@@ -2,7 +2,7 @@ const CACHE_NAME = 'bontrager-v1';
 
 const FILES_TO_CACHE = [
   './',
-  './bontrager_v21.html',
+  './index.html',
   './manifest.json'
 ];
 
