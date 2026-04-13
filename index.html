@@ -6,7 +6,7 @@
 <title>Bontrager Positioning</title>
   
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#1e4db7">
+<meta name="theme-color" content="#0f172a">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,46 +17,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  /* ── LIGHT: Clinical Parchment ── */
-  --bg:#f5f4f1;--bg2:#eceae5;--bg3:#e2dfd8;--bg4:#d6d2ca;
-  --text:#0f1923;--text2:#3d4a58;--text3:#8a96a3;
-  --border:#dbd8d2;--border2:#c8c4bc;
-  --accent:#0057b8;--accent-bg:#e8f0fc;--accent-text:#004494;
-  --accent2:#c8960c;--accent2-bg:#fef6e4;/* gold accent */
-  --green:#0d7a4e;--green-bg:#edfaf4;--green-border:#6ee7b7;
-  --red:#c0392b;--red-bg:#fdf3f2;--red-border:#f5a9a3;
+  /* ── LIGHT: Soft Paper ── */
+  --bg:#ffffff;--bg2:#f4f3f1;--bg3:#eaebef;--bg4:#dde0e6;
+  --text:#15202b;--text2:#4b5867;--text3:#7a8897;
+  --border:#d7d4cf;--border2:#c4c0bb;
+  --accent:#0057b8;--accent-bg:#e7f0ff;--accent-text:#003f8f;
+  --accent2:#c8960c;--accent2-bg:#fef6e4;
+  --green:#0d7a4e;--green-bg:#edf7f0;--green-border:#7dd9a3;
+  --red:#c0392b;--red-bg:#fdf1f0;--red-border:#f3a9a0;
   --amber:#c8960c;--amber-bg:#fef6e4;
   --radius:13px;--radius-sm:8px;--hh:54px;
   --sidebar-w:264px;
   --font:'IBM Plex Sans','Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-weight:400;
   --base-fs:15px;
   --shadow-sm:0 1px 3px rgba(15,25,35,.08),0 1px 2px rgba(15,25,35,.05);
   --shadow-md:0 4px 16px rgba(15,25,35,.1),0 2px 4px rgba(15,25,35,.06);
   --shadow-lg:0 12px 40px rgba(15,25,35,.15),0 4px 12px rgba(15,25,35,.08);
   /* ── SEMANTIC COLOR SYSTEM ── */
-  --c-position:#0057b8;--c-position-bg:#e8f0fc;--c-position-border:#93c2f7;
-  --c-cr:#0d7a4e;--c-cr-bg:#edfaf4;--c-cr-border:#6ee7b7;
+  --c-position:#0057b8;--c-position-bg:#e7f0ff;--c-position-border:#93c2f7;
+  --c-cr:#0d7a4e;--c-cr-bg:#edf7f0;--c-cr-border:#77c08c;
   --c-eval:#c8960c;--c-eval-bg:#fef6e4;--c-eval-border:#f5cc5a;
-  --c-warn:#c0392b;--c-warn-bg:#fdf3f2;--c-warn-border:#f5a9a3;
+  --c-warn:#c0392b;--c-warn-bg:#fdf1f0;--c-warn-border:#f5a9a3;
   --c-exam:#6434c8;--c-exam-bg:#f4f0fd;--c-exam-border:#bba6f0;
-  --c-clinical:#0773a0;--c-clinical-bg:#e8f6fc;--c-clinical-border:#82d0ef
+  --c-clinical:#0773a0;--c-clinical-bg:#e8f6fc;--c-clinical-border:#82d0ef;
+  /* ── FLASHCARD COLORS ── */
+  --fc-front-1:#667eea;--fc-front-2:#764ba2;
+  --fc-back-1:#f093fb;--fc-back-2:#f5576c
 }
 .dark{
-  /* ── DARK: Deep Obsidian ── */
-  --bg:#0d1117;--bg2:#141b24;--bg3:#1c2534;--bg4:#243040;
-  --text:#e6edf5;--text2:#8b98a8;--text3:#576474;
-  --border:#21303f;--border2:#2e3f52;
-  --accent:#4d9eff;--accent-bg:#0f2344;--accent-text:#93c5fd;
-  --accent2:#f5c518;--accent2-bg:#2a1f05;
-  --green-bg:#0a2e1e;--green-border:#166534;
-  --red-bg:#2a0f0d;--red-border:#7f1d1d;
-  --amber-bg:#2a1f05;
-  --c-position-bg:#0f2344;--c-position-border:#1d4ed8;
-  --c-cr-bg:#0a2e1e;--c-cr-border:#166534;
-  --c-eval-bg:#2a1f05;--c-eval-border:#92400e;
-  --c-warn-bg:#2a0f0d;--c-warn-border:#991b1b;
-  --c-exam-bg:#1e0f3d;--c-exam-border:#5b21b6;
-  --c-clinical-bg:#061c2e;--c-clinical-border:#0e7490;
+  /* ── DARK: Comfort Night ── */
+  --bg:#121827;--bg2:#0f172a;--bg3:#15233f;--bg4:#1e2a44;
+  --text:#e6edf5;--text2:#9caec6;--text3:#6f8097;
+  --border:#2a3648;--border2:#323f56;
+  --accent:#60a5ff;--accent-bg:#112f5f;--accent-text:#bfdbfe;
+  --accent2:#f5c518;--accent2-bg:#2f2910;
+  --green:#88c77c;--green-bg:#0c2f1e;--green-border:#1d6b3f;
+  --red:#f7948f;--red-bg:#2b1214;--red-border:#8f1f1f;
+  --amber-bg:#2f2910;
+  --c-position-bg:#112f5f;--c-position-border:#1d4ed8;
+  --c-cr-bg:#0c2f1e;--c-cr-border:#1d6b3f;
+  --c-eval-bg:#2f2910;--c-eval-border:#92400e;
+  --c-warn-bg:#2b1214;--c-warn-border:#991b1b;
+  --c-exam-bg:#19102e;--c-exam-border:#5b21b6;
+  --c-clinical-bg:#0b1d2f;--c-clinical-border:#0e7490;
   --shadow-sm:0 1px 3px rgba(0,0,0,.3);
   --shadow-md:0 4px 16px rgba(0,0,0,.4);
   --shadow-lg:0 12px 40px rgba(0,0,0,.5);
@@ -102,7 +106,166 @@
 .dark .nav-item.active{color:#4d9eff !important}
 .dark .nav-item svg,.dark .hbtn svg{stroke:#9d9cb8}
 .dark .nav-item.active svg{stroke:var(--accent)}
-body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:var(--base-fs);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em}
+body{font-family:var(--font);font-weight:var(--font-weight);background:var(--bg2);color:var(--text);font-size:var(--base-fs);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em}
+
+/* Animations */
+.page{animation:fadeIn 0.3s ease-in-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.nav-item:hover{transform:scale(1.02)}
+.back-btn:active{transform:scale(0.95)}
+.pos-img-wrap img{transition:transform 0.2s}
+.pos-img-wrap img:hover{transform:scale(1.05)}
+
+/* Progress Bar */
+.progress-bar div{transition:width 0.5s ease}
+
+/* Notes Section */
+#notesSection{animation:slideDown 0.3s ease}
+@keyframes slideDown{from{max-height:0;opacity:0}to{max-height:200px;opacity:1}}
+
+/* Flashcard */
+.flashcard{
+  perspective:1000px;
+  width:100%;
+  height:280px;
+  margin-bottom:20px;
+  cursor:pointer;
+}
+.flashcard-inner{
+  transition:transform 0.6s;
+  transform-style:preserve-3d;
+  width:100%;
+  height:100%;
+}
+.flashcard.flipped .flashcard-inner{
+  transform:rotateY(180deg);
+}
+.flashcard-front,.flashcard-back{
+  backface-visibility:hidden;
+  width:100%;
+  height:100%;
+  border-radius:12px;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:18px;
+  line-height:1.6;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  border:2px solid var(--border);
+}
+.flashcard-front{
+  background:linear-gradient(135deg, var(--fc-front-1) 0%, var(--fc-front-2) 100%);
+  color:white;
+  font-weight:700;
+  font-size:20px;
+  cursor:pointer;
+}
+.flashcard-back{
+  transform:rotateY(180deg);
+  background:linear-gradient(135deg, var(--fc-back-1) 0%, var(--fc-back-2) 100%);
+  color:white;
+  text-align:center;
+  font-size:16px;
+  padding:28px;
+}
+.flashcard:hover .flashcard-front{
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+}
+
+/* Flashcard Modal */
+.flashcard-modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  z-index:10000;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+.flashcard-modal.show{
+  display:flex;
+}
+.flashcard-modal-card{
+  perspective:1000px;
+  width:90%;
+  max-width:500px;
+  min-height:400px;
+  max-height:90vh;
+  position:relative;
+}
+.flashcard-modal-inner{
+  transition:transform 0.6s;
+  transform-style:preserve-3d;
+  width:100%;
+  height:100%;
+}
+.flashcard-modal-inner.flipped{
+  transform:rotateY(180deg);
+}
+.flashcard-modal-front,.flashcard-modal-back{
+  backface-visibility:hidden;
+  width:100%;
+  min-height:400px;
+  border-radius:12px;
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+  line-height:1.8;
+  box-shadow:0 10px 40px rgba(0,0,0,0.3);
+  border:none;
+  position:absolute;
+  top:0;
+  left:0;
+  word-break:break-word;
+  word-wrap:break-word;
+  overflow:auto;
+}
+.flashcard-modal-front{
+  background:linear-gradient(135deg, var(--fc-front-1) 0%, var(--fc-front-2) 100%);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+.flashcard-modal-back{
+  transform:rotateY(180deg);
+  background:linear-gradient(135deg, var(--fc-back-1) 0%, var(--fc-back-2) 100%);
+  color:white;
+  text-align:center;
+  cursor:pointer;
+}
+.flashcard-modal-close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  border:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:24px;
+  z-index:10001;
+}
+.flashcard-modal-close:hover{
+  background:rgba(255,255,255,0.3);
+}
+
+/* Breadcrumbs */
+.breadcrumbs{cursor:pointer}
+.breadcrumbs:hover{color:var(--accent)}
+
+/* Nav Buttons */
+.nav-btn:disabled{opacity:0.5;cursor:not-allowed}
 .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg2);position:relative}
 
 /* ── HEADER ── */
@@ -144,6 +307,7 @@ body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:v
 /* ── HOME ── */
 .hero{text-align:center;padding:32px 16px 20px}
 .hero h1{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-.03em;background:linear-gradient(135deg,var(--text) 40%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.hero-dev{font-family:'Segoe Script','Brush Script MT','Lucida Handwriting',cursive;font-size:1.15rem;color:var(--accent);margin-bottom:10px;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 3px 10px rgba(15,25,35,.18);display:inline-flex;padding:8px 18px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.18)}
 .hero p{font-size:13px;color:var(--text2);line-height:1.6}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;background:linear-gradient(135deg,var(--accent-bg),var(--accent2-bg));color:var(--accent-text);margin-top:10px;border:1px solid rgba(0,87,184,.18);box-shadow:0 2px 8px rgba(0,87,184,.12)}
 .sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
@@ -317,6 +481,23 @@ body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:v
 .toggle.on{background:var(--accent)}
 .toggle::after{content:'';width:21px;height:21px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .toggle.on::after{left:22px}
+.toggle:focus-visible,.ltog-btn:focus-visible,.mode-tab:focus-visible,.settings-row button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.high-contrast .app, .high-contrast .page{background:#071626;color:#f5fbff}
+.high-contrast .settings-group,
+.high-contrast .pos-sec-block,
+.high-contrast .mode-tabs,
+.high-contrast .hero,
+.high-contrast .hero-badge,
+.high-contrast .settings-row{background:#0b304e;border-color:#65b7ff;color:#f8fbff}
+.high-contrast .settings-row-label,
+.high-contrast .settings-row-sub,
+.high-contrast .hero p,
+.high-contrast .hero-dev{color:#f8fbff}
+.high-contrast .ltog-btn{background:#0a2c4f;border-color:#59c3ff;color:#f8fbff}
+.high-contrast .ltog-btn.active{background:#3da7ff;color:#fff}
+.high-contrast .toggle{background:#0b324f}
+.high-contrast .toggle.on{background:#5dc1ff}
+.high-contrast .hero-dev{background:rgba(255,255,255,.08)}
 .settings-select{font-size:13px;padding:7px 11px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--font)}
 
 /* ── IMAGE EDITOR MODAL ── */
@@ -506,9 +687,9 @@ body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:v
 .dark .tag.tag-daily{background:#422006;color:#fcd34d;border-color:#92400e}
 
 /* ── Layer Toggle bar ── */
-.layer-toggle-bar{display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
+.layer-toggle-bar{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
 .layer-toggle-bar span{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
-.ltog-btn{padding:5px 11px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg);font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text2);font-family:var(--font);transition:all .15s}
+.ltog-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg);font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);font-family:var(--font);transition:all .15s;min-height:36px;line-height:1}
 .ltog-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .ltog-btn:active{opacity:.8}
 
@@ -643,8 +824,7 @@ body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:v
 .mode-tab:first-child{border-right:1px solid var(--border2)}
 
 /* Layer toggle pill */
-.ltog-btn{padding:5px 13px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg);font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text2);font-family:var(--font);transition:all .15s}
-.ltog-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* preserved by earlier definition near the top of the stylesheet */
 
 /* Flip nav bar */
 .flip-btn{flex:1;padding:11px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
@@ -738,6 +918,58 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
 /* ── Spacing improvements ── */
 .pos-sec-block+.pos-sec-hdr{margin-top:4px}
 .fast-row{padding:5px 0;border-bottom:1px solid var(--border)}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE & ACCESSIBILITY FIXES
+═══════════════════════════════════════════════ */
+
+/* Ensure all buttons are touch-friendly */
+button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Fix button disabled states */
+button:disabled, .nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Add focus states for keyboard navigation */
+button:focus-visible, .nav-btn:focus-visible, 
+.ltog-btn:focus-visible, .ai-sug-btn:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Ensure modals work on all devices */
+.flashcard-modal {
+  touch-action: manipulation;
+}
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive button sizes for small screens */
+@media (max-width: 480px) {
+  button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+    min-height: 48px;
+    padding: 12px 14px !important;
+  }
+  
+  .flashcard-modal-card {
+    width: 95vw !important;
+    max-width: 100% !important;
+  }
+}
 .fast-row:last-child{border-bottom:none}
 .gref-row{padding:8px 0}
 
@@ -930,32 +1162,32 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
   </div>
   <div class="sb-section">Navigation</div>
   <div class="nav-item active" id="nav-home" onclick="navTo('home')">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span style="font-size:18px;">🏠</span>
     Home
   </div>
   <div class="nav-item" id="nav-learn-chapters" onclick="navTo('learn-chapters')">
-    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+    <span style="font-size:18px;">🎓</span>
     Section 1 — Learn
   </div>
   <div class="nav-item" id="nav-quiz-chapters" onclick="navTo('quiz-chapters')">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <span style="font-size:18px;">🧠</span>
     Section 2 — Quiz
   </div>
   <div class="nav-item" id="nav-ai" onclick="navTo('ai')">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span style="font-size:18px;">🤖</span>
     Ask AI
   </div>
   <div class="nav-item" id="nav-quickreview" onclick="navTo('quickreview');closeSidebar()">
-    <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    <span style="font-size:18px;">📋</span>
     Quick Review
   </div>
   <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    <span style="font-size:18px;">⚙️</span>
     Settings
   </div>
   <div class="sb-section">Account</div>
   <div class="nav-item" onclick="openProfileModal()">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span style="font-size:18px;">👨‍⚕️</span>
     User Profile
   </div>
   <div class="sb-footer">
@@ -970,16 +1202,19 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
 <!-- HEADER -->
 <div class="header">
   <button class="hbtn" id="menuBtn" onclick="toggleSidebar()">
-    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span style="font-size:18px;">☰</span>
   </button>
   <div class="htitle" id="headerTitle">Bontrager Positioning</div>
   <button class="hbtn" id="studyModeBtn" onclick="toggleStudyMode()" title="Study Mode" style="color:var(--text2)">
-    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+    <span style="font-size:18px;">👁️</span>
+  </button>
+  <button class="hbtn" id="colorModeBtn" onclick="toggleDark()" title="Toggle day/night mode" aria-label="Toggle day/night mode">
+    <span style="font-size:18px;">🌙</span>
+  </button>
+  <button class="hbtn" id="aboutHeaderBtn" onclick="navTo('about')" title="About" aria-label="About">
+    <span style="font-size:18px;">ℹ️</span>
   </button>
   <button class="hbtn" id="devAppearanceBtn" onclick="openDevAppearance()" title="Appearance" style="display:none">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 010 20"/><path d="M12 2C8 6 8 18 12 22"/><path d="M2 12h20"/></svg>
-  </button>
-  <button class="hbtn" id="aiHeaderBtn" onclick="navTo('ai')" title="Ask AI">
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   </button>
 </div>
@@ -994,24 +1229,25 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
   <div class="scroll">
     <div class="hero">
       <h1>Bontrager Positioning</h1>
-      <p id="heroSubtitle">Radiographic positioning guide · 10th Edition</p>
-      <div class="hero-badge" id="heroBadge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg> Student Mode</div>
+      <div class="hero-dev">QUTAIBA SALAMA</div>
+      <p id="heroSubtitle">Radiographic positioning guide · Bontrager 10th Edition book</p>
+      <div class="hero-badge" id="heroBadge"><span style="font-size:14px;">📖</span> Student Mode</div>
     </div>
     <div class="sec-grid">
       <div class="sec-card learn-card" onclick="navTo('learn-chapters')">
-        <div class="sec-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <div class="sec-card-icon"><span style="font-size:32px;">📚</span></div>
         <h2>Section 1</h2>
         <p>Learn all positions with photos &amp; technique details</p>
       </div>
       <div class="sec-card quiz-card" onclick="navTo('quiz-chapters')">
-        <div class="sec-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15l6-6M9 9l6 6"/></svg></div>
+        <div class="sec-card-icon"><span style="font-size:32px;">📊</span></div>
         <h2>Section 2</h2>
         <p>Test yourself with real X-ray identification</p>
       </div>
     </div>
     <div style="margin-bottom:12px">
       <div class="sec-card" onclick="buildQuickReview();navTo('quickreview')" style="text-align:left;display:flex;align-items:center;gap:14px;padding:14px 16px">
-        <div style="flex-shrink:0;width:44px;height:44px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+        <div style="flex-shrink:0;width:44px;height:44px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font-size:22px;">📄</span></div>
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Quick Review</div>
           <div style="font-size:11px;color:var(--text2);line-height:1.4">Top positions · CR angles · Common errors · Reference values</div>
@@ -1037,6 +1273,10 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
   <div class="scroll">
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
     <div class="ptitle">Choose a chapter</div>
+    <!-- Search Bar -->
+    <div style="margin:12px 0;padding:0 16px">
+      <input type="text" id="learnSearch" placeholder="🔍 Search chapters..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:14px" oninput="filterChapters()">
+    </div>
     <div id="learnChList"></div>
     <div id="devAddChapterPanel" style="display:none"></div>
   </div>
@@ -1055,6 +1295,8 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
         Home
       </button>
     </div>
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs" id="subChBreadcrumbs" style="font-size:12px;color:var(--text3);margin-bottom:8px;padding:0 16px">Home > Chapters</div>
     <div class="ptitle" id="subChTitle"></div>
     <div id="subChList"></div>
     <!-- DEV: manage subchapters -->
@@ -1075,10 +1317,26 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
         Home
       </button>
     </div>
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs" id="learnPosBreadcrumbs" style="font-size:12px;color:var(--text3);margin-bottom:8px;padding:0 16px">Home > Chapters</div>
     <div class="ptitle" id="learnPosTitle"></div>
+    <!-- Flashcard Mode Toggle -->
+    <div style="margin:8px 16px">
+      <button onclick="toggleFlashcardMode()" id="flashcardToggle" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:14px;cursor:pointer">🃏 Flashcard Mode</button>
+    </div>
     <div id="learnPosList"></div>
     <!-- DEV: add position -->
     <div id="devAddPosPanel" style="display:none"></div>
+  </div>
+  <!-- Flashcard Modal -->
+  <div id="flashcardModal" class="flashcard-modal">
+    <button class="flashcard-modal-close" onclick="closeFlashcardModal()">✕</button>
+    <div class="flashcard-modal-card">
+      <div class="flashcard-modal-inner" id="flashcardModalInner" onclick="toggleFlashcardModalFlip()">
+        <div class="flashcard-modal-front" id="flashcardModalFront"></div>
+        <div class="flashcard-modal-back" id="flashcardModalBack"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1122,11 +1380,20 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
         </button>
       </div>
     </div>
+    <!-- Breadcrumbs and Progress -->
+    <div class="breadcrumbs" id="posBreadcrumbs" style="font-size:12px;color:var(--text3);margin-bottom:8px">Home > Chapters</div>
+    <div class="progress-bar" id="posProgress" style="width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:12px"><div style="height:100%;background:var(--accent);border-radius:2px;width:0%"></div></div>
+    <!-- Previous/Next Buttons -->
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <button class="nav-btn" id="prevPosBtn" onclick="navigatePosition(-1)" disabled style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text2);cursor:pointer">← Previous</button>
+      <button class="nav-btn" id="nextPosBtn" onclick="navigatePosition(1)" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text2);cursor:pointer">Next →</button>
+    </div>
     <div class="dev-edit-bar" id="devEditBar" style="display:none">
       <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Developer Mode</span>
       <div class="dev-edit-actions">
         <button class="edit-btn" onclick="openAdvancedEditor()">✏️ Edit</button>
         <button class="edit-btn" onclick="openEditModal('pos')">Quick Edit</button>
+        <button class="edit-btn" onclick="togglePreviewMode()">👁️ Preview</button>
         <button class="edit-btn" onclick="embedAndExport()" style="border-color:#a78bfa;color:#a78bfa">💾 Embed & Export</button>
         <button class="edit-btn danger" onclick="deleteCurrentPos()">Delete</button>
       </div>
@@ -1134,7 +1401,17 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
     <div class="pos-title" id="posViewTitle"></div>
     <div class="badge" id="posViewBadge"></div>
     <div class="desc-text" id="posViewDesc"></div>
+    <div id="descToggle" style="display:none;margin-top:8px;text-align:center">
+      <button onclick="toggleDesc()" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;cursor:pointer">اقرأ المزيد</button>
+    </div>
     <div class="tech-card" id="posViewTech"></div>
+    <!-- Personal Notes -->
+    <div style="margin-top:16px">
+      <button onclick="toggleNotes()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:14px;cursor:pointer">📝 Personal Notes</button>
+      <div id="notesSection" style="display:none;margin-top:8px">
+        <textarea id="posNotes" placeholder="Add your notes here..." style="width:100%;height:80px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px;resize:vertical" onblur="saveNotes()"></textarea>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1261,7 +1538,7 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
       <button class="ai-sug-btn" onclick="sendAI('pneumothorax best projection')">Pneumothorax</button>
     </div>
     <div class="ai-chat-area" id="aiChat">
-      <div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I know every position in this program and update automatically when new data is added.<br><br>Ask me about:<br>• Any position — CR, kVp, SID, respiration, mA/mAs<br>• <em>"PA Chest technique"</em>, <em>"Mortise ankle CR"</em><br>• Pathology — pneumothorax, effusion, Bennett fracture<br>• Compare — <em>"RAO vs LAO"</em>, <em>"PA vs AP"</em><br>• Lists — <em>"list all routine positions"</em><br><br>Type <strong>"list all chapters"</strong> to see everything.</div>
+      <div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I know every position in this program and update automatically when new data is added.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية.<br><br>Ask me about:<br>• Any position — CR, kVp, SID, respiration, mA/mAs<br>• <em>"PA Chest technique"</em>, <em>"Mortise ankle CR"</em><br>• Pathology — pneumothorax, effusion, Bennett fracture<br>• Compare — <em>"RAO vs LAO"</em>, <em>"PA vs AP"</em><br>• Lists — <em>"list all routine positions"</em><br><br>Type <strong>"list all chapters"</strong> to see everything.</div>
     </div>
   </div>
 </div>
@@ -1275,11 +1552,90 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
       <div class="settings-group-title">Appearance</div>
       <div class="settings-row">
         <div><div class="settings-row-label">Dark mode</div></div>
-        <button class="toggle" id="darkToggle" onclick="toggleDark()"></button>
+        <button class="toggle" id="darkToggle" onclick="toggleDark()" aria-pressed="false" title="Toggle dark mode"></button>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">Large text</div></div>
-        <button class="toggle" id="largeToggle" onclick="toggleLarge()"></button>
+        <button class="toggle" id="largeToggle" onclick="toggleLarge()" aria-pressed="false" title="Toggle larger text"></button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">High contrast</div><div class="settings-row-sub">Boost UI legibility for screen readers</div></div>
+        <button class="toggle" id="highContrastToggle" onclick="toggleHighContrast()" aria-pressed="false" title="Toggle high contrast mode"></button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Font family</div>
+          <div class="settings-row-sub">Choose the app font for students and developers</div>
+        </div>
+        <select class="settings-select" id="fontSelect" onchange="onFontChange()">
+          <option value="IBM Plex Sans, Noto Sans Arabic, -apple-system, BlinkMacSystemFont, sans-serif">IBM Plex Sans</option>
+          <option value="'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif">Noto Sans Arabic</option>
+          <option value="Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif">Segoe UI</option>
+          <option value="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">Inter</option>
+          <option value="Roboto, Arial, sans-serif">Roboto</option>
+          <option value="Open Sans, Arial, sans-serif">Open Sans</option>
+          <option value="Lato, Arial, sans-serif">Lato</option>
+          <option value="Poppins, Arial, sans-serif">Poppins</option>
+          <option value="Montserrat, Arial, sans-serif">Montserrat</option>
+          <option value="Source Sans Pro, Arial, sans-serif">Source Sans Pro</option>
+          <option value="Arial, Helvetica, sans-serif">Arial</option>
+          <option value="Verdana, Geneva, sans-serif">Verdana</option>
+          <option value="Trebuchet MS, Helvetica, sans-serif">Trebuchet MS</option>
+          <option value="Calibri, Candara, Segoe, 'Segoe UI', sans-serif">Calibri</option>
+          <option value="Georgia, 'Times New Roman', Times, serif">Georgia</option>
+          <option value="Courier New, Courier, monospace">Courier New</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Font weight</div>
+          <div class="settings-row-sub">Make text lighter or darker</div>
+        </div>
+        <select class="settings-select" id="fontWeightSelect" onchange="onFontWeightChange()">
+          <option value="300">Light</option>
+          <option value="400" selected>Normal</option>
+          <option value="500">Medium</option>
+          <option value="600">Semi-bold</option>
+          <option value="700">Bold</option>
+          <option value="800">Extra-bold</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Font size</div>
+          <div class="settings-row-sub">Adjust the base font size (12-24px)</div>
+        </div>
+        <input type="number" min="12" max="24" value="15" id="fontSizeInput" oninput="onFontSizeChange()" style="width:80px;padding:7px 11px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--font);">
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Text color</div>
+          <div class="settings-row-sub">Customize text color for all text in the app</div>
+        </div>
+        <input type="color" id="textColorPicker" onchange="onTextColorChange()" style="width:50px;height:40px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);cursor:pointer;">
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-title">Flashcard colors</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Front color</div>
+          <div class="settings-row-sub">Gradient color for question side (front)</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input type="color" id="fcFront1" onchange="onFlashcardColorChange()" style="width:50px;height:40px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);cursor:pointer;flex:1;max-width:60px;">
+          <input type="color" id="fcFront2" onchange="onFlashcardColorChange()" style="width:50px;height:40px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);cursor:pointer;flex:1;max-width:60px;">
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Back color</div>
+          <div class="settings-row-sub">Gradient color for answer side (back)</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input type="color" id="fcBack1" onchange="onFlashcardColorChange()" style="width:50px;height:40px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);cursor:pointer;flex:1;max-width:60px;">
+          <input type="color" id="fcBack2" onchange="onFlashcardColorChange()" style="width:50px;height:40px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);cursor:pointer;flex:1;max-width:60px;">
+        </div>
       </div>
     </div>
     <div class="settings-group">
@@ -1318,14 +1674,59 @@ body.study-mode .page{padding-top:calc(var(--hh) + 27px)}
       </div>
       <div class="settings-row">
         <div>
-          <div class="settings-row-label">Version</div>
-          <div class="settings-row-sub">Bontrager v20 · 10th Edition</div>
+          <div class="settings-row-label">Restore defaults</div>
+          <div class="settings-row-sub">Reset font and appearance settings</div>
+        </div>
+        <button class="modal-btn secondary" onclick="resetFontAppearanceDefaults()" style="padding:10px 14px;">Restore</button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">App version</div>
+          <div class="settings-row-sub">v1</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Source</div>
+          <div class="settings-row-sub">Bontrager 10th Edition book</div>
         </div>
       </div>
     </div>
     <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;line-height:1.7">
-      Bontrager's Handbook of Radiographic<br>Positioning and Techniques · 10th Edition<br>
+      Bontrager 10th Edition book<br>
       <span id="statsFooter">— positions · — chapters</span>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-about">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">About</div>
+    <div class="settings-group">
+      <div class="settings-group-title">App info</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Developer</div>
+          <div class="settings-row-sub">QUTAIBA SALAMA</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Version</div>
+          <div class="settings-row-sub">v1</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Source</div>
+          <div class="settings-row-sub">Bontrager 10th Edition book</div>
+        </div>
+      </div>
+      <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div class="settings-row-label">Notes</div>
+        <div class="settings-row-sub" style="color:var(--text2);">إذا أعجبك التطبيق، فادعُ لنا: اللهم بارك في هذا الجهد، وانفع به الطلاب، ووفّق من عمل عليه.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1502,6 +1903,186 @@ const _UH='e11bec3e4a9e13ab8f92cee667e006c8f1bc82dcc3e4389f6cf001bd91c4f3e3';
 const _PH='b76819a2cac461de5cb8ae880ad00d010767c3c7bc4f0ef8e743d00571b79c62';
 async function _hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function _chkCreds(u,p){const[uh,ph]=await Promise.all([_hash(u),_hash(p)]);return uh===_UH&&ph===_PH;}
+
+function setAppFont(fontValue){
+  document.documentElement.style.setProperty('--font', fontValue);
+}
+
+function setAppFontWeight(weightValue){
+  document.documentElement.style.setProperty('--font-weight', weightValue);
+}
+
+function setAppFontSize(sizeValue){
+  document.documentElement.style.setProperty('--base-fs', sizeValue + 'px');
+  document.body.style.fontSize = sizeValue + 'px';
+  document.body.style.zoom = sizeValue / 15;
+}
+
+function setAppTextColor(colorValue){
+  document.documentElement.style.setProperty('--text', colorValue);
+}
+
+function onFontChange(){
+  const fontSelect = document.getElementById('fontSelect');
+  if(!fontSelect) return;
+  const fontValue = fontSelect.value;
+  setAppFont(fontValue);
+  localStorage.setItem('appFontFamily', fontValue);
+}
+
+function onFontWeightChange(){
+  const weightSelect = document.getElementById('fontWeightSelect');
+  if(!weightSelect) return;
+  const weightValue = weightSelect.value;
+  setAppFontWeight(weightValue);
+  localStorage.setItem('appFontWeight', weightValue);
+}
+
+function onFontSizeChange(){
+  const input = document.getElementById('fontSizeInput');
+  if(!input) return;
+  const sizeValue = parseInt(input.value);
+  if(isNaN(sizeValue) || sizeValue < 12 || sizeValue > 24) {
+    input.value = 15; // reset to default
+    return;
+  }
+  setAppFontSize(sizeValue);
+  localStorage.setItem('appFontSize', sizeValue);
+}
+
+function onTextColorChange(){
+  const textColorPicker = document.getElementById('textColorPicker');
+  if(!textColorPicker) return;
+  const colorValue = textColorPicker.value;
+  setAppTextColor(colorValue);
+  localStorage.setItem('appTextColor', colorValue);
+}
+
+function onFlashcardColorChange(){
+  const fcFront1 = document.getElementById('fcFront1');
+  const fcFront2 = document.getElementById('fcFront2');
+  const fcBack1 = document.getElementById('fcBack1');
+  const fcBack2 = document.getElementById('fcBack2');
+  
+  if(!fcFront1 || !fcFront2 || !fcBack1 || !fcBack2) return;
+  
+  document.documentElement.style.setProperty('--fc-front-1', fcFront1.value);
+  document.documentElement.style.setProperty('--fc-front-2', fcFront2.value);
+  document.documentElement.style.setProperty('--fc-back-1', fcBack1.value);
+  document.documentElement.style.setProperty('--fc-back-2', fcBack2.value);
+  
+  localStorage.setItem('appFlashcardFront1', fcFront1.value);
+  localStorage.setItem('appFlashcardFront2', fcFront2.value);
+  localStorage.setItem('appFlashcardBack1', fcBack1.value);
+  localStorage.setItem('appFlashcardBack2', fcBack2.value);
+}
+
+function initAppFont(){
+  const savedFont = localStorage.getItem('appFontFamily');
+  if(savedFont){
+    const fontSelect = document.getElementById('fontSelect');
+    if(fontSelect){
+      fontSelect.value = savedFont;
+    }
+    setAppFont(savedFont);
+  }
+
+  const savedWeight = localStorage.getItem('appFontWeight');
+  if(savedWeight){
+    const weightSelect = document.getElementById('fontWeightSelect');
+    if(weightSelect){
+      weightSelect.value = savedWeight;
+    }
+    setAppFontWeight(savedWeight);
+  }
+
+  const savedTextColor = localStorage.getItem('appTextColor');
+  if(savedTextColor){
+    const textColorPicker = document.getElementById('textColorPicker');
+    if(textColorPicker){
+      textColorPicker.value = savedTextColor;
+    }
+    setAppTextColor(savedTextColor);
+  }
+
+  const savedFontSize = localStorage.getItem('appFontSize');
+  if(savedFontSize){
+    const fontSizeInput = document.getElementById('fontSizeInput');
+    if(fontSizeInput){
+      fontSizeInput.value = savedFontSize;
+    }
+    const sz = parseInt(savedFontSize);
+    setAppFontSize(sz);
+    document.body.style.fontSize = sz + 'px';
+  }
+
+  // Load flashcard colors
+  const savedFcFront1 = localStorage.getItem('appFlashcardFront1');
+  const savedFcFront2 = localStorage.getItem('appFlashcardFront2');
+  const savedFcBack1 = localStorage.getItem('appFlashcardBack1');
+  const savedFcBack2 = localStorage.getItem('appFlashcardBack2');
+  
+  if(savedFcFront1 || savedFcFront2 || savedFcBack1 || savedFcBack2){
+    if(savedFcFront1) document.documentElement.style.setProperty('--fc-front-1', savedFcFront1);
+    if(savedFcFront2) document.documentElement.style.setProperty('--fc-front-2', savedFcFront2);
+    if(savedFcBack1) document.documentElement.style.setProperty('--fc-back-1', savedFcBack1);
+    if(savedFcBack2) document.documentElement.style.setProperty('--fc-back-2', savedFcBack2);
+    
+    const fcFront1 = document.getElementById('fcFront1');
+    const fcFront2 = document.getElementById('fcFront2');
+    const fcBack1 = document.getElementById('fcBack1');
+    const fcBack2 = document.getElementById('fcBack2');
+    
+    if(fcFront1 && savedFcFront1) fcFront1.value = savedFcFront1;
+    if(fcFront2 && savedFcFront2) fcFront2.value = savedFcFront2;
+    if(fcBack1 && savedFcBack1) fcBack1.value = savedFcBack1;
+    if(fcBack2 && savedFcBack2) fcBack2.value = savedFcBack2;
+  }
+}
+
+function resetFontAppearanceDefaults(){
+  const defaultFont = 'IBM Plex Sans, Noto Sans Arabic, -apple-system, BlinkMacSystemFont, sans-serif';
+  const defaultWeight = '400';
+  const defaultColor = '#0f1923';
+  const defaultFontSize = '15';
+
+  setAppFont(defaultFont);
+  setAppFontWeight(defaultWeight);
+  setAppTextColor(defaultColor);
+  setAppFontSize(defaultFontSize);
+
+  localStorage.setItem('appFontFamily', defaultFont);
+  localStorage.setItem('appFontWeight', defaultWeight);
+  localStorage.setItem('appTextColor', defaultColor);
+  localStorage.setItem('appFontSize', defaultFontSize);
+  localStorage.removeItem('bontrager_dark_v1');
+  localStorage.removeItem('bontrager_large_v1');
+  localStorage.removeItem('bontrager_highcontrast_v1');
+
+  const fontSelect = document.getElementById('fontSelect');
+  const weightSelect = document.getElementById('fontWeightSelect');
+  const textColorPicker = document.getElementById('textColorPicker');
+  const fontSizeInput = document.getElementById('fontSizeInput');
+  const highContrastToggle = document.getElementById('highContrastToggle');
+  const darkToggle = document.getElementById('darkToggle');
+  const largeToggle = document.getElementById('largeToggle');
+  if(fontSelect) fontSelect.value = defaultFont;
+  if(weightSelect) weightSelect.value = defaultWeight;
+  if(textColorPicker) textColorPicker.value = defaultColor;
+  if(fontSizeInput) fontSizeInput.value = defaultFontSize;
+  document.body.classList.remove('dark');
+  if(darkToggle) darkToggle.classList.remove('on');
+  document.documentElement.style.setProperty('--base-fs', '15px');
+  document.body.style.fontSize = '15px';
+  document.body.style.zoom = 1;
+  if(largeToggle) largeToggle.classList.remove('on');
+  document.body.classList.remove('high-contrast');
+  if(highContrastToggle) {
+    highContrastToggle.classList.remove('on');
+    highContrastToggle.setAttribute('aria-pressed','false');
+  }
+}
+
 // Legacy empty aliases (never expose real values)
 const DEV_USERNAME='';const DEV_PASSWORD='';
 
@@ -2470,12 +3051,27 @@ function confirmExitQuiz(){
   });
 }
 
-// ── Confirm before app close if quiz is active ──
+// ── Confirm before app close ──
 window.addEventListener('beforeunload',(e)=>{
   if(_quizActive){
     e.preventDefault();
     e.returnValue='هل تريد المغادرة؟ ستضيع إجاباتك في الاختبار الحالي.';
     return e.returnValue;
+  }
+});
+
+// ── Farewell message on app close (when not in quiz) ──
+window.addEventListener('beforeunload',(e)=>{
+  if(!_quizActive){
+    // Show blessing message
+    const blessingMessages = [
+      'أتمنى لك دوماً التوفيق والصحة والسعادة',
+      'اللهم بارك في علمك، وفقك الله في كل خطواتك',
+      'حفظك الله دائماً، وأتمنى لك النجاح والتميز',
+      'اللهم ألهمك الحكمة والفهم، وفقك لكل خير'
+    ];
+    const randomMsg = blessingMessages[Math.floor(Math.random() * blessingMessages.length)];
+    console.log('👋 ' + randomMsg);
   }
 });
 
@@ -2516,12 +3112,16 @@ function closeSidebar(){
 }
 
 function navTo(id){
+  // Close any open modals
+  const flashcardModal = document.getElementById('flashcardModal');
+  if(flashcardModal) flashcardModal.classList.remove('show');
+  
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -2638,10 +3238,216 @@ function buildChBtn(icon, name, sub, type){
   return `<button class="ch-btn"><span class="ch-icon">${icon}</span><div class="ch-info"><div class="ch-name">${name}</div><div class="ch-sub">${sub}</div></div><span class="ch-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>`;
 }
 
+// New functions for enhancements
+function filterChapters(){
+  const query = document.getElementById('learnSearch').value.toLowerCase();
+  const items = document.querySelectorAll('#learnChList > div');
+  items.forEach(item => {
+    const name = item.textContent.toLowerCase();
+    item.style.display = name.includes(query) ? '' : 'none';
+  });
+}
+
+function getPositionsForChap(chId, scId){
+  if(scId){
+    return BOOK[chId].subchapters[scId].positions || [];
+  } else {
+    return BOOK[chId].positions || [];
+  }
+}
+
+function buildLearnPositions(chId, scId){
+  const list = document.getElementById('learnPosList');
+  list.innerHTML = '';
+  const positions = getPositionsForChap(chId, scId);
+  
+  const mkSec = (title, filtered, type) => {
+    if (!filtered.length) return;
+    const sec = document.createElement('div');
+    sec.className = 'pos-section';
+    sec.innerHTML = `<div class="pos-section-title"><span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span>${title}</div>`;
+    filtered.forEach(pos => {
+      const realIdx = positions.indexOf(pos);
+      const btn = document.createElement('button');
+      btn.className = 'pos-btn';
+      const icon = getPositionIcon(pos.name);
+      if(userRole === 'developer'){
+        btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span><span style="flex:1">${esc(pos.name)}</span>`;
+      } else {
+        btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span>${esc(pos.name)}`;
+      }
+      btn.onclick = () => openPos(pos, chId, scId, realIdx);
+      sec.appendChild(btn);
+    });
+    list.appendChild(sec);
+  };
+  
+  mkSec('Routine', positions.filter(p => p.type === 'routine'), 'routine');
+  mkSec('Special', positions.filter(p => p.type === 'special'), 'special');
+}
+
+function toggleFlashcardMode(){
+  const list = document.getElementById('learnPosList');
+  const toggle = document.getElementById('flashcardToggle');
+  if(list.classList.contains('flashcard-mode')){
+    list.classList.remove('flashcard-mode');
+    toggle.textContent = '🃏 Flashcard Mode';
+    // Rebuild normal list
+    buildLearnPositions(curChapter, curSubchapter);
+  } else {
+    list.classList.add('flashcard-mode');
+    toggle.textContent = '📋 Normal Mode';
+    // Build flashcard view
+    buildFlashcards(curChapter, curSubchapter);
+  }
+}
+
+function buildFlashcards(chap, sub){
+  const list = document.getElementById('learnPosList');
+  list.innerHTML = '';
+  const positions = getPositionsForChap(chap, sub);
+  positions.forEach((pos, idx) => {
+    const card = document.createElement('div');
+    card.className = 'flashcard';
+    const desc = (pos.info?.desc || '').trim() || 'No description';
+    const icon = getPositionIcon(pos.name);
+    card.innerHTML = `
+      <div class="flashcard-inner" onclick="openFlashcardModal('${esc(pos.name)}', '${esc(desc)}', '${icon}')">
+        <div class="flashcard-front">
+          <div style="font-size:48px;margin-bottom:16px">${icon}</div>
+          <div style="text-align:center;word-wrap:break-word;max-width:90%">${esc(pos.name)}</div>
+        </div>
+        <div class="flashcard-back">
+          <div style="text-align:center;word-wrap:break-word;max-width:95%">${esc(desc)}</div>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function openFlashcardModal(title, desc, icon){
+  const modal = document.getElementById('flashcardModal');
+  const inner = document.getElementById('flashcardModalInner');
+  const front = document.getElementById('flashcardModalFront');
+  const back = document.getElementById('flashcardModalBack');
+  
+  front.innerHTML = `<div style="font-size:56px;margin-bottom:20px">${icon}</div><div style="text-align:center;word-wrap:break-word">${title}</div>`;
+  back.innerHTML = `<div style="text-align:center;word-wrap:break-word;max-width:95%">${desc}</div>`;
+  
+  inner.classList.remove('flipped');
+  modal.classList.add('show');
+}
+
+function closeFlashcardModal(){
+  const modal = document.getElementById('flashcardModal');
+  const inner = document.getElementById('flashcardModalInner');
+  inner.classList.remove('flipped');
+  modal.classList.remove('show');
+}
+
+function toggleFlashcardModalFlip(){
+  const inner = document.getElementById('flashcardModalInner');
+  inner.classList.toggle('flipped');
+}
+
+// Close modal when clicking on background
+document.getElementById('flashcardModal')?.addEventListener('click', function(e){
+  if(e.target === this) closeFlashcardModal();
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeFlashcardModal();
+});
+
+function flipCard(el){
+  el.closest('.flashcard').classList.toggle('flipped');
+}
+
+function navigatePosition(dir){
+  if(!currentPositions || !currentPosId) return;
+  const currentIdx = currentPositions.findIndex(p => p.id === currentPosId);
+  const newIdx = currentIdx + dir;
+  if(newIdx >= 0 && newIdx < currentPositions.length){
+    const newPos = currentPositions[newIdx];
+    // Find the posIdx for the new position
+    const flat = _getAllPosFlat();
+    const found = flat.find(p => `${p.chId}_${p.scId || 'null'}_${p.posIdx}` === newPos.id);
+    if(found) openPos(newPos, found.chId, found.scId, found.posIdx);
+    
+    // Update button states after navigation
+    setTimeout(() => {
+      const prevBtn = document.getElementById('prevPosBtn');
+      const nextBtn = document.getElementById('nextPosBtn');
+      if(prevBtn) prevBtn.disabled = newIdx <= 0;
+      if(nextBtn) nextBtn.disabled = newIdx >= currentPositions.length - 1;
+    }, 100);
+  }
+}
+
+function toggleNotes(){
+  const sec = document.getElementById('notesSection');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+  if(sec.style.display === 'block'){
+    const notes = localStorage.getItem(`notes_${currentPosId}`) || '';
+    document.getElementById('posNotes').value = notes;
+  }
+}
+
+function saveNotes(){
+  const notes = document.getElementById('posNotes').value;
+  localStorage.setItem(`notes_${currentPosId}`, notes);
+}
+
+function updateBreadcrumbs(page, path){
+  const bc = document.getElementById(page + 'Breadcrumbs');
+  if(!bc) return;
+  const parts = path.split(' > ');
+  const html = parts.map((part, idx) => {
+    const clickAction = _getBreadcrumbAction(page, parts, idx);
+    return `<span class="bc-item" ${clickAction ? `onclick="${clickAction}" style="cursor:pointer;color:var(--accent)"` : ''} title="${part.length > 20 ? part : ''}">${part}</span>`;
+  }).join('<span class="bc-sep"> > </span>');
+  bc.innerHTML = html;
+}
+
+function _getBreadcrumbAction(page, parts, idx){
+  if(parts[0] === 'Home') {
+    if(idx === 0) return `navTo('home')`;
+  }
+  // For chapter-level breadcrumbs
+  if(parts.length > 1 && parts[1]) {
+    const chId = Object.keys(BOOK).find(k => BOOK[k].name === parts[1]);
+    if(idx === 1 && chId) return `openLearnChap('${chId}', null)`;
+    if(idx === 2 && chId && parts[2]) {
+      const scId = Object.keys(BOOK[chId].subchapters || {}).find(k => BOOK[chId].subchapters[k].name === parts[2]);
+      if(scId) return `openLearnChap('${chId}', '${scId}')`;
+    }
+  }
+  return null;
+}
+
+function toggleDesc(){
+  const desc = document.getElementById('posViewDesc');
+  const toggle = document.getElementById('descToggle');
+  if(desc.classList.contains('expanded')){
+    desc.classList.remove('expanded');
+    desc.style.maxHeight = '100px';
+    desc.style.overflow = 'hidden';
+    toggle.querySelector('button').textContent = 'اقرأ المزيد';
+  } else {
+    desc.classList.add('expanded');
+    desc.style.maxHeight = 'none';
+    desc.style.overflow = 'visible';
+    toggle.querySelector('button').textContent = 'اقرأ أقل';
+  }
+}
+
 // ══════════════════════════════════════════════
 // SUB-CHAPTERS
 // ══════════════════════════════════════════════
 function openSubChapters(chId){
+  updateBreadcrumbs('subCh', `Home > ${BOOK[chId].name}`);
   const ch=BOOK[chId];
   curChapter=chId;
   document.getElementById('subChTitle').textContent=ch.name;
@@ -2770,6 +3576,8 @@ function openQuizSubChapters(chId){
 // LEARN
 // ══════════════════════════════════════════════
 function openLearnChap(chId, scId){
+  scId = scId || null;
+  updateBreadcrumbs('learnPos', `Home > ${BOOK[chId].name}${scId ? ' > ' + BOOK[chId].subchapters[scId].name : ''}`);
   curChapter=chId; curSubchapter=scId;
   editChId=chId;
   let ch, positions, backTarget;
@@ -2797,10 +3605,11 @@ function openLearnChap(chId, scId){
       const btn=document.createElement('button');
       btn.className='pos-btn';
 
+      const icon = getPositionIcon(pos.name);
       if(userRole==='developer'){
-        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span style="flex:1">${esc(pos.name)}</span>`;
+        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span><span style="flex:1">${esc(pos.name)}</span>`;
       } else {
-        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span>${esc(pos.name)}`;
+        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span>${esc(pos.name)}`;
       }
       btn.onclick=()=>openPos(pos, chId, scId, realIdx);
       sec.appendChild(btn);
@@ -2953,13 +3762,18 @@ function _getAllPosFlat(){
 }
 
 function openPos(pos, chId, scId, posIdx){
-  curPos=pos; editChId=chId; editPosIdx=posIdx; curSubchapter=scId||null;
+  scId = scId || null;
+  curPos=pos; editChId=chId; editPosIdx=posIdx; curSubchapter=scId;
+  currentPosId = `${chId}_${scId || 'null'}_${posIdx}`;
+  currentPositions = _getAllPosFlat().filter(p => p.chId === chId && (p.scId === scId || (p.scId === null && scId === null))).map(p => ({id: `${p.chId}_${p.scId || 'null'}_${p.posIdx}`, ...p.pos}));
+  if(currentPositions.length === 0) {
+    currentPositions = [pos]; // fallback
+  }
   _refreshPosImgDisplay();
   document.getElementById('posViewTitle').textContent=pos.name;
-  const badge=document.getElementById('posViewBadge');
-  badge.className='badge '+(pos.type==='routine'?'badge-r':'badge-s');
-  badge.textContent=pos.type==='routine'?'● Routine':'◆ Special';
   const info=pos.info||{};
+  const description = info.desc || '';
+  document.getElementById('posViewDesc').textContent = description;
 
   // ── Generate tags ──
   const chObj=chId? (scId? (BOOK[chId]?.subchapters?.[scId]): BOOK[chId]): null;
@@ -3129,12 +3943,12 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Layer toggle bar ──
   const layerBarHtml=`
-    <div class="layer-toggle-bar" id="layerBar">
+    <div class="layer-toggle-bar" id="layerBar" role="toolbar" aria-label="Layer controls">
       <span>Show:</span>
-      <button class="ltog-btn active" id="ltog-position" onclick="toggleLayer('position')">Position</button>
-      <button class="ltog-btn active" id="ltog-cr" onclick="toggleLayer('cr')">🟢 CR</button>
-      <button class="ltog-btn active" id="ltog-anatomy" onclick="toggleLayer('anatomy')">🧠 Anatomy</button>
-      <button class="ltog-btn active" id="ltog-errors" onclick="toggleLayer('errors')">⚠️ Errors</button>
+      <button class="ltog-btn active" data-layer="position" onclick="toggleLayer('position')" aria-pressed="true">Position</button>
+      <button class="ltog-btn active" data-layer="cr" onclick="toggleLayer('cr')" aria-pressed="true">🟢 CR</button>
+      <button class="ltog-btn active" data-layer="anatomy" onclick="toggleLayer('anatomy')" aria-pressed="true">🧠 Anatomy</button>
+      <button class="ltog-btn active" data-layer="errors" onclick="toggleLayer('errors')" aria-pressed="true">⚠️ Errors</button>
     </div>`;
 
   // ── Quick Flip navigation ──
@@ -3215,6 +4029,17 @@ function openPos(pos, chId, scId, posIdx){
 
   document.getElementById('posBackBtn').onclick=()=>openLearnChap(chId, scId||null);
   updateDevUI();
+  // Update breadcrumbs and progress
+  const chapterName = BOOK[chId]?.name || '';
+  const subchapterName = scId ? BOOK[chId]?.subchapters?.[scId]?.name : '';
+  updateBreadcrumbs('pos', `Home > ${chapterName}${subchapterName ? ' > ' + subchapterName : ''} > ${pos.name}`);
+  updateProgress();
+  // Update nav buttons
+  const prevBtn = document.getElementById('prevPosBtn');
+  const nextBtn = document.getElementById('nextPosBtn');
+  const currentIdx = currentPositions.findIndex(p => p.id === currentPosId);
+  if(prevBtn) prevBtn.disabled = currentIdx <= 0;
+  if(nextBtn) nextBtn.disabled = currentIdx >= currentPositions.length - 1;
   navTo('pos-view');
 }
 
@@ -3222,12 +4047,23 @@ function openPos(pos, chId, scId, posIdx){
 let _layerState={position:true,cr:true,anatomy:true,errors:true};
 function toggleLayer(name){
   _layerState[name]=!_layerState[name];
-  const btn=document.getElementById('ltog-'+name);
-  if(btn) btn.classList.toggle('active',_layerState[name]);
+  document.querySelectorAll(`[data-layer="${name}"]`).forEach(btn=>{
+    btn.classList.toggle('active',_layerState[name]);
+    btn.setAttribute('aria-pressed', _layerState[name] ? 'true' : 'false');
+  });
   // Toggle all elements with id="layer-{name}" in both panels
   document.querySelectorAll(`#layer-${name}`).forEach(el=>{
     el.style.display=_layerState[name]?'':'none';
   });
+}
+
+function toggleHighContrast(){
+  const t=document.getElementById('highContrastToggle');
+  if(!t) return;
+  const isHigh = t.classList.toggle('on');
+  document.body.classList.toggle('high-contrast', isHigh);
+  t.setAttribute('aria-pressed', isHigh ? 'true' : 'false');
+  try{ localStorage.setItem('bontrager_highcontrast_v1', isHigh ? '1' : '0'); }catch(e){}
 }
 
 function switchPosMode(mode){
@@ -3238,6 +4074,7 @@ function switchPosMode(mode){
   if(!tabE||!tabC) return;
   // Reset layer state on mode switch
   _layerState={position:true,cr:true,anatomy:true,errors:true};
+  document.querySelectorAll('[data-layer]').forEach(btn=>btn.classList.add('active'));
   if(mode==='exam'){
     tabE.className='mode-tab active-exam';
     tabC.className='mode-tab';
@@ -4334,7 +5171,7 @@ function _aiGeneralAnswer(query){
   const kb=[
     {keys:['pleural effusion','hydrothorax','انصباب'],
      ans:'**Pleural Effusion:**\nAbnormal fluid in pleural space.\n\n**Best position:** Lateral Decubitus (affected side down) with horizontal beam\n**Appearance:** Increased opacity, oblique angle at costophrenic angle\n**Minimum detectable:** ~200 mL on PA; ~50 mL on lateral decubitus'},
-    {keys:['pneumothorax','استروح'],
+    {keys:['pneumothorax','استرواح','استرواح صدري'],
      ans:'**Pneumothorax:**\nAir in pleural space → lung collapse.\n\n**Best position:** PA Erect on full expiration (enhances contrast)\n**Alternative:** Lateral decubitus (affected side up) with horizontal beam\n**Appearance:** Visible lung edge, absent lung markings peripherally'},
     {keys:['pneumoperitoneum','free air','peritoneal'],
      ans:'**Pneumoperitoneum — Free Intraperitoneal Air:**\nUsually from perforated hollow viscus.\n\n**Best position:** Left Lateral Decubitus (air rises to right, away from gastric bubble)\n**Appearance:** Radiolucent crescent under right hemidiaphragm\n**Wait time:** Patient in position 5–20 min before exposure'},
@@ -4384,6 +5221,46 @@ function _aiGeneralAnswer(query){
   return `**No specific result for: "${query}"**\n\nThe program has **${totalPos} positions** ready to search. Try:\n• Position name: _PA Chest, Lateral Knee, Mortise Ankle_\n• Technical term: _CR, kVp, SID, IR, respiration, grid_\n• Anatomy: _wrist, spine, hip, shoulder, foot_\n• Pathology: _pneumothorax, fracture, effusion, Bennett_\n• Type: _routine, special_\n\nOr type **"list all chapters"** to see everything.`;
 }
 
+function _aiSuggestedAnswer(query){
+  const q=query.toLowerCase().trim();
+  if(q==='list all chapters') return _aiListChapters();
+  if(q==='pa chest cr and technique' || q==='pa chest cr & technique'){
+    const matches=_aiSearch('pa chest');
+    return matches.length?_aiBuildAnswer('pa chest',matches):_aiGeneralAnswer(query);
+  }
+  if(q==='lateral knee positioning'){
+    const matches=_aiSearch('lateral knee');
+    return matches.length?_aiBuildAnswer('lateral knee',matches):_aiGeneralAnswer(query);
+  }
+  if(q==='compare pa chest vs ap chest' || q==='pa vs ap chest' || q==='pa chest vs ap chest'){
+    const matches=[...new Set([].concat(_aiSearch('pa chest'), _aiSearch('ap chest')))].slice(0,4);
+    const cmp=_aiCompare(query,matches);
+    return cmp||_aiBuildAnswer(query,matches);
+  }
+  if(q==='compare rao chest vs lao chest' || q==='rao vs lao chest' || q==='rao chest vs lao chest'){
+    const matches=[...new Set([].concat(_aiSearch('rao chest'), _aiSearch('lao chest')))].slice(0,4);
+    const cmp=_aiCompare(query,matches);
+    return cmp||_aiBuildAnswer(query,matches);
+  }
+  if(q==='danelius-miller hip axiolateral' || q==='danelius miller hip axiolateral' || q==='hip trauma'){
+    const matches=_aiSearch('danelius-miller');
+    return matches.length?_aiBuildAnswer(query,matches):_aiGeneralAnswer(query);
+  }
+  if(q==='kvp ranges for all regions' || q==='kvp reference' || q==='kVp reference'){
+    return `**Standard kVp Ranges:**\n• Chest PA/Lateral: **110–125 kVp**\n• Ribs / Sternum: **70–85 kVp**\n• Abdomen / KUB: **70–85 kVp**\n• Fingers / Hand: **55–65 kVp**\n• Wrist / Forearm: **60–70 kVp**\n• Elbow / Humerus: **65–75 kVp**\n• Shoulder: **70–80 kVp**\n• Cervical Spine: **70–85 kVp**\n• Thoracic Spine: **75–85 kVp**\n• Lumbar Spine: **80–90 kVp**\n• Pelvis / Hip: **80–90 kVp**\n• Knee / Leg: **65–80 kVp**\n• Foot / Ankle: **60–75 kVp**`;
+  }
+  if(/\bma\b.*\bmas\b|\bmas\b.*\bma\b|\bma\s*\/\s*mas\b/.test(q) || q==='ma mAs exposure factors' || q==='mA mAs exposure factors' || q==='mA/mAs exposure factors'){
+    return `**Exposure factor guidance:**\n• **Chest PA/Lateral:** 100–400 mA · 1–5 mAs (180 cm SID, grid)\n• **Extremities (fingers/hand/foot):** 50–150 mA · 1–4 mAs (tabletop)\n• **Wrist/Ankle/Elbow/Knee:** 100–200 mA · 2–8 mAs\n• **Shoulder/Hip/Femur:** 200–400 mA · 5–15 mAs (grid)\n• **Spine (C/T/L):** 200–500 mA · 10–60 mAs (grid required)\n• **Abdomen/Pelvis:** 200–400 mA · 20–50 mAs (grid)\n\n_Note: Use the Exposure Factors Reference card on each position page for region-specific guidance._`;
+  }
+  if(q==='pleural effusion' || q==='pleural effusion radiographic signs'){
+    return `**Pleural Effusion:**\nFluid in the pleural space.\n\n**Best position:** Lateral decubitus (affected side down) with horizontal beam.\n**Appearance:** Blunted costophrenic angle, increased opacity, meniscus sign.\n**Note:** On PA, look for obliteration of the lateral costophrenic angle and layering fluid.`;
+  }
+  if(q==='pneumothorax best projection' || q==='pneumothorax'){
+    return `**Pneumothorax — Best projection:**\n• **PA erect:** Preferred for spontaneous pneumothorax.\n• **Lateral decubitus (affected side up):** Best for small or occult pneumothorax when patient cannot stand.\n**Appearance:** Visible visceral pleural line with absent lung markings peripheral to it.`;
+  }
+  return null;
+}
+
 // ─── Format reply with markdown-like rendering ───
 function _aiFormatReply(text){
   // Raw HTML passthrough for compare tables
@@ -4412,31 +5289,36 @@ function sendAI(prompt){
   chat.scrollTop=chat.scrollHeight;
 
   setTimeout(()=>{
-    const intent=_aiDetectIntent(msg);
-    const matches=_aiSearch(msg);
+    const suggested=_aiSuggestedAnswer(msg);
     let reply;
-
-    // Compare intent: "RAO vs LAO", "PA vs AP", "compare X vs Y"
-    const compareMatch=msg.match(/compare\s+(.+?)\s+(?:vs?|versus|and)\s+(.+)/i)||msg.match(/(.+?)\s+vs?\.?\s+(.+)/i);
-    if((intent.isCompare || compareMatch) && matches.length>=2){
-      // Try to find the two named positions if explicit
-      let cmpMatches=matches;
-      if(compareMatch){
-        const nameA=compareMatch[1].trim(), nameB=compareMatch[2].trim();
-        const all=_aiGetAllPositions();
-        const findPos=name=>{
-          const nl=name.toLowerCase();
-          return all.find(({pos})=>pos.name.toLowerCase().includes(nl)||nl.includes(pos.name.toLowerCase().split(' ')[0]));
-        };
-        const foundA=findPos(nameA), foundB=findPos(nameB);
-        if(foundA && foundB) cmpMatches=[foundA, foundB];
-      }
-      const cmp=_aiCompare(msg, cmpMatches);
-      reply = cmp || _aiBuildAnswer(msg, matches);
-    } else if(matches.length>0){
-      reply=_aiBuildAnswer(msg, matches);
+    if(suggested){
+      reply=suggested;
     } else {
-      reply=_aiGeneralAnswer(msg);
+      const intent=_aiDetectIntent(msg);
+      const matches=_aiSearch(msg);
+
+      // Compare intent: "RAO vs LAO", "PA vs AP", "compare X vs Y"
+      const compareMatch=msg.match(/compare\s+(.+?)\s+(?:vs?|versus|and)\s+(.+)/i)||msg.match(/(.+?)\s+vs?\.?\s+(.+)/i);
+      if((intent.isCompare || compareMatch) && matches.length>=2){
+        // Try to find the two named positions if explicit
+        let cmpMatches=matches;
+        if(compareMatch){
+          const nameA=compareMatch[1].trim(), nameB=compareMatch[2].trim();
+          const all=_aiGetAllPositions();
+          const findPos=name=>{
+            const nl=name.toLowerCase();
+            return all.find(({pos})=>pos.name.toLowerCase().includes(nl)||nl.includes(pos.name.toLowerCase().split(' ')[0]));
+          };
+          const foundA=findPos(nameA), foundB=findPos(nameB);
+          if(foundA && foundB) cmpMatches=[foundA, foundB];
+        }
+        const cmp=_aiCompare(msg, cmpMatches);
+        reply = cmp || _aiBuildAnswer(msg, matches);
+      } else if(matches.length>0){
+        reply=_aiBuildAnswer(msg, matches);
+      } else {
+        reply=_aiGeneralAnswer(msg);
+      }
     }
 
     var tel=document.getElementById(tid);
@@ -4454,6 +5336,10 @@ function toggleDark(){
   t.classList.toggle('on');
   const isDark=t.classList.contains('on');
   document.body.classList.toggle('dark',isDark);
+  t.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+  // Update header icon
+  const colorBtn = document.getElementById('colorModeBtn');
+  if(colorBtn) colorBtn.innerHTML = isDark ? '<span style="font-size:18px;">🌙</span>' : '<span style="font-size:18px;">☀️</span>';
   // persist dark mode separately so it loads even without full appearance save
   try{ localStorage.setItem('bontrager_dark_v1', isDark?'1':'0'); }catch(e){}
 }
@@ -4464,6 +5350,7 @@ function toggleLarge(){
   const sz=big?'17px':'15px';
   document.documentElement.style.setProperty('--base-fs',sz);
   document.body.style.fontSize=sz;
+  t.setAttribute('aria-pressed', big ? 'true' : 'false');
   try{ localStorage.setItem('bontrager_large_v1', big?'1':'0'); }catch(e){}
 }
 
@@ -5513,17 +6400,29 @@ _loadSavedAppearance();
 (function(){
   try{
     const dark=localStorage.getItem('bontrager_dark_v1');
-    if(dark==='1'){
+    const isDark = dark==='1' || dark===null;
+    if(isDark){
       document.body.classList.add('dark');
       const t=document.getElementById('darkToggle');
-      if(t) t.classList.add('on');
+      if(t){ t.classList.add('on'); t.setAttribute('aria-pressed','true'); }
+      const colorBtn=document.getElementById('colorModeBtn');
+      if(colorBtn) colorBtn.innerHTML = '<span style="font-size:18px;">🌙</span>';
+    } else {
+      const colorBtn=document.getElementById('colorModeBtn');
+      if(colorBtn) colorBtn.innerHTML = '<span style="font-size:18px;">☀️</span>';
     }
     const large=localStorage.getItem('bontrager_large_v1');
     if(large==='1'){
       document.documentElement.style.setProperty('--base-fs','17px');
       document.body.style.fontSize='17px';
       const t=document.getElementById('largeToggle');
-      if(t) t.classList.add('on');
+      if(t){ t.classList.add('on'); t.setAttribute('aria-pressed','true'); }
+    }
+    const highContrast=localStorage.getItem('bontrager_highcontrast_v1');
+    if(highContrast==='1'){
+      document.body.classList.add('high-contrast');
+      const t=document.getElementById('highContrastToggle');
+      if(t){ t.classList.add('on'); t.setAttribute('aria-pressed','true'); }
     }
   }catch(e){}
 })();
@@ -5767,6 +6666,30 @@ embedAndExport=function(){
   // Only apply during export
   window._origDocCreate=origCreate;
 })();
+
+function getPositionIcon(name){
+  const n = name.toLowerCase();
+  if(n.includes('chest') || n.includes('thorax')) return '🫁';
+  if(n.includes('abdomen') || n.includes('pelvis')) return '🫃';
+  if(n.includes('spine') || n.includes('vertebral')) return '🦴';
+  if(n.includes('skull') || n.includes('head')) return '🧠';
+  if(n.includes('extremity') || n.includes('arm') || n.includes('leg')) return '🦵';
+  if(n.includes('hand') || n.includes('wrist')) return '🤚';
+  if(n.includes('foot') || n.includes('ankle')) return '🦶';
+  if(n.includes('knee')) return '🦵';
+  if(n.includes('elbow')) return '💪';
+  if(n.includes('shoulder')) return '🤷';
+  return '📷'; // default
+}
+
+function updateProgress(){
+  const progress = document.querySelector('#posProgress div');
+  if(progress && currentPositions){
+    const reviewed = currentPositions.filter(p => localStorage.getItem(`viewed_${p.id}`) === '1').length;
+    const pct = (reviewed / currentPositions.length) * 100;
+    progress.style.width = pct + '%';
+  }
+}
 
 // ── 5. IMAGE COMPRESSION on export ─────────────
 // Patch handlePosImgFile to auto-compress on upload
@@ -6243,6 +7166,10 @@ function _zoomUnbindEvents(){
   window.removeEventListener('mouseup',_onMouseUp);
   document.removeEventListener('keydown',_onKeyDown);
 }
+
+initAppFont();
+buildChapters();
+updateStats();
 </script>
 
 <!-- QUIZ COUNT PICKER MODAL -->
