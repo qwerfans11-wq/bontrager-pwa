@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bontrager-v3';
+const CACHE_NAME = 'bontrager-v4';
 
 const FILES_TO_CACHE = [
   './',
