@@ -126,42 +126,89 @@ body{font-family:var(--font);font-weight:var(--font-weight);background:var(--bg2
   scroll-snap-type:x mandatory;
   gap:0;
   width:100%;
-  background:#0f1117;
+  background:#0a0d14;
+  border-bottom:2px solid rgba(255,255,255,.07);
 }
+/* Two-image baseline: each takes exactly 50% */
+#posImgRow.layout-2 .pos-img-cell{flex:0 0 50%;width:50%}
+/* Three+ images: fixed width, scrollable */
+#posImgRow.layout-many .pos-img-cell{flex:0 0 52%;min-width:155px}
+/* Single image: full width */
+#posImgRow.layout-1 .pos-img-cell{flex:0 0 100%;width:100%}
 .pos-img-cell{
-  flex:0 0 auto;
   display:flex;
   flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  align-items:stretch;
   scroll-snap-align:start;
   position:relative;
-  min-width:0;
+  background:#0a0d14;
+  transition:background .15s;
+}
+.pos-img-cell:active{background:#111520}
+.pos-img-cell-img-wrap{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  min-height:0;
+  padding:6px 4px 2px;
 }
 .pos-img-cell img{
   display:block;
   width:100%;
-  height:240px;
+  height:220px;
   object-fit:contain;
   cursor:zoom-in;
-  transition:opacity .15s;
+  transition:transform .2s,opacity .15s;
 }
-.pos-img-cell img:active{opacity:.8}
+.pos-img-cell img:hover{transform:scale(1.03)}
+.pos-img-cell img:active{opacity:.75}
 .pos-img-cell-label{
-  font-size:9px;
-  font-weight:700;
+  font-size:9.5px;
+  font-weight:800;
   text-transform:uppercase;
-  letter-spacing:.08em;
-  padding:4px 8px;
-  color:rgba(255,255,255,.7);
+  letter-spacing:.09em;
+  padding:5px 8px 6px;
+  color:rgba(255,255,255,.55);
   text-align:center;
-  background:rgba(0,0,0,.45);
-  width:100%;
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  line-height:1;
 }
-.pos-img-cell.type-position .pos-img-cell-label{color:#86efac}
-.pos-img-cell.type-xray .pos-img-cell-label{color:#93c5fd}
+.pos-img-cell.type-position .pos-img-cell-label{
+  color:#86efac;
+  background:rgba(134,239,172,.06);
+}
+.pos-img-cell.type-xray .pos-img-cell-label{
+  color:#93c5fd;
+  background:rgba(147,197,253,.06);
+}
+.pos-img-cell-label .lbl-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+}
+.type-position .lbl-dot{background:#4ade80}
+.type-xray .lbl-dot{background:#60a5fa}
 /* Divider between cells */
-.pos-img-cell+.pos-img-cell{border-left:1px solid rgba(255,255,255,.1)}
+.pos-img-cell+.pos-img-cell{border-left:1px solid rgba(255,255,255,.08)}
+/* Scroll hint for many images */
+#posImgScrollHint{
+  display:none;
+  position:absolute;
+  right:8px;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;
+  padding:4px 8px;border-radius:12px;pointer-events:none;
+  backdrop-filter:blur(4px);gap:4px;align-items:center;
+}
+#posImgRow.layout-many ~ #posImgScrollHint{display:flex}
+
+/* Hide native number spinner for font size input */
+#fontSizeInput::-webkit-outer-spin-button,
+#fontSizeInput::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#fontSizeInput[type=number]{-moz-appearance:textfield}
 
 /* Progress Bar */
 .progress-bar div{transition:width 0.5s ease}
@@ -1403,9 +1450,11 @@ html, body {
 
 <!-- ═══ POSITION VIEW ═══ -->
 <div class="page" id="page-pos-view">
-  <div class="pos-img-wrap" id="posImgWrap">
+  <div class="pos-img-wrap" id="posImgWrap" style="position:relative">
     <!-- Dynamic multi-image row (auto-populated from IMAGE_DATA) -->
     <div id="posImgRow" style="display:none;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;"></div>
+    <!-- Scroll hint for many images -->
+    <div id="posImgScrollHint" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:12px;pointer-events:none;backdrop-filter:blur(4px);gap:4px;align-items:center;z-index:10"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg> Scroll</div>
     <!-- Legacy single/dual images (kept for dev-uploaded images) -->
     <img id="posImg" src="" alt="" style="display:none;width:100%;max-height:300px;object-fit:contain" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom">
     <img id="posImg2" src="" alt="" style="display:none;width:50%;max-height:300px;object-fit:contain;border-left:1px solid #333" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom">
@@ -1667,7 +1716,11 @@ html, body {
           <div class="settings-row-label">Font size</div>
           <div class="settings-row-sub">Adjust the base font size (12-24px)</div>
         </div>
-        <input type="number" min="12" max="24" value="15" id="fontSizeInput" oninput="onFontSizeChange()" style="width:80px;padding:7px 11px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--font);">
+        <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border2);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg2)">
+          <button onclick="(function(){var i=document.getElementById('fontSizeInput');var v=parseInt(i.value)||15;if(v>12){i.value=v-1;onFontSizeChange();}})()" style="width:34px;height:38px;border:none;border-right:1px solid var(--border2);background:none;color:var(--text);font-size:18px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;transition:background .1s;flex-shrink:0" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='none'" title="Decrease font size">−</button>
+          <input type="number" min="12" max="24" value="15" id="fontSizeInput" oninput="onFontSizeChange()" style="width:52px;padding:7px 4px;border:none;background:transparent;color:var(--text);font-family:var(--font);font-size:14px;font-weight:700;text-align:center;outline:none;-moz-appearance:textfield" title="Font size (12-24px)">
+          <button onclick="(function(){var i=document.getElementById('fontSizeInput');var v=parseInt(i.value)||15;if(v<24){i.value=v+1;onFontSizeChange();}})()" style="width:34px;height:38px;border:none;border-left:1px solid var(--border2);background:none;color:var(--text);font-size:18px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;transition:background .1s;flex-shrink:0" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='none'" title="Increase font size">+</button>
+        </div>
       </div>
       <div class="settings-row">
         <div>
@@ -1969,9 +2022,9 @@ const IMAGE_DATA = {
   "Clavicle_AP_Axial_Projection":{positions:[],xrays:["Clavicle_AP_Axial_Projection_Xray.jpeg","Clavicle_AP_Axial_Projection_25deg_Xray.jpeg"]},
   "Clavicle_AP_Axial_Projection_CR_15_to_30deg_Cephalad":{positions:["Clavicle_AP_Axial_Projection_CR_15_to_30deg_Cephalad_Position.jpeg"],xrays:["Clavicle_AP_Axial_Projection_Xray.jpeg","Clavicle_AP_and_AP_Axial_Projections_Xray.jpeg"]},
   "Clavicle_AP_Projection_CR_0deg":{positions:["Clavicle_AP_Projection_CR_0deg_Position.jpeg"],xrays:["Clavicle_AP_Projection_CR_0deg_Xray.jpeg"]},
-  "Elbow_AP_Alternate_Partial_Flexion_Forearm_Parallel":{positions:["Elbow_AP_Alternate_Partial_Flexion_Forearm_Parallel_Position.jpeg"],xrays:[]},
+  "Elbow_AP_Alternate_Partial_Flexion_Forearm_Parallel":{positions:["Elbow_AP_Alternate_Partial_Flexion_Forearm_Parallel_Position.jpeg"],xrays:["Elbow_AP_Alternate_Partial_Flexion_Humerus_Parallel_Xray.jpeg"]},
   "Elbow_AP_Alternate_Partial_Flexion_Humerus_Parallel":{positions:["Elbow_AP_Alternate_Partial_Flexion_Humerus_Parallel_Position.jpeg"],xrays:["Elbow_AP_Alternate_Partial_Flexion_Humerus_Parallel_Xray.jpeg"]},
-  "Elbow_AP_Oblique_Lateral_External_Rotation":{positions:["Elbow_AP_Oblique_Lateral_External_Rotation_Position.jpeg"],xrays:["Elbow_AP_Oblique_Lateral_External_Rotation_Xray.jpeg","Elbow_AP_Oblique_Lateral_External_Rotation_Xray_Labeled.jpeg"]},
+  "Elbow_AP_Oblique_Lateral_External_Rotation":{positions:["Elbow_AP_Oblique_Lateral_External_Rotation_Position.jpeg","Elbow_AP_Oblique_Lateral_External_Rotation_End_View_45deg.jpeg"],xrays:["Elbow_AP_Oblique_Lateral_External_Rotation_Xray.jpeg","Elbow_AP_Oblique_Lateral_External_Rotation_Xray_2.jpeg","Elbow_AP_Oblique_Lateral_External_Rotation_Xray_3.jpeg","Elbow_AP_Oblique_Lateral_External_Rotation_Xray_Labeled.jpeg"]},
   "Elbow_AP_Oblique_Medial_Internal_Rotation":{positions:["Elbow_AP_Oblique_Medial_Internal_Rotation_Position.jpeg"],xrays:["Elbow_AP_Oblique_Medial_Internal_Rotation_Xray.jpeg"]},
   "Elbow_AP_Projection_Fully_Extended":{positions:["Elbow_AP_Projection_Fully_Extended_Position.jpeg"],xrays:["Elbow_AP_Projection_Fully_Extended_Xray.jpeg"]},
   "Elbow_Acute_Flexion_Distal_Humerus":{positions:["Elbow_Acute_Flexion_Distal_Humerus_CR_Perpendicular_to_Humerus_Position.jpeg"],xrays:["Elbow_Acute_Flexion_Distal_Humerus_Xray.jpeg"]},
@@ -1991,15 +2044,15 @@ const IMAGE_DATA = {
   "Hand_Lateral_in_Flexion":{positions:["Hand_Lateral_in_Flexion_Position.jpeg"],xrays:["Hand_Lateral_in_Flexion_Xray.jpeg","Hand_Lateral_in_Flexion_Xray_Labeled.jpeg"]},
   "Hand_PA_Oblique_Projection":{positions:["Hand_PA_Oblique_Projection_Digits_Not_Parallel_Position.jpeg","Hand_PA_Oblique_Projection_Digits_Parallel_Position.jpeg"],xrays:["Hand_PA_Oblique_Projection_Digits_Parallel_Xray.jpeg","Hand_PA_Oblique_Projection_Digits_Parallel_Xray_Labeled.jpeg"]},
   "Hand_PA_Projection":{positions:["Hand_PA_Projection_Position.jpeg"],xrays:["Hand_PA_Projection_Xray.jpeg"]},
-  "Humerus_AP_Projection":{positions:["Humerus_AP_Projection_Erect_Position.jpeg","Humerus_AP_Projection_Supine_Position.jpeg"],xrays:["Humerus_AP_Projection_Xray.jpeg","Humerus_AP_Projection_Xray_Labeled.jpeg"]},
-  "Humerus_Rotational_Lateral_Mediolateral_Erect":{positions:["Humerus_Rotational_Lateral_Mediolateral_Erect_Facing_IR_Position.jpeg","Humerus_Rotational_Lateral_Lateromedial_Erect_Back_to_IR_Position.jpeg"],xrays:["Humerus_Rotational_Lateral_Mediolateral_Erect_Xray.jpeg","Humerus_Rotational_Lateral_Mediolateral_Xray_Labeled.jpeg"]},
+  "Humerus_AP_Projection":{positions:["Humerus_AP_Projection_Erect_Position.jpeg","Humerus_AP_Projection_Supine_Position.jpeg"],xrays:["Humerus_AP_Projection_Xray.jpeg","Humerus_AP_Projection_Xray_Labeled.jpeg","Humerus_AP_Projection_Xray_2.jpeg","Humerus_AP_Projection_Xray_3.jpeg","Humerus_AP_Projection_Xray_4.jpeg","Humerus_AP_Projection_Xray_5.jpeg","Humerus_AP_Neutral_Rotation_Fracture_Proximal_Humerus_Xray.jpeg"]},
+  "Humerus_Rotational_Lateral_Mediolateral_Erect":{positions:["Humerus_Rotational_Lateral_Mediolateral_Erect_Facing_IR_Position.jpeg","Humerus_Rotational_Lateral_Lateromedial_Erect_Back_to_IR_Position.jpeg"],xrays:["Humerus_Rotational_Lateral_Mediolateral_Erect_Xray.jpeg","Humerus_Rotational_Lateral_Mediolateral_Xray_Labeled.jpeg","Humerus_Rotational_Lateral_Mediolateral_Xray_3.jpeg","Humerus_Rotational_Lateral_Mediolateral_Xray_4.jpeg"]},
   "Humerus_Rotational_Lateral_Supine":{positions:["Humerus_Rotational_Lateral_Supine_Position.jpeg"],xrays:["Humerus_Rotational_Lateral_Mediolateral_Erect_Xray_2.jpeg"]},
-  "Humerus_Transthoracic_Lateral_Projection":{positions:["Humerus_Transthoracic_Lateral_Projection_Trauma_Erect_and_Recumbent_Position.jpeg"],xrays:["Humerus_Transthoracic_Lateral_Projection_Trauma_Xray.jpeg","Humerus_Transthoracic_Lateral_Projection_Trauma_Recumbent_Xray.jpeg"]},
+  "Humerus_Transthoracic_Lateral_Projection":{positions:["Humerus_Transthoracic_Lateral_Projection_Trauma_Erect_and_Recumbent_Position.jpeg"],xrays:["Humerus_Transthoracic_Lateral_Projection_Trauma_Xray.jpeg","Humerus_Transthoracic_Lateral_Projection_Trauma_Recumbent_Xray.jpeg","Humerus_Transthoracic_Lateral_Projection_Trauma_Xray_2.jpeg"]},
   "Humerus_Trauma_Horizontal_Beam_Lateral_Mid_to_Distal":{positions:["Humerus_Trauma_Horizontal_Beam_Lateral_Mid_to_Distal_Position.jpeg"],xrays:["Humerus_Trauma_Horizontal_Beam_Lateral_Mid_to_Distal_Xray.jpeg","Humerus_Trauma_Horizontal_Beam_Lateral_Mid_to_Distal_Xray_Labeled.jpeg"]},
   "Scapula_AP_Projection":{positions:["Scapula_AP_Projection_Erect_Position.jpeg"],xrays:["Scapula_AP_Projection_Xray.jpeg","Scapula_AP_Projection_Xray_Labeled.jpeg"]},
-  "Scapula_Lateral_Erect":{positions:["Scapula_Lateral_Position_Erect_Acromion_Coracoid_Process_60deg_LAO_Position.jpeg","Scapula_Lateral_Position_Erect_Body_of_Scapula_45deg_LAO_Position.jpeg"],xrays:["Scapula_Lateral_Position_Erect_Body_of_Scapula_Xray.jpeg","Scapula_Lateral_Position_Erect_Xray_Labeled.jpeg"]},
-  "Scapula_Lateral_Recumbent":{positions:["Scapula_Lateral_Position_Recumbent_Position.jpeg","Scapula_Lateral_Position_Recumbent_Palpating_Borders_Position.jpeg"],xrays:["Scapula_Lateral_Position_Recumbent_Xray.jpeg","Scapula_Lateral_Position_Recumbent_Xray_2.jpeg"]},
-  "Shoulder_AP_Apical_Oblique_Axial_Garth_Method":{positions:["Shoulder_AP_Apical_Oblique_Axial_Garth_Method_45deg_Posterior_Oblique_CR_45deg_Caudad_Position.jpeg"],xrays:["Shoulder_AP_Apical_Oblique_Axial_Garth_Method_Xray.jpeg","Shoulder_AP_Apical_Oblique_Axial_Garth_Method_Xray_Labeled.jpeg"]},
+  "Scapula_Lateral_Erect":{positions:["Scapula_Lateral_Position_Erect_Acromion_Coracoid_Process_60deg_LAO_Position.jpeg","Scapula_Lateral_Position_Erect_Body_of_Scapula_45deg_LAO_Position.jpeg"],xrays:["Scapula_Lateral_Position_Erect_Body_of_Scapula_Xray.jpeg","Scapula_Lateral_Position_Erect_Xray_Labeled.jpeg","Scapula_Lateral_Position_Erect_Acromion_Coracoid_Process_Xray.jpeg","Scapula_Lateral_Position_Erect_Xray_Final.jpeg"]},
+  "Scapula_Lateral_Recumbent":{positions:["Scapula_Lateral_Position_Recumbent_Position.jpeg","Scapula_Lateral_Position_Recumbent_Palpating_Borders_Position.jpeg","Scapula_Lateral_Position_Recumbent_Alternative_Supine_Position.jpeg"],xrays:["Scapula_Lateral_Position_Recumbent_Xray.jpeg","Scapula_Lateral_Position_Recumbent_Xray_2.jpeg","Scapula_Lateral_Position_Recumbent_Xray_3.jpeg"]},
+  "Shoulder_AP_Apical_Oblique_Axial_Garth_Method":{positions:["Shoulder_AP_Apical_Oblique_Axial_Garth_Method_45deg_Posterior_Oblique_CR_45deg_Caudad_Position.jpeg"],xrays:["Shoulder_AP_Apical_Oblique_Axial_Garth_Method_Xray.jpeg","Shoulder_AP_Apical_Oblique_Axial_Garth_Method_Xray_2.jpeg","Shoulder_AP_Apical_Oblique_Axial_Garth_Method_Xray_Labeled.jpeg"]},
   "Shoulder_AP_External_Rotation":{positions:["Shoulder_AP_External_Rotation_Position.jpeg"],xrays:["Shoulder_AP_External_Rotation_Xray.jpeg","Shoulder_AP_External_Rotation_Xray_Labeled.jpeg"]},
   "Shoulder_AP_Internal_Rotation":{positions:["Shoulder_AP_Internal_Rotation_Position.jpeg"],xrays:["Shoulder_AP_Internal_Rotation_Xray.jpeg","Shoulder_AP_Internal_Rotation_Xray_Labeled.jpeg"]},
   "Shoulder_AP_Neutral_Rotation_Trauma":{positions:["Shoulder_AP_Neutral_Rotation_Trauma_Erect_Position.jpeg"],xrays:["Shoulder_AP_Neutral_Rotation_Trauma_Xray.jpeg","Shoulder_AP_Neutral_Rotation_Trauma_Xray_Labeled.jpeg"]},
@@ -2088,50 +2141,95 @@ function _showExitDialog() {
   overlay.id = "_exitDialog";
   overlay.style.cssText = [
     "position:fixed","top:0","left:0","width:100%","height:100%",
-    "background:rgba(0,0,0,0.65)","z-index:99999",
+    "background:rgba(0,0,0,0.72)","z-index:99999",
     "display:flex","align-items:center","justify-content:center",
-    "padding:24px","box-sizing:border-box","backdrop-filter:blur(4px)"
+    "padding:20px","box-sizing:border-box","backdrop-filter:blur(6px)",
+    "animation:_exitFadeIn .2s ease"
   ].join(";");
   overlay.innerHTML = `
-    <div style="
-      background:var(--bg);border-radius:20px;padding:28px 24px;
-      max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);
-      text-align:center;border:1px solid var(--border);
-    ">
-      <div style="font-size:36px;margin-bottom:12px">🚪</div>
-      <h3 style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:10px;letter-spacing:-.02em">
-        هل تريد إغلاق التطبيق؟
-      </h3>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px">
-        قبل أن تغادر، نسألك بكل محبة أن تُهدي صاحب هذا التطبيق
-        دعوةً صادقة من قلبك:
-      </p>
-      <div style="
-        background:linear-gradient(135deg,var(--accent-bg),var(--bg2));
-        border:1px solid var(--border);border-radius:14px;
-        padding:14px 16px;margin:14px 0;
-      ">
-        <p style="font-size:14px;font-weight:700;color:var(--accent);line-height:1.9;margin:0">
-          اللهم وفّقه في دراسته وعمله،<br>
-          وأدم عليه الصحة والعافية،<br>
-          واجعل عمله هذا في ميزان حسناته.
-          <br><span style="font-size:12px;font-weight:500;color:var(--text3)">آمين 🤲</span>
-        </p>
+    <style>
+    @keyframes _exitFadeIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+    @keyframes _exitPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    ._exit-card{
+      background:var(--bg);border-radius:22px;padding:0;
+      max-width:360px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.5);
+      border:1px solid var(--border);overflow:hidden;
+      animation:_exitFadeIn .22s ease;
+    }
+    ._exit-header{
+      background:linear-gradient(135deg,#1e3a6e 0%,#0a1628 100%);
+      padding:24px 24px 20px;text-align:center;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    ._exit-emoji{font-size:42px;display:block;margin-bottom:10px;animation:_exitPulse 2s infinite}
+    ._exit-title{font-size:18px;font-weight:800;color:#e8f0fe;letter-spacing:-.02em;margin-bottom:4px}
+    ._exit-subtitle{font-size:12.5px;color:rgba(232,240,254,.6);line-height:1.5}
+    ._exit-body{padding:20px 22px}
+    ._exit-dua-label{
+      font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;
+      color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px;
+    }
+    ._exit-dua-label::before{content:'';flex:1;height:1px;background:var(--border)}
+    ._exit-dua-label::after{content:'';flex:1;height:1px;background:var(--border)}
+    ._exit-dua-box{
+      background:linear-gradient(135deg,var(--accent-bg),var(--bg2));
+      border:1px solid var(--border);border-radius:16px;
+      padding:16px 18px;margin-bottom:16px;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    ._exit-dua-box::before{
+      content:'❝';position:absolute;top:6px;left:12px;
+      font-size:28px;color:var(--accent);opacity:.15;font-family:serif;
+    }
+    ._exit-dua-text{
+      font-size:14.5px;font-weight:600;color:var(--text);
+      line-height:2.1;margin:0;direction:rtl;
+    }
+    ._exit-dua-text span{color:var(--accent);font-weight:800}
+    ._exit-ameen{
+      font-size:12px;color:var(--text3);margin-top:8px;
+      display:flex;align-items:center;justify-content:center;gap:5px;
+    }
+    ._exit-actions{display:flex;gap:10px;padding:0 22px 22px}
+    ._exit-btn{
+      flex:1;padding:14px;border-radius:50px;font-size:14px;font-weight:700;
+      cursor:pointer;font-family:var(--font);transition:all .15s;border:none;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+    }
+    ._exit-btn-stay{
+      background:var(--bg2);color:var(--text);
+      border:1.5px solid var(--border2)!important;border:none;
+    }
+    ._exit-btn-stay:hover{background:var(--bg3)}
+    ._exit-btn-close{
+      background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;
+    }
+    ._exit-btn-close:hover{opacity:.9;transform:scale(1.02)}
+    </style>
+    <div class="_exit-card">
+      <div class="_exit-header">
+        <span class="_exit-emoji">🚪</span>
+        <div class="_exit-title">هل تريد إغلاق التطبيق؟</div>
+        <div class="_exit-subtitle">لحظة واحدة قبل أن تغادر…</div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:4px">
-        <button onclick="document.getElementById('_exitDialog').remove()" style="
-          flex:1;padding:13px;border-radius:50px;border:1.5px solid var(--border2);
-          background:var(--bg2);color:var(--text);font-size:14px;font-weight:700;
-          cursor:pointer;font-family:var(--font);transition:all .15s;
-        ">
-          ابقَ هنا 📖
+      <div class="_exit-body">
+        <div class="_exit-dua-label">دعوة صادقة</div>
+        <div class="_exit-dua-box">
+          <p class="_exit-dua-text">
+            اللهم <span>وفّق</span> صاحب هذا التطبيق في دراسته وعمله،<br>
+            وأدم عليه <span>الصحة والعافية</span> في جسده وعقله،<br>
+            واجعل هذا العمل في <span>ميزان حسناته</span> يوم القيامة،<br>
+            وارزقه <span>النجاح</span> في الدنيا والفوز في الآخرة.
+          </p>
+          <div class="_exit-ameen">🤲 آمين يا ربَّ العالمين 🤲</div>
+        </div>
+      </div>
+      <div class="_exit-actions">
+        <button class="_exit-btn _exit-btn-stay" onclick="document.getElementById('_exitDialog').remove()">
+          📖 ابقَ هنا
         </button>
-        <button onclick="window.close();history.go(-999);" style="
-          flex:1;padding:13px;border-radius:50px;border:none;
-          background:linear-gradient(135deg,var(--red),#e74c3c);color:#fff;
-          font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);
-        ">
-          إغلاق
+        <button class="_exit-btn _exit-btn-close" onclick="window.close();history.go(-999);">
+          إغلاق ✕
         </button>
       </div>
     </div>
@@ -5846,52 +5944,61 @@ function _refreshPosImgDisplay(){
     row.innerHTML='';
 
     const totalImgs = autoData.positions.length + autoData.xrays.length;
-    // Each cell width: if 1 img → 100%, 2 imgs → 50% each, 3+ → 45% each (scrollable)
-    const cellW = totalImgs === 1 ? '100%' : totalImgs === 2 ? '50%' : '45%';
+    // Layout classes for CSS-driven sizing
+    row.className = '';
+    if(totalImgs === 1) row.classList.add('layout-1');
+    else if(totalImgs === 2) row.classList.add('layout-2');
+    else row.classList.add('layout-many');
 
-    // Render position/setup photos first (green label)
-    autoData.positions.forEach((fname, i) => {
+    function _makeCell(fname, type, labelText){
       const cell = document.createElement('div');
-      cell.className = 'pos-img-cell type-position';
-      cell.style.width = cellW;
-      cell.style.minWidth = totalImgs > 2 ? '140px' : '0';
-      const label = document.createElement('div');
-      label.className = 'pos-img-cell-label';
-      label.textContent = autoData.positions.length > 1
-        ? `Position ${i + 1}`
-        : 'Position';
+      cell.className = 'pos-img-cell type-' + type;
+
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'pos-img-cell-img-wrap';
+
       const img = document.createElement('img');
       img.src = IMAGES_PATH + fname;
-      img.alt = 'Positioning photo';
+      img.alt = type === 'position' ? 'Positioning photo' : 'Radiograph';
       img.loading = 'lazy';
       img.title = 'Tap to zoom';
       img.onclick = () => openImgZoom(img.src);
-      cell.appendChild(img);
+      imgWrap.appendChild(img);
+
+      const dot = document.createElement('span');
+      dot.className = 'lbl-dot';
+
+      const label = document.createElement('div');
+      label.className = 'pos-img-cell-label';
+      label.appendChild(dot);
+      label.appendChild(document.createTextNode(labelText));
+
+      cell.appendChild(imgWrap);
       cell.appendChild(label);
-      row.appendChild(cell);
+      return cell;
+    }
+
+    // Render position/setup photos first (green label)
+    autoData.positions.forEach((fname, i) => {
+      const lbl = autoData.positions.length > 1 ? `Positioning ${i + 1}` : 'Positioning';
+      row.appendChild(_makeCell(fname, 'position', lbl));
     });
 
     // Render x-ray images (blue label)
     autoData.xrays.forEach((fname, i) => {
-      const cell = document.createElement('div');
-      cell.className = 'pos-img-cell type-xray';
-      cell.style.width = cellW;
-      cell.style.minWidth = totalImgs > 2 ? '140px' : '0';
-      const label = document.createElement('div');
-      label.className = 'pos-img-cell-label';
-      label.textContent = autoData.xrays.length > 1
-        ? `X-ray ${i + 1}`
-        : 'X-ray Result';
-      const img = document.createElement('img');
-      img.src = IMAGES_PATH + fname;
-      img.alt = 'Radiograph';
-      img.loading = 'lazy';
-      img.title = 'Tap to zoom';
-      img.onclick = () => openImgZoom(img.src);
-      cell.appendChild(img);
-      cell.appendChild(label);
-      row.appendChild(cell);
+      const lbl = autoData.xrays.length > 1 ? `X-ray ${i + 1}` : 'X-ray Result';
+      row.appendChild(_makeCell(fname, 'xray', lbl));
     });
+
+    // Show scroll hint if many images
+    const hint = document.getElementById('posImgScrollHint');
+    if(hint){
+      hint.style.display = totalImgs > 2 ? 'flex' : 'none';
+      // Auto-hide scroll hint after first scroll
+      if(totalImgs > 2){
+        row.addEventListener('scroll', function(){ hint.style.display='none'; }, {once:true});
+      }
+    }
     return;
   }
 
