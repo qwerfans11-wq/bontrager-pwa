@@ -1332,6 +1332,12 @@ html, body {
   Study Mode Active — Tap the book icon to exit
 </div>
 
+<!-- Offline Status Bar -->
+<div id="offlineBar" style="display:none;position:fixed;top:var(--hh);left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#b91c1c;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:6px 12px;z-index:499;gap:6px;align-items:center;justify-content:center">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:4px"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55"/><path d="M5 12.55a10.94 10.94 0 015.17-2.39"/><path d="M10.71 5.05A16 16 0 0122.56 9"/><path d="M1.42 9a15.91 15.91 0 014.7-2.88"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+  Offline — some content may be unavailable
+</div>
+
 <!-- ═══ HOME ═══ -->
 <div class="page active" id="page-home">
   <div class="scroll">
@@ -1805,6 +1811,39 @@ html, body {
           <div class="settings-row-label">Source</div>
           <div class="settings-row-sub">Bontrager 10th Edition book</div>
         </div>
+      </div>
+    </div>
+    <div class="settings-group" id="offlineStorageGroup">
+      <div class="settings-group-title">Offline Storage</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Cached images</div>
+          <div class="settings-row-sub" id="offlineCacheStatus">Checking…</div>
+        </div>
+        <button class="modal-btn secondary" onclick="_offlineRefreshStatus()" style="padding:8px 12px;font-size:12px">Refresh</button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Download all images</div>
+          <div class="settings-row-sub">Save all 198 medical images for offline use</div>
+        </div>
+        <button class="modal-btn primary" id="offlineDownloadBtn" onclick="_offlineDownloadAll()" style="padding:8px 12px;font-size:12px">Download</button>
+      </div>
+      <div class="settings-row" id="offlineProgressRow" style="display:none">
+        <div style="flex:1">
+          <div class="settings-row-label">Downloading…</div>
+          <div style="margin-top:6px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+            <div id="offlineProgressBar" style="height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .3s"></div>
+          </div>
+          <div class="settings-row-sub" id="offlineProgressText" style="margin-top:4px">0 / 0</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Clear cached images</div>
+          <div class="settings-row-sub">Free up storage by removing offline images</div>
+        </div>
+        <button class="modal-btn secondary" id="offlineClearBtn" onclick="_offlineClearAll()" style="padding:8px 12px;font-size:12px;color:var(--red)">Clear</button>
       </div>
     </div>
     <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;line-height:1.7">
@@ -6040,6 +6079,8 @@ function _refreshPosImgDisplay(){
       img.loading = 'lazy';
       img.title = 'Tap to zoom';
       img.onclick = () => openImgZoom(img.src);
+      // Use IndexedDB cached blob if available
+      if (typeof OfflineManager !== 'undefined') { OfflineManager.applyCachedSrc(img, fname); }
       imgWrap.appendChild(img);
 
       const dot = document.createElement('span');
@@ -7439,39 +7480,12 @@ function _pwaInitManifest(){
   if(appleLink) appleLink.href=icon192;
 }
 
-// Service Worker registration (inline SW for full offline support)
+// Service Worker registration
 function _pwaRegisterSW(){
   if(!('serviceWorker' in navigator)) return;
-  // Inline service worker as blob
-  const swCode=`
-const CACHE='bontrager-v1';
-self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(cache=>{
-    return cache.addAll([location.pathname||'/']);
-  }));
-  self.skipWaiting();
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    if(e.request.url.startsWith(location.origin)){
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-    }
-    return res;
-  }).catch(()=>caches.match(location.pathname||'/'))));
-});
-`;
-  try{
-    const swBlob=new Blob([swCode],{type:'application/javascript'});
-    const swUrl=URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl,{scope:'./'}).then(reg=>{
-      console.log('SW registered');
-    }).catch(e=>console.log('SW reg failed (normal for file://):', e.message));
-  }catch(e){console.log('SW not supported in this context');}
+  navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).then(reg=>{
+    console.log('SW registered');
+  }).catch(e=>console.log('SW reg failed (normal for file://):', e.message));
 }
 
 // Install prompt handling
@@ -7681,6 +7695,98 @@ function _zoomUnbindEvents(){
 initAppFont();
 buildChapters();
 updateStats();
+
+// ── Offline UI ─────────────────────────────────────────────────────────────
+
+function _fmtBytes(bytes){
+  if(!bytes) return '0 B';
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1048576).toFixed(1)+' MB';
+}
+
+function _offlineUpdateBar(){
+  const bar=document.getElementById('offlineBar');
+  if(!bar) return;
+  if(!navigator.onLine){
+    bar.style.display='flex';
+  } else {
+    bar.style.display='none';
+  }
+}
+
+function _offlineRefreshStatus(){
+  const el=document.getElementById('offlineCacheStatus');
+  if(!el) return;
+  el.textContent='Checking…';
+  if(typeof OfflineManager==='undefined'){el.textContent='IndexedDB unavailable in this browser.';return;}
+  Promise.all([OfflineManager.getAllCacheStatus(), OfflineManager.getStorageInfo()]).then(function(results){
+    const status=results[0], info=results[1];
+    const pct=status.total>0?Math.round(status.cached/status.total*100):0;
+    let txt=status.cached+' / '+status.total+' images cached ('+pct+'%)';
+    if(info.totalSize) txt+=' · '+_fmtBytes(info.totalSize)+' used';
+    if(info.quota) txt+=' · quota '+_fmtBytes(info.quota);
+    el.textContent=txt;
+  }).catch(function(){el.textContent='Unable to read cache status.';});
+}
+
+var _offlineDownloading=false;
+function _offlineDownloadAll(){
+  if(_offlineDownloading) return;
+  if(typeof OfflineManager==='undefined'){_showToast('IndexedDB not supported in this browser.','#b91c1c');return;}
+  _offlineDownloading=true;
+  const btn=document.getElementById('offlineDownloadBtn');
+  const row=document.getElementById('offlineProgressRow');
+  const bar=document.getElementById('offlineProgressBar');
+  const txt=document.getElementById('offlineProgressText');
+  if(btn) btn.disabled=true;
+  if(row) row.style.display='flex';
+  OfflineManager.downloadAllImages(function(p){
+    const pct=p.total>0?Math.round(p.downloaded/p.total*100):0;
+    if(bar) bar.style.width=pct+'%';
+    if(txt) txt.textContent=p.downloaded+' / '+p.total+(p.failed?' ('+p.failed+' failed)':'');
+  }).then(function(result){
+    _offlineDownloading=false;
+    if(btn) btn.disabled=false;
+    if(row) row.style.display='none';
+    const msg=result.failed>0
+      ? result.downloaded+' images cached ('+result.failed+' failed)'
+      : result.downloaded+' images ready offline';
+    _showToast(msg, result.failed>0?'#b45309':'#15803d');
+    _offlineRefreshStatus();
+    // Also cache via Service Worker for fetch-event interception
+    if(navigator.serviceWorker && navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({type:'CACHE_IMAGES',images:OfflineManager.getAllImageFilenames()});
+    }
+  }).catch(function(){
+    _offlineDownloading=false;
+    if(btn) btn.disabled=false;
+    if(row) row.style.display='none';
+    _showToast('Download failed — check your connection.','#b91c1c');
+  });
+}
+
+function _offlineClearAll(){
+  if(typeof OfflineManager==='undefined') return;
+  OfflineManager.clearAllCache().then(function(){
+    _showToast('Offline images cleared.','#0369a1');
+    _offlineRefreshStatus();
+  });
+}
+
+function _offlineUIInit(){
+  _offlineUpdateBar();
+  window.addEventListener('online', _offlineUpdateBar);
+  window.addEventListener('offline', _offlineUpdateBar);
+  // Refresh status when settings page is opened
+  const origNavTo = window.navTo;
+  if(typeof origNavTo==='function'){
+    window.navTo=function(id){
+      origNavTo(id);
+      if(id==='settings') setTimeout(_offlineRefreshStatus, 100);
+    };
+  }
+}
 </script>
 
 <!-- QUIZ COUNT PICKER MODAL -->
@@ -7731,10 +7837,13 @@ updateStats();
     </button>
   </div>
 </div>
+<script src="./db.js"></script>
+<script src="./offline-manager.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
-}
+// Initialise offline UI after scripts load
+(function(){
+  try { _offlineUIInit(); } catch(e){}
+})();
 </script>
 </body>
 </html>
