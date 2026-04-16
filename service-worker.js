@@ -1,51 +1,185 @@
-const CACHE_NAME = 'bontrager-v5';
+// ══════════════════════════════════════════════
+// SERVICE WORKER — Offline Support & Caching
+// ══════════════════════════════════════════════
 
-const FILES_TO_CACHE = [
+const CACHE_NAME = 'bontrager-cache-v1';
+const STATIC_ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-
-  // أيقونات PWA
-  './icons/icon-72.png',
-  './icons/icon-96.png',
-  './icons/icon-128.png',
-  './icons/icon-144.png',
-  './icons/icon-192.png',
-  './icons/icon-256.png',
-  './icons/icon-384.png',
-  './icons/icon-512.png',
-  './icons/icon-512-maskable.png'
+  './css/styles.css',
+  './js/data.js',
+  './js/core.js',
+  './js/auth.js',
+  './js/ui.js',
+  './js/features.js',
+  './js/viewer.js',
+  './js/editor.js',
+  './js/zoom.js',
+  './js/pwa.js',
+  './js/ai.js',
+  './manifest.json'
 ];
 
-// تثبيت Service Worker
+// ═══ INSTALL ═══
 self.addEventListener('install', event => {
+  console.log('Service Worker installing...');
+  
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(FILES_TO_CACHE);
+      console.log('Caching assets...');
+      return cache.addAll(STATIC_ASSETS).catch(err => {
+        console.log('Some assets failed to cache:', err);
+        // Continue even if some assets fail
+        return Promise.resolve();
+      });
     })
   );
+  
   self.skipWaiting();
 });
 
-// تفعيل Service Worker
+// ═══ ACTIVATE ═══
 self.addEventListener('activate', event => {
+  console.log('Service Worker activating...');
+  
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    )
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames
+          .filter(cacheName => cacheName !== CACHE_NAME)
+          .map(cacheName => {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+      );
+    })
   );
+  
   self.clients.claim();
 });
 
-// استراتيجية Offline First
+// ═══ FETCH ═══
 self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
+    return;
+  }
+  
+  // Skip cross-origin requests
+  if (url.origin !== location.origin) {
+    return;
+  }
+  
+  // Network-first strategy for HTML documents
+  if (request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Cache successful responses
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fall back to cache on network error
+          return caches.match(request)
+            .then(cachedResponse => {
+              return cachedResponse || caches.match('./index.html');
+            });
+        })
+    );
+    return;
+  }
+  
+  // Cache-first strategy for other assets
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+    caches.match(request)
+      .then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        
+        return fetch(request)
+          .then(response => {
+            // Cache successful responses
+            if (response && response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(request, responseClone);
+              });
+            }
+            return response;
+          })
+          .catch(() => {
+            // Return offline fallback
+            console.log('Request failed, returning offline content:', request.url);
+            return new Response('Offline - content not available', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain'
+              })
+            });
+          });
+      })
   );
 });
+
+// ═══ BACKGROUND SYNC ═══
+self.addEventListener('sync', event => {
+  console.log('Background sync event:', event.tag);
+  
+  if (event.tag === 'sync-quiz-results') {
+    event.waitUntil(syncQuizResults());
+  }
+  
+  if (event.tag === 'sync-progress') {
+    event.waitUntil(syncProgress());
+  }
+});
+
+function syncQuizResults() {
+  // Placeholder for syncing quiz results when online
+  console.log('Syncing quiz results...');
+  return Promise.resolve();
+}
+
+function syncProgress() {
+  // Placeholder for syncing progress when online
+  console.log('Syncing progress...');
+  return Promise.resolve();
+}
+
+// ═══ MESSAGE HANDLING ═══
+self.addEventListener('message', event => {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+  
+  if (event.data.action === 'clearCache') {
+    caches.delete(CACHE_NAME).then(() => {
+      event.ports[0].postMessage({ success: true });
+    });
+  }
+  
+  if (event.data.action === 'getCacheSize') {
+    caches.open(CACHE_NAME).then(cache => {
+      // Rough cache size estimation
+      cache.keys().then(keys => {
+        event.ports[0].postMessage({ 
+          success: true, 
+          cacheSize: keys.length 
+        });
+      });
+    });
+  }
+});
+
+console.log('Service Worker loaded');
