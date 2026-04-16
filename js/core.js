@@ -325,12 +325,55 @@ function viewPosition(position, chapterName, posIdx) {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
   
+  // Display position image
+  displayPositionImage(position.name);
+  
   navTo('pos-view');
+}
+
+// Display the positioning photo in the position view page
+function displayPositionImage(positionName) {
+  const imgEl = document.getElementById('posImg');
+  const phEl  = document.getElementById('posImgPh');
+  if (!imgEl || !phEl) return;
+  
+  // Hide both while loading
+  imgEl.style.display = 'none';
+  phEl.style.display  = 'none';
+  
+  const images = getPositionImages(positionName);
+  const positionSrc = images && images.position ? images.position : null;
+  
+  if (positionSrc) {
+    imgEl.onerror = function() {
+      imgEl.style.display = 'none';
+      phEl.style.display  = 'block';
+    };
+    imgEl.onload = function() {
+      imgEl.style.display = 'block';
+      phEl.style.display  = 'none';
+    };
+    imgEl.alt = positionName + ' — positioning photo';
+    imgEl.src = positionSrc;
+  } else {
+    phEl.style.display = 'block';
+  }
 }
 
 function renderQuizChapters() {
   const container = document.getElementById('quizChList');
   container.innerHTML = '<p style="color:var(--text2);padding:16px">Quiz questions coming soon...</p>';
+}
+
+// ═══ MODAL HELPERS ═══
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
 }
 
 // Initialize on page load
