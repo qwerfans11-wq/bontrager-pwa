@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#1a1a1a">
+<meta name="description" content="Complete radiographic positioning guide with offline support">
+<title>Bontrager Positioning</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192x192.png">
+</head>
+<body>
+<div class="app">
+
+<!-- DEV LOGIN MODAL -->
+<div class="dev-login-overlay" id="devLoginOverlay">
+  <div class="dev-login-box">
+    <h3>🛠 Developer Login</h3>
+    <p>Enter credentials to access developer mode</p>
+    <div class="dev-login-field">
+      <label>Username</label>
+      <input type="text" id="devLoginUser" placeholder="Username" autocomplete="off">
+    </div>
+    <div class="dev-login-field">
+      <label>Password</label>
+      <input type="password" id="devLoginPass" placeholder="Password">
+    </div>
+    <div class="dev-login-error" id="devLoginError">❌ Incorrect credentials</div>
+    <div class="dev-login-actions">
+      <button class="modal-btn secondary" onclick="cancelDevLogin()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitDevLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEV APPEARANCE PANEL -->
+<div class="dev-appearance-overlay" id="devAppearanceOverlay" onclick="closeDevAppearance(event)">
+  <div class="dev-appearance-panel" onclick="event.stopPropagation()">
+    <h3>🎨 Developer — Appearance Controls</h3>
+
+    <div class="dap-section">
+      <div class="dap-section-title">Background Color</div>
+      <div class="dap-row">
+        <div class="dap-label">Main Background</div>
+        <input class="dap-color" type="color" id="dap-bg" value="#f4f3f1" oninput="previewAppearance()">
+      </div>
+      <div class="dap-row">
+        <div class="dap-label">Card / Panel Background</div>
+        <input class="dap-color" type="color" id="dap-bg-card" value="#ffffff" oninput="previewAppearance()">
+      </div>
+      <div class="dap-row">
+        <div class="dap-label">Accent Color</div>
+        <input class="dap-color" type="color" id="dap-accent" value="#0057b8" oninput="previewAppearance()">
+      </div>
+    </div>
+
+    <div class="dap-section">
+      <div class="dap-section-title">Text Color</div>
+      <div class="dap-row">
+        <div class="dap-label">Primary Text</div>
+        <input class="dap-color" type="color" id="dap-text" value="#09090b" oninput="previewAppearance()">
+      </div>
+      <div class="dap-row">
+        <div class="dap-label">Secondary Text</div>
+        <input class="dap-color" type="color" id="dap-text2" value="#52525b" oninput="previewAppearance()">
+      </div>
+    </div>
+
+    <div class="dap-section">
+      <div class="dap-section-title">Font Size</div>
+      <div class="dap-row">
+        <div class="dap-label">Base Font Size</div>
+        <input class="dap-input" type="number" id="dap-fontsize" value="15" min="11" max="24" placeholder="15" oninput="previewAppearance()"> px
+      </div>
+    </div>
+
+    <div class="dap-actions">
+      <button class="dap-btn danger" onclick="resetAppearance()">Reset to Default</button>
+      <button class="dap-btn secondary" onclick="closeDevAppearance()">Cancel</button>
+      <button class="dap-btn primary" onclick="saveAppearance()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="soverlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-header">
+    <div class="avatar student" id="sbAvatar">S</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sbName">Student</div>
+      <div class="sb-user-role" id="sbRole">Student mode</div>
+    </div>
+    <button class="sb-close" onclick="closeSidebar()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+    </button>
+  </div>
+  <div class="sb-section">Navigation</div>
+  <div class="nav-item active" id="nav-home" onclick="navTo('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </div>
+  <div class="nav-item" id="nav-learn-chapters" onclick="navTo('learn-chapters')">
+    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+    Section 1 — Learn
+  </div>
+  <div class="nav-item" id="nav-quiz" onclick="navTo('quiz-chapters')">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    Section 2 — Quiz
+  </div>
+  <div class="nav-item" id="nav-ai" onclick="navTo('ai')">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Ask AI
+  </div>
+  <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </div>
+  <div class="sb-section">Account</div>
+  <div class="nav-item" onclick="openProfileModal()">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    User Profile
+  </div>
+  <div class="sb-footer">
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:8px">Switch mode</div>
+    <div class="role-toggle">
+      <button class="role-btn active" id="roleStudent" onclick="setRole('student')">📚 Student</button>
+      <button class="role-btn" id="roleDev" onclick="requestDevRole()">🛠 Developer</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <button class="hbtn" id="menuBtn" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="htitle" id="headerTitle">Bontrager Positioning</div>
+  <button class="hbtn" id="aiHeaderBtn" onclick="navTo('ai')" title="Ask AI">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </button>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div class="page active" id="page-home">
+  <div class="scroll">
+    <div class="hero">
+      <h1>Bontrager Positioning</h1>
+      <p id="heroSubtitle">Radiographic positioning guide · 10th Edition</p>
+      <div class="hero-badge" id="heroBadge">📚 Student Mode</div>
+    </div>
+    <div class="sec-grid">
+      <div class="sec-card learn-card" onclick="navTo('learn-chapters')">
+        <div class="sec-card-icon">📖</div>
+        <h2>Section 1</h2>
+        <p>Learn all positions with photos &amp; technique details</p>
+      </div>
+      <div class="sec-card quiz-card" onclick="navTo('quiz-chapters')">
+        <div class="sec-card-icon">🩻</div>
+        <h2>Section 2</h2>
+        <p>Test yourself with real X-ray identification</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n" id="homeChapters">—</div><div class="stat-l">Chapters</div></div>
+      <div class="stat"><div class="stat-n" id="homePositions">—</div><div class="stat-l">Positions</div></div>
+      <div class="stat"><div class="stat-n" id="homeBest">—</div><div class="stat-l">Best %</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEARN CHAPTERS ═══ -->
+<div class="page" id="page-learn-chapters">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">Choose a chapter</div>
+    <div id="learnChList"></div>
+  </div>
+</div>
+
+<!-- ═══ LEARN SUB-CHAPTERS ═══ -->
+<div class="page" id="page-learn-subchapters">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+      <button class="back-btn" id="subChBackBtn">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Chapters
+      </button>
+      <button class="back-btn" onclick="navTo('home')" style="color:var(--accent)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </button>
+    </div>
+    <div class="ptitle" id="subChTitle"></div>
+    <div id="subChList"></div>
+  </div>
+</div>
+
+<!-- ═══ LEARN POSITIONS ═══ -->
+<div class="page" id="page-learn-positions">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+      <button class="back-btn" id="learnPosBackBtn" onclick="navTo('learn-chapters')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Chapters
+      </button>
+      <button class="back-btn" onclick="navTo('home')" style="color:var(--accent)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </button>
+    </div>
+    <div class="ptitle" id="learnPosTitle"></div>
+    <div id="learnPosList"></div>
+  </div>
+</div>
+
+<!-- ═══ POSITION VIEW ═══ -->
+<div class="page" id="page-pos-view">
+  <div class="pos-img-wrap" id="posImgWrap">
+    <img id="posImg" src="" alt="" style="display:none;width:100%;max-height:300px;object-fit:contain">
+    <div class="pos-img-ph" id="posImgPh" style="display:none">
+      <div class="ph-icon">📷</div><p>No positioning photo</p>
+    </div>
+  </div>
+  <div class="pos-body">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <button class="back-btn" id="posBackBtn">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <button class="back-btn" onclick="navTo('home')" style="color:var(--accent)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </button>
+    </div>
+    <div class="pos-title" id="posViewTitle"></div>
+    <div class="badge" id="posViewBadge"></div>
+    <div class="desc-text" id="posViewDesc"></div>
+    <div class="tech-card" id="posViewTech"></div>
+  </div>
+</div>
+
+<!-- ═══ QUIZ CHAPTERS ═══ -->
+<div class="page" id="page-quiz-chapters">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">Choose a chapter to test</div>
+    <div id="quizChList"></div>
+  </div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div class="page" id="page-quiz">
+  <div class="quiz-progress"><div class="quiz-progress-fill" id="qProgress" style="width:0%"></div></div>
+  <div class="xray-wrap" style="position:relative">
+    <img id="xrayImg" src="" alt="X-ray" style="display:none">
+    <div class="xray-ph" id="xrayPh" style="display:none">
+      <div class="xph-icon">🩻</div>
+      <p style="font-size:12px;color:#666">X-ray image</p>
+    </div>
+  </div>
+  <div class="quiz-body">
+    <div class="q-meta">
+      <span class="q-counter" id="qCounter">Question 1 / 5</span>
+      <span class="q-score" id="qScore">Score: 0</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="opts" id="optsGrid"></div>
+    <div class="feedback" id="feedbackDiv"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">Next question →</button>
+  </div>
+</div>
+
+<!-- ═══ SCORE ═══ -->
+<div class="page" id="page-score">
+  <div class="scroll">
+    <div class="score-wrap">
+      <div class="score-ring"><span class="score-num" id="scoreNum">—</span></div>
+      <div class="score-title" id="scoreTitle">Quiz complete</div>
+      <div class="score-sub" id="scoreSub"></div>
+      <button class="score-btn primary" onclick="navTo('quiz-chapters')">Try another chapter</button>
+      <button class="score-btn outline" onclick="navTo('home')">Back to home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div class="page" id="page-settings">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">Settings</div>
+    <div class="settings-group">
+      <div class="settings-group-title">Appearance</div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">Dark mode</div></div>
+        <button class="toggle" id="darkToggle" onclick="toggleDark()"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AI PAGE ═══ -->
+<div class="page" id="page-ai">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">Ask AI</div>
+    <div style="color:var(--text2);font-size:13px;margin-bottom:15px">
+      💡 Ask questions about positioning, technique, and more
+    </div>
+    <div id="aiChat" style="background:var(--bg2);border-radius:8px;padding:12px;min-height:300px;max-height:400px;overflow-y:auto;margin-bottom:15px;border:1px solid var(--border)"></div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="aiInput" placeholder="Ask a question..." style="flex:1;padding:10px;border:1px solid var(--border);border-radius:4px">
+      <button id="aiSendBtn" onclick="sendAI(document.getElementById('aiInput').value)" style="padding:10px 16px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer">Send</button>
+    </div>
+    <div style="margin-top:15px;color:var(--text3);font-size:12px">
+      <div style="font-weight:bold;margin-bottom:8px">💬 Try asking:</div>
+      <button onclick="useSuggestedPrompt('PA Chest CR')" style="display:block;width:100%;text-align:left;padding:6px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">PA Chest CR</button>
+      <button onclick="useSuggestedPrompt('AP Abdomen technique')" style="display:block;width:100%;text-align:left;padding:6px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">AP Abdomen technique</button>
+      <button onclick="useSuggestedPrompt('Difference between RAO and LAO')" style="display:block;width:100%;text-align:left;padding:6px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">Difference between RAO and LAO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLASHCARD MODAL ═══ -->
+<div class="modal-overlay" id="flashcard-modal" onclick="closeModal('flashcard-modal')">
+  <div class="modal-content" onclick="event.stopPropagation()" style="max-width:400px">
+    <button class="modal-close" onclick="closeModal('flashcard-modal')">✕</button>
+    <div style="perspective:1000px;min-height:250px">
+      <div id="flashcard-inner" style="position:relative;width:100%;height:250px;transition:transform 0.3s;transform-style:preserve-3d;cursor:pointer" onclick="toggleFlashcardFlip()">
+        <!-- Front -->
+        <div id="fc-front" style="position:absolute;width:100%;height:100%;background:var(--accent);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;padding:20px;text-align:center;-webkit-backface-visibility:hidden;backface-visibility:hidden"></div>
+        <!-- Back -->
+        <div id="fc-back" style="position:absolute;width:100%;height:100%;background:var(--bg2);color:var(--text);display:flex;flex-direction:column;justify-content:center;border-radius:8px;padding:20px;border:1px solid var(--border);-webkit-backface-visibility:hidden;backface-visibility:hidden;transform:rotateY(180deg)"></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:15px;color:var(--text2);font-size:12px">Tap card to flip • Swipe to next</div>
+    <button class="modal-btn primary" onclick="nextFlashcard()" style="width:100%;margin-top:15px">Next card →</button>
+  </div>
+</div>
+
+<!-- ═══ IMAGE ZOOM MODAL ═══ -->
+<div class="modal-overlay" id="img-zoom-modal" onclick="closeImgZoom()">
+  <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px" onclick="event.stopPropagation()">
+    <div style="position:relative;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;background:var(--bg)" style="max-width:90vw;max-height:70vh">
+      <img id="zoomImg" src="" alt="Zoom image" style="max-width:100%;max-height:100%;object-fit:contain">
+    </div>
+    <div style="display:flex;gap:8px;padding:12px">
+      <button onclick="zoomOutBtn()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">−</button>
+      <button onclick="zoomResetBtn()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">Reset</button>
+      <button onclick="zoomInBtn()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;cursor:pointer">+</button>
+      <button onclick="closeImgZoom()" style="padding:8px 12px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ IMAGE EDITOR MODAL ═══ -->
+<div class="modal-overlay" id="img-editor-modal" onclick="closeImgEditor()">
+  <div class="modal-content" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeImgEditor()">✕</button>
+    <h3>Image Editor</h3>
+    <div style="display:flex;gap:8px;margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:10px">
+      <button class="ed-tab active" data-tab="crop" onclick="switchEditorTab('crop')" style="padding:8px 12px;background:var(--accent);color:white;border:none;border-radius:4px">Crop</button>
+      <button class="ed-tab" data-tab="resize" onclick="switchEditorTab('resize')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px">Resize</button>
+    </div>
+    <canvas id="imgEditorCanvas" width="440" height="280" style="width:100%;border:1px solid var(--border);border-radius:4px;margin-bottom:15px;background:var(--bg2)"></canvas>
+    <!-- Crop Panel -->
+    <div id="ed-panel-crop" class="ed-panel">
+      <div style="margin-bottom:10px"><label>X: <input id="ed-crop-x" type="number" value="0" style="width:60px"></label></div>
+      <div style="margin-bottom:10px"><label>Y: <input id="ed-crop-y" type="number" value="0" style="width:60px"></label></div>
+      <div style="margin-bottom:10px"><label>Width: <input id="ed-crop-w" type="number" value="100" style="width:60px"></label></div>
+      <div style="margin-bottom:10px"><label>Height: <input id="ed-crop-h" type="number" value="100" style="width:60px"></label></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="edCropReset()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px">Reset</button>
+        <button onclick="edApplyCrop()" style="padding:8px 12px;background:var(--accent);color:white;border:none;border-radius:4px">Apply</button>
+      </div>
+    </div>
+    <!-- Resize Panel -->
+    <div id="ed-panel-resize" class="ed-panel" style="display:none">
+      <div style="margin-bottom:10px"><label>Width: <input id="ed-resize-w" type="number" value="440" style="width:80px"></label></div>
+      <div style="margin-bottom:10px"><label>Height: <input id="ed-resize-h" type="number" value="280" style="width:80px"></label></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="edResizeReset()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px">Reset</button>
+        <button onclick="edApplyResize()" style="padding:8px 12px;background:var(--accent);color:white;border:none;border-radius:4px">Apply</button>
+      </div>
+    </div>
+    <button onclick="edSaveAll()" style="width:100%;padding:10px;margin-top:15px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer">Save Image</button>
+  </div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner" style="display:none;position:fixed;bottom:20px;left:20px;right:20px;background:var(--accent);color:white;padding:15px;border-radius:8px;z-index:1000;display:flex;align-items:center;justify-content:space-between">
+  <div>
+    <strong>📲 Install App</strong>
+    <p style="font-size:12px;margin:4px 0 0 0">Get offline access and home screen shortcut</p>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="pwaDismiss()" style="padding:6px 12px;background:rgba(255,255,255,0.2);border:1px solid white;color:white;border-radius:4px;cursor:pointer">Later</button>
+    <button onclick="pwaInstall()" style="padding:6px 12px;background:white;color:var(--accent);border:none;border-radius:4px;cursor:pointer">Install</button>
+  </div>
+</div>
+
+<!-- OFFLINE NOTIFICATION -->
+<div id="offline-notification" style="display:none;position:fixed;top:60px;left:0;right:0;background:#FF9800;color:white;padding:10px;text-align:center;font-size:12px;z-index:999">
+  ⚠️ You are offline. Content loaded from cache.
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal-overlay" id="profileModalOverlay" onclick="closeProfileModal(event)">
+  <div class="profile-modal" onclick="event.stopPropagation()">
+    <div class="pm-title">User Profile</div>
+    <div class="pm-sub">Set your name and choose your mode</div>
+    <input class="pm-name-input" id="pmNameInput" placeholder="Your name (e.g. Qutaiba)" maxlength="30">
+    <div class="pm-roles">
+      <div class="pm-role-card selected" id="pmStudent" onclick="selectPMRole('student')">
+        <div class="pm-role-icon">📚</div>
+        <div class="pm-role-name">Student</div>
+        <div class="pm-role-desc">Learn and practice radiographic positioning</div>
+      </div>
+      <div class="pm-role-card" id="pmDev" onclick="selectPMRole('developer')">
+        <div class="pm-role-icon">🛠️</div>
+        <div class="pm-role-name">Developer</div>
+        <div class="pm-role-desc">Edit content, images, and quiz questions</div>
+      </div>
+    </div>
+    <button class="pm-save" onclick="saveProfile()">Save profile</button>
+  </div>
+</div>
+</div>
+
+<!-- External JavaScript Modules -->
+<!-- Load order CRITICAL: data first, then core, then others -->
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/features.js"></script>
+<script src="js/viewer.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/zoom.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/ai.js"></script>
+
+</body>
+</html>
