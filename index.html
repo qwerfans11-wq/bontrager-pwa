@@ -2080,10 +2080,83 @@ const IMAGE_DATA = {
   "Wrist_PA_Radial_Deviation":{positions:["Wrist_PA_Radial_Deviation_Position.jpeg"],xrays:["Wrist_PA_Radial_Deviation_Xray.jpeg"]},
   "Wrist_PA_Scaphoid_Modified_Stecher_Method":{positions:["Wrist_PA_Scaphoid_Modified_Stecher_Method_Hand_Elevated_Ulnar_Deviation_Position.jpeg","Wrist_PA_Scaphoid_Modified_Stecher_Method_Severe_Pain_No_Ulnar_Deviation_Position.jpeg"],xrays:["Wrist_PA_Scaphoid_Modified_Stecher_Method_Xray.jpeg","Wrist_PA_Scaphoid_Modified_Stecher_Method_No_Ulnar_Deviation_Xray.jpeg"]},
   "AC_Joints_AP_Bilateral_Pearson_Method_Bilateral":{positions:["AC_Joints_AP_Bilateral_Pearson_Method_Stress_View_with_Weights_Position.jpeg"],xrays:["AC_Joints_AP_Bilateral_Pearson_Method_Xray_Labeled.jpeg","AC_Joints_AP_Bilateral_Pearson_Method_with_and_without_Weights_Xray.jpeg"]},
+  "Clavicle_AP_and_AP_Axial_Projections":{positions:["Clavicle_AP_Projection_CR_0deg_Position.jpeg","Clavicle_AP_Axial_Projection_CR_15_to_30deg_Cephalad_Position.jpeg"],xrays:["Clavicle_AP_Projection_CR_0deg_Xray.jpeg","Clavicle_AP_and_AP_Axial_Projections_Xray.jpeg","Clavicle_AP_Axial_Projection_Xray.jpeg","Clavicle_AP_Axial_Projection_25deg_Xray.jpeg"]},
 };
 
 // Image folder path on GitHub Pages
 const IMAGES_PATH = 'renamed_images/';
+
+// Explicit map: BOOK position name → IMAGE_DATA key (takes priority over fuzzy matching)
+const POSITION_IMAGE_MAP = {
+  // ── Fingers ──
+  'PA Fingers (2nd\u20135th)': 'Fingers_PA_Projection',
+  'PA Oblique Fingers \u2014 Lateral Rotation': 'Fingers_PA_Oblique_Projection',
+  'Lateral Finger \u2014 Lateromedial or Mediolateral': 'Fingers_Lateromedial_Projection',
+  // ── Thumb ──
+  'AP Thumb': 'Thumb_AP_Projection',
+  'PA Oblique Thumb \u2014 Medial Rotation': 'Thumb_PA_Oblique_Projection_Medial_Rotation',
+  'Lateral Thumb': 'Thumb_Lateral',
+  'AP Axial Thumb \u2014 Modified Robert Method': 'Thumb_AP_Axial_Modified_Robert_Method',
+  'PA Stress Thumb \u2014 Folio Method': 'Thumb_PA_Stress_Folio_Method',
+  // ── Hand ──
+  'PA Hand': 'Hand_PA_Projection',
+  'PA Oblique Hand': 'Hand_PA_Oblique_Projection',
+  '"Fan" Lateral Hand \u2014 Lateromedial': 'Hand_Fan_Lateral_Lateromedial_Projection',
+  'Lateral Hand in Extension \u2014 Lateromedial': 'Hand_Lateral_in_Extension',
+  'Lateral Hand in Flexion \u2014 Lateromedial': 'Hand_Lateral_in_Flexion',
+  'AP Axial Hand \u2014 Brewerton Method': 'Hand_AP_Axial_Brewerton_Method',
+  // ── Wrist ──
+  'PA Wrist': 'Wrist_PA_Projection',
+  'PA Oblique Wrist \u2014 Lateral Rotation': 'Wrist_PA_Oblique_Lateral_Rotation',
+  'Lateromedial Wrist': 'Wrist_Lateromedial_Projection',
+  'PA and PA Axial Scaphoid \u2014 Ulnar Deviation': 'Wrist_PA_Axial_Scaphoid_Ulnar_Deviation',
+  'PA Scaphoid \u2014 Modified Stecher Method': 'Wrist_PA_Scaphoid_Modified_Stecher_Method',
+  'PA Radial Deviation Wrist': 'Wrist_PA_Radial_Deviation',
+  'Carpal Canal \u2014 Tangential (Gaynor-Hart Method)': 'Wrist_Carpal_Canal_Tangential_Gaynor_Hart_Method',
+  'Carpal Bridge \u2014 Tangential Wrist': 'Wrist_Carpal_Bridge_Tangential_Projection',
+  // ── Forearm ──
+  'AP Forearm': 'Forearm_AP_Projection',
+  'Lateromedial Forearm': 'Forearm_Lateromedial_Projection',
+  // ── Elbow ──
+  'AP Elbow \u2014 Fully Extended': 'Elbow_AP_Projection_Fully_Extended',
+  'AP Elbow \u2014 Partial Flexion (Humerus Parallel)': 'Elbow_AP_Alternate_Partial_Flexion_Humerus_Parallel',
+  'AP Elbow \u2014 Partial Flexion (Forearm Parallel)': 'Elbow_AP_Alternate_Partial_Flexion_Forearm_Parallel',
+  'AP Elbow \u2014 Acute Flexion (Distal Humerus)': 'Elbow_Acute_Flexion_Distal_Humerus',
+  'AP Elbow \u2014 Acute Flexion (Proximal Forearm)': 'Elbow_Acute_Flexion_Proximal_Forearm',
+  'AP Oblique Elbow \u2014 Lateral (External) Rotation': 'Elbow_AP_Oblique_Lateral_External_Rotation',
+  'AP Oblique Elbow \u2014 Medial (Internal) Rotation': 'Elbow_AP_Oblique_Medial_Internal_Rotation',
+  'Lateromedial Elbow': 'Elbow_Lateromedial_Projection_Flexed_90deg',
+  'Trauma Axial Lateromedial Elbow \u2014 Coyle Method (Radial Head)': 'Elbow_Trauma_Axial_Lateromedial_Coyle_Method_Radial_Head',
+  'Trauma Axial Mediolateral Elbow \u2014 Coyle Method (Coronoid Process)': 'Elbow_Trauma_Axial_Mediolateral_Coyle_Method_Coronoid_Process',
+  'Radial Head Lateromedial Projections \u2014 Four Positions': 'Elbow_Radial_Head_Lateromedial',
+  // ── Humerus ──
+  'AP Projection \u2014 Humerus': 'Humerus_AP_Projection',
+  'Rotational Lateral \u2014 Lateromedial or Mediolateral: Humerus': 'Humerus_Rotational_Lateral_Mediolateral_Erect',
+  'Trauma Horizontal Beam Lateral \u2014 Mid-to-Distal Humerus': 'Humerus_Trauma_Horizontal_Beam_Lateral_Mid_to_Distal',
+  'Transthoracic Lateral Projection \u2014 Humerus (Trauma)': 'Humerus_Transthoracic_Lateral_Projection',
+  // ── Shoulder ──
+  'AP Projection \u2014 External Rotation: Shoulder (Nontrauma)': 'Shoulder_AP_External_Rotation',
+  'AP Projection \u2014 Internal Rotation: Shoulder (Nontrauma)': 'Shoulder_AP_Internal_Rotation',
+  'Inferosuperior Axial Projection \u2014 Lawrence Method: Shoulder (Nontrauma)': 'Shoulder_Inferosuperior_Axial_Lawrence_Method',
+  'PA Axial Transaxillary Projection \u2014 Modified Bernageau Method: Shoulder': 'Shoulder_PA_Axial_Transaxillary_Modified_Bernageau_Method',
+  'Inferosuperior Axial Projection \u2014 Clements Modification: Shoulder': 'Shoulder_Inferosuperior_Axial_Clements_Modification',
+  'AP Oblique Projection \u2014 Glenoid Cavity: Grashey Method (Nontrauma)': 'Shoulder_AP_Oblique_Glenoid_Cavity_Grashey_Method',
+  'Apical AP Axial Projection \u2014 Shoulder': 'Shoulder_Apical_AP_Axial_Projection',
+  'Tangential Projection \u2014 Intertubercular (Bicipital) Sulcus: Fisk Modification': 'Shoulder_Tangential_Intertubercular_Sulcus_Fisk_Modification',
+  'AP Projection \u2014 Neutral Rotation: Shoulder (Trauma)': 'Shoulder_AP_Neutral_Rotation_Trauma',
+  'Transthoracic Lateral Projection \u2014 Proximal Humerus (Trauma): Lawrence Method': 'Shoulder_Transthoracic_Lateral_Proximal_Humerus_Trauma',
+  'PA Oblique Projection \u2014 Scapular Y Lateral: Shoulder (Trauma)': 'Shoulder_PA_Oblique_Scapular_Y_Lateral_Trauma',
+  'Tangential Projection \u2014 Supraspinatus Outlet: Neer Method (Trauma)': 'Shoulder_Tangential_Supraspinatus_Outlet_Neer_Method',
+  'AP Apical Oblique Axial Projection \u2014 Garth Method (Trauma)': 'Shoulder_AP_Apical_Oblique_Axial_Garth_Method',
+  // ── Clavicle ──
+  'AP and AP Axial Projections \u2014 Clavicle': 'Clavicle_AP_and_AP_Axial_Projections',
+  // ── AC Joints ──
+  'AP Projection \u2014 Bilateral AC Joints: Pearson Method (With and Without Weights)': 'AC_Joints_AP_Bilateral_Pearson_Method_Bilateral',
+  // ── Scapula ──
+  'AP Projection \u2014 Scapula': 'Scapula_AP_Projection',
+  'Lateral Position \u2014 Scapula (Patient Erect)': 'Scapula_Lateral_Erect',
+  'Lateral Position \u2014 Scapula (Patient Recumbent)': 'Scapula_Lateral_Recumbent',
+};
 
 // Build lookup table: normalized position name -> IMAGE_DATA key
 const _imgKeyMap = (function(){
@@ -2101,6 +2174,10 @@ const _imgKeyMap = (function(){
 
 function _getImagesForPos(posName){
   if(!posName) return null;
+  // 1. Check explicit name mapping first (highest priority)
+  if(POSITION_IMAGE_MAP[posName] && IMAGE_DATA[POSITION_IMAGE_MAP[posName]]){
+    return IMAGE_DATA[POSITION_IMAGE_MAP[posName]];
+  }
   // normalize the position name
   function norm(s){
     return s.toLowerCase()
@@ -2108,9 +2185,9 @@ function _getImagesForPos(posName){
       .replace(/^_|_$/g,'');
   }
   const n = norm(posName);
-  // Try exact match first
+  // 2. Try exact match via normalized key map
   if(_imgKeyMap[n]) return IMAGE_DATA[_imgKeyMap[n]];
-  // Try partial matches (position name contains key or key contains position name)
+  // 3. Try partial matches (position name contains key or key contains position name)
   let bestKey = null, bestScore = 0;
   for(const [kn, key] of Object.entries(_imgKeyMap)){
     const overlap = n.startsWith(kn) || kn.startsWith(n) || n.includes(kn) || kn.includes(n);
