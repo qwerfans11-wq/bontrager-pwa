@@ -324,7 +324,20 @@ function viewPosition(position, chapterName, posIdx) {
   } else {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
-  
+
+  // Show position image
+  const imgPath = getImagePath(position.name);
+  const posImg = document.getElementById('posImg');
+  const posImgPh = document.getElementById('posImgPh');
+  if (imgPath) {
+    posImg.src = imgPath;
+    posImg.style.display = 'block';
+    posImgPh.style.display = 'none';
+  } else {
+    posImg.style.display = 'none';
+    posImgPh.style.display = 'flex';
+  }
+
   navTo('pos-view');
 }
 
