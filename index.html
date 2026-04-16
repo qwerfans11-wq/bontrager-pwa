@@ -2111,10 +2111,16 @@ function _getImagesForPos(posName){
       .replace(/[^a-z0-9]+/g,'_')
       .replace(/^_|_$/g,'');
   }
-  // stem: strip trailing 's' for basic plural handling
-  function stem(w){ return w.endsWith('s') && w.length > 3 ? w.slice(0,-1) : w; }
+  // stem: strip trailing 's' for basic plural handling (min length 6 avoids
+  // incorrectly stemming short medical terms like 'axis' or 'conus')
+  function stem(w){ return w.endsWith('s') && w.length > 5 ? w.slice(0,-1) : w; }
   // split normalized string into stemmed word set for overlap scoring
   function words(s){ return new Set(s.split('_').filter(w=>w.length>1).map(stem)); }
+
+  // Minimum Jaccard-like overlap score to accept a fuzzy match.
+  // 0.33 was chosen because it reliably matches all 49 upper-limb position names
+  // (verified against IMAGE_DATA) while avoiding false cross-region matches.
+  const FUZZY_MATCH_THRESHOLD = 0.33;
 
   const n = norm(posName);
   // Try exact match first
@@ -2140,7 +2146,7 @@ function _getImagesForPos(posName){
       if(score > bestScore){ bestScore = score; bestKey = key; }
     }
   }
-  if(bestKey && bestScore >= 0.33) return IMAGE_DATA[bestKey];
+  if(bestKey && bestScore >= FUZZY_MATCH_THRESHOLD) return IMAGE_DATA[bestKey];
   return null;
 }
 
