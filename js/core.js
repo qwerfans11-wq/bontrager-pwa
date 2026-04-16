@@ -288,6 +288,36 @@ function renderLearnPositions(chKey, schKey) {
   navTo('learn-positions');
 }
 
+function displayPositionImage(position) {
+  const posImg = document.getElementById('posImg');
+  const posImgPh = document.getElementById('posImgPh');
+
+  if (!posImg || !posImgPh) return;
+
+  const images = getPositionImages(position);
+
+  if (images.posImg) {
+    posImg.style.display = 'none';
+    posImgPh.style.display = 'none';
+
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      posImg.src = images.posImg;
+      posImg.alt = position.name;
+      posImg.style.display = 'block';
+      posImgPh.style.display = 'none';
+    };
+    tempImg.onerror = function () {
+      posImg.style.display = 'none';
+      posImgPh.style.display = 'block';
+    };
+    tempImg.src = images.posImg;
+  } else {
+    posImg.style.display = 'none';
+    posImgPh.style.display = 'block';
+  }
+}
+
 function viewPosition(position, chapterName, posIdx) {
   document.getElementById('posViewTitle').textContent = position.name;
   document.getElementById('posViewDesc').textContent = position.info.desc;
@@ -324,7 +354,10 @@ function viewPosition(position, chapterName, posIdx) {
   } else {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
-  
+
+  // Display the positioning image
+  displayPositionImage(position);
+
   navTo('pos-view');
 }
 
