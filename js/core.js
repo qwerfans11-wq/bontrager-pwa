@@ -325,10 +325,13 @@ function viewPosition(position, chapterName, posIdx) {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
   
+  // Display position image
+  displayPositionImage(position);
+  
   navTo('pos-view');
 }
 
-function renderQuizChapters() {
+function renderQuizChapters(){
   const container = document.getElementById('quizChList');
   container.innerHTML = '<p style="color:var(--text2);padding:16px">Quiz questions coming soon...</p>';
 }
