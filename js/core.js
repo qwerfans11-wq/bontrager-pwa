@@ -288,6 +288,74 @@ function renderLearnPositions(chKey, schKey) {
   navTo('learn-positions');
 }
 
+// Display the positioning photo for a given position key in the pos-view page.
+// Shows the image if found, otherwise shows the placeholder.
+function displayPositionImage(positionKey) {
+  const imgEl = document.getElementById('posImg');
+  const phEl  = document.getElementById('posImgPh');
+
+  if (!imgEl || !phEl) return;
+
+  const images = getPositionImages(positionKey);
+  if (images && images.position) {
+    imgEl.src = images.position;
+    imgEl.alt = positionKey.replace(/_/g, ' ');
+    imgEl.style.display = 'block';
+    phEl.style.display  = 'none';
+
+    // Add x-ray tabs below the image if xray images are available
+    const wrap = document.getElementById('posImgWrap');
+    if (wrap) {
+      // Remove any previously created xray tabs
+      const existingTabs = wrap.querySelector('.pos-img-tabs');
+      if (existingTabs) existingTabs.remove();
+
+      const xrayImages = [];
+      if (images.xray)        xrayImages.push({ label: '🩻 X-ray',         src: images.xray });
+      if (images.xrayLabeled) xrayImages.push({ label: '🔬 Labeled X-ray', src: images.xrayLabeled });
+
+      if (xrayImages.length > 0) {
+        const tabs = document.createElement('div');
+        tabs.className = 'pos-img-tabs';
+        tabs.style.cssText = 'display:flex;gap:8px;padding:8px 0;justify-content:center;flex-wrap:wrap';
+
+        // "Position Photo" button (active by default)
+        const posBtn = document.createElement('button');
+        posBtn.textContent = '📷 Position Photo';
+        posBtn.style.cssText = 'padding:6px 12px;border:none;border-radius:20px;cursor:pointer;font-size:12px;background:var(--accent);color:white';
+        posBtn.onclick = () => {
+          imgEl.src = images.position;
+          imgEl.alt = positionKey.replace(/_/g, ' ');
+          tabs.querySelectorAll('button').forEach(b => { b.style.background = 'var(--bg2)'; b.style.color = 'var(--text)'; });
+          posBtn.style.background = 'var(--accent)';
+          posBtn.style.color = 'white';
+        };
+        tabs.appendChild(posBtn);
+
+        xrayImages.forEach(({ label, src }) => {
+          const btn = document.createElement('button');
+          btn.textContent = label;
+          btn.style.cssText = 'padding:6px 12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:12px;background:var(--bg2);color:var(--text)';
+          btn.onclick = () => {
+            imgEl.src = src;
+            imgEl.alt = label;
+            tabs.querySelectorAll('button').forEach(b => { b.style.background = 'var(--bg2)'; b.style.color = 'var(--text)'; b.style.border = '1px solid var(--border)'; });
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+            btn.style.border = 'none';
+          };
+          tabs.appendChild(btn);
+        });
+
+        wrap.appendChild(tabs);
+      }
+    }
+  } else {
+    imgEl.style.display = 'none';
+    phEl.style.display  = 'block';
+  }
+}
+
 function viewPosition(position, chapterName, posIdx) {
   document.getElementById('posViewTitle').textContent = position.name;
   document.getElementById('posViewDesc').textContent = position.info.desc;
@@ -324,6 +392,9 @@ function viewPosition(position, chapterName, posIdx) {
   } else {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
+
+  // Display position image(s) from renamed_images/
+  displayPositionImage(position.key);
   
   navTo('pos-view');
 }
