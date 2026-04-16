@@ -966,6 +966,26 @@ max-height:90vh;
 /* Settings group shadow */
 .settings-group{box-shadow:0 1px 4px rgba(0,0,0,.05)}
 
+/* ── Offline Panel ── */
+.offline-panel{padding:4px 0}
+.offline-chapter-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border)}
+.offline-chapter-item:first-child{border-top:none}
+.offline-chapter-icon{font-size:18px;flex-shrink:0;width:24px;text-align:center}
+.offline-chapter-name{flex:1;min-width:0}
+.offline-chapter-name b{display:block;font-size:13.5px;font-weight:600;color:var(--text)}
+.offline-chapter-name small{font-size:11px;color:var(--text3)}
+.offline-chapter-size{font-size:11px;color:var(--text3);flex-shrink:0;margin-right:4px}
+.offline-dl-btn{padding:6px 12px;border-radius:50px;border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent-text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:all .15s}
+.offline-dl-btn:hover{background:var(--accent);color:#fff}
+.offline-dl-btn.cancel{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.offline-dl-btn.done{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.offline-progress-wrap{padding:4px 16px 10px;display:none}
+.offline-progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.offline-progress-fill{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .3s}
+.offline-progress-text{font-size:11px;color:var(--text3)}
+.offline-storage-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
+.offline-status-dot{font-size:13px;cursor:default}
+
 /* ptitle with icon alignment */
 .ptitle svg{flex-shrink:0}
 
@@ -1313,6 +1333,7 @@ html, body {
     <span style="font-size:18px;">☰</span>
   </button>
   <div class="htitle" id="headerTitle">Bontrager Positioning</div>
+  <span id="offlineStatusDot" class="offline-status-dot hbtn" title="Online">🟢</span>
   <button class="hbtn" id="studyModeBtn" onclick="toggleStudyMode()" title="Study Mode" style="color:var(--text2)">
     <span style="font-size:18px;">👁️</span>
   </button>
@@ -1807,6 +1828,14 @@ html, body {
         </div>
       </div>
     </div>
+    <!-- ── Offline Storage Panel ── -->
+    <div class="settings-group">
+      <div class="settings-group-title">📊 Offline Storage — إدارة التخزين</div>
+      <div class="offline-panel" id="offlinePanel">
+        <!-- Populated by buildOfflinePanel() -->
+        <div style="padding:14px 16px;color:var(--text3);font-size:13px">Loading…</div>
+      </div>
+    </div>
     <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;line-height:1.7">
       Bontrager 10th Edition book<br>
       <span id="statsFooter">— positions · — chapters</span>
@@ -2007,6 +2036,9 @@ html, body {
     </div>
   </div>
 </div>
+
+<script src="db.js"></script>
+<script src="chapters-config.js"></script>
 
 <script>
 
@@ -3565,6 +3597,8 @@ function navTo(id){
   }
   // Build dev manager
   if(id==='dev-manager') buildDevManager();
+  // Build offline panel when visiting settings
+  if(id==='settings' && typeof buildOfflinePanel === 'function') buildOfflinePanel();
   window.scrollTo(0,0);
   // refresh stats on home
   if(id==='home') updateStats();
@@ -6040,6 +6074,22 @@ function _refreshPosImgDisplay(){
       img.loading = 'lazy';
       img.title = 'Tap to zoom';
       img.onclick = () => openImgZoom(img.src);
+      // Offline fallback: serve from IndexedDB if network fails
+      img.onerror = function() {
+        if (typeof bontragerDB !== 'undefined') {
+          bontragerDB.getImage(fname).then(blob => {
+            if (blob) {
+              const blobUrl = URL.createObjectURL(blob);
+              img.src = blobUrl;
+              img.onclick = () => openImgZoom(blobUrl);
+            }
+          }).catch(() => {});
+        }
+      };
+      // Auto-cache image when browsed online
+      if (navigator.onLine && typeof _autoCacheImage === 'function') {
+        _autoCacheImage(fname);
+      }
       imgWrap.appendChild(img);
 
       const dot = document.createElement('span');
@@ -7731,7 +7781,100 @@ updateStats();
     </button>
   </div>
 </div>
+<script src="offline-manager.js"></script>
 <script>
+
+// ══════════════════════════════════════════════
+// OFFLINE PANEL BUILDER
+// ══════════════════════════════════════════════
+
+function buildOfflinePanel() {
+  const panel = document.getElementById('offlinePanel');
+  if (!panel || typeof CHAPTERS === 'undefined') return;
+
+  const online = navigator.onLine;
+  const dot = document.getElementById('offlineStatusDot');
+  if (dot) { dot.textContent = online ? '🟢' : '🔴'; dot.title = online ? 'Online' : 'Offline'; }
+
+  let html = '';
+  CHAPTERS.forEach(ch => {
+    const isDownloaded = offlineManager ? offlineManager.isDownloaded(ch.id) : false;
+    const isDownloading = offlineManager ? offlineManager.isDownloading(ch.id) : false;
+    const progress = offlineManager ? offlineManager.getDownloadProgress(ch.id) : null;
+    const pct = progress ? progress.percent : 0;
+
+    let btnHtml;
+    if (isDownloading) {
+      btnHtml = `<button class="offline-dl-btn cancel" onclick="offlineManager.cancelDownload('${ch.id}')">⏹ إيقاف</button>`;
+    } else if (isDownloaded) {
+      btnHtml = `<button class="offline-dl-btn done" onclick="_confirmDeleteChapter('${ch.id}','${ch.name}')">✅ حذف</button>`;
+    } else {
+      btnHtml = `<button class="offline-dl-btn" onclick="offlineManager.downloadChapter('${ch.id}')"${!online ? ' disabled title="Offline"' : ''}>⬇ تحميل</button>`;
+    }
+
+    html += `
+      <div class="offline-chapter-item">
+        <span class="offline-chapter-icon">${ch.icon}</span>
+        <div class="offline-chapter-name">
+          <b>${ch.name}</b>
+          <small>${ch.nameAr} · ${ch.imageCount} images</small>
+        </div>
+        <span class="offline-chapter-size">${ch.estimatedSize}</span>
+        ${btnHtml}
+      </div>
+      ${isDownloading ? `
+      <div class="offline-progress-wrap" id="dlProgressWrap_${ch.id}" style="display:block">
+        <div class="offline-progress-bar"><div class="offline-progress-fill" id="dlBar_${ch.id}" style="width:${pct}%"></div></div>
+        <div class="offline-progress-text" id="dlTxt_${ch.id}">${pct}%</div>
+      </div>` : `<div class="offline-progress-wrap" id="dlProgressWrap_${ch.id}"></div>`}
+    `;
+  });
+
+  // Storage usage row
+  bontragerDB.getStorageUsage().then(bytes => {
+    const usedEl = document.getElementById('offlineStorageUsed');
+    if (usedEl) usedEl.textContent = _fmtBytes(bytes);
+  });
+
+  html += `
+    <div class="offline-storage-row">
+      <span>المستخدم: <b id="offlineStorageUsed">…</b></span>
+      <span>${online ? '🟢 Online' : '🔴 Offline'}</span>
+    </div>
+  `;
+
+  panel.innerHTML = html;
+
+  // Refresh storage display
+  bontragerDB.getStorageUsage().then(bytes => {
+    const el = document.getElementById('offlineStorageUsed');
+    if (el) el.textContent = _fmtBytes(bytes);
+  });
+}
+
+function _confirmDeleteChapter(chapterId, chapterName) {
+  if (confirm('حذف "' + chapterName + '" من التخزين؟')) {
+    offlineManager.deleteChapterData(chapterId);
+  }
+}
+
+// ── Initialize offline manager after page load ──
+window.addEventListener('load', function() {
+  offlineManager = new OfflineManager(bontragerDB, IMAGES_PATH);
+  offlineManager.onProgress(function(chapterId, event, data) {
+    buildOfflinePanel();
+  });
+
+  // Update online/offline dot
+  function _updateDot() {
+    const dot = document.getElementById('offlineStatusDot');
+    if (dot) { dot.textContent = navigator.onLine ? '🟢' : '🔴'; dot.title = navigator.onLine ? 'Online' : 'Offline'; }
+  }
+  window.addEventListener('online', _updateDot);
+  window.addEventListener('offline', _updateDot);
+  _updateDot();
+});
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
