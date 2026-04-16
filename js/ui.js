@@ -28,5 +28,16 @@ function toggleLarge() {
   }
 }
 
+// ─── MODAL HELPERS ───
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initUI);
