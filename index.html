@@ -1149,6 +1149,37 @@ html, body {
 
 /* Dark mode AI table fix */
 .dark .ai-bubble.bot table,.dark .ai-bubble.bot [style*="border-radius:10px"] {background:var(--bg3)!important}
+
+/* ══════════════════════════════════════════════
+   OFFLINE MANAGER STYLES
+══════════════════════════════════════════════ */
+.om-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.om-status-badge{font-size:12px;font-weight:700;padding:4px 12px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text2)}
+.om-status-badge.om-online{color:var(--green);border-color:var(--green-border);background:var(--green-bg)}
+.om-status-badge.om-offline{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.om-storage-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
+.om-storage-info{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text2)}
+.om-storage-warn{margin-top:6px;font-size:12px;font-weight:700;color:var(--amber)}
+.om-chapter-card{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg);margin-bottom:8px;transition:border-color .15s}
+.om-chapter-card.om-downloaded{border-color:var(--green-border);background:var(--green-bg)}
+.om-ch-icon{font-size:22px;flex-shrink:0;width:36px;text-align:center}
+.om-ch-info{flex:1;min-width:0}
+.om-ch-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.om-ch-sub{font-size:11px;color:var(--text3)}
+.om-chapter-card.om-downloaded .om-ch-sub{color:var(--green)}
+.om-ch-actions{flex-shrink:0}
+.om-btn{font-size:12px;font-weight:700;padding:8px 14px;border-radius:var(--radius-sm);border:1.5px solid;cursor:pointer;font-family:var(--font);transition:opacity .15s}
+.om-btn:disabled{opacity:.45;cursor:not-allowed}
+.om-btn-download{color:var(--accent);border-color:var(--accent);background:var(--accent-bg)}
+.om-btn-delete{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.om-progress-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.om-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600;color:var(--text2)}
+.om-btn-cancel{font-size:12px;font-weight:700;padding:5px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--red-border);color:var(--red);background:var(--red-bg);cursor:pointer;font-family:var(--font)}
+.om-progress-bar{height:8px;border-radius:50px;background:var(--bg3);overflow:hidden;margin-bottom:6px}
+.om-progress-fill{height:100%;border-radius:50px;background:var(--accent);transition:width .3s}
+.om-progress-pct{font-size:12px;color:var(--text3);font-weight:700;text-align:right}
+.dark .om-chapter-card{border-color:var(--border2)}
+.dark .om-chapter-card.om-downloaded{border-color:var(--green-border)}
 </style>
 <meta name="theme-color" content="#1e4db7">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1293,6 +1324,10 @@ html, body {
     <span style="font-size:18px;">⚙️</span>
     Settings
   </div>
+  <div class="nav-item" id="nav-offline" onclick="navTo('offline');closeSidebar()">
+    <span style="font-size:18px;">📶</span>
+    Offline Storage
+  </div>
   <div class="sb-section">Account</div>
   <div class="nav-item" onclick="openProfileModal()">
     <span style="font-size:18px;">👨‍⚕️</span>
@@ -1325,6 +1360,7 @@ html, body {
   <button class="hbtn" id="devAppearanceBtn" onclick="openDevAppearance()" title="Appearance" style="display:none">
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   </button>
+  <button class="hbtn" id="offlineHeaderBtn" onclick="navTo('offline')" title="Offline Storage" aria-label="Offline Storage" style="font-size:16px">📶</button>
 </div>
 <!-- Study Mode Indicator Bar -->
 <div class="study-mode-bar" id="studyModeBar">
@@ -1810,6 +1846,46 @@ html, body {
     <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;line-height:1.7">
       Bontrager 10th Edition book<br>
       <span id="statsFooter">— positions · — chapters</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OFFLINE STORAGE PAGE ═══ -->
+<div class="page" id="page-offline">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span>📶 Offline Storage</span>
+      <span id="omStatusBadge" class="om-status-badge">🟢 Online</span>
+    </div>
+
+    <!-- Storage usage info -->
+    <div class="om-storage-bar">
+      <div class="om-storage-info">
+        <span>💾 Space used by cached images</span>
+        <span id="omStorageUsage">Used: 0 MB</span>
+      </div>
+      <div id="omStorageWarn" style="display:none" class="om-storage-warn"></div>
+    </div>
+
+    <!-- Download progress -->
+    <div id="omProgressWrap" style="display:none" class="om-progress-wrap">
+      <div class="om-progress-header">
+        <span id="omProgressLabel">Downloading…</span>
+        <button class="om-btn-cancel" onclick="omCancelDownload()">✕ Cancel</button>
+      </div>
+      <div class="om-progress-bar">
+        <div id="omProgressFill" class="om-progress-fill" style="width:0%"></div>
+      </div>
+      <div id="omProgressText" class="om-progress-pct">0%</div>
+    </div>
+
+    <!-- Chapter list -->
+    <div class="settings-group-title">Chapters</div>
+    <div id="omChapterGrid"></div>
+
+    <div style="font-size:11px;color:var(--text3);padding:10px 0 20px;text-align:center">
+      Downloaded images are stored locally and available without internet.
     </div>
   </div>
 </div>
@@ -3550,7 +3626,7 @@ function navTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',offline:'📶 Offline Storage'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -3565,6 +3641,8 @@ function navTo(id){
   }
   // Build dev manager
   if(id==='dev-manager') buildDevManager();
+  // Refresh offline panel when navigating to it
+  if(id==='offline' && typeof omInit === 'function') omInit();
   window.scrollTo(0,0);
   // refresh stats on home
   if(id==='home') updateStats();
@@ -7731,10 +7809,14 @@ updateStats();
     </button>
   </div>
 </div>
+<script src="./db.js"></script>
+<script src="./offline-manager.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
+// Init offline manager after scripts are loaded
+if (typeof omInit === 'function') omInit();
 </script>
 </body>
 </html>
