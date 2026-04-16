@@ -1,0 +1,43 @@
+/* DARK MODE: force correct text colors */
+.dark .nav-item,
+.dark .ch-name,
+.dark .ch-sub,
+.dark .sb-user-name,
+.dark .sb-user-role,
+.dark .sb-section,
+.dark .ptitle,
+.dark .pos-title,
+.dark .desc-text,
+.dark .tech-label,
+.dark .tech-val,
+.dark .settings-row-label,
+.dark .settings-row-sub,
+.dark .settings-group-title,
+.dark .stat-l,
+.dark .hero h1,
+.dark .hero p,
+.dark .sec-card h2,
+.dark .sec-card p,
+.dark .q-text,
+.dark .score-title,
+.dark .score-sub,
+.dark .back-btn,
+.dark .page-back,
+.dark .htitle,
+.dark .hbtn,
+.dark .pos-section-title,
+.dark .edit-field label,
+.dark .pm-title,
+.dark .pm-sub,
+.dark .pm-role-name,
+.dark .pm-role-desc,
+.dark .modal-btn.secondary,
+.dark .score-btn.outline{
+  color:#e6edf5 !important;
+}
+.dark .nav-item{color:#8b98a8 !important}
+.dark .nav-item.active{color:#4d9eff !important}
+.dark .nav-item svg,.dark .hbtn svg{stroke:#9d9cb8}
+.dark .nav-item.active svg{stroke:var(--accent)}
+/* Dark mode AI table fix */
+.dark .ai-bubble.bot table,.dark .ai-bubble.bot [style*="border-radius:10px"] {background:var(--bg3)!important}

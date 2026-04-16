@@ -1,0 +1,10 @@
+body{font-family:var(--font);font-weight:var(--font-weight);background:var(--bg2);color:var(--text);font-size:var(--base-fs);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em}
+
+/* Animations */
+.page{animation:fadeIn 0.3s ease-in-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.nav-item:hover{transform:scale(1.02)}
+.back-btn:active{transform:scale(0.95)}
+.pos-img-wrap img{transition:transform 0.2s}
+.pos-img-wrap img:hover{transform:scale(1.05)}
+

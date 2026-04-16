@@ -1,9 +1,29 @@
-const CACHE_NAME = 'bontrager-v5';
+const CACHE_NAME = 'bontrager-v7';
 
 const FILES_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
+
+  // CSS files
+  './css/variables.css',
+  './css/base.css',
+  './css/components.css',
+  './css/layout.css',
+  './css/themes.css',
+  './css/pages/home.css',
+  './css/pages/learn.css',
+  './css/pages/quiz.css',
+  './css/pages/settings.css',
+
+  // JS files
+  './js/data.js',
+  './js/modules/storage.js',
+  './js/modules/utils.js',
+  './js/modules/navigation.js',
+  './js/modules/pages.js',
+  './js/modules/modals.js',
+  './js/app.js',
 
   // أيقونات PWA
   './icons/icon-72.png',
