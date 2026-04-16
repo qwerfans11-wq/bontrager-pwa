@@ -325,6 +325,7 @@ function viewPosition(position, chapterName, posIdx) {
     badgeEl.innerHTML = '<span class="badge badge-s">⭐ Special Position</span>';
   }
   
+  displayPositionImage(position.name);
   navTo('pos-view');
 }
 
