@@ -1,19 +1,24 @@
-// Function to display position photos and x-rays
-function displayImages(imageUrls) {
-    const imageContainer = document.getElementById('image-container');
-    imageContainer.innerHTML = ''; // Clear previous images
-
-    imageUrls.forEach(url => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = 'Position Photo or X-ray';
-        img.style.width = '100%'; // Set the width of the image
-        img.style.margin = '10px 0'; // Add some margin
-        // You can customize styles as needed
-        imageContainer.appendChild(img);
-    });
+// Returns the image path for a position name, or null if not found
+function getImagePath(posName) {
+  if (!posName || typeof POSITION_IMAGES === 'undefined') return null;
+  return POSITION_IMAGES[posName] || null;
 }
 
-// Example usage
-const imageUrls = ['url_to_position_photo_1', 'url_to_xray_1']; // Add actual URLs here
-displayImages(imageUrls);
+// Displays the positioning photo for a given position name
+function displayPositionImage(posName) {
+  const imgEl = document.getElementById('posImg');
+  const phEl = document.getElementById('posImgPh');
+  if (!imgEl || !phEl) return;
+
+  const path = getImagePath(posName);
+  if (path) {
+    imgEl.src = path;
+    imgEl.alt = posName;
+    imgEl.style.display = 'block';
+    phEl.style.display = 'none';
+  } else {
+    imgEl.src = '';
+    imgEl.style.display = 'none';
+    phEl.style.display = 'block';
+  }
+}
