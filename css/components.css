@@ -1,0 +1,72 @@
+/* Progress Bar */
+.progress-bar div{transition:width 0.5s ease}
+
+/* ── MODALS ── */
+.edit-modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,.55);z-index:800;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.edit-modal-overlay.open{display:flex}
+.edit-modal{background:var(--bg);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;padding:22px}
+.edit-modal h3{font-size:16px;font-weight:800;margin-bottom:18px;color:var(--text);letter-spacing:-.01em}
+.edit-field{margin-bottom:14px}
+.edit-field label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.edit-field input,.edit-field textarea,.edit-field select{width:100%;padding:11px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s}
+.edit-field input:focus,.edit-field textarea:focus{border-color:var(--accent)}
+.edit-field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.edit-opts{display:flex;flex-direction:column;gap:6px}
+.edit-opt-row{display:flex;gap:6px;align-items:center}
+.edit-opt-row input{flex:1}
+.correct-radio{width:18px;height:18px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
+.modal-actions{display:flex;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.modal-btn{flex:1;padding:13px;border-radius:50px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .15s,transform .1s;letter-spacing:.01em}
+.modal-btn.primary{background:linear-gradient(135deg,var(--accent),#0073e6);color:#fff;box-shadow:0 4px 14px rgba(0,87,184,.3)}
+.modal-btn.secondary{background:var(--bg2);color:var(--text2);border:1.5px solid var(--border)}
+.modal-btn.danger{background:var(--red);color:#fff}
+.modal-btn:active{opacity:.8;transform:scale(.98)}
+
+/* ── DEV LOGIN MODAL ── */
+.dev-login-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,.6);z-index:900;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.dev-login-overlay.open{display:flex}
+.dev-login-box{background:var(--bg);border-radius:var(--radius);width:calc(100% - 48px);max-width:340px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.dev-login-box h3{font-size:18px;font-weight:800;margin-bottom:4px;color:var(--text);letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.dev-login-box p{font-size:12px;color:var(--text3);margin-bottom:22px}
+.dev-login-field{margin-bottom:14px}
+.dev-login-field label{display:block;font-size:10.5px;font-weight:800;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+.dev-login-field input{width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:border-color .15s}
+.dev-login-field input:focus{border-color:var(--accent)}
+.dev-login-error{font-size:12px;color:var(--red);margin-bottom:10px;display:none;padding:8px 12px;background:var(--red-bg);border-radius:var(--radius-sm);border:1px solid var(--red-border)}
+.dev-login-error.show{display:block}
+.dev-login-actions{display:flex;gap:8px;margin-top:18px}
+
+/* ── CONFIRM DIALOG ── */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,.5);z-index:950;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--bg);border-radius:var(--radius);width:calc(100% - 48px);max-width:320px;padding:22px;box-shadow:0 16px 48px rgba(0,0,0,.18)}
+.confirm-box h4{font-size:15px;font-weight:800;margin-bottom:8px;color:var(--text)}
+.confirm-box p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+.confirm-actions{display:flex;gap:8px}
+
+/* ── PWA Install Banner ── */
+.pwa-banner{display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:var(--accent);color:#fff;border-radius:var(--radius);padding:12px 16px;z-index:600;box-shadow:0 8px 32px rgba(30,77,183,.4);align-items:center;gap:12px;animation:slideUp .3s ease}
+.pwa-banner.show{display:flex}
+.pwa-banner-text{flex:1;font-size:13px;font-weight:600;line-height:1.4}
+.pwa-banner-text small{display:block;font-size:11px;font-weight:400;opacity:.85;margin-top:2px}
+.pwa-install-btn{background:#fff;color:var(--accent);border:none;border-radius:50px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.pwa-dismiss-btn{background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+
+/* ── Image Zoom Overlay ── */
+.img-zoom-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:1000;align-items:center;justify-content:center;touch-action:none}
+.img-zoom-overlay.open{display:flex}
+.img-zoom-container{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none}
+.img-zoom-img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;will-change:transform;cursor:grab;user-select:none;-webkit-user-drag:none;transition:none}
+.img-zoom-img.dragging{cursor:grabbing}
+.img-zoom-close{position:fixed;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:1001;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .15s}
+.img-zoom-close:hover{background:rgba(255,255,255,.25)}
+.img-zoom-controls{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:1001}
+.img-zoom-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all .15s}
+.img-zoom-btn:hover{background:rgba(255,255,255,.28);transform:scale(1.08)}
+.img-zoom-hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.45);font-size:13px;font-weight:500;pointer-events:none;text-align:center;transition:opacity .5s}
+
+/* Tap-to-zoom cursor on images */
+.pos-img-wrap img,.xray-wrap img{cursor:zoom-in;transition:transform .1s}
+.pos-img-wrap img:active,.xray-wrap img:active{transform:scale(.98)}
+
