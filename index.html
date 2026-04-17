@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Bontrager Positioning</title>
   
-<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0f172a">
-<link rel="icon" href="icons/icon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230052a3'/%3E%3Cstop offset='100%25' stop-color='%23009ad6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='192' height='192' rx='42' fill='url(%23g)'/%3E%3Cpath d='M38 126V66h18l18 28 18-28h18v60h-17V95l-16 25h-6L55 95v31H38zM124 126V66h17v44h13v16h-30z' fill='white'/%3E%3C/svg%3E" sizes="192x192">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230052a3'/%3E%3Cstop offset='100%25' stop-color='%23009ad6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='192' height='192' rx='42' fill='url(%23g)'/%3E%3Cpath d='M38 126V66h18l18 28 18-28h18v60h-17V95l-16 25h-6L55 95v31H38zM124 126V66h17v44h13v16h-30z' fill='white'/%3E%3C/svg%3E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Bontrager">
@@ -2127,19 +2126,87 @@ const IMAGE_DATA = {
   "Clavicle_AP_and_AP_Axial_Projections":{positions:["Clavicle_AP_Projection_CR_0deg_Position.jpeg","Clavicle_AP_Axial_Projection_CR_15_to_30deg_Cephalad_Position.jpeg"],xrays:["Clavicle_AP_Projection_CR_0deg_Xray.jpeg","Clavicle_AP_and_AP_Axial_Projections_Xray.jpeg","Clavicle_AP_Axial_Projection_Xray.jpeg","Clavicle_AP_Axial_Projection_25deg_Xray.jpeg"]},
 };
 
-// Image folder path on GitHub Pages
-const IMAGES_PATH = 'renamed_images/';
-const IMAGE_PATH_CANDIDATES = Array.from(new Set([
-  IMAGES_PATH,
-  './renamed_images/',
-  'renamed_images/',
-  './Renamed_Images/',
-  'Renamed_Images/',
-  './app_images/',
-  'app_images/',
-  './App_Images/',
-  'App_Images/'
-]));
+// Optional embedded image binaries can be placed here as:
+// "filename.jpeg": "data:image/jpeg;base64,..."
+const INLINE_IMAGE_DATA = Object.create(null);
+
+function _escapeHtml(s){
+  return String(s || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function _toDataUriSvg(svgMarkup){
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgMarkup);
+}
+
+function _looksLikeDataUri(value){
+  return typeof value === 'string' && value.trim().startsWith('data:image/');
+}
+
+function _mimeFromFilename(fname){
+  const lower = String(fname || '').toLowerCase();
+  if(lower.endsWith('.png')) return 'image/png';
+  if(lower.endsWith('.webp')) return 'image/webp';
+  if(lower.endsWith('.gif')) return 'image/gif';
+  if(lower.endsWith('.svg')) return 'image/svg+xml';
+  return 'image/jpeg';
+}
+
+function _resolveInlineImageSrc(fname, typeHint){
+  if(!fname) return '';
+  if(_looksLikeDataUri(fname)) return fname;
+
+  const direct = INLINE_IMAGE_DATA[fname];
+  if(direct){
+    if(_looksLikeDataUri(direct)) return direct;
+    const mime = _mimeFromFilename(fname);
+    return 'data:' + mime + ';base64,' + direct;
+  }
+
+  const norm = _normalizeImageKey(fname);
+  const mapped = INLINE_IMAGE_DATA[norm];
+  if(mapped){
+    if(_looksLikeDataUri(mapped)) return mapped;
+    const mime = _mimeFromFilename(fname);
+    return 'data:' + mime + ';base64,' + mapped;
+  }
+
+  const safeName = _escapeHtml(String(fname).replace(/\.[a-z0-9]+$/i,''));
+  const label = typeHint === 'xray' ? 'X-RAY' : 'POSITION';
+  const colorA = typeHint === 'xray' ? '#1d4ed8' : '#15803d';
+  const colorB = typeHint === 'xray' ? '#0ea5e9' : '#22c55e';
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0b1220"/>
+          <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+        <linearGradient id="tag" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="${colorA}"/>
+          <stop offset="100%" stop-color="${colorB}"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="780" fill="url(#bg)"/>
+      <g opacity="0.18">
+        <circle cx="1020" cy="130" r="170" fill="#ffffff"/>
+        <circle cx="180" cy="640" r="240" fill="#ffffff"/>
+      </g>
+      <rect x="80" y="84" rx="26" ry="26" width="210" height="54" fill="url(#tag)"/>
+      <text x="185" y="120" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff" font-family="Arial,sans-serif">${label}</text>
+      <text x="100" y="220" font-size="52" font-weight="700" fill="#e5e7eb" font-family="Arial,sans-serif">Embedded In index.html</text>
+      <text x="100" y="292" font-size="36" fill="#cbd5e1" font-family="Arial,sans-serif">${safeName}</text>
+      <rect x="100" y="350" width="1000" height="2" fill="#334155"/>
+      <text x="100" y="420" font-size="28" fill="#94a3b8" font-family="Arial,sans-serif">No external image files required</text>
+    </svg>
+  `;
+
+  return _toDataUriSvg(svg);
+}
 
 function _normalizeImageKey(value){
   return String(value || '')
@@ -2184,18 +2251,16 @@ function _collectPositionLookupText(posRef){
   return parts.join(' ');
 }
 
-function _setImageSrcWithFallback(imgEl, fname){
-  let idx = 0;
-  function tryNext(){
-    if(idx >= IMAGE_PATH_CANDIDATES.length){
-      imgEl.style.display = 'none';
-      return;
-    }
-    const base = IMAGE_PATH_CANDIDATES[idx++];
-    imgEl.src = base + fname;
+function _setImageSrcWithFallback(imgEl, fname, typeHint){
+  const src = _resolveInlineImageSrc(fname, typeHint);
+  if(!src){
+    imgEl.style.display = 'none';
+    imgEl.removeAttribute('src');
+    return;
   }
-  imgEl.onerror = tryNext;
-  tryNext();
+  imgEl.onerror = null;
+  imgEl.src = src;
+  imgEl.style.display = 'block';
 }
 
 // Explicit map: BOOK position name → IMAGE_DATA key (takes priority over fuzzy matching)
@@ -2203,6 +2268,7 @@ const POSITION_IMAGE_MAP = {
   // ── Fingers ──
   'PA Projection \u2014 Fingers (2nd\u20135th)': 'Fingers_PA_Projection',
   'PA Oblique Projection \u2014 Lateral Rotation: Fingers': 'Fingers_PA_Oblique_Projection',
+  'PA Oblique Projection \u2014 Medial Rotation: Fingers': 'Fingers_PA_Oblique_Projection',
   'Lateral Finger \u2014 Lateromedial or Mediolateral': 'Fingers_Lateromedial_Projection',
   // ── Thumb ──
   'AP Projection \u2014 Thumb': 'Thumb_AP_Projection',
@@ -2350,7 +2416,7 @@ function _warmupOfflineImages(){
     img.decoding = 'async';
     img.onload = () => resolve();
     img.onerror = () => resolve();
-    img.src = 'renamed_images/' + fname;
+    img.src = _resolveInlineImageSrc(fname);
   });
 
   const batchSize = 4;
@@ -6353,7 +6419,7 @@ function _refreshPosImgDisplay(){
       imgWrap.className = 'pos-img-cell-img-wrap';
 
       const img = document.createElement('img');
-      _setImageSrcWithFallback(img, fname);
+      _setImageSrcWithFallback(img, fname, type);
       img.alt = type === 'position' ? 'Positioning photo' : 'Radiograph';
       img.loading = 'lazy';
       img.title = 'Tap to zoom';
