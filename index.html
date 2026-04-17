@@ -2052,7 +2052,6 @@ html, body {
   </div>
 </div>
 
-<script src="./index/reference_image_map.js"></script>
 <script>
 
 // ══════════════════════════════════════════════
@@ -2142,38 +2141,47 @@ const IMAGE_PATH_CANDIDATES = Array.from(new Set([
   'App_Images/'
 ]));
 
-let _refMapLoadPromise = null;
-function _ensureReferenceMapLoaded(){
-  const hasGlobal = (typeof REFERENCE_POSITION_IMAGES !== 'undefined') && REFERENCE_POSITION_IMAGES && Object.keys(REFERENCE_POSITION_IMAGES).length;
-  if(hasGlobal) return Promise.resolve(true);
-  if(_refMapLoadPromise) return _refMapLoadPromise;
+function _normalizeImageKey(value){
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'_')
+    .replace(/^_|_$/g,'');
+}
 
-  const candidates = [
-    './reference_image_map.json',
-    'reference_image_map.json',
-    './index/reference_image_map.json',
-    'index/reference_image_map.json',
-    './data/reference_image_map.json',
-    'data/reference_image_map.json'
-  ];
+function _collectPositionLookupText(posRef){
+  if(!posRef) return '';
+  if(typeof posRef === 'string') return posRef;
 
-  _refMapLoadPromise = (async()=>{
-    for(const url of candidates){
-      try{
-        const res = await fetch(url, {cache:'no-store'});
-        if(!res.ok) continue;
-        const data = await res.json();
-        const map = (data && data.map) ? data.map : data;
-        if(map && typeof map === 'object' && Object.keys(map).length){
-          window.REFERENCE_POSITION_IMAGES = map;
-          return true;
-        }
-      }catch(e){}
-    }
-    return false;
-  })();
+  const parts = [];
+  const push = (value) => {
+    if(value && typeof value === 'string') parts.push(value);
+  };
 
-  return _refMapLoadPromise;
+  push(posRef.name);
+  push(posRef.symbol);
+  push(posRef.code);
+  push(posRef.title);
+  push(posRef.alias);
+  push(posRef.desc);
+  push(posRef.description);
+  push(posRef.note);
+  push(posRef.notes);
+  push(posRef.summary);
+
+  if(posRef.info && typeof posRef.info === 'object'){
+    push(posRef.info.name);
+    push(posRef.info.symbol);
+    push(posRef.info.code);
+    push(posRef.info.title);
+    push(posRef.info.alias);
+    push(posRef.info.desc);
+    push(posRef.info.description);
+    push(posRef.info.note);
+    push(posRef.info.notes);
+    push(posRef.info.summary);
+  }
+
+  return parts.join(' ');
 }
 
 function _setImageSrcWithFallback(imgEl, fname){
@@ -2265,37 +2273,22 @@ const POSITION_IMAGE_MAP = {
 // Build lookup table: normalized position name -> IMAGE_DATA key
 const _imgKeyMap = (function(){
   const map = {};
-  function norm(s){
-    return s.toLowerCase()
-      .replace(/[^a-z0-9]+/g,'_')
-      .replace(/^_|_$/g,'');
-  }
   for(const key of Object.keys(IMAGE_DATA)){
-    map[norm(key)] = key;
+    map[_normalizeImageKey(key)] = key;
   }
   return map;
 })();
 
-function _getImagesForPos(posName){
-  if(!posName) return null;
-  // 0. Use high-accuracy reference mapping when available
-  if(typeof REFERENCE_POSITION_IMAGES !== 'undefined'){
-    const ref = REFERENCE_POSITION_IMAGES[posName];
-    if(ref && Array.isArray(ref.positions) && Array.isArray(ref.xrays) && ref.positions.length && ref.xrays.length){
-      return ref;
-    }
-  }
+function _getImagesForPos(posRef){
+  const lookupText = _collectPositionLookupText(posRef);
+  if(!lookupText) return null;
+  const lookupName = typeof posRef === 'string' ? posRef : (posRef && posRef.name) ? posRef.name : lookupText;
+
   // 1. Check explicit name mapping first (highest priority)
-  if(POSITION_IMAGE_MAP[posName] && IMAGE_DATA[POSITION_IMAGE_MAP[posName]]){
-    return IMAGE_DATA[POSITION_IMAGE_MAP[posName]];
+  if(POSITION_IMAGE_MAP[lookupName] && IMAGE_DATA[POSITION_IMAGE_MAP[lookupName]]){
+    return IMAGE_DATA[POSITION_IMAGE_MAP[lookupName]];
   }
-  // normalize the position name
-  function norm(s){
-    return s.toLowerCase()
-      .replace(/[^a-z0-9]+/g,'_')
-      .replace(/^_|_$/g,'');
-  }
-  const n = norm(posName);
+  const n = _normalizeImageKey(lookupText);
   // 2. Try exact match via normalized key map
   if(_imgKeyMap[n]) return IMAGE_DATA[_imgKeyMap[n]];
   // 3. Try partial matches (position name contains key or key contains position name)
@@ -2308,6 +2301,28 @@ function _getImagesForPos(posName){
     }
   }
   if(bestKey && bestScore >= 0.5) return IMAGE_DATA[bestKey];
+
+  // 4. Try token-based matching from the descriptive text
+  const tokens = lookupText.split(/[^a-z0-9]+/i).filter(Boolean).map(t => t.toLowerCase());
+  if(tokens.length){
+    let tokenBestKey = null;
+    let tokenBestScore = 0;
+    for(const [kn, key] of Object.entries(_imgKeyMap)){
+      const knParts = kn.split('_').filter(Boolean);
+      let score = 0;
+      for(const token of tokens){
+        if(token.length < 3) continue;
+        if(kn.includes(token) || token.includes(knParts[0] || token)) score += 1;
+      }
+      const normalizedScore = score / Math.max(tokens.length, knParts.length || 1);
+      if(normalizedScore > tokenBestScore){
+        tokenBestScore = normalizedScore;
+        tokenBestKey = key;
+      }
+    }
+    if(tokenBestKey && tokenBestScore >= 0.35) return IMAGE_DATA[tokenBestKey];
+  }
+
   return null;
 }
 
@@ -2315,12 +2330,9 @@ let _offlineImageWarmupStarted = false;
 function _warmupOfflineImages(){
   if(_offlineImageWarmupStarted) return;
   _offlineImageWarmupStarted = true;
-  const ref = (typeof REFERENCE_POSITION_IMAGES !== 'undefined' && REFERENCE_POSITION_IMAGES) ? REFERENCE_POSITION_IMAGES : null;
-  if(!ref || !Object.keys(ref).length) return;
-
   const queue = [];
   const seen = new Set();
-  for(const entry of Object.values(ref)){
+  for(const entry of Object.values(IMAGE_DATA)){
     const files = [];
     if(Array.isArray(entry.positions)) files.push(...entry.positions);
     if(Array.isArray(entry.xrays)) files.push(...entry.xrays);
@@ -6310,11 +6322,6 @@ function resetAppearance(){
 function _refreshPosImgDisplay(){
   if(!curPos) return;
 
-  // Load external reference map on demand if script file wasn't loaded on host.
-  if((typeof REFERENCE_POSITION_IMAGES === 'undefined' || !Object.keys(REFERENCE_POSITION_IMAGES||{}).length) && !_refMapLoadPromise){
-    _ensureReferenceMapLoaded().then(()=>{ if(curPos) _refreshPosImgDisplay(); });
-  }
-
   const img1  = document.getElementById('posImg');
   const img2  = document.getElementById('posImg2');
   const ph    = document.getElementById('posImgPh');
@@ -6322,7 +6329,7 @@ function _refreshPosImgDisplay(){
   const row   = document.getElementById('posImgRow');
 
   // ── 1. Try auto-images from IMAGE_DATA first (upper-limb positions) ──
-  const autoData = _getImagesForPos(curPos.name);
+  const autoData = _getImagesForPos(curPos);
   if(autoData && (autoData.positions.length || autoData.xrays.length)){
     // Hide legacy elements
     img1.style.display='none';
