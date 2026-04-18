@@ -1088,128 +1088,6 @@ function resetFontAppearanceDefaults(){
   }
 }
 
-// ══════════════════════════════════════════════
-// PWA — INSTALLABLE APP SUPPORT
-// ══════════════════════════════════════════════
-const _PWA_MANIFEST_URL='./manifest.webmanifest';
-const _PWA_APPLE_ICON='./icons/icon-180.png';
-const _PWA_FAVICON='./icons/favicon-32.png';
-
-function _pwaIsSecureContext(){
-  return location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1';
-}
-
-function _pwaInitManifest(){
-  const manifestLink=document.getElementById('pwaManifest');
-  if(manifestLink) manifestLink.setAttribute('href', _PWA_MANIFEST_URL);
-
-  const appleLinks=[...document.querySelectorAll('link[rel="apple-touch-icon"]')];
-  if(appleLinks.length){
-    appleLinks.forEach(link=>link.setAttribute('href', _PWA_APPLE_ICON));
-  } else {
-    const link=document.createElement('link');
-    link.rel='apple-touch-icon';
-    link.href=_PWA_APPLE_ICON;
-    document.head.appendChild(link);
-  }
-
-  const iconLink=document.querySelector('link[rel="icon"]');
-  if(iconLink) iconLink.setAttribute('href', _PWA_FAVICON);
-}
-
-function _pwaRegisterSW(){
-  if(!('serviceWorker' in navigator)) return;
-  if(!_pwaIsSecureContext()){
-    console.log('SW skipped: install requires HTTPS (or localhost).');
-    return;
-  }
-
-  navigator.serviceWorker.getRegistrations()
-    .then(regs=>Promise.all(regs.map(reg=>{
-      const url=reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || '';
-      if(url.startsWith('blob:')) return reg.unregister();
-      return Promise.resolve();
-    })))
-    .catch(()=>Promise.resolve())
-    .finally(()=>{
-      navigator.serviceWorker.register('./sw.js',{scope:'./'})
-        .then(()=>console.log('SW registered'))
-        .catch(e=>console.log('SW reg failed:', e.message));
-    });
-}
-
-// Install prompt handling
-let _pwaPrompt=null;
-const _PWA_DISMISSED='bontrager_pwa_dismissed_v1';
-
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();
-  _pwaPrompt=e;
-  try{
-    if(!localStorage.getItem(_PWA_DISMISSED)){
-      setTimeout(()=>{
-        const banner=document.getElementById('pwaBanner');
-        if(banner) banner.classList.add('show');
-      },3000);
-    }
-  }catch(err){}
-});
-
-function pwaInstall(){
-  if(_pwaPrompt){
-    _pwaPrompt.prompt();
-    _pwaPrompt.userChoice.then(result=>{
-      document.getElementById('pwaBanner')?.classList.remove('show');
-      _pwaPrompt=null;
-      if(result.outcome==='accepted') _showToast('Installing…','#15803d');
-    });
-    return;
-  }
-
-  if(!_pwaIsSecureContext()){
-    alert('Chrome install needs HTTPS (or localhost). Open the app from an HTTPS link, then try Install again.');
-    return;
-  }
-
-  alert('Install option not ready yet. In Chrome use: menu (⋮) -> Install app / Add to Home screen.');
-}
-
-function pwaDismiss(){
-  document.getElementById('pwaBanner')?.classList.remove('show');
-  try{localStorage.setItem(_PWA_DISMISSED,'1');}catch(e){}
-}
-
-// Add to homescreen instructions in Settings
-function _pwaShowInstructions(){
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isAndroid=/android/i.test(navigator.userAgent);
-
-  if(isIOS){
-    alert('Install on iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
-    return;
-  }
-
-  if(!_pwaIsSecureContext()){
-    alert('Chrome requires HTTPS for installation. Open this app from an HTTPS URL, not file://, then install.');
-    return;
-  }
-
-  if(isAndroid){
-    if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Android Chrome:\n1. Open menu (⋮)\n2. Tap "Install app" or "Add to Home screen"\n3. Tap "Install"'); }
-  } else {
-    if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Desktop (Chrome/Edge):\nUse the install icon in the address bar or menu -> Install app'); }
-  }
-}
-
-// Initialize PWA
-(function(){
-  try{
-    _pwaInitManifest();
-    _pwaRegisterSW();
-  }catch(e){console.log('PWA init error:',e);}
-})();
           {name:'Lateral Projection — Forearm (Lateromedial)',type:'routine',info:{desc:'True lateral of the radius and ulna. Patient seated at end of table, elbow flexed 90°. Drop shoulder to place entire upper limb on same horizontal plane. Rotate hand and wrist into true lateral position. Support hand to prevent motion, ensure distal radius and ulna are superimposed directly. For heavy muscular forearms, place support under hand and wrist to make radius and ulna parallel to IR. Note: to make best use of anode heel effect, place elbow at cathode end of x-ray beam.',cr:'Perpendicular to IR, directed to mid-forearm',ir:'35×43 cm (14×17 in) — portrait',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
           {name:'AP Elbow — Fully Extended',type:'routine',info:{desc:'AP projection of the elbow joint with arm fully extended. Patient seated at end of table, elbow fully extended, hand supinated. Align arm and forearm with long axis of IR, center elbow joint to center of IR. Patient leans laterally as necessary for true AP. Palpate humeral epicondyles to ensure interepicondylar plane is parallel to IR. CR to mid-elbow joint approximately ¾ inch (2 cm) distal to midpoint of line between epicondyles. Demonstrates distal humerus, elbow joint space, and proximal radius and ulna.',cr:'Perpendicular to IR, directed to mid-elbow joint (¾ inch distal to midpoint between epicondyles)',ir:'24×30 cm (10×12 in) — portrait; smallest available',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
           {name:'AP Elbow — Partial Flexion (Humerus Parallel)',type:'routine',info:{desc:'Alternate AP when elbow cannot be fully extended. Humerus parallel to IR position. Two AP projections required — one with humerus parallel (shown here) and one with forearm parallel. CR perpendicular to IR, directed to mid-elbow. Best visualizes distal humerus including epicondyles. NOTE: If elbow remains flexed near 90°, angle CR 10°–15° into elbow joint.',cr:'Perpendicular to IR, directed to mid-elbow joint (¾ inch distal to midpoint between epicondyles)',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
@@ -7699,9 +7577,53 @@ document.addEventListener('keydown', e => {
 const _PWA_MANIFEST_URL='./manifest.webmanifest';
 const _PWA_APPLE_ICON='./icons/icon-180.png';
 const _PWA_FAVICON='./icons/favicon-32.png';
+const _PWA_DISMISSED='bontrager_pwa_dismissed_v1';
+let _pwaPrompt=null;
+let _pwaFallbackTimer=0;
 
 function _pwaIsSecureContext(){
   return location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1';
+}
+
+function _pwaIsStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+}
+
+function _pwaIsFirefox(){
+  return /firefox/i.test(navigator.userAgent);
+}
+
+function _pwaCanShowBanner(){
+  if(_pwaIsStandalone()) return false;
+  try{
+    return !localStorage.getItem(_PWA_DISMISSED);
+  }catch(e){
+    return true;
+  }
+}
+
+function _pwaShowBanner(){
+  const banner=document.getElementById('pwaBanner');
+  if(banner) banner.classList.add('show');
+}
+
+function _pwaHideBanner(){
+  const banner=document.getElementById('pwaBanner');
+  if(banner) banner.classList.remove('show');
+}
+
+function _pwaSetInstallButtonLabel(){
+  const btn=document.querySelector('#pwaBanner .pwa-install-btn');
+  if(!btn) return;
+  if(_pwaPrompt){
+    btn.textContent='Install';
+    return;
+  }
+  if(_pwaIsFirefox()){
+    btn.textContent='How to Install';
+    return;
+  }
+  btn.textContent='Install';
 }
 
 function _pwaInitManifest(){
@@ -7732,62 +7654,72 @@ function _pwaRegisterSW(){
   navigator.serviceWorker.getRegistrations()
     .then(regs=>Promise.all(regs.map(reg=>{
       const url=reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || '';
-      if(url.startsWith('blob:')) return reg.unregister();
+      if(url.startsWith('blob:') || /\/service-worker\.js(\?|$)/i.test(url)) return reg.unregister();
       return Promise.resolve();
     })))
     .catch(()=>Promise.resolve())
     .finally(()=>{
-      navigator.serviceWorker.register('./sw.js',{scope:'./'})
+      navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'})
         .then(()=>console.log('SW registered'))
         .catch(e=>console.log('SW reg failed:', e.message));
     });
 }
 
-// Install prompt handling
-let _pwaPrompt=null;
-const _PWA_DISMISSED='bontrager_pwa_dismissed_v1';
+function _pwaScheduleFallbackBanner(){
+  clearTimeout(_pwaFallbackTimer);
+  if(!_pwaCanShowBanner()) return;
+
+  _pwaFallbackTimer=setTimeout(()=>{
+    if(_pwaPrompt || _pwaIsStandalone()) return;
+    _pwaSetInstallButtonLabel();
+    _pwaShowBanner();
+  }, 4200);
+}
 
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();
   _pwaPrompt=e;
-  try{
-    if(!localStorage.getItem(_PWA_DISMISSED)){
-      setTimeout(()=>{
-        const banner=document.getElementById('pwaBanner');
-        if(banner) banner.classList.add('show');
-      },3000);
-    }
-  }catch(err){}
+  if(_pwaCanShowBanner()){
+    _pwaSetInstallButtonLabel();
+    _pwaShowBanner();
+  }
+});
+
+window.addEventListener('appinstalled',()=>{
+  _pwaPrompt=null;
+  _pwaHideBanner();
 });
 
 function pwaInstall(){
   if(_pwaPrompt){
     _pwaPrompt.prompt();
     _pwaPrompt.userChoice.then(result=>{
-      document.getElementById('pwaBanner')?.classList.remove('show');
+      _pwaHideBanner();
       _pwaPrompt=null;
-      if(result.outcome==='accepted') _showToast('Installing…','#15803d');
+      _pwaSetInstallButtonLabel();
+      if(result.outcome==='accepted') _showToast('Installing...','#15803d');
     });
     return;
   }
 
-  if(!_pwaIsSecureContext()){
-    alert('Chrome install needs HTTPS (or localhost). Open the app from an HTTPS link, then try Install again.');
-    return;
-  }
-
-  alert('Install option not ready yet. In Chrome use: menu (⋮) -> Install app / Add to Home screen.');
+  _pwaShowInstructions();
 }
 
 function pwaDismiss(){
-  document.getElementById('pwaBanner')?.classList.remove('show');
+  _pwaHideBanner();
   try{localStorage.setItem(_PWA_DISMISSED,'1');}catch(e){}
 }
 
 // Add to homescreen instructions in Settings
 function _pwaShowInstructions(){
+  if(_pwaPrompt){
+    pwaInstall();
+    return;
+  }
+
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isAndroid=/android/i.test(navigator.userAgent);
+  const isEdge=/edg\//i.test(navigator.userAgent);
 
   if(isIOS){
     alert('Install on iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
@@ -7795,16 +7727,28 @@ function _pwaShowInstructions(){
   }
 
   if(!_pwaIsSecureContext()){
-    alert('Chrome requires HTTPS for installation. Open this app from an HTTPS URL, not file://, then install.');
+    alert('Install requires HTTPS (or localhost). Open this app from an HTTPS URL, then install.');
+    return;
+  }
+
+  if(_pwaIsFirefox()){
+    if(isAndroid){
+      alert('Firefox Android:\n1. Open menu (⋮)\n2. Tap "Add to Home screen"\n3. Confirm');
+    } else {
+      alert('Firefox desktop does not provide full PWA install UI for this app. Use Edge or Chrome to install it as an app.');
+    }
+    return;
+  }
+
+  if(isEdge){
+    alert('Microsoft Edge:\n1. Open menu (...)\n2. Apps -> Install this site as an app\n3. Click Install');
     return;
   }
 
   if(isAndroid){
-    if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Android Chrome:\n1. Open menu (⋮)\n2. Tap "Install app" or "Add to Home screen"\n3. Tap "Install"'); }
+    alert('Install on Android Chrome:\n1. Open menu (⋮)\n2. Tap "Install app" or "Add to Home screen"\n3. Tap "Install"');
   } else {
-    if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Desktop (Chrome/Edge):\nUse the install icon in the address bar or menu -> Install app'); }
+    alert('Install on Desktop (Chrome/Edge):\nUse the install icon in the address bar or menu -> Install app');
   }
 }
 
@@ -7813,6 +7757,8 @@ function _pwaShowInstructions(){
   try{
     _pwaInitManifest();
     _pwaRegisterSW();
+    _pwaSetInstallButtonLabel();
+    _pwaScheduleFallbackBanner();
   }catch(e){console.log('PWA init error:',e);}
 })();
 

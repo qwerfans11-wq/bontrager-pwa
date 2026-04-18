@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bontrager-v3-20260418';
+const CACHE_NAME = 'bontrager-v4-20260418';
 
 const APP_SHELL = [
   './',
