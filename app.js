@@ -1010,12 +1010,12 @@ function onFlashcardColorChange(){
 
 function initAppFont(){
   const savedFont = localStorage.getItem('appFontFamily');
-  const defaultInterFont = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-  const fontToApply = savedFont || defaultInterFont;
+  const defaultFont = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  const fontToApply = savedFont || defaultFont;
   const fontSelect = document.getElementById('fontSelect');
   if(fontSelect) fontSelect.value = fontToApply;
   setAppFont(fontToApply);
-  if(!savedFont) localStorage.setItem('appFontFamily', defaultInterFont);
+  if(!savedFont) localStorage.setItem('appFontFamily', defaultFont);
 
   const savedWeight = localStorage.getItem('appFontWeight');
   if(savedWeight){

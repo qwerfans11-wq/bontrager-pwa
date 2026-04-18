@@ -15,7 +15,7 @@
   --safe-bottom:env(safe-area-inset-bottom, 0px);
   --app-height:100vh;
   --sidebar-w:264px;
-  --font:Inter,'Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:'Inter','Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
   --font-weight:400;
   --base-fs:15px;
   --font-scale:1;
