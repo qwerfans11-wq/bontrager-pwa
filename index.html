@@ -1068,19 +1068,26 @@ function showPWAInstallBanner() {
   
   if (!banner) return;
   
-  // Show banner
+  // Reset and show banner with fresh slide-up animation
+  banner.classList.remove('hidden');
   banner.style.display = 'flex';
+  // Force reflow to restart CSS animation
+  void banner.offsetWidth;
   
   // Text based on platform
   let titleText = '📲 ثبّت التطبيق على هاتفك';
   let subtitleText = 'اتصال أسرع • يعمل بدون إنترنت • وصول فوري';
   
   if (_isIOS) {
-    titleText = '📲 أضف التطبيق إلى الشاشة الرئيسية (iOS)';
-    subtitleText = 'اضغط Share ثم Add to Home Screen';
+    titleText = '📲 أضف التطبيق للشاشة الرئيسية';
+    subtitleText = 'اضغط Share ثم "Add to Home Screen"';
+    if (button) button.textContent = 'كيفية التثبيت';
   } else if (_isAndroid) {
     titleText = '📲 ثبّت التطبيق على هاتفك';
     subtitleText = 'اتصال أسرع • يعمل بدون إنترنت • وصول فوري';
+    if (button) button.textContent = 'تثبيت الآن';
+  } else {
+    if (button) button.textContent = 'تثبيت الآن';
   }
   
   const titleEl = banner.querySelector('.pwa-install-title');
@@ -1091,16 +1098,20 @@ function showPWAInstallBanner() {
   
   console.log('✅ PWA install banner shown');
 
-  // Auto-hide after 5 seconds
+  // Auto-hide after 3 seconds
   setTimeout(function() {
     hidePWAInstallBanner();
-  }, 5000);
+  }, 3000);
 }
 
 function hidePWAInstallBanner() {
   const banner = document.getElementById('pwaInstallBannerMandatory');
   if (banner) {
-    banner.style.display = 'none';
+    banner.classList.add('hidden');
+    setTimeout(function() {
+      banner.style.display = 'none';
+      banner.classList.remove('hidden');
+    }, 400);
   }
 }
 
