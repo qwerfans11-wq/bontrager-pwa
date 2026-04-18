@@ -1088,146 +1088,128 @@ function resetFontAppearanceDefaults(){
   }
 }
 
-// Legacy empty aliases (never expose real values)
-const DEV_USERNAME='';const DEV_PASSWORD='';
+// ══════════════════════════════════════════════
+// PWA — INSTALLABLE APP SUPPORT
+// ══════════════════════════════════════════════
+const _PWA_MANIFEST_URL='./manifest.webmanifest';
+const _PWA_APPLE_ICON='./icons/icon-180.png';
+const _PWA_FAVICON='./icons/favicon-32.png';
 
-// ══════════════════════════════════════════════
-// DATA — BOOK
-// ══════════════════════════════════════════════
-const BOOK = {
-  chest:{
-    name:'Chest',icon:'🫁',
-    positions:[
-      {name:'PA Projection — Chest (Ambulatory)',type:'routine',info:{desc:'Standard PA chest — most common radiographic examination. Patient erect, feet slightly spread, weight equally distributed. Chin raised and resting against IR. Hands on lower hips, palms out, elbows partially flexed. Shoulders rotated forward against IR to move scapulae laterally clear of lung fields; shoulders depressed downward to move clavicles below the apices. Align midsagittal plane with CR and midline of IR. Ensure no rotation: place midcoronal plane parallel to IR. Top of IR approximately 1½ to 2 inches (4–5 cm) above shoulders on average patients. CR perpendicular to IR, centered to midsagittal plane at level of T7 — 7 to 8 inches (18–20 cm) below vertebra prominens (or to inferior angle of scapula). Collimate on four sides to area of lung fields: top border to level of vertebra prominens, lateral border to outer skin margins. Exposure on end of second full inspiration. Demonstrates both lungs from apices to costophrenic angles, air-filled trachea from T1 down, hilum markings, heart, great vessels, bony thorax. No rotation: both sternoclavicular joints equidistant from spine. Minimum 10 posterior ribs above diaphragm (11 on many patients). NOTE: For hypersthenic/broad-chested patients, place IR landscape.',cr:'Perpendicular to IR, to midsagittal plane at T7 (7–8 inches/18–20 cm below vertebra prominens or to inferior angle of scapula)',ir:'35×43 cm (14×17 in) — portrait or landscape for hypersthenic',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'PA Projection — Chest (On Stretcher if Patient Cannot Stand)',type:'routine',info:{desc:'PA chest for patients who cannot stand. Patient erect, seated on cart, legs over the edge. Arms around cassette unless a chest IR device is used (then position as for ambulatory patient). Shoulders rotated forward and downward. Ensure no rotation of thorax. Adjust height of IR so top of IR is about 1½ to 2 inches (4–5 cm) above top of shoulders and CR is at T7. If portable image receptor used because patient cannot be placed against wall bucky, place pillow or padding on lap to raise and support IR, keeping it against chest for minimum OID. CR perpendicular to IR, centered to midsagittal plane at T7 (7–8 inches below vertebra prominens or to inferior angles of scapulae). Cassette centered to level of CR. Collimate to area of lung fields; upper border to level of vertebra prominens. Exposure on second full inspiration. Use compression band or other means to ensure patient is stable and will not move during exposure. Radiograph should appear similar to ambulatory PA chest.',cr:'Perpendicular to IR, to midsagittal plane at T7 (7–8 inches/18–20 cm below vertebra prominens or to inferior angles of scapulae)',ir:'35×43 cm (14×17 in) — portrait or landscape',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Lateral Position — Chest (Ambulatory)',type:'routine',info:{desc:'Lateral chest — 90° perspective from PA. LEFT lateral preferred (left side against IR) to minimize cardiac magnification, unless pathology involves right side. Patient erect, weight evenly distributed on both feet. Arms raised above head, chin up. Center patient to CR and to IR anteriorly and posteriorly. Position in true lateral: coronal plane perpendicular, sagittal plane parallel to IR. Lower CR and IR slightly from PA if needed (increased OID of lower chest causes costophrenic angles to project lower). CR perpendicular, directed to midthorax at T7 (3–4 inches/7.5–10 cm below level of jugular notch). Collimate on four sides to area of lung fields (top border to level of vertebra prominens). Exposure at end of second full inspiration. True lateral: posterior ribs on far side projected ¼ to ½ inch (about 1 cm) posterior due to divergence at 72-inch SID — any greater separation indicates rotation. NOTE: midsagittal plane must be parallel to IR; for slender broad-shouldered patients, hips and lower thorax may not touch IR. Demonstrates entire lungs from apices to costophrenic angles, sternum anteriorly to posterior ribs and thorax posteriorly. Hilar region in approximate center of IR.',cr:'Perpendicular to IR, to midthorax at T7 (3–4 inches/7.5–10 cm below jugular notch)',ir:'35×43 cm (14×17 in) — portrait',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Alternative Lateral Positions — Chest (Wheelchair or Cart)',type:'routine',info:{desc:'Lateral chest for patients who cannot stand. ON CART: Patient seated on cart, legs over edge (ensure cart is locked). Arms crossed above head or holding arm support. Chin extended upward. ON WHEELCHAIR: Remove armrests if possible, or place pillow under smaller patients so armrests do not superimpose lower lungs. Turn patient in wheelchair to lateral position as close to IR as possible. Have patient lean forward; place support blocks behind back. Raise arms above head — patient holds support bar keeping arms high. Center patient to CR and to IR by checking anterior and posterior aspects of thorax; adjust CR and IR to level of T7. Ensure no rotation by viewing patient from tube position. CR perpendicular, directed to T7 (3–4 inches/8–10 cm below jugular notch). Top of IR approximately 1 inch (2.5 cm) above vertebra prominens. Collimate on four sides. Exposure at end of second full inspiration. NOTE: Always attempt completely erect position; if condition does not allow, raise head end of cart as nearly erect as possible with radiolucent support behind back.',cr:'Perpendicular to IR, to T7 (3–4 inches/8–10 cm below jugular notch)',ir:'35×43 cm (14×17 in) — portrait',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'AP Projection — Chest (Supine or Semierect)',type:'special',info:{desc:'AP chest for patients unable to stand — in department or as bedside portable. Patient supine on cart; raise head end to semierect if possible. Roll shoulders forward by rotating arms medially/internally. Place IR under or behind patient; align center of IR to CR (top of IR about 1½ inches/4–5 cm above shoulders). Center patient to CR and IR — check by viewing from top, near tube position. CR angled caudad to be perpendicular to long axis of sternum (generally ±5° caudad to prevent clavicles from obscuring apices). CR at T7, 3–4 inches (8–10 cm) below jugular notch. Collimate on four sides to area of lung fields. Exposure at end of second full inspiration. NOTES: Landscape IR recommended for large/hypersthenic/broad-chested patients to minimize lateral cutoff (requires accurate CR alignment with center of IR with only minimal caudal angle to prevent grid cutoff if grid used). For semierect position, use 72-inch (180-cm) SID if possible. Always place markers to indicate SID used and type of projection (AP supine or AP semierect). Three differences from PA: (1) heart appears larger due to increased magnification; (2) pleural effusion may obscure vascular lung markings; (3) only 8–9 posterior ribs visible above diaphragm.',cr:'CR caudad ±5° (perpendicular to long axis of sternum); to T7, 3–4 inches (8–10 cm) below jugular notch',ir:'35×43 cm (14×17 in) — portrait or landscape; landscape recommended for broad-chested patients',sid:'72 in (180 cm) for semierect if possible',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Lateral Decubitus Position (AP Projection) — Chest',type:'special',info:{desc:'Lateral decubitus chest for air-fluid levels. Cardiac board on cart or radiolucent pad under patient. Patient lying on RIGHT side for right lateral decubitus, on LEFT side for left lateral decubitus. FOR PLEURAL EFFUSION: suspected side should be DOWN (fluid gravitates). FOR PNEUMOTHORAX: affected side should be UP (air rises). Chin extended, both arms raised above head to clear lung field. Back of patient firmly against IR. Cart secured. Pillow under head. Knees flexed slightly; coronal plane parallel to IR; no body rotation. Adjust height of IR to center thorax to IR. Adjust patient and cart so midsagittal plane and T7 centered to CR (top of IR approximately 1 inch/2.5 cm above vertebra prominens). CR HORIZONTAL — directed to center of IR at T7, 3–4 inches (8–10 cm) inferior to jugular notch. Horizontal beam MANDATORY to show air-fluid level or pneumothorax. Collimate on four sides to area of lung fields. Exposure at end of second full inspiration. ALWAYS use decubitus marker indicating which side is down. NOTES: Anatomic side marker must correspond with patient\'s left or right body side and must be placed on IR before exposure — unacceptable to indicate side digitally or with marking pen after exposure.',cr:'Horizontal beam, perpendicular to IR, to T7 (3–4 inches/8–10 cm below jugular notch)',ir:'35×43 cm (14×17 in) — landscape (with respect to patient position)',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'AP Lordotic Projection — Chest',type:'special',info:{desc:'Lordotic projection to demonstrate lung apices free of clavicle superimposition — rules out calcifications and masses beneath the clavicles, frequently requested for reactivation (secondary) tuberculosis. Patient standing about 1 foot (30 cm) away from IR, leaning back with shoulders, neck, and back of head against IR. Both hands on hips, palms out; shoulders rolled forward. Center midsagittal plane to CR and to centerline of IR. Top of IR about 3 inches (7–8 cm) above shoulders on average patient. Palpate clavicles to ensure they are at level or above shoulders. CR perpendicular to IR, centered to midsternum (3–4 inches/9 cm below jugular notch). Collimate on four sides to area of lung fields. Exposure at end of second full inspiration. ALTERNATIVE: If patient is weak/unstable or unable to assume erect lordotic position, AP semiaxial projection taken supine — shoulders rolled forward, CR directed 15°–20° cephalad to midsternum. Demonstrates entire lung fields and clavicles. Clavicles should appear nearly horizontal and above or superior to apices, with medial aspects of clavicles superimposed by first ribs. Posterior ribs appear nearly horizontal superimposing anterior ribs.',cr:'Perpendicular to IR, to midsternum (3–4 inches/9 cm below jugular notch); Alternative supine: CR 15°–20° cephalad to midsternum',ir:'35×43 cm (14×17 in) — portrait or landscape',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Anterior Oblique Positions — RAO and LAO: Chest',type:'special',info:{desc:'Anterior oblique positions for pathology of lung fields, trachea, and mediastinal structures; determining size and contours of heart and great vessels. POSITIONING: Patient erect, rotated 45° — right anterior shoulder against IR for RAO; left anterior shoulder against IR for LAO. Arm nearest IR flexed, hand placed on hip palm out. Opposite arm raised to clear lung field, hand rested on head or chest unit, keeping arm as high as possible. Patient looking straight ahead, chin raised. Center patient to CR and IR as viewed from x-ray tube, with top of IR about 1 inch (2.5 cm) above vertebra prominens. CR perpendicular, directed to T7 (7–8 inches/8–10 cm below vertebra prominens). CR midway between midsagittal plane and lateral margin of thorax. Collimate on four sides. Exposure at end of second full inspiration. NOTES: For anterior oblique, side of interest generally is the side FARTHEST from the IR — RAO provides best visualization of LEFT lung; LAO provides best visualization of RIGHT lung. Certain heart/great vessel studies require 45°–60° rotation. 60° LAO best demonstrates trachea, carina, heart, and great vessels. Less rotation (15°–20°) may be valuable for visualization of various lung areas for possible pulmonary disease. EVALUATION: 45° rotation evidenced when distance from outer margin of ribs to vertebral column on side farthest from IR is approximately two times the distance of the side closest to IR.',cr:'Perpendicular to IR, to T7 (7–8 inches below vertebra prominens); CR midway between midsagittal plane and lateral margin of thorax',ir:'35×43 cm (14×17 in) — portrait',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Posterior Oblique Positions — RPO and LPO: Chest',type:'special',info:{desc:'Posterior oblique positions for same indications as anterior obliques — pathology of lung fields, trachea, and mediastinal structures; size and contours of heart and great vessels. NOTE: Posterior oblique positions show the same anatomy as the OPPOSITE anterior oblique — RPO corresponds to LAO position; LPO corresponds to RAO position. Posterior oblique provides best visualization of the side CLOSEST to the IR. ERECT POSITIONING: Patient rotated 45° (up to 60°) — right posterior shoulder against IR for RPO; left posterior shoulder against IR for LPO. Arm closest to IR raised, resting on head. Other arm placed on hip, palm out. Patient looking straight ahead. RECUMBENT POSITIONING: If patient cannot stand or sit, perform on table with supports under head and under elevated hip and shoulder. Top of IR about 1 inch (2 cm) above vertebra prominens or about 5 inches (12 cm) above jugular notch (2 inches/5 cm above shoulders). Thorax centered to CR and to IR. CR perpendicular to T7. CR midway between midsagittal plane and lateral margin of thorax. Collimate on four sides. Exposure after second full inspiration. NOTE: Due to increased magnification of anterior diaphragm, lung fields appear shorter on posterior oblique than anterior oblique. Heart and great vessels appear larger on posterior oblique because they are farther from the IR.',cr:'Perpendicular to IR, to T7; CR midway between midsagittal plane and lateral margin of thorax',ir:'35×43 cm (14×17 in) — portrait',sid:'180 cm (72 in)',kv:'110–125 kVp',resp:'End of second full inspiration'}},
-      {name:'Lateral Position — Upper Airway',type:'routine',info:{desc:'Lateral upper airway to investigate pathology of the air-filled larynx and trachea, including thyroid and thymus gland region and upper esophagus for opaque foreign object or contrast medium. Rules out epiglottitis (may be life-threatening for young child). Patient upright if possible, seated or standing in lateral position (may be R or L lateral; may be taken recumbent tabletop if necessary). Center upper airway to CR and center of IR (larynx and trachea lie anterior to cervical and thoracic vertebrae). Rotate shoulders posteriorly, arms hanging down, hands clasped behind back. Raise chin slightly, patient looks directly ahead. Adjust IR height to place top of IR at level of external auditory meatus (EAM) — the opening of the external ear canal. CR perpendicular to center of IR at level of C6 or C7, midway between laryngeal prominence of thyroid cartilage and jugular notch. Collimate to region of soft tissue of neck. Exposure during slow, deep inspiration to ensure air-filled trachea and upper airway. NOTE (neck region): Centering to laryngeal prominence (C5) with soft tissue lateral neck exposure if interest is primarily larynx and upper trachea. NOTE (distal larynx/trachea): If distal larynx and upper/midtrachea are primary area, lower IR and CR to place CR at upper jugular notch (T1–T2) with exposure factors approximately those for lateral chest. Use 72-inch SID to minimize magnification. Demonstrates larynx and trachea filled with air.',cr:'Perpendicular to center of IR at C6–C7, midway between laryngeal prominence and jugular notch',ir:'24×30 cm (10×12 in) — portrait',sid:'180 cm (72 in) to minimize magnification',kv:'75–85 kVp',resp:'Slow, deep inspiration'}},
-      {name:'AP Projection — Upper Airway',type:'routine',info:{desc:'AP upper airway to investigate pathology of air-filled larynx and trachea, thyroid and thymus gland region, and upper esophagus. Patient upright if possible, seated or standing with back of head and shoulders against IR (may be taken recumbent tabletop if necessary). Align midsagittal plane with CR and midline of grid or table. Raise chin so acanthiomeatal line is perpendicular to IR (line from acanthion — area directly under the nose — to meatus or EAM); patient looks directly ahead. Adjust IR height to place top of IR about 1–1½ inches (3–4 cm) below EAM. CR perpendicular to center of IR at level of T1–T2, about 1 inch (2.5 cm) above jugular notch. Collimate to region of soft tissue neck. Exposure during slow, deep inspiration to ensure filling of trachea and upper airway with air. NOTE (exposure): Approximately that of AP cervical or thoracic spine. NOTE (centering): Similar to lateral distal larynx and upper trachea position because most proximal area of larynx is not visualized on AP due to superimposed base of skull and mandible — more of trachea can be visualized. Demonstrates larynx and trachea from C3 to T4 filled with air and visualized through spine. No rotation: symmetric appearance of sternoclavicular joints. Use minimum SID of 40 inches (100 cm) to minimize magnification.',cr:'Perpendicular to center of IR at T1–T2, about 1 inch (2.5 cm) above jugular notch',ir:'24×30 cm (10×12 in) — portrait',sid:'40 in (100 cm) minimum to minimize magnification',kv:'75–85 kVp',resp:'Slow, deep inspiration'}},
-    ]
-  },
-  abdomen:{
-    name:'Abdomen',icon:'🫀',
-    positions:[
-      {name:'AP Projection — Supine Position (KUB)',type:'routine',info:{desc:'Standard supine AP — also called KUB (Kidneys, Ureters, Bladder). Most common abdominal image, performed without contrast media. Indications: bowel obstruction, neoplasms, calcifications, ascites, scout for contrast studies.\n\nPatient Position: Supine, midsagittal plane centered to midline. Arms at sides away from body. Legs BENT with support under knees (to lessen lordotic lumbar curvature).\n\nPart Position: Center of IR to level of iliac crests, bottom margin at symphysis pubis. No rotation — check both ASIS equidistant from tabletop.\n\nNOTES: Tall/asthenic patient may need two portrait IRs (one lower to include symphysis, one upper to include diaphragm). Broad/hypersthenic patient may need two landscape IRs with 1–2 inch (3–5 cm) overlap.\n\nEvaluation: Outline of liver, spleen, kidneys, psoas muscles, air-filled stomach and bowel, and symphysis pubis arch. No rotation: iliac wings, obturator foramina, and ischial spines symmetric. No motion: ribs and gas bubble margins sharp. Psoas muscle outlines visible.',cr:'Perpendicular to IR, directed to center of IR at level of iliac crest',ir:'35×43 cm (14×17 in) — portrait; two IRs for tall or broad patients',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration — allow ~1 second delay after expiration for involuntary bowel motion to cease'}},
-      {name:'PA Projection — Prone Position (Abdomen)',type:'special',info:{desc:'Face-down projection. Indications: bowel obstruction, neoplasms, calcifications, ascites, scout for contrast studies.\n\nNOTE: LESS DESIRABLE than AP if kidneys are primary interest — increased OID. However, tissue compression reduces part thickness and lowers exposure.\n\nPatient Position: Prone, midsagittal plane centered to midline of table. Legs extended with support under ankles. Arms up beside head; clean pillow provided.\n\nPart Position: No rotation of pelvis, shoulders, and thorax. Center of IR to iliac crest.\n\nNOTE: Tall asthenic patients may need two portrait IRs; broad hypersthenic/bariatric patients may need two landscape IRs.\n\nEvaluation: Outline of liver, spleen, kidneys, psoas muscles, bowel segments, and symphysis pubis arch. No rotation: iliac wings symmetric, sacroiliac joints and outer lower rib margins equidistant from spine. No motion.',cr:'Perpendicular to IR, directed to center of IR at level of iliac crest',ir:'35×43 cm (14×17 in) — portrait; two IRs for large patients',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration'}},
-      {name:'Lateral Decubitus Position (AP Projection) — Abdomen',type:'special',info:{desc:'Horizontal beam AP with patient on side. Indications: abdominal masses, air-fluid levels, possible intraperitoneal air. Small amounts of free intraperitoneal air best demonstrated on erect PA chest.\n\nIMPORTANT: Patient must be on side MINIMUM 5 minutes before exposure; 10–20 minutes preferred. LEFT lateral decubitus best visualizes free air near LIVER in right upper abdomen AWAY FROM gastric bubble.\n\nMarker: Arrow or marker indicating "up" side REQUIRED.\n\nPatient Position: Lateral recumbent on radiolucent pad/cardiac board firmly against table or vertical grid device (cart wheels locked). Knees partially flexed. Arms up near head; pillow provided.\n\nPart Position: Center of IR approximately 2 inches (5 cm) above iliac crest to include diaphragm. Ensure upside of abdomen clearly included.\n\nEvaluation: Air-filled bowel and air-fluid levels where present. Bilateral diaphragm included. No rotation: iliac wings symmetric. Horizontal beam mandatory.',cr:'Horizontal beam, directed 2 inches (5 cm) above level of iliac crest to center of IR — HORIZONTAL BEAM MANDATORY',ir:'35×43 cm (14×17 in) — landscape',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration — must include elevated (upside) of abdomen'}},
-      {name:'AP Projection — Erect Position (Abdomen)',type:'special',info:{desc:'Upright AP demonstrating air-fluid levels and free intraperitoneal air. Indications: abnormal masses, air-fluid levels, intraperitoneal air under diaphragm.\n\nPerform FIRST if patient is ambulatory or in wheelchair (erect position).\n\nMarker: ERECT marker required on IR.\n\nPatient Position: Upright, legs slightly spread, back against table or grid device. Arms at sides. Midsagittal plane centered to midline.\n\nPart Position: No rotation. Center IR approximately 2 inches (5 cm) above iliac crest to include diaphragm — top of IR at approximately axilla level.\n\nNOTE: Patient should be upright MINIMUM 5 minutes; 10–20 minutes preferred before exposure. If patient too weak, perform LATERAL DECUBITUS instead. For hypersthenic patients, two landscape IRs may be required.\n\nEvaluation: Air-fluid levels, both diaphragms included, free air as crescent under right hemidiaphragm away from gastric bubble (if present). Slightly less density than supine preferred.',cr:'Perpendicular to IR, directed approximately 2 inches (5 cm) above iliac crest to include diaphragm',ir:'35×43 cm (14×17 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration'}},
-      {name:'Dorsal Decubitus Position (Right or Left Lateral) — Abdomen',type:'special',info:{desc:'Patient supine with side against grid; uses horizontal CR. Indications: abnormal masses, accumulations of gas, air-fluid levels, aneurysms (dilation of artery/vein/heart), calcification of aorta or other vessels, umbilical hernia.\n\nNOTE: May be right or left lateral; appropriate R or L marker indicating side closest to IR required.\n\nPatient Position: SUPINE on radiolucent pad, side against table or vertical grid device (secure cart). Pillow under head, arms up beside head; support under partially flexed knees. Ensure neither patient nor cart is tilted.\n\nPart Position: Center of IR at iliac crest or 2 inches (5 cm) above to include diaphragm. Both ASIS equidistant from tabletop (no rotation). Adjust height to align midcoronal plane with centerline of IR.\n\nEvaluation: Diaphragm and lower abdomen included. Air-filled bowel with soft tissue detail in anterior abdomen and prevertebral regions. No rotation (superimposed posterior ribs and iliac wing borders). Lumbar vertebrae may appear underexposed. Close collimation important — increased scatter.',cr:'Horizontal CR to center of IR at iliac crest and/or 2 inches (5 cm) above — HORIZONTAL BEAM',ir:'35×43 cm (14×17 in) — landscape',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration — close collimation essential to reduce scatter'}},
-      {name:'Lateral Position — Abdomen',type:'special',info:{desc:'Lateral recumbent position for soft tissue masses and prevertebral region evaluation. Indications: abnormal soft tissue masses, umbilical hernia, prevertebral region for aortic aneurysms or calcifications, localization of foreign bodies.\n\nPatient Position: Lateral recumbent (right or left side), pillow for head. Elbows flexed, arms up, knees and hips partially flexed, PILLOW BETWEEN KNEES to maintain lateral position. Ensure patient is not tilted.\n\nPart Position: Align midcoronal plane with CR and midline of table. Pelvis and thorax in TRUE lateral position (no rotation).\n\nEvaluation: Diaphragm and lower abdomen included. Air-filled bowel visible in prevertebral and anterior regions. No rotation (superimposed posterior ribs and iliac wing borders). Lumbar vertebrae may appear about 50% underexposed — soft tissue detail must be visible anteriorly and in prevertebral region.',cr:'Perpendicular to table, centered at level of iliac crest to midcoronal plane',ir:'35×43 cm (14×17 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspended expiration'}},
-      {name:'Acute Abdominal Series — Acute Abdomen',type:'special',info:{desc:'Three-projection emergency series. Standard routine: (1) AP Supine Abdomen, (2) AP Erect Abdomen or Left Lateral Decubitus, (3) PA Chest.\n\nIndications: Ileus, mechanical bowel obstruction, ascites, perforated hollow viscus (free intraperitoneal air), intra-abdominal mass, postoperative evaluation.\n\nPerform ERECT images FIRST if patient arrives ambulatory.\n\nPA Chest included because chest technique best visualizes small amounts of free air under diaphragm.\n\nBreathing: Chest on FULL INSPIRATION; abdomen on EXPIRATION.\n\nNOTES: Left lateral decubitus replaces erect if patient cannot stand. Horizontal beam mandatory for air-fluid levels. Patient should be on side minimum 5 minutes before decubitus exposure. For pediatrics under 2–3 years, erect abdomen with Pigg-O-Stat preferred over decubitus.',cr:'Supine: to iliac crest. Erect/decubitus: 2 inches (5 cm) above iliac crest to include diaphragm',ir:'35×43 cm (14×17 in)',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp (abdomen); 110–125 kVp (PA chest)',resp:'Abdomen: suspended expiration. PA Chest: full inspiration'}},
-    ]
-  },
-  spine:{
-    name:'Spine',icon:'🦴',
-    subchapters:{
-      cervical:{
-        name:'Cervical Spine (Ch. 8)',icon:'🔵',
-        positions:[
-          {name:'AP Open Mouth Projection — C1 and C2 (Odontoid)',type:'routine',info:{desc:'Demonstrates C1–C2 and odontoid process through open mouth. WARNING: For trauma patients, do not remove cervical collar or move head/neck until cleared by physician.\n\nClinical Indications: Pathology (particularly fractures) involving C1 and C2; demonstrates odontoid (Jefferson) fractures.\n\nPatient Position: Supine or erect, arms at sides. Head on table surface with immobilization if needed.\n\nPart Position: Align midsagittal plane to CR. Adjust head so with mouth open, line from lower margin of upper incisors to base of skull (mastoid tips) is perpendicular to IR. Ensure no rotation of head. Open mouth wide as last step before exposure — instruct patient to keep tongue in lower jaw.\n\nNOTE: If upper odontoid is not demonstrated, perform Fuchs or Judd method.',cr:'Perpendicular to IR, directed through center of open mouth to C1–C2',ir:'18×24 cm (8×10 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspend respiration'}},
-          {name:'AP Axial Projection — Cervical Spine (C3–C7)',type:'routine',info:{desc:'Demonstrates C3 to T2 with intervertebral disk spaces. Clinical indications: Pathology of mid and lower cervical spine; clay shoveler\'s fracture, compression fractures, HNP, degenerative disease.\n\nPatient Position: Supine or erect, arms at sides.\n\nPart Position: Align midsagittal plane to CR. Adjust head so line from lower margin of upper incisors to base of skull (mastoid processes) is perpendicular to IR. Ensure no rotation of head or thorax.\n\nCR: 15° cephalad when supine or less lordosis; 20° cephalad when erect or more lordosis. Direct CR to enter at level of upper margin of thyroid cartilage to pass through C4.\n\nNOTE: Cephalad angulation directs beam between overlapping cervical vertebral bodies to better demonstrate intervertebral disk spaces.',cr:'15°–20° cephalad, directed to C4 (upper margin of thyroid cartilage)',ir:'18×24 cm or 24×30 cm — portrait',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspend respiration; patient should not swallow during exposure'}},
-          {name:'Anterior Oblique Positions (RAO/LAO) — Cervical Spine',type:'routine',info:{desc:'PREFERRED oblique for cervical spine — RAO and LAO reduce thyroid dose. Demonstrates intervertebral foramina and pedicles on the side CLOSEST to the IR.\n\nRAO = right foramina; LAO = left foramina.\n\nClinical Indications: Pathology involving intervertebral foramina; both right and left obliques should be taken for comparison.\n\nPatient Position: Erect preferred (sitting or standing); recumbent possible.\n\nPart Position: Rotate body and head into 45° oblique. Protract chin to prevent mandible from superimposing vertebrae. Elevate chin to place acanthiomeatal line (AML) parallel with floor.\n\nCR Anterior Oblique: 15°–20° CAUDAD to C4.',cr:'15°–20° caudad (anterior oblique RAO/LAO), directed to C4 (upper margin of thyroid cartilage)',ir:'24×30 cm (10×12 in) — portrait',sid:'40–72 inches (100–180 cm), longer SID recommended',kv:'70–85 kVp',resp:'Suspend respiration'}},
-          {name:'Posterior Oblique Positions (RPO/LPO) — Cervical Spine',type:'routine',info:{desc:'Demonstrates intervertebral foramina on side FARTHEST from IR.\n\nRPO = left foramina; LPO = right foramina.\n\nNote: Anterior obliques (RAO/LAO) preferred due to significantly lower thyroid dose.\n\nPatient Position: Erect preferred (sitting or standing); recumbent possible.\n\nPart Position: Rotate body and head into 45° oblique. Protract chin. Elevate chin to place AML parallel with floor.\n\nCR Posterior Oblique: 15°–20° CEPHALAD to C4.',cr:'15°–20° cephalad (posterior oblique RPO/LPO), directed to C4 (upper margin of thyroid cartilage)',ir:'24×30 cm (10×12 in) — portrait',sid:'40–72 inches (100–180 cm)',kv:'70–85 kVp',resp:'Suspend respiration'}},
-          {name:'Lateral Position (Erect) — Cervical Spine',type:'routine',info:{desc:'True lateral demonstrating all seven cervical vertebrae, zygapophyseal joints, and intervertebral spaces.\n\nClinical Indications: Pathology involving cervical spine; degenerative diseases including spondylosis and osteoarthritis.\n\nPatient Position: Erect lateral (sitting or standing), shoulder against vertical IR.\n\nPart Position: Align midcoronal plane to CR. Center IR to CR — top of IR about 1–2 inches (2.5–5 cm) above EAM. Depress shoulders (as last step before exposure). Elevate and protract chin to place AML parallel with floor and prevent mandible superimposition.\n\nNOTE: Adding 5–10 lb (2.3–4.5 kg) weights suspended from each wrist helps depress shoulders. Long 72-inch SID compensates for increased OID.',cr:'Perpendicular to IR, directed horizontally to C4 (upper margin of thyroid cartilage)',ir:'24×30 cm (10×12 in) — portrait',sid:'60–72 inches (150–180 cm)',kv:'70–85 kVp',resp:'Suspend respiration on full expiration (for maximum shoulder depression)'}},
-          {name:'Lateral Horizontal Beam — Trauma: Cervical Spine',type:'routine',info:{desc:'Emergency/trauma lateral using horizontal beam. WARNING: Do NOT remove cervical collar and do NOT move head or neck until authorized by physician.\n\nClinical Indications: Trauma — clay shoveler\'s fracture, compression fracture, hangman\'s fracture, odontoid fracture, teardrop burst fracture, subluxation.\n\nPatient Position: Supine on stretcher or radiographic table. Do NOT manipulate head or neck.\n\nPart Position: Support IR vertically against shoulder, or place stretcher next to vertical grid device. Top of IR about 1–2 inches above EAM. Depress shoulders.\n\nNOTE: Traction on arms to depress shoulders should only be done by qualified assistant and/or with physician consent.',cr:'Perpendicular to IR, directed horizontally to C4 (upper margin of thyroid cartilage)',ir:'24×30 cm (10×12 in) — portrait',sid:'60–72 inches (150–180 cm)',kv:'70–85 kVp',resp:'Suspend respiration on full expiration'}},
-          {name:'Cervicothoracic Lateral (Swimmer\'s Position) — Ch. 8',type:'special',info:{desc:'Demonstrates C5 to T3 when lower cervical/upper thoracic vertebrae are not visualized on lateral cervical or upper thoracic lateral.\n\nClinical Indications: Pathology of inferior cervical/superior thoracic spine; fractures and subluxation; used when C7–T1 not visualized on lateral cervical.\n\nPatient Position: Erect preferred (sitting or standing); recumbent if needed.\n\nPart Position: Arm and shoulder CLOSEST to IR raised up (flex elbow, rest forearm on head). Arm and shoulder FARTHEST from IR lowered and rotated slightly posterior to place remote humeral head posterior to vertebrae.\n\nNOTE: Slight caudad angulation of 3°–5° may be necessary. Optional breathing technique (low mA, 3–4 second exposure) if patient can remain immobilized.',cr:'Perpendicular to IR (or 3°–5° caudad); directed to T1 (1 inch above jugular notch anteriorly, at vertebra prominens posteriorly)',ir:'24×30 cm (10×12 in) — portrait',sid:'60–72 inches (150–180 cm)',kv:'75–95 kVp',resp:'Suspend respiration on full expiration'}},
-          {name:'Lateral Hyperflexion and Hyperextension — Cervical Spine',type:'special',info:{desc:'Functional study demonstrating anteroposterior vertebral mobility. WARNING: NEVER attempt on trauma patient until authorized by physician.\n\nClinical Indications: Functional study to demonstrate vertebral mobility; rule out "whiplash" type injury; follow-up after spinal fusion surgery.\n\nTwo images obtained: one in hyperflexion, one in hyperextension.\n\nHyperflexion: Depress chin until it touches the chest (or as much as tolerated). Do NOT allow patient to move forward — entire cervical spine must be on IR.\n\nHyperextension: Raise chin and tilt head back as much as possible. Do NOT allow patient to move backward.\n\nEvaluation: Hyperflexion — spinous processes well separated. Hyperextension — spinous processes in close proximity.',cr:'Perpendicular to IR, directed horizontally to C4',ir:'24×30 cm (10×12 in) — portrait',sid:'60–72 inches (150–180 cm)',kv:'70–85 kVp',resp:'Suspend respiration on full expiration'}},
-          {name:'AP/PA Projection for C1–C2 Dens — Fuchs/Judd Method',type:'special',info:{desc:'Special projections for superior portion of dens when not well visualized on AP open mouth.\n\nWARNING: Cervical spine must be cleared for fracture/subluxation before performing these projections.\n\nClinical Indications: Pathology involving dens and surrounding bony structures of C1 ring.\n\nAP (Fuchs Method): Patient supine. Elevate chin to bring mentomeatal line (MML) near perpendicular to tabletop. Ensure no rotation of head. CR parallel to MML, directed to inferior tip of mandible.\n\nPA (Judd Method — PREFERRED, lower thyroid dose): Patient prone. Chin resting on tabletop, extended to bring MML near perpendicular to table. CR parallel to MML.',cr:'Parallel to MML, directed to inferior tip of mandible (AP Fuchs) or equivalent (PA Judd)',ir:'18×24 cm (8×10 in) — landscape',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspend respiration'}},
-          {name:'AP Axial — Vertebral Arch (Pillars): Cervical Spine',type:'special',info:{desc:'Demonstrates posterior vertebral arch (articular pillars) of C4–C7 and spinous processes with whiplash-type injuries.\n\nWARNING: Do NOT remove cervical collar/move neck until authorized by physician.\n\nClinical Indications: Pathology/trauma involving posterior vertebral arch (pillars) of C4–C7 and spinous processes of cervicothoracic vertebrae.\n\nPatient Position: Supine, arms at side.\n\nPart Position: Align midsagittal plane to CR. Hyperextend neck if patient is able (see warning).\n\nCR: 20°–30° caudal, directed to lower margin of thyroid cartilage through C5.',cr:'20°–30° caudal, directed to lower margin of thyroid cartilage (C5)',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'70–85 kVp',resp:'Suspend respiration; patient must not swallow'}},
-        ]
-      },
-      thoracic:{
-        name:'Thoracic Spine (Ch. 8)',icon:'🟢',
-        positions:[
-          {name:'AP Projection — Thoracic Spine',type:'routine',info:{desc:'Demonstrates T1–T12 thoracic vertebral bodies, intervertebral disk spaces, and posterior ribs.\n\nClinical Indications: Pathology involving thoracic spine including compression fractures, subluxation, kyphosis.\n\nPatient Position: Supine preferred, arms at sides. If patient cannot tolerate supine, erect with arms at sides. Place patient so the more intense aspect of beam (cathode side, anode heel effect) is over the thoracolumbar region.\n\nPart Position: Align midsagittal plane to CR. Flex knees and hips to reduce thoracic curvature. Ensure no rotation.\n\nNOTE: Compensating filter useful for uniform brightness (thicker part toward upper vertebrae). Anode heel effect should be used — cathode end over thoracolumbar region.',cr:'Perpendicular to IR, directed to T7 (3–4 inches [8–10 cm] below jugular notch, or 1–2 inches [2.5–5 cm] below sternal angle)',ir:'35×43 cm (14×17 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'75–90 kVp',resp:'Suspend respiration on expiration (reduces air volume for more uniform brightness)'}},
-          {name:'Lateral Position — Thoracic Spine',type:'routine',info:{desc:'True lateral demonstrating thoracic vertebral bodies, intervertebral joint spaces, and foramina.\n\nClinical Indications: Compression fractures, subluxation, kyphosis. NOTE: For upper thoracic vertebrae (T1–T3), perform cervicothoracic (swimmer\'s) lateral in addition.\n\nPatient Position: Lateral recumbent or erect. If recumbent: head on pillow, knees flexed, arms at right angles to body with elbows flexed. Support waist so entire spine is near parallel to table.\n\nPart Position: Align posterior half of thorax (between midcoronal plane and posterior aspect) to CR and midline. Flex hips and knees with support between knees. Ensure no rotation of shoulders or pelvis.\n\nNOTE: Lead mat placed on table behind patient reduces scatter to IR. With orthostatic (breathing) technique: low mA and 2–3 second exposure.',cr:'Perpendicular to long axis of thoracic spine, directed to T7 (3–4 inches [8–10 cm] below jugular notch, or 7–8 inches [18–20 cm] below vertebra prominens)',ir:'35×43 cm (14×17 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'80–95 kVp',resp:'Slow breathing (orthostatic/breathing technique, 2–3 sec exposure) OR suspended expiration'}},
-          {name:'Anterior/Posterior Oblique Positions — Thoracic Spine',type:'special',info:{desc:'Demonstrates zygapophyseal joints of thoracic spine. Both right and left obliques taken for comparison.\n\nANTERIOR OBLIQUES (RAO/LAO) RECOMMENDED — significantly lower breast dose than posterior obliques.\n\nClinical Indications: Pathology involving zygapophyseal joints of thoracic spine.\n\nPatient Position: Lateral recumbent preferred, or erect.\n\nPart Position: Rotate body 20° from true lateral to create 70° oblique from table plane. Ensure equal rotation of shoulders and pelvis.\n\nPosterior oblique (RPO/LPO — recumbent): Arm nearest table up and forward; arm nearest tube down and posterior.\n\nAnterior oblique (LAO/RAO — recumbent): Arm nearest table down and posterior; arm nearest tube up and forward.\n\nNOTE: 70° rotation required (more than lumbar) to demonstrate thoracic zygapophyseal joints.',cr:'Perpendicular to IR, directed to T7',ir:'35×43 cm (14×17 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'80–95 kVp',resp:'Suspend respiration on expiration'},},
-        ]
-      },
-      lumbar:{
-        name:'Lumbar Spine (Ch. 9)',icon:'🟠',
-        positions:[
-          {name:'AP (or PA) Projection — Lumbar Spine',type:'routine',info:{desc:'Standard AP of the entire lumbar spine. Clinical indications: Pathology of lumbar vertebrae including fractures, scoliosis, neoplastic processes.\n\nPatient Position: Supine preferred (AP), arms at sides, head on pillow. Also possible prone (PA) or erect.\n\nPart Position: Align midsagittal plane to CR. FLEX KNEES AND HIPS to reduce lordotic curvature and bring back closer to table. Ensure no rotation of thorax or pelvis.\n\nCR Options:\n• 35×43 cm IR: Direct CR to level of iliac crest (L4–L5) — includes lumbar vertebrae, sacrum, and possibly coccyx.\n• 30×35 cm IR: Direct CR to L3 (1.5 inches [4 cm] above iliac crest) — includes primarily five lumbar vertebrae.\n\nNOTE: PA projection (prone) opens intervertebral disk spaces better as lumbar curvature coincides with diverging rays. PA also reduces ovarian dose by 25–30% in females.',cr:'Perpendicular to IR; CR to iliac crest (L4–L5) for 14×17 IR, or to L3 (1.5 in above crest) for 11×14 IR',ir:'35×43 cm (14×17 in) portrait OR 30×35 cm (11×14 in) portrait',sid:'Minimum 100 cm (40 in)',kv:'75–90 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'Posterior (or Anterior) Oblique Positions — Lumbar Spine',type:'routine',info:{desc:'45° oblique demonstrating zygapophyseal joints. Both right and left obliques required for comparison.\n\nClinical Indications: Defects of the pars interarticularis (spondylolysis). Scottie dog appearance — broken neck = spondylolysis.\n\nJoint Visualization Rule:\n• POSTERIOR oblique (RPO/LPO): DOWNSIDE (near-side) zygapophyseal joints shown\n  - RPO → Right (downside) joints\n  - LPO → Left (downside) joints\n• ANTERIOR oblique (RAO/LAO): UPSIDE joints shown\n  - RAO → Left (upside) joints\n  - LAO → Right (upside) joints\n\nPatient Position: Semisupine for RPO/LPO; semiprone for RAO/LAO.\n\nPart Position: Rotate body 45°; align spinal column to midline. Note: 50° oblique best for L1–L2; 30° for L5–S1. Ensure equal rotation of shoulders and pelvis. Support with radiolucent sponges.\n\nCR: CR perpendicular, to L3 at level of lower costal margin (1–2 inches [2.5–5 cm] above iliac crest) and 2 inches (5 cm) medial to upside ASIS.',cr:'Perpendicular to IR, directed to L3 (lower costal margin, 1–2 in above iliac crest and 2 in medial to upside ASIS)',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'75–90 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'Lateral Position — Lumbar Spine',type:'routine',info:{desc:'True lateral demonstrating intervertebral foramina, disk spaces, and vertebral bodies.\n\nClinical Indications: Fractures, spondylolisthesis, neoplastic processes, osteoporosis.\n\nPatient Position: Lateral recumbent, head on pillow, knees flexed with support between knees and ankles.\n\nPart Position: Align midcoronal plane to CR. Place radiolucent support under waist as needed to place long axis of spine near parallel to table (palpate spinous processes). Ensure no rotation of thorax or pelvis.\n\nCR Options:\n• 35×43 cm IR: Center to iliac crest (L4–L5)\n• 30×35 cm IR: Center to L3 (lower costal margin)\n\nNOTE: Female patients with wider pelvis and narrow thorax may require 5°–8° caudad angle even with support. Lead masking on tabletop behind patient is essential for digital imaging.',cr:'Perpendicular to IR (or 5°–8° caudad if needed); to L4–L5 (iliac crest) for 14×17 IR, or to L3 (lower costal margin) for 11×14',ir:'35×43 cm (14×17 in) portrait OR 30×35 cm portrait',sid:'Minimum 100 cm (40 in)',kv:'80–90 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'Lateral L5–S1 Position — Lumbar Spine',type:'routine',info:{desc:'Lateral spot projection focused specifically on the L5–S1 junction.\n\nClinical Indications: Spondylolisthesis involving L4–L5 or L5–S1 and other L5–S1 pathologies.\n\nPatient Position: Lateral recumbent, head on pillow, knees flexed with support between knees and ankles.\n\nPart Position: Align midcoronal plane to CR. Place radiolucent support under waist as needed. Ensure no rotation.\n\nCR: Perpendicular to IR with sufficient waist support, OR 5°–8° caudad with less support (to be parallel to interiliac line). Direct CR 1.5 inches (4 cm) inferior to iliac crest and 2 inches (5 cm) posterior to ASIS.\n\nNOTE: High amounts of scatter generated. Close collimation and lead masking on tabletop behind patient are ESSENTIAL, especially with digital imaging.',cr:'Perpendicular to IR (or 5°–8° caudad); directed 1.5 in (4 cm) inferior to iliac crest and 2 in (5 cm) posterior to ASIS',ir:'18×24 cm (8×10 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'85–95 kVp',resp:'Suspend respiration to limit patient motion'}},
-          {name:'AP Axial L5–S1 Projection — Lumbar Spine',type:'special',info:{desc:'Angled AP axial projection to "open" the L5–S1 joint space.\n\nClinical Indications: Pathology of L5–S1 and sacroiliac joints.\n\nNOTE: Lateral view of L5–S1 generally provides MORE information than the AP projection. This projection also may be performed prone with caudal angle.\n\nPatient Position: Supine, arms at sides, head on pillow, legs extended with support under knees.\n\nPart Position: Align midsagittal plane to CR. Ensure no rotation of thorax or pelvis.\n\nCR: Cephalad angle — 30° for MALE patients; 35° for FEMALE patients. Direct CR to the level of ASIS at midline of body.',cr:'30° cephalad (male) or 35° cephalad (female), directed to level of ASIS at midline',ir:'18×24 cm (8×10 in) — landscape',sid:'Minimum 100 cm (40 in)',kv:'80–90 kVp',resp:'Suspend respiration to limit patient motion'}},
-        ]
-      },
-      scoliosis:{
-        name:'Scoliosis Series (Ch. 9)',icon:'🔴',
-        positions:[
-          {name:'PA Projection — Scoliosis Series (Erect/Recumbent)',type:'routine',info:{desc:'Standard scoliosis series projection to determine degree and severity of scoliosis.\n\nPA STRONGLY RECOMMENDED over AP — approximately 90% reduction in dosage to breasts. Also reduces thyroid dose significantly.\n\nScoliosis generally requires repeat examinations over several years (especially pediatric).\n\nTwo PA projections taken for comparison: one erect and one recumbent.\n\nPatient Position: Erect (preferred) OR recumbent, arms at sides. Distribute weight evenly on both feet for erect.\n\nPart Position: Align midsagittal plane to CR. Ensure no rotation (scoliosis may make some rotation unavoidable). Place lower margin of IR a minimum of 1–2 inches (3–5 cm) below iliac crest.\n\nNOTE: Erect marker required for erect position. Compensating filters recommended for uniform density. Shielding essential — breast shields and gonadal shields.',cr:'Perpendicular to IR, centered to IR',ir:'35×43 cm (14×17 in) portrait; or 35×90 cm (14×36 in) for taller patients',sid:'40–60 inches (100–150 cm); longer SID required with larger IR',kv:'75–90 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'Lateral Position (Erect) — Scoliosis Series',type:'routine',info:{desc:'Erect lateral demonstrating degree of kyphosis or lordosis.\n\nClinical Indications: Spondylolisthesis, degree of kyphosis, or lordosis.\n\nPlace the CONVEX side of the curve against the IR.\n\nPatient Position: Erect lateral, arms elevated (or grasping support in front if unsteady). Place convex side of curve against IR.\n\nPart Position: Align midcoronal plane to CR. Ensure no rotation. Place lower margin of IR a minimum of 1–2 inches (2.5–5 cm) below level of iliac crests.\n\nNOTE: Erect marker required. Compensating filters recommended.',cr:'Perpendicular to IR, centered to IR',ir:'35×43 cm (14×17 in) portrait; or 35×90 cm (14×36 in) for taller patients',sid:'40–60 inches (100–150 cm)',kv:'85–95 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'PA Projection — Ferguson Method: Scoliosis Series',type:'special',info:{desc:'Assists in differentiating primary (deforming) curve from compensatory curve.\n\nTwo images obtained: (1) standard erect PA and (2) with foot/hip on convex side of curve elevated.\n\nClinical Indications: Differentiate primary deforming curve from compensatory curve.\n\nPatient Position: Erect (seated or standing), facing table, arms at sides. For second image: place 3–4 inch (8–10 cm) block under buttocks (if sitting) or under foot (if standing) on the convex side of the curve.\n\nNOTE: No support (compression band) is to be used. Patient should stand/sit with block unassisted. Perform PA projections to reduce dose to thyroid and breasts.',cr:'Perpendicular to IR, centered to IR',ir:'35×43 cm (14×17 in) portrait; or 35×90 cm (14×36 in)',sid:'40–60 inches (100–150 cm)',kv:'80–90 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'PA/AP Projection — Right and Left Bending: Scoliosis Series',type:'special',info:{desc:'Assessment of the range of motion of the vertebral column by lateral bending.\n\nClinical Indications: Assessment of range of motion of vertebral column.\n\nTwo images: maximum right bending and maximum left bending.\n\nPatient Position: Erect (preferred) or recumbent (supine), arms at sides.\n\nThe PELVIS must remain as stationary as possible — pelvis acts as fulcrum during changes in position.\n\nPart Position: With pelvis as fulcrum, ask patient to bend laterally (lateral flexion) as far as possible to either side. If recumbent, move both upper torso and legs to achieve maximum lateral flexion.\n\nNOTE: PA projections recommended when erect to reduce exposure to radiation-sensitive organs.',cr:'Perpendicular to IR, centered to IR',ir:'35×43 cm (14×17 in) portrait; or 35×90 cm (14×36 in)',sid:'40–60 inches (100–150 cm)',kv:'80–95 kVp',resp:'Suspend respiration on expiration'}},
-          {name:'Lateral Positions — Hyperextension and Hyperflexion: Spinal Fusion Series',type:'routine',info:{desc:'Functional study to demonstrate mobility/stability of the lumbar vertebral column after spinal fusion or with suspected instability.\n\nClinical Indications: Postoperative evaluation of spinal fusion; assessment of vertebral mobility.\n\nTwo images: maximum hyperextension and maximum hyperflexion.\n\nPatient Position: Erect lateral (sitting or standing), arms elevated or grasping support.\n\nFor HYPERFLEXION: Patient bends forward at waist as much as possible.\nFor HYPEREXTENSION: Patient bends backward at waist as much as possible.\n\nPatient should remain immobilized with each position maintained during exposure.',cr:'Perpendicular to IR, directed to L3 or appropriate level of interest',ir:'35×43 cm (14×17 in) — portrait',sid:'40–60 inches (100–150 cm)',kv:'80–90 kVp',resp:'Suspend respiration on expiration'},},
-        ]
-      },
-      sacrum_coccyx:{
-        name:'Sacrum & Coccyx (Ch. 9)',icon:'🟣',
-        positions:[
-          {name:'AP Axial Projection — Sacrum',type:'routine',info:{desc:'Demonstrates sacrum, SI joints, and L5–S1 intervertebral joint space.\n\nClinical Indications: Pathology of sacrum including fracture.\n\nNOTE: Urinary bladder should be emptied before procedure. Desirable to have lower colon free of gas and fecal material (cleansing enema as ordered by physician).\n\nFemale sacrum is generally shorter and wider than male sacrum.\n\nPatient Position: Supine, arms at sides, head on pillow, legs extended with support under knees.\n\nPart Position: Align midsagittal plane to CR. Ensure no rotation of pelvis.\n\nCR: 15° CEPHALAD, directed 2 inches (5 cm) superior to pubic symphysis.\n\nNOTES: May need to increase to 20° cephalad for greater posterior curvature of sacrum and pelvis. May also be performed prone (angle 15° caudad) if necessary.',cr:'15° cephalad (or 20° if needed); directed 2 inches (5 cm) superior to pubic symphysis',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'75–90 kVp',resp:'Suspend respiration to limit patient motion'}},
-          {name:'AP Axial Projection — Coccyx',type:'routine',info:{desc:'Demonstrates coccyx projected superior to pubis.\n\nClinical Indications: Pathology of coccyx including fracture.\n\nNOTE: Urinary bladder should be emptied before procedure. Lower colon should be free of gas and fecal material.\n\nPatient Position: Supine, arms at sides, head on pillow, legs extended with support under knees.\n\nPart Position: Align midsagittal plane to midline. Ensure no rotation of pelvis.\n\nCR: 10° CAUDAD, directed 2 inches (5 cm) superior to pubic symphysis.\n\nNOTES: May need to increase to 15° caudad with greater anterior curvature of coccyx (as evidenced on lateral). May also be performed prone (angle 10° cephalad) if necessary, with CR centered to coccyx (localized using greater trochanter).',cr:'10° caudad (or 15° if greater curvature); directed 2 inches (5 cm) superior to pubic symphysis',ir:'18×24 cm (8×10 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'75–85 kVp',resp:'Suspend respiration to limit patient motion'}},
-          {name:'Lateral Position — Sacrum and Coccyx',type:'routine',info:{desc:'Demonstrates sacrum, L5–S1 joint, and coccyx in a single lateral exposure.\n\nClinical Indications: Pathology of sacrum and coccyx including fracture.\n\nNOTE: Sacrum and coccyx commonly imaged together on the lateral — separate AP projections are required (different CR angles) but one lateral exposure can include both. This projection reduces gonadal doses.\n\nPatient Position: Lateral recumbent, head on pillow, knees flexed.\n\nPart Position: Align long axis of sacrum and coccyx to CR and midline. Ensure no rotation of thorax or pelvis.\n\nCR: Perpendicular to IR. Direct CR 3–4 inches (8–10 cm) posterior to ASIS (centering for sacrum).\n\nNOTE: High amounts of secondary and scatter radiation generated. Close collimation ESSENTIAL to reduce patient dose. If coccyx to be included, boomerang-type filter useful.',cr:'Perpendicular to IR, directed 3–4 inches (8–10 cm) posterior to ASIS',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'85–95 kVp',resp:'Suspend respiration to limit patient motion'},},
-        ]
-      },
-      sacroiliac:{
-        name:'Sacroiliac Joints (Ch. 9)',icon:'⚪',
-        positions:[
-          {name:'AP Axial Projection — Sacroiliac Joints',type:'routine',info:{desc:'Demonstrates both sacroiliac joints and L5–S1 intervertebral joint space.\n\nClinical Indications: Pathology of SI joint including fracture and joint dislocation or subluxation.\n\nPatient Position: Supine, arms at sides, head on pillow, legs extended with support under knees.\n\nPart Position: Align midsagittal plane to CR. Ensure no rotation of pelvis.\n\nCR: 30°–35° CEPHALAD — generally males 30°, females 35° (with increased lumbosacral curve). Direct CR to midline about 2 inches (5 cm) below level of ASIS.\n\nAlternative PA axial projection: If patient cannot assume supine position, perform PA (prone) with 30°–35° CAUDAD angle, centering to level of L4 or slightly above iliac crest.',cr:'30°–35° cephalad (30° male, 35° female); directed 2 in (5 cm) below ASIS at midline',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'80–95 kVp',resp:'Suspend respiration to limit patient motion'}},
-          {name:'Posterior Oblique Positions (LPO/RPO) — Sacroiliac Joints',type:'routine',info:{desc:'Demonstrates the SI joint on the upside (farthest from IR).\n\nClinical Indications: Pathology of SI joint; bilateral study for comparison.\n\nJoint Demonstrated Rule:\n• LPO → RIGHT (upside) SI joint\n• RPO → LEFT (upside) SI joint\n\nBilateral study: both LPO and RPO required.\n\nPatient Position: Supine, arms at sides, head on pillow.\n\nPart Position: Rotate body into 25°–30° posterior oblique with side of interest ELEVATED. Align joint of interest to CR and midline. Place support under elevated hip and flex elevated knee. Use angle-measuring device for consistent angles on both obliques.\n\nCR: Perpendicular to IR. Direct CR 1 inch (2.5 cm) medial to upside ASIS.\n\nNOTE: To demonstrate inferior/distal part of joint more clearly, CR may be angled 15°–20° cephalad.',cr:'Perpendicular to IR (or 15°–20° cephalad for distal joint); directed 1 inch (2.5 cm) medial to upside ASIS',ir:'24×30 cm (10×12 in) — portrait',sid:'Minimum 100 cm (40 in)',kv:'80–95 kVp',resp:'Suspend respiration to limit patient motion'},},
-        ]
-      }
+function _pwaIsSecureContext(){
+  return location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1';
+}
+
+function _pwaInitManifest(){
+  const manifestLink=document.getElementById('pwaManifest');
+  if(manifestLink) manifestLink.setAttribute('href', _PWA_MANIFEST_URL);
+
+  const appleLinks=[...document.querySelectorAll('link[rel="apple-touch-icon"]')];
+  if(appleLinks.length){
+    appleLinks.forEach(link=>link.setAttribute('href', _PWA_APPLE_ICON));
+  } else {
+    const link=document.createElement('link');
+    link.rel='apple-touch-icon';
+    link.href=_PWA_APPLE_ICON;
+    document.head.appendChild(link);
+  }
+
+  const iconLink=document.querySelector('link[rel="icon"]');
+  if(iconLink) iconLink.setAttribute('href', _PWA_FAVICON);
+}
+
+function _pwaRegisterSW(){
+  if(!('serviceWorker' in navigator)) return;
+  if(!_pwaIsSecureContext()){
+    console.log('SW skipped: install requires HTTPS (or localhost).');
+    return;
+  }
+
+  navigator.serviceWorker.getRegistrations()
+    .then(regs=>Promise.all(regs.map(reg=>{
+      const url=reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || '';
+      if(url.startsWith('blob:')) return reg.unregister();
+      return Promise.resolve();
+    })))
+    .catch(()=>Promise.resolve())
+    .finally(()=>{
+      navigator.serviceWorker.register('./sw.js',{scope:'./'})
+        .then(()=>console.log('SW registered'))
+        .catch(e=>console.log('SW reg failed:', e.message));
+    });
+}
+
+// Install prompt handling
+let _pwaPrompt=null;
+const _PWA_DISMISSED='bontrager_pwa_dismissed_v1';
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _pwaPrompt=e;
+  try{
+    if(!localStorage.getItem(_PWA_DISMISSED)){
+      setTimeout(()=>{
+        const banner=document.getElementById('pwaBanner');
+        if(banner) banner.classList.add('show');
+      },3000);
     }
-  },
-  upper_limb:{
-    name:'Upper Limb',icon:'💪',
-    subchapters:{
-      fingers_thumb:{
-        name:'Fingers & Thumb',icon:'👆',
-        positions:[
-          {name:'PA Projection — Fingers (2nd–5th)',type:'routine',info:{desc:'Posteroanterior projection. Patient seated at end of table, elbow flexed ~90°. Hand pronated with fingers extended. Center and align long axis of affected finger with long axis of IR. Separate adjoining fingers. CR directed to PIP joint. Demonstrates distal, middle, proximal phalanges, distal metacarpal, and associated joints. Used for fractures/dislocations of phalanges and pathologic processes.',cr:'Perpendicular to IR, directed to PIP (proximal interphalangeal) joint of affected finger',ir:'18×24 cm (8×10 in) — portrait; smallest IR available and collimate to area of interest',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Oblique Projection — Lateral Rotation: Fingers',type:'routine',info:{desc:'45° lateral oblique of affected finger. Hand placed at 45° lateral oblique (thumb side up) against foam wedge block. Finger parallel to IR. Used for all fingers 2nd–5th (lateral rotation recommended for 3rd, 4th, 5th digits). CR to PIP joint. Demonstrates oblique view of phalanges and associated joints.',cr:'Perpendicular to IR, directed to PIP joint of affected finger',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Oblique Projection — Medial Rotation: Fingers',type:'routine',info:{desc:'45° medial oblique of affected finger. Thumb side down, thumb and other fingers flexed to prevent superimposition. Places part closer to IR for improved definition. May be more painful for patient. Recommended especially for 2nd digit to minimize OID.',cr:'Perpendicular to IR, directed to PIP joint',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Lateral Finger — Lateromedial or Mediolateral',type:'routine',info:{desc:'True lateral of affected finger. Hand in lateral position (thumb side up) with finger fully extended. Use sponge block to support finger and prevent motion. Flex unaffected fingers. Ensure long axis of finger is parallel to IR. For 2nd digit, mediolateral is advised if patient can assume position (places 2nd digit in contact with IR for less OID). CR to PIP joint.',cr:'Perpendicular to IR, directed to PIP joint of affected finger',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'AP Projection — Thumb',type:'routine',info:{desc:'AP projection of the 1st digit. Patient seated facing table, arms extended in front, hand rotated internally (posteriorly) until posterior surface of thumb is in contact with IR. Immobilize other fingers with tape if necessary. Align thumb with long axis of IR. Center first MCP joint to CR. Thumb includes entire first metacarpal and trapezium. Note: this is an awkward position — demonstrate on yourself first for the patient.',cr:'Perpendicular to IR, to first MCP (metacarpophalangeal) joint',ir:'18×24 cm (8×10 in) — portrait; smallest available',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Oblique Projection — Medial Rotation: Thumb',type:'routine',info:{desc:'45° oblique of thumb (natural position). Patient seated at end of table, hand resting on IR. Abduct thumb slightly with palmar surface of hand in contact with IR — this naturally places thumb in 45° oblique position. Align long axis of thumb with long axis of IR. Center first MCP joint. CR to first MCP joint. Demonstrates distal and proximal phalanges, first metacarpal, trapezium, and associated joints in 45° oblique.',cr:'Perpendicular to IR, directed to first MCP joint',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Lateral Position — Thumb',type:'routine',info:{desc:'True lateral of the thumb. Start with hand pronated and thumb abducted, fingers slightly arched, then rotate hand slightly medially until thumb is in true lateral position. Sponge or support may be needed under lateral portion of hand. Entire lateral aspect of thumb in direct contact with IR. Center first MCP joint to CR. True lateral position evidenced by concave-shaped anterior surface of proximal phalanx and first metacarpal, relatively straight posterior surfaces.',cr:'Perpendicular to IR, directed to first MCP joint',ir:'18×24 cm (8×10 in) — portrait; landscape orientation also used',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'AP Axial Projection — Modified Robert Method: Thumb',type:'special',info:{desc:'Special AP axial projection demonstrating the first CMC (carpometacarpal) joint to rule out Bennett fracture. Patient seated parallel to end of table, hand and arm fully extended. Arm rotated internally until posterior aspect of thumb rests on IR. CR directed 15° proximally toward wrist, entering at first CMC joint. Lewis modification centers CR 10–15° proximal to MCP joint. Demonstrates base of first metacarpal and trapezium without superimposition.',cr:'CR directed 15° proximally toward wrist, entering at first CMC joint; OR Lewis modification: CR 10°–15° proximal to MCP joint',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Stress Thumb — Folio Method',type:'special',info:{desc:'Bilateral PA stress projection for ulnar collateral ligament injury (Skier\'s thumb). Both hands side by side rotated laterally into ±45° oblique, resulting in PA projection of both thumbs. Round spacer (roll of medical tape) placed between proximal thumb regions, rubber bands wrapped around distal thumbs. Immediately before exposure, patient pulls thumbs apart firmly and holds. Used for sprain or tearing of ulnar collateral ligament at MCP joint. A 20° MCP angle indicates tear.',cr:'Perpendicular to IR, directed to midway between the two MCP joints',ir:'18×24 cm (8×10 in) — landscape',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-        ]
-      },
-      hand:{
-        name:'Hand & Wrist',icon:'✋',
-        positions:[
-          {name:'PA Projection — Hand',type:'routine',info:{desc:'Posteroanterior projection of entire hand and wrist. Patient seated at end of table, hand and forearm extended. Hand pronated with palmar surface in contact with IR, fingers slightly spread. Align long axis of hand and forearm with long axis of IR, centered to IR. CR to third MCP joint. Demonstrates PA of entire hand and wrist, about 1 inch of distal forearm, and oblique view of thumb.',cr:'Perpendicular to IR, directed to 3rd MCP (metacarpophalangeal) joint',ir:'24×30 cm (10×12 in) — portrait; smallest IR available',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Oblique Projection — Hand',type:'routine',info:{desc:'45° lateral oblique of the hand. Pronate hand on IR, center and align long axis with IR. Rotate entire hand and wrist laterally 45° and support with radiolucent wedge or step block so all digits are separated and parallel to IR. CR to third MCP joint. 45° oblique evidenced by: midshafts of metacarpals should not overlap; some overlap of distal heads of 3rd, 4th, 5th metacarpals but no overlap of distal 2nd and 3rd.',cr:'Perpendicular to IR, directed to 3rd MCP joint',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'"Fan" Lateral Hand — Lateromedial',type:'routine',info:{desc:'Preferred lateral for hand when phalanges are area of interest. Rotate hand and wrist into lateral position with thumb side up. Spread fingers and thumb into a "fan" position and support each digit on radiolucent block. All digits including thumb must be separated and parallel to IR. Metacarpals remain in true lateral position (not rotated). CR to second MCP joint. Demonstrates phalanges in lateral position with joint spaces open.',cr:'Perpendicular to IR, directed to 2nd MCP joint',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Lateral Hand in Extension — Lateromedial',type:'special',info:{desc:'Alternative to fan lateral for localization of foreign bodies or anterior/posterior displaced fractures of metacarpals. Rotate hand and wrist (thumb side up) into true lateral position. Extend fingers and thumb and support against radiolucent block. All fingers and metacarpals superimposed directly for true lateral. CR to second to fifth MCP joints. True lateral evidenced by superimposition of radius and ulna distally and metacarpals.',cr:'Perpendicular to IR, directed to 2nd–5th MCP joints',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Lateral Hand in Flexion — Lateromedial',type:'special',info:{desc:'Alternative lateral; may be less painful for injured patients. Flex fingers into natural flexed position with thumb lightly touching first finger, maintaining true lateral position. CR to second to fifth MCP joints. Same indications as lateral in extension but may be preferable for patient comfort.',cr:'Perpendicular to IR, directed to 2nd–5th MCP joints',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'AP Axial Hand — Brewerton Method',type:'special',info:{desc:'Special projection to evaluate early rheumatoid arthritis at 2nd–5th MCP joints (detecting slight erosion of metacarpal heads). May also demonstrate fractures of base of 4th and 5th metacarpals. Patient standing at end of table, hand supinated. Keeping fingers in contact with IR, flex hand to create 65° angle between dorsum of hand and IR. Extend fingers, slightly separated and parallel to IR. Abduct thumb. CR angled 15° proximally toward ulna, directed to third MCP joint.',cr:'CR angled 15° proximally toward ulna, directed to 3rd MCP joint',ir:'24×30 cm (10×12 in) — portrait; 35×43 cm for bilateral study — landscape',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Bilateral AP Oblique Hand — Norgaard Method',type:'special',info:{desc:'Bilateral AP oblique of both hands. Demonstrates early erosive changes of rheumatoid arthritis on the radial aspects of the proximal phalanges of the 2nd through 5th digits bilaterally. Both hands placed side by side in 45° lateral oblique. CR perpendicular directed to center of both hands. IR 35×43 cm landscape.',cr:'Perpendicular to IR, directed to center of both hands',ir:'35×43 cm — landscape',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Wrist',type:'routine',info:{desc:'Posteroanterior projection of the wrist (also called AP wrist). Patient seated at end of table, drop shoulder so shoulder, elbow, and wrist are on same horizontal plane. Align and center long axis of hand and wrist to IR with carpal area centered to CR. With hand pronated, arch hand slightly to place wrist and carpal area in close contact with IR. Demonstrates midmetacarpals, proximal metacarpals, carpals, distal radius, ulna, associated joints, and soft tissues including fat pads and fat stripes.',cr:'Perpendicular to IR, directed to midcarpal area',ir:'18×24 cm (8×10 in) — portrait; smallest available',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Alternative AP Projection — Wrist',type:'special',info:{desc:'Alternative AP wrist projection used when PA position cannot be achieved or when department protocol requests AP comparison. Patient seated at end of table with shoulder, elbow, and wrist on same horizontal plane. Hand supinated with posterior wrist in contact with IR. Align long axis of forearm and wrist to IR and center midcarpal area to CR. Demonstrates distal radius and ulna, proximal metacarpals, and carpal bones in AP orientation.',cr:'Perpendicular to IR, directed to midcarpal area',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Oblique Wrist — Lateral Rotation',type:'routine',info:{desc:'45° lateral rotation oblique of the wrist. From pronated position, rotate wrist and hand laterally 45°. Place 45° support under thumb side of hand OR partially flex fingers so fingertips rest lightly on IR. CR to midcarpal area. Demonstrates trapezium and scaphoid well with only slight superimposition of other carpals on their medial aspects. Also demonstrates distal radius, ulna, carpals, and midmetacarpal area.',cr:'Perpendicular to IR, directed to midcarpal area',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'60–70 kVp',resp:'N/A'}},
-          {name:'Lateromedial Wrist',type:'routine',info:{desc:'True lateral projection of the wrist. Patient seated at end of table, arm and forearm resting on table. Place wrist and hand on IR in thumb-up lateral position. Shoulder, elbow, and wrist on same horizontal plane. Adjust hand and wrist into true lateral position with fingers comfortably extended. True lateral evidenced by: ulnar head superimposed over distal radius; proximal 2nd–5th metacarpals all aligned and superimposed. Demonstrates distal radius and ulna, carpals, midmetacarpal area.',cr:'Perpendicular to IR, directed to midcarpal area',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'60–70 kVp',resp:'N/A'}},
-          {name:'PA and PA Axial Scaphoid — Ulnar Deviation',type:'special',info:{desc:'WARNING: Complete routine wrist series before this projection. PA with ulnar deviation for possible scaphoid fractures. Position wrist as for PA, then gently evert hand (move toward ulnar side) as far as patient can tolerate without lifting or rotating distal forearm. CR angled 10–15° proximally toward elbow (perpendicular to long axis of scaphoid). Center CR to scaphoid located ¾ inch (2 cm) distal and medial to radial styloid process. Scaphoid demonstrated clearly without foreshortening.',cr:'CR angled 10°–15° proximally toward elbow, centered to scaphoid (¾ inch distal and medial to radial styloid)',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Scaphoid — Modified Stecher Method',type:'special',info:{desc:'Alternative scaphoid projection. Place hand and wrist palm down on IR with hand elevated on 20° angle sponge. Wrist in direct contact with IR. Gently evert or turn hand outward (ulnar side) unless contraindicated. CR perpendicular to IR directed to scaphoid. Stecher indicated that elevation of hand 20° places scaphoid parallel to IR without CR angle. Alternative: patient clenches fist with ulnar deviation.',cr:'Perpendicular to IR, directed to scaphoid (¾ inch [2 cm] distal and medial to radial styloid)',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'PA Radial Deviation Wrist',type:'special',info:{desc:'PA wrist with radial deviation (hand moved toward thumb/radial side). From PA position, gently invert (move medially toward thumb side) as far as patient can tolerate without lifting or rotating distal forearm. CR perpendicular to midcarpal area. Opens interspaces and best demonstrates carpals on ulnar (medial) side of wrist: hamate, pisiform, triquetrum, and lunate.',cr:'Perpendicular to IR, directed to midcarpal area',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Carpal Canal — Tangential (Gaynor-Hart Method)',type:'special',info:{desc:'Superoinferior (inferosuperior) tangential projection of carpal tunnel. WARNING: Complete routine series first. Patient seated, wrist and hand on IR palm down. Hyperextend wrist (dorsiflex) as far as possible using tape or band, until long axis of metacarpals and fingers are as near vertical (90° to forearm) as possible. Rotate entire hand and wrist about 10° internally (toward radial side) to prevent superimposition of pisiform and hamate. CR angled 25–30° proximally to long axis of hand, directed 1 inch (2–3 cm) distal to base of 3rd metacarpal (center of palm). Demonstrates pisiform, hamulus process of hamate, scaphoid, capitate, and trapezium in tunnel-like arrangement.',cr:'CR angled 25°–30° proximally to long axis of hand, directed to center of palm (1 inch distal to base of 3rd metacarpal)',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-          {name:'Carpal Bridge — Tangential Wrist',type:'special',info:{desc:'Tangential projection of dorsal aspect of carpal bones. WARNING: Complete routine series first. Patient stands or sits at end of table then leans over and places dorsal surface of hand (palm upward) on IR. Center dorsal aspect of carpals to IR. Gently flex wrist as far as patient can tolerate or until hand and forearm form as near 90° angle as possible. CR angled 45° distally to long axis of forearm, directed to midpoint of distal forearm about 1½ inches (4 cm) proximal to wrist joint. Demonstrates tangential view of dorsal aspect of scaphoid, lunate, and triquetrum.',cr:'CR angled 45° distally to long axis of forearm, directed to midpoint of distal forearm ~1½ inches proximal to wrist',ir:'18×24 cm (8×10 in) — portrait',sid:'100 cm (40 in)',kv:'55–65 kVp',resp:'N/A'}},
-        ]
-      },
-      forearm:{
-        name:'Forearm & Elbow',icon:'🦾',
-        positions:[
-          {name:'AP Projection — Forearm',type:'routine',info:{desc:'AP projection of the radius and ulna. Patient seated at end of table, hand and arm fully extended and palm up (supinated). Drop shoulder to place entire upper limb on same horizontal plane. Align and center forearm to long axis of IR ensuring both wrist and elbow joints are included. Patient leans laterally as necessary for true frontal position. Palpate medial and lateral epicondyles to ensure they are same distance from IR. Demonstrates entire radius and ulna in AP with proximal row carpals and distal humerus.',cr:'Perpendicular to IR, directed to mid-forearm',ir:'35×43 cm (14×17 in) — portrait; use largest IR needed to include both joints',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
+  }catch(err){}
+});
+
+function pwaInstall(){
+  if(_pwaPrompt){
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(result=>{
+      document.getElementById('pwaBanner')?.classList.remove('show');
+      _pwaPrompt=null;
+      if(result.outcome==='accepted') _showToast('Installing…','#15803d');
+    });
+    return;
+  }
+
+  if(!_pwaIsSecureContext()){
+    alert('Chrome install needs HTTPS (or localhost). Open the app from an HTTPS link, then try Install again.');
+    return;
+  }
+
+  alert('Install option not ready yet. In Chrome use: menu (⋮) -> Install app / Add to Home screen.');
+}
+
+function pwaDismiss(){
+  document.getElementById('pwaBanner')?.classList.remove('show');
+  try{localStorage.setItem(_PWA_DISMISSED,'1');}catch(e){}
+}
+
+// Add to homescreen instructions in Settings
+function _pwaShowInstructions(){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid=/android/i.test(navigator.userAgent);
+
+  if(isIOS){
+    alert('Install on iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+    return;
+  }
+
+  if(!_pwaIsSecureContext()){
+    alert('Chrome requires HTTPS for installation. Open this app from an HTTPS URL, not file://, then install.');
+    return;
+  }
+
+  if(isAndroid){
+    if(_pwaPrompt){ pwaInstall(); }
+    else{ alert('Install on Android Chrome:\n1. Open menu (⋮)\n2. Tap "Install app" or "Add to Home screen"\n3. Tap "Install"'); }
+  } else {
+    if(_pwaPrompt){ pwaInstall(); }
+    else{ alert('Install on Desktop (Chrome/Edge):\nUse the install icon in the address bar or menu -> Install app'); }
+  }
+}
+
+// Initialize PWA
+(function(){
+  try{
+    _pwaInitManifest();
+    _pwaRegisterSW();
+  }catch(e){console.log('PWA init error:',e);}
+})();
           {name:'Lateral Projection — Forearm (Lateromedial)',type:'routine',info:{desc:'True lateral of the radius and ulna. Patient seated at end of table, elbow flexed 90°. Drop shoulder to place entire upper limb on same horizontal plane. Rotate hand and wrist into true lateral position. Support hand to prevent motion, ensure distal radius and ulna are superimposed directly. For heavy muscular forearms, place support under hand and wrist to make radius and ulna parallel to IR. Note: to make best use of anode heel effect, place elbow at cathode end of x-ray beam.',cr:'Perpendicular to IR, directed to mid-forearm',ir:'35×43 cm (14×17 in) — portrait',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
           {name:'AP Elbow — Fully Extended',type:'routine',info:{desc:'AP projection of the elbow joint with arm fully extended. Patient seated at end of table, elbow fully extended, hand supinated. Align arm and forearm with long axis of IR, center elbow joint to center of IR. Patient leans laterally as necessary for true AP. Palpate humeral epicondyles to ensure interepicondylar plane is parallel to IR. CR to mid-elbow joint approximately ¾ inch (2 cm) distal to midpoint of line between epicondyles. Demonstrates distal humerus, elbow joint space, and proximal radius and ulna.',cr:'Perpendicular to IR, directed to mid-elbow joint (¾ inch distal to midpoint between epicondyles)',ir:'24×30 cm (10×12 in) — portrait; smallest available',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
           {name:'AP Elbow — Partial Flexion (Humerus Parallel)',type:'routine',info:{desc:'Alternate AP when elbow cannot be fully extended. Humerus parallel to IR position. Two AP projections required — one with humerus parallel (shown here) and one with forearm parallel. CR perpendicular to IR, directed to mid-elbow. Best visualizes distal humerus including epicondyles. NOTE: If elbow remains flexed near 90°, angle CR 10°–15° into elbow joint.',cr:'Perpendicular to IR, directed to mid-elbow joint (¾ inch distal to midpoint between epicondyles)',ir:'24×30 cm (10×12 in) — portrait',sid:'100 cm (40 in)',kv:'65–75 kVp',resp:'N/A'}},
@@ -7714,87 +7696,51 @@ document.addEventListener('keydown', e => {
 // ══════════════════════════════════════════════
 // PWA — INSTALLABLE APP SUPPORT
 // ══════════════════════════════════════════════
+const _PWA_MANIFEST_URL='./manifest.webmanifest';
+const _PWA_APPLE_ICON='./icons/icon-180.png';
+const _PWA_FAVICON='./icons/favicon-32.png';
 
-// Generate app icon as SVG data URL (medical cross + book design)
-function _pwaGenerateIcon(size){
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <rect width="${size}" height="${size}" rx="${size*0.18}" fill="#1e4db7"/>
-    <rect x="${size*0.18}" y="${size*0.12}" width="${size*0.64}" height="${size*0.76}" rx="${size*0.06}" fill="white" opacity="0.95"/>
-    <rect x="${size*0.28}" y="${size*0.22}" width="${size*0.44}" height="${size*0.56}" rx="${size*0.04}" fill="#eef2ff"/>
-    <line x1="${size*0.38}" y1="${size*0.35}" x2="${size*0.62}" y2="${size*0.35}" stroke="#1e4db7" stroke-width="${size*0.045}" stroke-linecap="round"/>
-    <line x1="${size*0.38}" y1="${size*0.47}" x2="${size*0.62}" y2="${size*0.47}" stroke="#1e4db7" stroke-width="${size*0.045}" stroke-linecap="round"/>
-    <line x1="${size*0.38}" y1="${size*0.59}" x2="${size*0.54}" y2="${size*0.59}" stroke="#1e4db7" stroke-width="${size*0.045}" stroke-linecap="round"/>
-    <circle cx="${size*0.72}" cy="${size*0.72}" r="${size*0.2}" fill="#15803d"/>
-    <line x1="${size*0.72}" y1="${size*0.61}" x2="${size*0.72}" y2="${size*0.83}" stroke="white" stroke-width="${size*0.06}" stroke-linecap="round"/>
-    <line x1="${size*0.61}" y1="${size*0.72}" x2="${size*0.83}" y2="${size*0.72}" stroke="white" stroke-width="${size*0.06}" stroke-linecap="round"/>
-  </svg>`;
-  return 'data:image/svg+xml;base64,'+btoa(svg);
+function _pwaIsSecureContext(){
+  return location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1';
 }
 
-// Generate manifest dynamically and inject
 function _pwaInitManifest(){
-  const icon192=_pwaGenerateIcon(192);
-  const icon512=_pwaGenerateIcon(512);
-  const manifest={
-    name:'Bontrager Positioning',
-    short_name:'Bontrager',
-    description:'Radiographic positioning guide — 10th Edition',
-    start_url:'.',
-    display:'standalone',
-    background_color:'#f0ede8',
-    theme_color:'#1e4db7',
-    orientation:'portrait-primary',
-    icons:[
-      {src:icon192,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},
-      {src:icon512,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
-    ]
-  };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-  const url=URL.createObjectURL(blob);
-  const link=document.getElementById('pwaManifest');
-  if(link) link.href=url;
+  const manifestLink=document.getElementById('pwaManifest');
+  if(manifestLink) manifestLink.setAttribute('href', _PWA_MANIFEST_URL);
 
-  // Apple touch icon
-  const appleLink=document.getElementById('appleTouchIcon');
-  if(appleLink) appleLink.href=icon192;
+  const appleLinks=[...document.querySelectorAll('link[rel="apple-touch-icon"]')];
+  if(appleLinks.length){
+    appleLinks.forEach(link=>link.setAttribute('href', _PWA_APPLE_ICON));
+  } else {
+    const link=document.createElement('link');
+    link.rel='apple-touch-icon';
+    link.href=_PWA_APPLE_ICON;
+    document.head.appendChild(link);
+  }
+
+  const iconLink=document.querySelector('link[rel="icon"]');
+  if(iconLink) iconLink.setAttribute('href', _PWA_FAVICON);
 }
 
-// Service Worker registration (inline SW for full offline support)
 function _pwaRegisterSW(){
   if(!('serviceWorker' in navigator)) return;
-  // Inline service worker as blob
-  const swCode=`
-const CACHE='bontrager-v2-20260418';
-self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(CACHE).then(cache=>{
-    return cache.addAll([location.pathname||'/']);
-  }));
-  self.skipWaiting();
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET') return;
-  e.respondWith(
-    fetch(e.request).then(res=>{
-      if(e.request.url.startsWith(location.origin) && res && res.status===200){
-        const clone=res.clone();
-        caches.open(CACHE).then(c=>c.put(e.request,clone));
-      }
-      return res;
-    }).catch(()=>caches.match(e.request).then(r=>r||caches.match(location.pathname||'/')))
-  );
-});
-`;
-  try{
-    const swBlob=new Blob([swCode],{type:'application/javascript'});
-    const swUrl=URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl,{scope:'./'}).then(reg=>{
-      console.log('SW registered');
-    }).catch(e=>console.log('SW reg failed (normal for file://):', e.message));
-  }catch(e){console.log('SW not supported in this context');}
+  if(!_pwaIsSecureContext()){
+    console.log('SW skipped: install requires HTTPS (or localhost).');
+    return;
+  }
+
+  navigator.serviceWorker.getRegistrations()
+    .then(regs=>Promise.all(regs.map(reg=>{
+      const url=reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || '';
+      if(url.startsWith('blob:')) return reg.unregister();
+      return Promise.resolve();
+    })))
+    .catch(()=>Promise.resolve())
+    .finally(()=>{
+      navigator.serviceWorker.register('./sw.js',{scope:'./'})
+        .then(()=>console.log('SW registered'))
+        .catch(e=>console.log('SW reg failed:', e.message));
+    });
 }
 
 // Install prompt handling
@@ -7815,13 +7761,22 @@ window.addEventListener('beforeinstallprompt',e=>{
 });
 
 function pwaInstall(){
-  if(!_pwaPrompt) return;
-  _pwaPrompt.prompt();
-  _pwaPrompt.userChoice.then(result=>{
-    document.getElementById('pwaBanner')?.classList.remove('show');
-    _pwaPrompt=null;
-    if(result.outcome==='accepted') _showToast('Installing…','#15803d');
-  });
+  if(_pwaPrompt){
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(result=>{
+      document.getElementById('pwaBanner')?.classList.remove('show');
+      _pwaPrompt=null;
+      if(result.outcome==='accepted') _showToast('Installing…','#15803d');
+    });
+    return;
+  }
+
+  if(!_pwaIsSecureContext()){
+    alert('Chrome install needs HTTPS (or localhost). Open the app from an HTTPS link, then try Install again.');
+    return;
+  }
+
+  alert('Install option not ready yet. In Chrome use: menu (⋮) -> Install app / Add to Home screen.');
 }
 
 function pwaDismiss(){
@@ -7833,14 +7788,23 @@ function pwaDismiss(){
 function _pwaShowInstructions(){
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isAndroid=/android/i.test(navigator.userAgent);
+
   if(isIOS){
-    alert('Install on iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add"\n\nThe app will work fully offline!');
-  } else if(isAndroid){
+    alert('Install on iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+    return;
+  }
+
+  if(!_pwaIsSecureContext()){
+    alert('Chrome requires HTTPS for installation. Open this app from an HTTPS URL, not file://, then install.');
+    return;
+  }
+
+  if(isAndroid){
     if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Android:\n1. Tap the menu (⋮) in Chrome\n2. Tap "Add to Home screen" or "Install app"\n3. Tap "Install"\n\nThe app will work fully offline!'); }
+    else{ alert('Install on Android Chrome:\n1. Open menu (⋮)\n2. Tap "Install app" or "Add to Home screen"\n3. Tap "Install"'); }
   } else {
     if(_pwaPrompt){ pwaInstall(); }
-    else{ alert('Install on Desktop (Chrome/Edge):\n1. Look for the install icon (⊕) in the address bar\n2. Click "Install Bontrager Positioning"\n\nOr: Menu → "Install Bontrager Positioning"'); }
+    else{ alert('Install on Desktop (Chrome/Edge):\nUse the install icon in the address bar or menu -> Install app'); }
   }
 }
 
