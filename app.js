@@ -762,6 +762,16 @@ const LARGE_FONT_DELTA = 2;
 const FLASHCARD_FONT_SIZE_MIN = 12;
 const FLASHCARD_FONT_SIZE_MAX = 26;
 const FLASHCARD_FONT_SIZE_DEFAULT = 16;
+const MOBILE_FONT_EFFECTIVE_MAX = 18;
+const MOBILE_FLASHCARD_FONT_MAX = 20;
+
+function _isNarrowViewport(){
+  try{
+    return window.matchMedia('(max-width: 480px)').matches;
+  }catch(e){
+    return window.innerWidth <= 480;
+  }
+}
 
 function _normalizeFontSize(value, fallback = FONT_SIZE_DEFAULT){
   const parsed = parseInt(value, 10);
@@ -818,10 +828,16 @@ function _syncFlashcardFontSizeInput(size){
 }
 
 function setAppFontSize(sizeValue){
-  const baseSize = _normalizeFontSize(sizeValue);
-  const effectiveSize = _isLargeModeEnabled()
+  let baseSize = _normalizeFontSize(sizeValue);
+  let effectiveSize = _isLargeModeEnabled()
     ? Math.min(baseSize + LARGE_FONT_DELTA, FONT_SIZE_MAX + LARGE_FONT_DELTA)
     : baseSize;
+
+  if(_isNarrowViewport()){
+    effectiveSize = Math.min(effectiveSize, MOBILE_FONT_EFFECTIVE_MAX);
+    baseSize = Math.min(baseSize, MOBILE_FONT_EFFECTIVE_MAX);
+  }
+
   const scale = effectiveSize / FONT_SIZE_DEFAULT;
 
   document.documentElement.style.setProperty('--base-fs', effectiveSize + 'px');
@@ -832,7 +848,10 @@ function setAppFontSize(sizeValue){
 }
 
 function setFlashcardFontSize(sizeValue){
-  const size = _normalizeFlashcardFontSize(sizeValue);
+  let size = _normalizeFlashcardFontSize(sizeValue);
+  if(_isNarrowViewport()){
+    size = Math.min(size, MOBILE_FLASHCARD_FONT_MAX);
+  }
   const scale = size / FLASHCARD_FONT_SIZE_DEFAULT;
   document.documentElement.style.setProperty('--fc-font-scale', scale.toFixed(4));
   _syncFlashcardFontSizeInput(size);
@@ -863,18 +882,30 @@ function onFontSizeChange(){
   const input = document.getElementById('fontSizeInput');
   if(!input) return;
   const sizeValue = _normalizeFontSize(input.value);
-  input.value = String(sizeValue);
-  setAppFontSize(sizeValue);
-  localStorage.setItem('appFontSize', String(sizeValue));
+  const applied = setAppFontSize(sizeValue);
+  input.value = String(applied.baseSize);
+  localStorage.setItem('appFontSize', String(applied.baseSize));
 }
 
 function onFlashcardFontSizeChange(){
   const input = document.getElementById('flashcardFontSizeInput');
   if(!input) return;
   const sizeValue = _normalizeFlashcardFontSize(input.value);
-  input.value = String(sizeValue);
-  setFlashcardFontSize(sizeValue);
-  localStorage.setItem('appFlashcardFontSize', String(sizeValue));
+  const appliedSize = setFlashcardFontSize(sizeValue);
+  input.value = String(appliedSize);
+  localStorage.setItem('appFlashcardFontSize', String(appliedSize));
+}
+
+let _responsiveFontResizeTimer=0;
+function _bindResponsiveFontSizing(){
+  if(typeof window==='undefined') return;
+  window.addEventListener('resize', ()=>{
+    clearTimeout(_responsiveFontResizeTimer);
+    _responsiveFontResizeTimer=setTimeout(()=>{
+      setAppFontSize(_getStoredBaseFontSize());
+      setFlashcardFontSize(_getStoredFlashcardFontSize());
+    },120);
+  }, {passive:true});
 }
 
 function onTextColorChange(){
@@ -7733,7 +7764,7 @@ function _pwaRegisterSW(){
   if(!('serviceWorker' in navigator)) return;
   // Inline service worker as blob
   const swCode=`
-const CACHE='bontrager-v1';
+const CACHE='bontrager-v2-20260418';
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(cache=>{
     return cache.addAll([location.pathname||'/']);
@@ -7745,13 +7776,16 @@ self.addEventListener('activate',e=>{
   self.clients.claim();
 });
 self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    if(e.request.url.startsWith(location.origin)){
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-    }
-    return res;
-  }).catch(()=>caches.match(location.pathname||'/'))));
+  if(e.request.method!=='GET') return;
+  e.respondWith(
+    fetch(e.request).then(res=>{
+      if(e.request.url.startsWith(location.origin) && res && res.status===200){
+        const clone=res.clone();
+        caches.open(CACHE).then(c=>c.put(e.request,clone));
+      }
+      return res;
+    }).catch(()=>caches.match(e.request).then(r=>r||caches.match(location.pathname||'/')))
+  );
 });
 `;
   try{
@@ -7968,6 +8002,7 @@ function _zoomUnbindEvents(){
 }
 
 initAppFont();
+_bindResponsiveFontSizing();
 _refreshQuizBankQuality();
 buildChapters();
 updateStats();
