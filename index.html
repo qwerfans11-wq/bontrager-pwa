@@ -1017,7 +1017,16 @@ let _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 let _isAndroid = /Android/.test(navigator.userAgent);
 let _isPWAInstallable = false;
 
+function _isRunningStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.matchMedia('(display-mode: fullscreen)').matches ||
+         window.navigator.standalone === true;
+}
+
 (function initPWAInstall() {
+  // Don't show install banner if app is already installed
+  if (_isRunningStandalone()) return;
+
   // Listen for beforeinstallprompt (Chrome, Edge, Opera, Samsung Internet)
   window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
@@ -1051,6 +1060,9 @@ let _isPWAInstallable = false;
 // PWA INSTALL BANNER & FUNCTIONS
 // ═══════════════════════════════════════════════════════════════════
 function showPWAInstallBanner() {
+  // Never show install banner when already running as installed PWA
+  if (_isRunningStandalone()) return;
+
   const banner = document.getElementById('pwaInstallBannerMandatory');
   const button = document.getElementById('pwaInstallButtonMandatory');
   
