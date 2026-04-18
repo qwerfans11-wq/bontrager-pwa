@@ -1,25 +1,39 @@
 {
-  "name": "Bontrager Positioning",
+  "name": "Bontrager Positioning Guide",
   "short_name": "Bontrager",
-  "description": "Radiographic positioning guide - 10th Edition",
-  "id": "./",
+  "description": "دليل المواضع الإشعاعية الكامل - Complete radiographic positioning guide with offline support and interactive learning tools",
+  "id": "/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait-primary",
-  "background_color": "#f4f3f1",
-  "theme_color": "#1e4db7",
+  "background_color": "#ffffff",
+  "theme_color": "#0057b8",
+  "categories": ["medical", "education", "reference"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "./icons/favicon-32.png",
-      "sizes": "32x32",
+      "src": "./icons/icon-72.png",
+      "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/icon-180.png",
-      "sizes": "180x180",
+      "src": "./icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-144.png",
+      "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
@@ -30,17 +44,83 @@
       "purpose": "any"
     },
     {
+      "src": "./icons/icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/maskable-512.png",
+      "src": "./icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "prefer_related_applications": false
+  "screenshots": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Learn Positions",
+      "short_name": "Learn",
+      "description": "Start learning radiographic positions",
+      "url": "./index.html?page=learn-chapters",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Take Quiz",
+      "short_name": "Quiz",
+      "description": "Test your knowledge with quizzes",
+      "url": "./index.html?page=quiz-chapters",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Quick Reference",
+      "short_name": "Reference",
+      "description": "Quick reference guide",
+      "url": "./index.html?page=quickreview",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }

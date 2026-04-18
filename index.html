@@ -21,6 +21,20 @@
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+<!-- PWA Install Button (Mandatory) -->
+<div class="pwa-install-banner-mandatory" id="pwaInstallBannerMandatory">
+  <div class="pwa-install-content">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+    <div class="pwa-install-text">
+      <div class="pwa-install-title">📲 ثبّت التطبيق على هاتفك</div>
+      <div class="pwa-install-subtitle">اتصال أسرع • يعمل بدون إنترنت • وصول فوري</div>
+    </div>
+  </div>
+  <div class="pwa-install-actions">
+    <button class="pwa-install-button" id="pwaInstallButtonMandatory" onclick="pwaInstallMandatory()">تثبيت الآن</button>
+    <button class="pwa-install-dismiss" onclick="pwaDismissMandatory()">×</button>
+  </div>
+</div>
 <div class="app">
 
 <!-- DEV LOGIN MODAL -->
@@ -954,6 +968,197 @@
 <script src="./data/ch3/ch3-images-part2.js"></script>
 <script src="./data/ch3/ch3-reference-pdf.js"></script>
 <script src="./app.js"></script>
+
+<!-- ═══ PWA Service Worker Registration & Install Handler ═══ -->
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════════
+// SERVICE WORKER REGISTRATION
+// ═══════════════════════════════════════════════════════════════════
+(function initServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    console.warn('❌ Service Worker not supported in this browser');
+    return;
+  }
+
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(function(registration) {
+        console.log('✅ Service Worker registered successfully');
+        console.log('   Scope:', registration.scope);
+        console.log('   Active:', registration.active ? 'Yes' : 'No');
+        
+        // Check for updates
+        registration.addEventListener('updatefound', function() {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'activated') {
+              console.log('✅ New Service Worker activated');
+              // Notify user about update
+              if (window._notifyAppUpdate) {
+                window._notifyAppUpdate();
+              }
+            }
+          });
+        });
+      })
+      .catch(function(error) {
+        console.error('❌ Service Worker registration failed:', error);
+      });
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+// PWA INSTALL PROMPT HANDLER
+// ═══════════════════════════════════════════════════════════════════
+let _deferredPrompt = null;
+let _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+let _isAndroid = /Android/.test(navigator.userAgent);
+let _isPWAInstallable = false;
+
+(function initPWAInstall() {
+  // Listen for beforeinstallprompt (Chrome, Edge, Opera, Samsung Internet)
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    _deferredPrompt = e;
+    _isPWAInstallable = true;
+    console.log('✅ beforeinstallprompt triggered - app is installable');
+    
+    // Show install button
+    showPWAInstallBanner();
+  });
+
+  // App already installed
+  window.addEventListener('appinstalled', function() {
+    console.log('✅ App installed successfully');
+    _deferredPrompt = null;
+    hidePWAInstallBanner();
+    
+    // Notify user
+    if (typeof _showNotification === 'function') {
+      _showNotification('✅ تم تثبيت التطبيق بنجاح!', 'success');
+    }
+  });
+
+  // Show banner on page load (mandatory)
+  setTimeout(function() {
+    showPWAInstallBanner();
+  }, 1500);
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+// PWA INSTALL BANNER & FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════
+function showPWAInstallBanner() {
+  const banner = document.getElementById('pwaInstallBannerMandatory');
+  const button = document.getElementById('pwaInstallButtonMandatory');
+  
+  if (!banner) return;
+  
+  // Show banner
+  banner.style.display = 'flex';
+  
+  // Text based on platform
+  let titleText = '📲 ثبّت التطبيق على هاتفك';
+  let subtitleText = 'اتصال أسرع • يعمل بدون إنترنت • وصول فوري';
+  
+  if (_isIOS) {
+    titleText = '📲 أضف التطبيق إلى الشاشة الرئيسية (iOS)';
+    subtitleText = 'اضغط Share ثم Add to Home Screen';
+  } else if (_isAndroid) {
+    titleText = '📲 ثبّت التطبيق على هاتفك';
+    subtitleText = 'اتصال أسرع • يعمل بدون إنترنت • وصول فوري';
+  }
+  
+  const titleEl = banner.querySelector('.pwa-install-title');
+  const subtitleEl = banner.querySelector('.pwa-install-subtitle');
+  
+  if (titleEl) titleEl.textContent = titleText;
+  if (subtitleEl) subtitleEl.textContent = subtitleText;
+  
+  console.log('✅ PWA install banner shown');
+}
+
+function hidePWAInstallBanner() {
+  const banner = document.getElementById('pwaInstallBannerMandatory');
+  if (banner) {
+    banner.style.display = 'none';
+  }
+}
+
+function pwaInstallMandatory() {
+  if (_isIOS) {
+    // iOS: Show manual instructions
+    alert('📱 iOS Users:\\n\\n1. اضغط على زر Share (مشاركة)\\n2. اختر "Add to Home Screen"\\n3. اسم التطبيق: Bontrager Positioning\\n4. تم! ستجده على الشاشة الرئيسية');
+    return;
+  }
+  
+  if (_deferredPrompt) {
+    // Show native install prompt
+    _deferredPrompt.prompt();
+    
+    _deferredPrompt.userChoice.then(function(choiceResult) {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('✅ User accepted install prompt');
+      } else {
+        console.log('❌ User dismissed install prompt');
+      }
+      _deferredPrompt = null;
+    });
+  } else {
+    // Fallback: guide user to install
+    if (_isAndroid) {
+      alert('📱 To install this app:\\n\\n1. Open menu (three dots)\\n2. Select "Install app" or "Add to Home Screen"\\n3. Confirm');
+    } else {
+      alert('📱 To install this app:\\n\\n1. Menu (three dots) → Install app\\n2. Or: three dots → More tools → Create shortcut');
+    }
+  }
+}
+
+function pwaDismissMandatory() {
+  hidePWAInstallBanner();
+  
+  // Show again after 24 hours
+  localStorage.setItem('pwaInstallDismissedTime', String(Date.now()));
+  localStorage.setItem('pwaInstallDismissed', 'true');
+  
+  // But show again after 1 day
+  setTimeout(function() {
+    localStorage.removeItem('pwaInstallDismissed');
+    showPWAInstallBanner();
+  }, 24 * 60 * 60 * 1000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// OFFLINE DETECTION
+// ═══════════════════════════════════════════════════════════════════
+(function initOfflineDetection() {
+  window.addEventListener('online', function() {
+    console.log('🟢 Back online!');
+    document.body.style.opacity = '1';
+  });
+  
+  window.addEventListener('offline', function() {
+    console.log('🔴 Offline mode');
+    // App should still work with SW cache
+  });
+  
+  // Check initial state
+  if (!navigator.onLine) {
+    console.log('🔴 Starting in offline mode');
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+// APP UPDATE NOTIFICATION
+// ═══════════════════════════════════════════════════════════════════
+window._notifyAppUpdate = function() {
+  if (confirm('📦 نسخة جديدة متاحة! إعادة التحميل الآن؟')) {
+    location.reload();
+  }
+};
+</script>
 
 <!-- QUIZ COUNT PICKER MODAL -->
 <div class="quiz-count-overlay" id="quizCountOverlay">
