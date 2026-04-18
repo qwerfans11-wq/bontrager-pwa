@@ -1010,13 +1010,12 @@ function onFlashcardColorChange(){
 
 function initAppFont(){
   const savedFont = localStorage.getItem('appFontFamily');
-  if(savedFont){
-    const fontSelect = document.getElementById('fontSelect');
-    if(fontSelect){
-      fontSelect.value = savedFont;
-    }
-    setAppFont(savedFont);
-  }
+  const defaultInterFont = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  const fontToApply = savedFont || defaultInterFont;
+  const fontSelect = document.getElementById('fontSelect');
+  if(fontSelect) fontSelect.value = fontToApply;
+  setAppFont(fontToApply);
+  if(!savedFont) localStorage.setItem('appFontFamily', defaultInterFont);
 
   const savedWeight = localStorage.getItem('appFontWeight');
   if(savedWeight){
@@ -1054,7 +1053,7 @@ function initAppFont(){
 }
 
 function resetFontAppearanceDefaults(){
-  const defaultFont = 'IBM Plex Sans, Noto Sans Arabic, -apple-system, BlinkMacSystemFont, sans-serif';
+  const defaultFont = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
   const defaultWeight = '400';
   const defaultColor = '#0f1923';
   const defaultFontSize = FONT_SIZE_DEFAULT;
@@ -1263,6 +1262,22 @@ const BOOK = {
       }
     }
   },
+  chest:{
+    name:'Chest',icon:'🫁',
+    positions:[
+      {name:'PA Projection \u2014 Chest (Ambulatory)',type:'routine',info:{desc:'Standard erect PA chest projection for ambulatory patients. Patient stands facing the upright grid or bucky, chin raised, hands on hips with elbows forward to rotate scapulae away from lung fields. Midsagittal plane centered to midline. Shoulders pressed against IR. Top of IR approximately 1\u00bd\u20132 inches (4\u20135 cm) above shoulders. CR perpendicular to IR, directed to T7 (7\u20138 inches/18\u201320 cm below vertebra prominens, or 3\u20134 inches/8\u201310 cm below jugular notch). 180 cm (72 in) SID preferred to minimize magnification. Demonstrates entire lung fields, heart, mediastinum, bony thorax, and diaphragm. At full inspiration: 10 posterior ribs should be visible above diaphragm. No rotation: sternoclavicular joints equidistant from spine.',cr:'Perpendicular to IR, directed to T7 (7\u20138 inches below vertebra prominens or 3\u20134 inches below jugular notch)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait or landscape',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration (second breath)'}},
+      {name:'PA Projection \u2014 Chest (On Stretcher if Patient Cannot Stand)',type:'routine',info:{desc:'PA chest projection for patient who cannot stand but can sit or be partially erect on stretcher. Position patient seated with back to stretcher, IR placed vertically against back. Alternatively, patient sits on stretcher leaning forward with chest against upright IR holder. Midsagittal plane centered to CR. Shoulders pressed against IR. CR perpendicular to IR, directed to T7. Same technical parameters as ambulatory PA chest. Document patient position (seated vs. erect). May be performed as AP if PA is not achievable.',cr:'Perpendicular to IR, directed to T7 (7\u20138 inches below vertebra prominens)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration (second breath)'}},
+      {name:'Lateral Position \u2014 Chest (Ambulatory)',type:'routine',info:{desc:'Left lateral chest projection (left side against IR) is standard to minimize cardiac magnification. Patient erect, left side against IR. Raise both arms overhead (or hold bar above). Ensure both feet flat on floor with weight equally distributed. Align mid-coronal plane to CR and midline of IR. Top of IR 1\u00bd\u20132 inches (4\u20135 cm) above shoulders. Ensure no rotation of thorax (a true lateral has posterior thoracic wall perpendicular to IR). CR perpendicular to IR, directed to T7 in midaxillary line. SID 180 cm preferred. True lateral: posterior borders of femoral condyles superimposed, posterior ribs within \u00bc\u2013\u00bd inch (1 cm) due to beam divergence.',cr:'Perpendicular to IR, directed to T7 in midaxillary line',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'Alternative Lateral Positions \u2014 Chest (Wheelchair or Cart)',type:'routine',info:{desc:'Lateral chest projection for patients confined to wheelchair or cart who cannot stand. Wheelchair or cart positioned sideways to upright bucky. Left lateral preferred (left side against IR). Patient seated in wheelchair or on cart as erect as possible; chin raised. Raise arms overhead if possible, or hold them forward out of lung field. IR centered at T7 in midaxillary line. CR horizontal and perpendicular to IR, directed to T7. Use increased SID if possible to minimize magnification. Document patient status. For supine patient on cart: dorsal decubitus with horizontal beam is an alternative.',cr:'Horizontal CR perpendicular to IR, directed to T7 in midaxillary line',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'AP Projection \u2014 Chest (Supine or Semierect)',type:'routine',info:{desc:'AP chest projection for patients who cannot be positioned erect or PA. Patient supine with back of shoulders and both sides of chest as flat against IR as possible; chin raised; arms at sides (not rotated). Midsagittal plane centered to midline. CR 5\u00b0 caudal directed to jugular notch (approximately 3\u20134 inches below), or perpendicular to IR for semierect patients. Diaphragm will appear elevated compared to erect PA. AP technique increases cardiac magnification and produces less radiographic quality than PA erect. NOTE: Increase kVp 8\u201310 over PA technique due to greater tissue thickness supine.',cr:'CR 5\u00b0 caudal, directed to jugular notch (3\u20134 inches below); perpendicular if semierect',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'100 cm (40 in)',kv:'110\u2013125 kVp (increase 8\u201310 kVp over PA erect)',resp:'Suspended full inspiration'}},
+      {name:'Lateral Decubitus Position (AP Projection) \u2014 Chest',type:'special',info:{desc:'Lateral decubitus AP chest for detection of free pleural fluid or pneumothorax. For pleural effusion: affected side DOWN (fluid pools on down side away from lung). For pneumothorax: affected side UP (free air rises to up side). Patient positioned in true lateral recumbent position on appropriate side. Elevate patient on radiolucent sponge or mattress so lower lateral chest wall is included. Ensure hips and shoulders are directly lateral (no rotation). IR placed vertically against anterior chest. Horizontal beam CR perpendicular to IR, at level of T7. Include both diaphragms and lateral chest wall. Minimum 5 minutes in decubitus position before exposure to allow fluid or air to redistribute.',cr:'Horizontal beam, perpendicular to IR, directed to T7',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'AP Lordotic Projection \u2014 Chest',type:'special',info:{desc:'AP axial projection to demonstrate lung apices free of clavicle superimposition and for evaluating middle lobe disease. Patient erect, standing about 1 foot (30 cm) from IR. Patient leans back against IR with shoulders touching IR and chin raised; thorax forms 45\u00b0 angle with IR. Alternatively, CR can be angled 45\u00b0 cephalad with patient standing erect. Arms out, elbows forward. CR perpendicular to IR, directed to midsternum (3\u20134 inches below jugular notch). Clavicles appear nearly horizontal and above the apex of the lungs (projected over the first rib). Middle lobe atelectasis/pneumonia seen as triangular density. Normal: apices well demonstrated above clavicles.',cr:'Perpendicular to IR, directed to midsternum (3\u20134 inches below jugular notch)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'Anterior Oblique Positions \u2014 RAO and LAO: Chest',type:'routine',info:{desc:'Anterior oblique projections (RAO and LAO) of the chest to demonstrate specific lung regions and cardiac structures. Standard obliquity: 45\u00b0 (up to 60\u00b0 for cardiac studies). RAO: patient rotates right side toward IR \u2014 best demonstrates LEFT lung and left cardiac border, trachea, right lung hilum. LAO: patient rotates left side toward IR \u2014 best demonstrates RIGHT lung and right cardiac border, trachea, carina, heart and great vessels (at 60\u00b0). Patient erect. Raise nearest arm overhead; far arm at side or on hip. CR perpendicular to IR, directed to T7 of the thorax. Correct rotation confirmed by separation of sternum from spine.',cr:'Perpendicular to IR, directed to T7 (45\u00b0 from frontal plane)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'Posterior Oblique Positions \u2014 RPO and LPO: Chest',type:'routine',info:{desc:'Posterior oblique projections (RPO and LPO) of the chest — complementary to or alternative for anterior obliques. RPO demonstrates same anatomy as LAO (best for right lung). LPO demonstrates same anatomy as RAO (best for left lung). Patient erect with back against IR. Standard obliquity: 45\u00b0. RPO: patient rotates right posterior side against IR \u2014 demonstrates right lung same as LAO. LPO: patient rotates left posterior side against IR \u2014 demonstrates left lung same as RAO. CR perpendicular to IR, directed to T7. Used when patient cannot rotate anteriorly (as from wheelchair position).',cr:'Perpendicular to IR, directed to T7 (45\u00b0 from frontal plane)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
+      {name:'Lateral Position \u2014 Upper Airway',type:'routine',info:{desc:'Lateral projection of the upper airway (larynx, trachea, and pharynx) to evaluate foreign body, epiglottitis, croup, and masses. Patient erect, lateral position (either side). Chin raised and extended to prevent superimposition of mandible over pharynx. Shoulders pulled back and depressed. Align long axis of neck to long axis of IR. CR perpendicular to IR, directed midway between laryngeal prominence (thyroid cartilage) and jugular notch. Exposure made during slow, deep inspiration (to fill trachea with air). Collimate to include nasopharynx down to carina.',cr:'Perpendicular to IR, midway between laryngeal prominence and jugular notch',ir:'24\u00d730 cm or 18\u00d724 cm \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'75\u201385 kVp',resp:'Slow, deep inspiration'}},
+      {name:'AP Projection \u2014 Upper Airway',type:'routine',info:{desc:'AP projection of the upper airway (larynx, trachea, and pharynx) to evaluate foreign body, croup, epiglottitis, and masses in the frontal plane. Patient erect facing tube. Chin raised; no rotation. Align midsagittal plane to CR. CR perpendicular to IR, directed to level of T1\u2013T2 (approximately 1 inch above jugular notch). Exposure made during Valsalva maneuver (patient distends hypopharynx by closing mouth and nose and blowing) or slow, deep inspiration. Croup produces smooth tapered narrowing of subglottic trachea (Gothic arch sign). Collimate to include nasopharynx down to carina.',cr:'Perpendicular to IR, directed to level of T1\u2013T2 (~1 inch above jugular notch)',ir:'24\u00d730 cm or 18\u00d724 cm \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'75\u201385 kVp',resp:'Slow, deep inspiration or Valsalva maneuver'}},
+    ]
+  },
   bony_thorax:{
     name:'Bony Thorax',icon:'🩻',
     subchapters:{
@@ -1296,22 +1311,6 @@ const BOOK = {
         ]
       }
     }
-  },
-  chest:{
-    name:'Chest',icon:'🫁',
-    positions:[
-      {name:'PA Projection \u2014 Chest (Ambulatory)',type:'routine',info:{desc:'Standard erect PA chest projection for ambulatory patients. Patient stands facing the upright grid or bucky, chin raised, hands on hips with elbows forward to rotate scapulae away from lung fields. Midsagittal plane centered to midline. Shoulders pressed against IR. Top of IR approximately 1\u00bd\u20132 inches (4\u20135 cm) above shoulders. CR perpendicular to IR, directed to T7 (7\u20138 inches/18\u201320 cm below vertebra prominens, or 3\u20134 inches/8\u201310 cm below jugular notch). 180 cm (72 in) SID preferred to minimize magnification. Demonstrates entire lung fields, heart, mediastinum, bony thorax, and diaphragm. At full inspiration: 10 posterior ribs should be visible above diaphragm. No rotation: sternoclavicular joints equidistant from spine.',cr:'Perpendicular to IR, directed to T7 (7\u20138 inches below vertebra prominens or 3\u20134 inches below jugular notch)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait or landscape',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration (second breath)'}},
-      {name:'PA Projection \u2014 Chest (On Stretcher if Patient Cannot Stand)',type:'routine',info:{desc:'PA chest projection for patient who cannot stand but can sit or be partially erect on stretcher. Position patient seated with back to stretcher, IR placed vertically against back. Alternatively, patient sits on stretcher leaning forward with chest against upright IR holder. Midsagittal plane centered to CR. Shoulders pressed against IR. CR perpendicular to IR, directed to T7. Same technical parameters as ambulatory PA chest. Document patient position (seated vs. erect). May be performed as AP if PA is not achievable.',cr:'Perpendicular to IR, directed to T7 (7\u20138 inches below vertebra prominens)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration (second breath)'}},
-      {name:'Lateral Position \u2014 Chest (Ambulatory)',type:'routine',info:{desc:'Left lateral chest projection (left side against IR) is standard to minimize cardiac magnification. Patient erect, left side against IR. Raise both arms overhead (or hold bar above). Ensure both feet flat on floor with weight equally distributed. Align mid-coronal plane to CR and midline of IR. Top of IR 1\u00bd\u20132 inches (4\u20135 cm) above shoulders. Ensure no rotation of thorax (a true lateral has posterior thoracic wall perpendicular to IR). CR perpendicular to IR, directed to T7 in midaxillary line. SID 180 cm preferred. True lateral: posterior borders of femoral condyles superimposed, posterior ribs within \u00bc\u2013\u00bd inch (1 cm) due to beam divergence.',cr:'Perpendicular to IR, directed to T7 in midaxillary line',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'Alternative Lateral Positions \u2014 Chest (Wheelchair or Cart)',type:'routine',info:{desc:'Lateral chest projection for patients confined to wheelchair or cart who cannot stand. Wheelchair or cart positioned sideways to upright bucky. Left lateral preferred (left side against IR). Patient seated in wheelchair or on cart as erect as possible; chin raised. Raise arms overhead if possible, or hold them forward out of lung field. IR centered at T7 in midaxillary line. CR horizontal and perpendicular to IR, directed to T7. Use increased SID if possible to minimize magnification. Document patient status. For supine patient on cart: dorsal decubitus with horizontal beam is an alternative.',cr:'Horizontal CR perpendicular to IR, directed to T7 in midaxillary line',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'AP Projection \u2014 Chest (Supine or Semierect)',type:'routine',info:{desc:'AP chest projection for patients who cannot be positioned erect or PA. Patient supine with back of shoulders and both sides of chest as flat against IR as possible; chin raised; arms at sides (not rotated). Midsagittal plane centered to midline. CR 5\u00b0 caudal directed to jugular notch (approximately 3\u20134 inches below), or perpendicular to IR for semierect patients. Diaphragm will appear elevated compared to erect PA. AP technique increases cardiac magnification and produces less radiographic quality than PA erect. NOTE: Increase kVp 8\u201310 over PA technique due to greater tissue thickness supine.',cr:'CR 5\u00b0 caudal, directed to jugular notch (3\u20134 inches below); perpendicular if semierect',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'100 cm (40 in)',kv:'110\u2013125 kVp (increase 8\u201310 kVp over PA erect)',resp:'Suspended full inspiration'}},
-      {name:'Lateral Decubitus Position (AP Projection) \u2014 Chest',type:'special',info:{desc:'Lateral decubitus AP chest for detection of free pleural fluid or pneumothorax. For pleural effusion: affected side DOWN (fluid pools on down side away from lung). For pneumothorax: affected side UP (free air rises to up side). Patient positioned in true lateral recumbent position on appropriate side. Elevate patient on radiolucent sponge or mattress so lower lateral chest wall is included. Ensure hips and shoulders are directly lateral (no rotation). IR placed vertically against anterior chest. Horizontal beam CR perpendicular to IR, at level of T7. Include both diaphragms and lateral chest wall. Minimum 5 minutes in decubitus position before exposure to allow fluid or air to redistribute.',cr:'Horizontal beam, perpendicular to IR, directed to T7',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'AP Lordotic Projection \u2014 Chest',type:'special',info:{desc:'AP axial projection to demonstrate lung apices free of clavicle superimposition and for evaluating middle lobe disease. Patient erect, standing about 1 foot (30 cm) from IR. Patient leans back against IR with shoulders touching IR and chin raised; thorax forms 45\u00b0 angle with IR. Alternatively, CR can be angled 45\u00b0 cephalad with patient standing erect. Arms out, elbows forward. CR perpendicular to IR, directed to midsternum (3\u20134 inches below jugular notch). Clavicles appear nearly horizontal and above the apex of the lungs (projected over the first rib). Middle lobe atelectasis/pneumonia seen as triangular density. Normal: apices well demonstrated above clavicles.',cr:'Perpendicular to IR, directed to midsternum (3\u20134 inches below jugular notch)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'Anterior Oblique Positions \u2014 RAO and LAO: Chest',type:'routine',info:{desc:'Anterior oblique projections (RAO and LAO) of the chest to demonstrate specific lung regions and cardiac structures. Standard obliquity: 45\u00b0 (up to 60\u00b0 for cardiac studies). RAO: patient rotates right side toward IR \u2014 best demonstrates LEFT lung and left cardiac border, trachea, right lung hilum. LAO: patient rotates left side toward IR \u2014 best demonstrates RIGHT lung and right cardiac border, trachea, carina, heart and great vessels (at 60\u00b0). Patient erect. Raise nearest arm overhead; far arm at side or on hip. CR perpendicular to IR, directed to T7 of the thorax. Correct rotation confirmed by separation of sternum from spine.',cr:'Perpendicular to IR, directed to T7 (45\u00b0 from frontal plane)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'Posterior Oblique Positions \u2014 RPO and LPO: Chest',type:'routine',info:{desc:'Posterior oblique projections (RPO and LPO) of the chest — complementary to or alternative for anterior obliques. RPO demonstrates same anatomy as LAO (best for right lung). LPO demonstrates same anatomy as RAO (best for left lung). Patient erect with back against IR. Standard obliquity: 45\u00b0. RPO: patient rotates right posterior side against IR \u2014 demonstrates right lung same as LAO. LPO: patient rotates left posterior side against IR \u2014 demonstrates left lung same as RAO. CR perpendicular to IR, directed to T7. Used when patient cannot rotate anteriorly (as from wheelchair position).',cr:'Perpendicular to IR, directed to T7 (45\u00b0 from frontal plane)',ir:'35\u00d743 cm (14\u00d717 in) \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'110\u2013125 kVp',resp:'Suspended full inspiration'}},
-      {name:'Lateral Position \u2014 Upper Airway',type:'routine',info:{desc:'Lateral projection of the upper airway (larynx, trachea, and pharynx) to evaluate foreign body, epiglottitis, croup, and masses. Patient erect, lateral position (either side). Chin raised and extended to prevent superimposition of mandible over pharynx. Shoulders pulled back and depressed. Align long axis of neck to long axis of IR. CR perpendicular to IR, directed midway between laryngeal prominence (thyroid cartilage) and jugular notch. Exposure made during slow, deep inspiration (to fill trachea with air). Collimate to include nasopharynx down to carina.',cr:'Perpendicular to IR, midway between laryngeal prominence and jugular notch',ir:'24\u00d730 cm or 18\u00d724 cm \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'75\u201385 kVp',resp:'Slow, deep inspiration'}},
-      {name:'AP Projection \u2014 Upper Airway',type:'routine',info:{desc:'AP projection of the upper airway (larynx, trachea, and pharynx) to evaluate foreign body, croup, epiglottitis, and masses in the frontal plane. Patient erect facing tube. Chin raised; no rotation. Align midsagittal plane to CR. CR perpendicular to IR, directed to level of T1\u2013T2 (approximately 1 inch above jugular notch). Exposure made during Valsalva maneuver (patient distends hypopharynx by closing mouth and nose and blowing) or slow, deep inspiration. Croup produces smooth tapered narrowing of subglottic trachea (Gothic arch sign). Collimate to include nasopharynx down to carina.',cr:'Perpendicular to IR, directed to level of T1\u2013T2 (~1 inch above jugular notch)',ir:'24\u00d730 cm or 18\u00d724 cm \u2014 portrait',sid:'180 cm (72 in) preferred; 100 cm (40 in) minimum',kv:'75\u201385 kVp',resp:'Slow, deep inspiration or Valsalva maneuver'}},
-    ]
   },
   abdomen:{
     name:'Abdomen',icon:'\ud83e\udec3',
@@ -2471,7 +2470,7 @@ function navTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy — علم التشريح','anatomy-detail':'Anatomy Detail'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -8063,6 +8062,284 @@ function _zoomUnbindEvents(){
   window.removeEventListener('mousemove',_onMouseMove);
   window.removeEventListener('mouseup',_onMouseUp);
   document.removeEventListener('keydown',_onKeyDown);
+}
+
+// ══════════════════════════════════════════════
+// ANATOMY SECTION
+// ══════════════════════════════════════════════
+const ANATOMY_DATA = {
+  head_neck:{
+    name:'Head & Neck',arabicName:'الرأس والرقبة',icon:'🧠',
+    structures:[
+      'Skull — calvarium (frontal, parietal, temporal, occipital)',
+      'Base of skull (sphenoid, ethmoid)',
+      'Facial bones (mandible, maxilla, nasal, zygomatic)',
+      'C1 Atlas & C2 Axis — atlantoaxial joint',
+      'Cervical vertebrae C3–C7',
+      'Odontoid process (dens) of C2',
+      'Intervertebral foramina (IVF) — exit for nerve roots',
+      'Hyoid bone',
+      'Larynx & upper trachea',
+      'Thyroid & parathyroid glands',
+    ],
+    radiographyNotes:'Cervical spine: AP open mouth C1–C2 (odontoid), AP axial 15–20° cephalad C3–C7, lateral (SID 180 cm), obliques RAO/LAO or RPO/LPO for IVF, trauma lateral (horizontal beam — do NOT move patient), Swimmer\'s position C7–T1. Skull: AP/PA, Caldwell, Waters, Lateral, submentovertical.',
+    clinicalIndications:'Cervical fractures (Jefferson C1, odontoid, hangman\'s C2), degenerative disc disease, skull fractures, sinusitis, foreign body in airway, epiglottitis, croup, TMJ disorders.',
+    kVpRange:'65–80 kVp (cervical), 70–80 kVp (skull)',
+    positioning:'Erect preferred for cervical. Horizontal beam lateral for trauma — DO NOT move patient before all 7 cervical vertebrae are demonstrated.',
+    chapterKey:'spine'
+  },
+  thorax:{
+    name:'Thorax & Chest',arabicName:'الصدر والثوركس',icon:'🫁',
+    structures:[
+      'Lungs (right: 3 lobes; left: 2 lobes)',
+      'Heart & pericardium',
+      'Great vessels (aorta, pulmonary arteries/veins, vena cava)',
+      'Trachea & carina (bifurcates at T4–T5)',
+      'Thoracic vertebrae T1–T12',
+      'Ribs 1–12 (posterior, axillary, anterior portions)',
+      'Sternum (manubrium, body, xiphoid process)',
+      'Clavicles & sternoclavicular joints',
+      'Diaphragm (right higher due to liver)',
+      'Pleural cavities & costophrenic angles',
+    ],
+    radiographyNotes:'Chest: PA erect (SID 180 cm, 110–125 kVp, full inspiration, 2nd breath), lateral, AP supine, obliques RAO/LAO/RPO/LPO 45°, AP Lordotic (apices), lateral decubitus (effusion/pneumothorax — 5+ min before exposure). Ribs: AP bilateral/unilateral, axillary obliques RPO/LPO/RAO/LAO. Sternum: RAO 15–20°, lateral.',
+    clinicalIndications:'Pneumonia, pleural effusion, pneumothorax, cardiomegaly (heart > 50% chest width on PA), rib fractures, sternal fractures, COPD/emphysema, atelectasis, lung masses, mediastinal widening.',
+    kVpRange:'110–125 kVp (chest), 75–85 kVp (ribs/sternum)',
+    positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
+    chapterKey:'chest'
+  },
+  abdomen:{
+    name:'Abdomen & Pelvis',arabicName:'البطن والحوض',icon:'🫃',
+    structures:[
+      'Liver (right lobe, left lobe, caudate, quadrate)',
+      'Gallbladder & biliary ducts',
+      'Spleen (upper left quadrant)',
+      'Pancreas (head, body, tail)',
+      'Kidneys & adrenal glands',
+      'Ureters & urinary bladder',
+      'Large intestine (cecum, colon, rectum)',
+      'Small intestine (duodenum, jejunum, ileum)',
+      'Stomach',
+      'Aorta & inferior vena cava',
+    ],
+    radiographyNotes:'AP supine KUB (iliac crest centering, 70–85 kVp, expiration), AP erect (2" above iliac crest — air-fluid levels), left lateral decubitus (free peritoneal air), PA prone, dorsal decubitus, lateral abdomen. Acute abdomen series: AP supine + AP erect + PA chest.',
+    clinicalIndications:'Bowel obstruction (air-fluid levels), pneumoperitoneum (free air under diaphragm), kidney/ureteral calculi (KUB), ascites, ileus, volvulus, intussusception, appendicitis.',
+    kVpRange:'70–85 kVp',
+    positioning:'Supine preferred. Erect or lateral decubitus for free air/fluid. Minimum 5–20 min in decubitus position before exposure.',
+    chapterKey:'abdomen'
+  },
+  spine:{
+    name:'Vertebral Column (Spine)',arabicName:'العمود الفقري',icon:'🦴',
+    structures:[
+      'Cervical spine: C1 (Atlas) – C7 (7 vertebrae)',
+      'Thoracic spine: T1 – T12 (12 vertebrae)',
+      'Lumbar spine: L1 – L5 (5 vertebrae)',
+      'Sacrum: S1–S5 (5 fused segments)',
+      'Coccyx (3–5 fused segments)',
+      'Intervertebral discs (nucleus pulposus + annulus fibrosus)',
+      'Facet (zygapophyseal) joints',
+      'Pedicles, laminae, spinous & transverse processes',
+      'Neural foramina (IVF)',
+      'Sacroiliac joints',
+    ],
+    radiographyNotes:'Cervical: AP open mouth + AP axial 15° + lateral + obliques. Thoracic: AP + lateral (orthostatic 3–4 sec breathing technique) + obliques 70°. Lumbar: AP + lateral + obliques 45° (Scottie dog) + L5–S1 spot lateral. Sacrum: AP axial 15° ceph + lateral. Coccyx: AP axial 10° caud + lateral. Scoliosis: PA full-spine, lateral, bending series.',
+    clinicalIndications:'Vertebral compression fractures, disc herniation, spondylolisthesis, spondylolysis (broken collar/neck on Scottie dog = pars interarticularis defect), spinal stenosis, scoliosis (Cobb angle), degenerative joint disease.',
+    kVpRange:'65–80 kVp (cervical), 75–90 kVp (thoracic), 80–95 kVp (lumbar), 70–80 kVp (sacrum/coccyx)',
+    positioning:'Erect preferred for functional studies. Supine for detailed vertebral views. Flex knees (support under knees) for lumbar AP to reduce lordosis and open disc spaces.',
+    chapterKey:'spine'
+  },
+  shoulder:{
+    name:'Shoulder & Clavicle',arabicName:'الكتف والترقوة',icon:'💪',
+    structures:[
+      'Glenohumeral joint (ball-and-socket)',
+      'Glenoid fossa of scapula',
+      'Humeral head (greater & lesser tubercles)',
+      'Intertubercular (bicipital) groove',
+      'Coracoid process',
+      'Acromion process',
+      'Acromioclavicular (AC) joint',
+      'Clavicle (medial, shaft, lateral ends)',
+      'Scapula (spine, body, glenoid, coracoid, acromion)',
+      'Subacromial space (≥7 mm normal)',
+    ],
+    radiographyNotes:'Shoulder: AP external rotation (greater tubercle in profile), AP internal rotation (lesser tubercle in profile), AP neutral. Axial: inferosuperior Lawrence, Clements modification, Bernageau. Obliques: Grashey (true AP for joint space), Scapular Y (trauma). Clavicle: AP, AP axial 15–30° cephalad. AC joints: bilateral AP with & without weights (5–15 lb, comparison). Scapula: AP, lateral.',
+    clinicalIndications:'Shoulder dislocations (anterior 95%, posterior rare), rotator cuff tears, AC joint separation (grades I–VI), Hill-Sachs lesion (posterior humeral head), Bankart lesion (anterior glenoid), clavicle fractures, scapular fractures.',
+    kVpRange:'65–80 kVp',
+    positioning:'Erect preferred; patient rotated to specific angles for each projection. Supine for post-trauma axial views. DO NOT force internal rotation in suspected posterior dislocation.',
+    chapterKey:'upper_limb'
+  },
+  upper_arm:{
+    name:'Humerus & Elbow',arabicName:'العضد والكوع',icon:'🦾',
+    structures:[
+      'Humerus (head, anatomical neck, surgical neck)',
+      'Greater & lesser tubercles, bicipital groove',
+      'Humeral shaft (diaphysis)',
+      'Medial & lateral epicondyles',
+      'Capitellum (articulates with radial head)',
+      'Trochlea (articulates with ulna)',
+      'Olecranon fossa (posterior), coronoid fossa (anterior)',
+      'Radial head & neck (proximal radius)',
+      'Coronoid process & olecranon (proximal ulna)',
+      'Anterior fat pad (normal) & posterior fat pad (abnormal = effusion)',
+    ],
+    radiographyNotes:'Humerus: AP, lateral (mediolateral/lateromedial), transthoracic lateral (proximal humerus), trauma horizontal beam. Include both shoulder and elbow joints for shaft views. Elbow: AP in full extension, lateral at 90° flexion, medial oblique (45°), lateral oblique (45°), radial head series (Coyle method — 4 positions around 90°).',
+    clinicalIndications:'Proximal humerus fractures (surgical neck, greater tuberosity), mid-shaft fractures, supracondylar fractures (children — most common), condylar fractures, radial head fractures, fat pad sign (joint effusion/hemarthrosis), elbow dislocations.',
+    kVpRange:'60–70 kVp (humerus), 60–70 kVp (elbow)',
+    positioning:'Erect preferred. IR includes both joints for shaft views. Elbow at exactly 90° flexion for true lateral. Horizontal beam alternatives for trauma.',
+    chapterKey:'upper_limb'
+  },
+  forearm_hand:{
+    name:'Forearm, Wrist & Hand',arabicName:'الساعد والمعصم والكف',icon:'✋',
+    structures:[
+      'Radius (head, neck, shaft, styloid process)',
+      'Ulna (olecranon, coronoid process, shaft, styloid)',
+      'Distal radioulnar joint (DRUJ)',
+      'Carpal bones — proximal row: Scaphoid, Lunate, Triquetrum, Pisiform',
+      'Carpal bones — distal row: Trapezium, Trapezoid, Capitate, Hamate',
+      'Hook of hamate & pisiform (carpal canal boundaries)',
+      'Metacarpals 1–5',
+      'Phalanges: proximal, middle (2nd–5th), distal',
+      'MCP, PIP, DIP, CMC joints',
+      'Carpal tunnel (median nerve passage)',
+    ],
+    radiographyNotes:'Forearm: AP, lateral (include wrist and elbow). Wrist: PA, oblique 45°, lateral, ulnar deviation (scaphoid/Stecher method), radial deviation, carpal canal (Gaynor-Hart). Hand: PA, oblique 45°, fan lateral, Brewerton, Norgaard. Fingers: PA, oblique, lateral. Thumb: AP, oblique, lateral, Modified Robert (1st CMC in true AP).',
+    clinicalIndications:'Colles fracture (dorsal angulation), Smith fracture (volar), scaphoid fracture (most commonly missed — AVN risk if untreated), Galeazzi (radius + DRUJ), Monteggia (ulna + radial head dislocation), Bennett (1st CMC), Gamekeeper\'s thumb (UCL).',
+    kVpRange:'55–65 kVp (fingers/hand), 60–70 kVp (wrist/forearm)',
+    positioning:'Patient seated at end of table, hand/forearm resting on IR. PA for hand (minimizes OID). Elbow at 90° for forearm lateral view.',
+    chapterKey:'upper_limb'
+  },
+  hip_femur:{
+    name:'Pelvis, Hip & Femur',arabicName:'الحوض والورك والفخذ',icon:'🦴',
+    structures:[
+      'Ilium (iliac crest, ASIS, PSIS, iliac fossa)',
+      'Ischium (ischial tuberosity, ischial spine)',
+      'Pubis (pubic symphysis, superior/inferior rami)',
+      'Sacroiliac joints',
+      'Femur (head, neck, greater & lesser trochanters, shaft)',
+      'Acetabulum (weight-bearing dome, anterior & posterior columns)',
+      'Hip joint — ball-and-socket (deepest joint in body)',
+      'Femoral neck angle of inclination (normal 120–135°)',
+      'Obturator foramen',
+    ],
+    radiographyNotes:'Pelvis: AP bilateral (internal rotation 15° of feet), bilateral frog-leg (Cleaves). Hip: AP unilateral, frog-leg Modified Cleaves, axiolateral inferosuperior Danelius-Miller (trauma — keep injured leg extended), Clements-Nakayama. Acetabulum: Judet method 45° RPO/LPO obliques, Teufel PA axial oblique. Femur: AP, mediolateral/lateromedial lateral.',
+    clinicalIndications:'Hip fractures (femoral neck, intertrochanteric, subtrochanteric), hip dislocations (posterior 90%), avascular necrosis (AVN) of femoral head, acetabular fractures, developmental dysplasia of hip (DDH). WARNING: DO NOT use frog-leg for suspected hip fracture/dislocation.',
+    kVpRange:'70–85 kVp (hip/pelvis), 70–85 kVp (femur)',
+    positioning:'AP supine standard. Injured leg in neutral (anatomic) position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval.',
+    chapterKey:'lower_limb'
+  },
+  knee_leg:{
+    name:'Knee & Lower Leg',arabicName:'الركبة والساق السفلية',icon:'🦵',
+    structures:[
+      'Distal femur (medial & lateral condyles, trochlear groove)',
+      'Proximal tibia (medial & lateral plateaus, tibial tuberosity)',
+      'Fibula head & neck (proximal)',
+      'Patella (kneecap)',
+      'Tibia shaft & medial malleolus',
+      'Fibula shaft & lateral malleolus',
+      'Ankle mortise (tibiotalar joint)',
+      'Menisci (medial & lateral fibrocartilage)',
+      'ACL, PCL (cruciate), MCL, LCL (collateral ligaments)',
+    ],
+    radiographyNotes:'Knee: AP (CR parallel to tibial plateau — adjust for body habitus), lateral 90°, medial oblique 45°, lateral oblique 45°, tunnel/notch (intercondylar fossa), tangential patella Merchant/Settegast. Tibia-Fibula: AP, lateral (include both joints). Ankle: AP, mortise (15–20° internal rotation — opens full mortise), lateral, oblique 45°, stress views (with caution).',
+    clinicalIndications:'Tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, ligament/meniscal tears, Osgood-Schlatter (tibial tuberosity apophysitis), tibia/fibula shaft fractures, ankle fractures (bimalleolar, trimalleolar), Maisonneuve.',
+    kVpRange:'65–80 kVp (knee), 60–75 kVp (ankle/leg)',
+    positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel view. Horizontal beam for trauma non-ambulatory patients.',
+    chapterKey:'lower_limb'
+  },
+  foot_ankle:{
+    name:'Foot & Ankle',arabicName:'القدم والكاحل',icon:'🦶',
+    structures:[
+      'Talus (trochlea, head, neck)',
+      'Calcaneus (heel bone, sustentaculum tali, tuberosity)',
+      'Navicular bone',
+      'Cuboid bone',
+      'Cuneiforms (medial, intermediate, lateral)',
+      'Metatarsals 1–5 (base, shaft, head)',
+      'Phalanges of toes (proximal, middle, distal)',
+      'Sesamoids (plantar surface of 1st MTP joint)',
+      'Subtalar joint (talocalcaneal)',
+      'Lisfranc joint complex (tarsometatarsal joints)',
+    ],
+    radiographyNotes:'Foot: AP/dorsoplantar (10° posterior CR), medial oblique 30–40°, lateral. Weight-bearing AP & lateral (arch evaluation, Lisfranc injury). Calcaneus: axial plantodorsal (40° cephalad), lateral. Toes: AP (10–15° cephalad to MTP), oblique, lateral. Ankle: AP, mortise 15–20° medial rotation, lateral, oblique 45°. Sesamoids: tangential (Lewis modification).',
+    clinicalIndications:'Calcaneal fractures (falls from height — check Böhler angle), Lisfranc injuries (1st–2nd metatarsal base alignment), 5th metatarsal Jones fracture, navicular stress fractures, hallux valgus, pes planus/cavus, sesamoid fractures, talus fractures.',
+    kVpRange:'50–65 kVp (toes/foot), 60–75 kVp (ankle/calcaneus)',
+    positioning:'Patient supine or seated for non-weight-bearing. Standing for weight-bearing projections (arch and functional assessment).',
+    chapterKey:'lower_limb'
+  }
+};
+
+function openAnatomyRegion(regionId){
+  if(!ANATOMY_DATA[regionId]) return;
+  buildAnatomyDetail(regionId);
+  navTo('anatomy-detail');
+}
+
+function buildAnatomyDetail(regionId){
+  const r = ANATOMY_DATA[regionId];
+  if(!r) return;
+  const el = document.getElementById('anatDetailContent');
+  if(!el) return;
+
+  const chName = r.chapterKey && BOOK[r.chapterKey] ? BOOK[r.chapterKey].name : '';
+  const chIcon = r.chapterKey && BOOK[r.chapterKey] ? BOOK[r.chapterKey].icon : '';
+
+  const structHTML = r.structures.map(s=>`<li>${s}</li>`).join('');
+
+  el.innerHTML = `
+    <div class="anat-detail-header">
+      <div class="anat-detail-icon">${r.icon}</div>
+      <div>
+        <div class="anat-detail-title">${r.name}</div>
+        <div class="anat-detail-ar">${r.arabicName}</div>
+      </div>
+    </div>
+
+    <div class="anat-detail-section">
+      <div class="anat-detail-section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Anatomical Structures — الهياكل التشريحية
+      </div>
+      <div class="anat-detail-section-body">
+        <ul class="anat-struct-list">${structHTML}</ul>
+      </div>
+    </div>
+
+    <div class="anat-detail-section">
+      <div class="anat-detail-section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Radiographic Technique — تقنية الأشعة
+      </div>
+      <div class="anat-detail-section-body">
+        <div class="anat-info-row">
+          <div class="anat-info-label">Projections</div>
+          <div class="anat-info-val">${r.radiographyNotes}</div>
+        </div>
+        <div class="anat-info-row">
+          <div class="anat-info-label">kVp Range</div>
+          <div class="anat-info-val"><span class="anat-kvp-badge">${r.kVpRange}</span></div>
+        </div>
+        <div class="anat-info-row">
+          <div class="anat-info-label">Positioning</div>
+          <div class="anat-info-val">${r.positioning}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="anat-detail-section">
+      <div class="anat-detail-section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Clinical Indications — المؤشرات السريرية
+      </div>
+      <div class="anat-detail-section-body">
+        <div class="anat-info-val">${r.clinicalIndications}</div>
+      </div>
+    </div>
+
+    ${chName ? `<button class="anat-goto-btn" onclick="navTo('learn-chapters')">
+      <span>${chIcon} Go to ${chName} chapter in Section 1 — Learn</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>` : ''}
+  `;
 }
 
 initAppFont();

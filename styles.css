@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cairo:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cairo:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   /* ── LIGHT: Soft Paper ── */
@@ -15,7 +15,7 @@
   --safe-bottom:env(safe-area-inset-bottom, 0px);
   --app-height:100vh;
   --sidebar-w:264px;
-  --font:'IBM Plex Sans','Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:Inter,'Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
   --font-weight:400;
   --base-fs:15px;
   --font-scale:1;
@@ -1490,4 +1490,50 @@ html, body {
 
 /* Dark mode AI table fix */
 .dark .ai-bubble.bot table,.dark .ai-bubble.bot [style*="border-radius:10px"] {background:var(--bg3)!important}
+
+/* ══════════════════════════════════════════
+   ANATOMY SECTION STYLES
+═══════════════════════════════════════════ */
+.anat-intro{padding:12px 16px;font-size:calc(13px * var(--font-scale));color:var(--text2);line-height:1.6;border-radius:var(--radius);background:var(--accent-bg);border:1px solid var(--accent);margin-bottom:16px}
+.anat-tap-hint{text-align:center;font-size:calc(12px * var(--font-scale));color:var(--text3);margin-bottom:10px;letter-spacing:.01em}
+.anat-body-container{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
+.anat-body-svg-wrap{width:100%;max-width:320px;padding:8px;background:var(--bg);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border)}
+#anatomyBodySVG{width:100%;display:block}
+#anatomyBodySVG .ab-zone{cursor:pointer;transition:opacity .15s,filter .15s}
+#anatomyBodySVG .ab-zone:hover{opacity:.9;filter:brightness(1.12)}
+#anatomyBodySVG .ab-zone:active{opacity:.7;filter:brightness(.95)}
+#anatomyBodySVG .ab-lbl{font-family:Inter,-apple-system,sans-serif;font-weight:700;fill:#1a2535;pointer-events:none;text-anchor:middle;dominant-baseline:middle}
+.dark #anatomyBodySVG .ab-lbl{fill:#f0f4f8}
+.anat-spine-btn{display:flex;align-items:center;gap:10px;width:100%;max-width:320px;margin:8px auto 0;padding:12px 16px;background:linear-gradient(135deg,#f3e5f5,#e1bee7);border:1.5px solid #ce93d8;border-radius:var(--radius);cursor:pointer;font-size:calc(13px * var(--font-scale));font-weight:700;color:#6a1b9a;text-align:left;transition:background .15s,box-shadow .15s}
+.anat-spine-btn:hover{background:linear-gradient(135deg,#e1bee7,#ce93d8);box-shadow:var(--shadow-sm)}
+.dark .anat-spine-btn{background:linear-gradient(135deg,#2d1c3d,#3e2257);border-color:#9c27b0;color:#e1bee7}
+.anat-regions-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+.anat-region-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:background .15s,box-shadow .15s,border-color .15s;display:flex;align-items:center;gap:10px}
+.anat-region-card:hover{background:var(--bg3);box-shadow:var(--shadow-sm);border-color:var(--accent)}
+.anat-region-card:active{background:var(--bg4)}
+.anat-region-icon{font-size:22px;flex-shrink:0}
+.anat-region-info{min-width:0}
+.anat-region-name{font-size:calc(12px * var(--font-scale));font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anat-region-ar{font-size:calc(11px * var(--font-scale));color:var(--text2);direction:rtl;margin-top:1px}
+
+/* Anatomy Detail Page */
+.anat-detail-header{display:flex;align-items:center;gap:14px;padding:16px;background:linear-gradient(135deg,var(--bg3),var(--bg));border-radius:var(--radius);border:1px solid var(--border);margin-bottom:16px}
+.anat-detail-icon{font-size:40px;flex-shrink:0}
+.anat-detail-title{font-size:calc(20px * var(--font-scale));font-weight:800;color:var(--text);line-height:1.2}
+.anat-detail-ar{font-size:calc(15px * var(--font-scale));color:var(--text2);direction:rtl;margin-top:3px}
+.anat-detail-section{margin-bottom:16px;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden}
+.anat-detail-section-title{padding:11px 15px;background:var(--bg3);font-size:calc(12px * var(--font-scale));font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+.anat-detail-section-body{padding:12px 15px;background:var(--bg)}
+.anat-struct-list{margin:0;padding-left:18px;list-style:none}
+.anat-struct-list li{font-size:calc(13px * var(--font-scale));color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.anat-struct-list li:last-child{border-bottom:none}
+.anat-struct-list li::before{content:"⬥";color:var(--accent);margin-right:8px;font-size:10px}
+.anat-info-row{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
+.anat-info-row:last-child{border-bottom:none}
+.anat-info-label{font-size:calc(11px * var(--font-scale));font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;padding-top:2px;min-width:80px}
+.anat-info-val{font-size:calc(13px * var(--font-scale));color:var(--text);line-height:1.6}
+.anat-kvp-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--c-eval-bg);border:1px solid var(--c-eval-border);color:var(--amber);font-size:calc(12px * var(--font-scale));font-weight:700}
+.anat-goto-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;color:var(--accent);font-size:calc(13px * var(--font-scale));font-weight:700;width:100%;margin-top:12px;transition:background .15s}
+.anat-goto-btn:hover{background:var(--accent);color:#fff}
+
 
