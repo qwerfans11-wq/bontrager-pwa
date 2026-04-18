@@ -759,11 +759,20 @@ const FONT_SIZE_MIN = 12;
 const FONT_SIZE_MAX = 24;
 const FONT_SIZE_DEFAULT = 15;
 const LARGE_FONT_DELTA = 2;
+const FLASHCARD_FONT_SIZE_MIN = 12;
+const FLASHCARD_FONT_SIZE_MAX = 26;
+const FLASHCARD_FONT_SIZE_DEFAULT = 16;
 
 function _normalizeFontSize(value, fallback = FONT_SIZE_DEFAULT){
   const parsed = parseInt(value, 10);
   if(Number.isNaN(parsed)) return fallback;
   return Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, parsed));
+}
+
+function _normalizeFlashcardFontSize(value, fallback = FLASHCARD_FONT_SIZE_DEFAULT){
+  const parsed = parseInt(value, 10);
+  if(Number.isNaN(parsed)) return fallback;
+  return Math.max(FLASHCARD_FONT_SIZE_MIN, Math.min(FLASHCARD_FONT_SIZE_MAX, parsed));
 }
 
 function _isLargeModeEnabled(){
@@ -784,10 +793,27 @@ function _getStoredBaseFontSize(){
   }
 }
 
+function _getStoredFlashcardFontSize(){
+  try{
+    const raw = localStorage.getItem('appFlashcardFontSize');
+    if(raw === null) return FLASHCARD_FONT_SIZE_DEFAULT;
+    return _normalizeFlashcardFontSize(raw);
+  }catch(e){
+    return FLASHCARD_FONT_SIZE_DEFAULT;
+  }
+}
+
 function _syncFontSizeInput(baseSize){
   const input = document.getElementById('fontSizeInput');
   if(input && document.activeElement !== input){
     input.value = String(baseSize);
+  }
+}
+
+function _syncFlashcardFontSizeInput(size){
+  const input = document.getElementById('flashcardFontSizeInput');
+  if(input && document.activeElement !== input){
+    input.value = String(size);
   }
 }
 
@@ -796,11 +822,21 @@ function setAppFontSize(sizeValue){
   const effectiveSize = _isLargeModeEnabled()
     ? Math.min(baseSize + LARGE_FONT_DELTA, FONT_SIZE_MAX + LARGE_FONT_DELTA)
     : baseSize;
+  const scale = effectiveSize / FONT_SIZE_DEFAULT;
 
   document.documentElement.style.setProperty('--base-fs', effectiveSize + 'px');
+  document.documentElement.style.setProperty('--font-scale', scale.toFixed(4));
   document.body.style.fontSize = effectiveSize + 'px';
   _syncFontSizeInput(baseSize);
   return { baseSize, effectiveSize };
+}
+
+function setFlashcardFontSize(sizeValue){
+  const size = _normalizeFlashcardFontSize(sizeValue);
+  const scale = size / FLASHCARD_FONT_SIZE_DEFAULT;
+  document.documentElement.style.setProperty('--fc-font-scale', scale.toFixed(4));
+  _syncFlashcardFontSizeInput(size);
+  return size;
 }
 
 function setAppTextColor(colorValue){
@@ -830,6 +866,15 @@ function onFontSizeChange(){
   input.value = String(sizeValue);
   setAppFontSize(sizeValue);
   localStorage.setItem('appFontSize', String(sizeValue));
+}
+
+function onFlashcardFontSizeChange(){
+  const input = document.getElementById('flashcardFontSizeInput');
+  if(!input) return;
+  const sizeValue = _normalizeFlashcardFontSize(input.value);
+  input.value = String(sizeValue);
+  setFlashcardFontSize(sizeValue);
+  localStorage.setItem('appFlashcardFontSize', String(sizeValue));
 }
 
 function onTextColorChange(){
@@ -946,6 +991,13 @@ function initAppFont(){
   }
   setAppFontSize(baseFontSize);
 
+  const flashcardFontSize = _getStoredFlashcardFontSize();
+  const flashcardFontInput = document.getElementById('flashcardFontSizeInput');
+  if(flashcardFontInput){
+    flashcardFontInput.value = String(flashcardFontSize);
+  }
+  setFlashcardFontSize(flashcardFontSize);
+
   _loadFlashcardTheme();
 }
 
@@ -963,6 +1015,7 @@ function resetFontAppearanceDefaults(){
   localStorage.setItem('appFontWeight', defaultWeight);
   localStorage.setItem('appTextColor', defaultColor);
   localStorage.setItem('appFontSize', String(defaultFontSize));
+  localStorage.setItem('appFlashcardFontSize', String(FLASHCARD_FONT_SIZE_DEFAULT));
   localStorage.setItem('appFlashcardFront1', FLASHCARD_DEFAULT_COLORS.front1);
   localStorage.setItem('appFlashcardFront2', FLASHCARD_DEFAULT_COLORS.front2);
   localStorage.setItem('appFlashcardBack1', FLASHCARD_DEFAULT_COLORS.back1);
@@ -975,6 +1028,7 @@ function resetFontAppearanceDefaults(){
   const weightSelect = document.getElementById('fontWeightSelect');
   const textColorPicker = document.getElementById('textColorPicker');
   const fontSizeInput = document.getElementById('fontSizeInput');
+  const flashcardFontInput = document.getElementById('flashcardFontSizeInput');
   const highContrastToggle = document.getElementById('highContrastToggle');
   const darkToggle = document.getElementById('darkToggle');
   const largeToggle = document.getElementById('largeToggle');
@@ -982,6 +1036,7 @@ function resetFontAppearanceDefaults(){
   if(weightSelect) weightSelect.value = defaultWeight;
   if(textColorPicker) textColorPicker.value = defaultColor;
   if(fontSizeInput) fontSizeInput.value = String(defaultFontSize);
+  if(flashcardFontInput) flashcardFontInput.value = String(FLASHCARD_FONT_SIZE_DEFAULT);
   document.body.classList.remove('dark');
   if(darkToggle) {
     darkToggle.classList.remove('on');
@@ -992,6 +1047,7 @@ function resetFontAppearanceDefaults(){
     largeToggle.setAttribute('aria-pressed','false');
   }
   setAppFontSize(defaultFontSize);
+  setFlashcardFontSize(FLASHCARD_FONT_SIZE_DEFAULT);
   _applyFlashcardTheme(FLASHCARD_DEFAULT_COLORS);
   _syncFlashcardColorInputs(FLASHCARD_DEFAULT_COLORS);
   document.body.classList.remove('high-contrast');
@@ -2227,6 +2283,7 @@ let wrongAnswers=[];
 let lastChId=null, editQIdx=null, editTarget=null;
 let bestScores={};
 let aiHistory=[];
+let lastQuizSession=null;
 let confirmCallback=null;
 let pendingDevAction=null;
 let _quizActive=false;
@@ -2438,8 +2495,9 @@ function buildChapters(){
   const ll=document.getElementById('learnChList');
   const ql=document.getElementById('quizChList');
   ll.innerHTML=''; ql.innerHTML='';
+  _invalidateHomeSearchIndex();
 
-  Object.entries(BOOK).forEach(([id,ch])=>{
+  Object.entries(BOOK).forEach(([id,ch], orderIdx)=>{
     // Count positions for this chapter
     let pn=0, qn=0;
     if(ch.positions){ pn+=ch.positions.length; }
@@ -2448,11 +2506,15 @@ function buildChapters(){
     // Quiz count (all flat quiz keys for this chapter)
     const qKeys=Object.keys(QUIZ).filter(k=>k===id||k.startsWith(id+'_'));
     qKeys.forEach(k=>{ if(QUIZ[k]) qn+=QUIZ[k].length; });
+    const coverage=_quizCountWithImages(qKeys);
 
     // Learn button
     const lb=document.createElement('div');
     lb.style.position='relative';
     lb.innerHTML=buildChBtn(ch.icon, ch.name, `${pn} position${pn!==1?'s':''}`, 'learn');
+    lb.dataset.chOrder=String(orderIdx);
+    lb.dataset.searchName=ch.name||'';
+    lb.dataset.searchSub=`${pn} position${pn!==1?'s':''}`;
     lb.querySelector('.ch-btn').onclick=()=>{
       if(ch.subchapters) openSubChapters(id);
       else openLearnChap(id, null);
@@ -2470,7 +2532,11 @@ function buildChapters(){
 
     // Quiz button
     const qb=document.createElement('div');
-    qb.innerHTML=buildChBtn(ch.icon, ch.name, `${qn} question${qn!==1?'s':''}`, 'quiz');
+    const qSub=qn ? `${qn} question${qn!==1?'s':''} · ${coverage.withImages} with images` : '0 questions';
+    qb.innerHTML=buildChBtn(ch.icon, ch.name, qSub, 'quiz');
+    qb.dataset.chOrder=String(orderIdx);
+    qb.dataset.searchName=ch.name||'';
+    qb.dataset.searchSub=qSub;
     qb.querySelector('.ch-btn').onclick=()=>{
       if(ch.subchapters) openQuizSubChapters(id);
       else startQuiz(id);
@@ -2480,20 +2546,348 @@ function buildChapters(){
 
   buildAddChapterPanel();
   updateStats();
+  filterChapters();
+  filterQuizChapters();
 }
 
 function buildChBtn(icon, name, sub, type){
   return `<button class="ch-btn"><span class="ch-icon">${icon}</span><div class="ch-info"><div class="ch-name">${name}</div><div class="ch-sub">${sub}</div></div><span class="ch-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>`;
 }
 
-// New functions for enhancements
-function filterChapters(){
-  const query = document.getElementById('learnSearch').value.toLowerCase();
-  const items = document.querySelectorAll('#learnChList > div');
-  items.forEach(item => {
-    const name = item.textContent.toLowerCase();
-    item.style.display = name.includes(query) ? '' : 'none';
+// Shared search utilities
+const _SEARCH_STOP_WORDS=new Set(['the','of','and','for','with','from','into','onto','view','position','projection','xray','x-ray','radiograph']);
+
+function _searchNormalize(value){
+  return String(value||'')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[’'`]/g,'')
+    .replace(/[-_/\\|]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function _searchTokens(value){
+  return Array.from(new Set(
+    _searchNormalize(value)
+      .split(' ')
+      .filter(t=>t && t.length>1 && !_SEARCH_STOP_WORDS.has(t))
+  ));
+}
+
+function _levenshteinWithin(a,b,maxDist){
+  if(a===b) return true;
+  const al=a.length;
+  const bl=b.length;
+  if(!al || !bl) return Math.max(al,bl)<=maxDist;
+  if(Math.abs(al-bl)>maxDist) return false;
+
+  let prev=new Array(bl+1);
+  let curr=new Array(bl+1);
+  for(let j=0;j<=bl;j++) prev[j]=j;
+
+  for(let i=1;i<=al;i++){
+    curr[0]=i;
+    let rowMin=curr[0];
+    const ca=a.charCodeAt(i-1);
+    for(let j=1;j<=bl;j++){
+      const cost=(ca===b.charCodeAt(j-1))?0:1;
+      const del=prev[j]+1;
+      const ins=curr[j-1]+1;
+      const sub=prev[j-1]+cost;
+      const val=Math.min(del,ins,sub);
+      curr[j]=val;
+      if(val<rowMin) rowMin=val;
+    }
+    if(rowMin>maxDist) return false;
+    const tmp=prev; prev=curr; curr=tmp;
+  }
+  return prev[bl]<=maxDist;
+}
+
+function _fieldHasFuzzyToken(field, token){
+  if(!field || !token || token.length<4) return false;
+  const maxDist=token.length>=9?2:1;
+  const words=field.split(' ').filter(Boolean);
+  for(let i=0;i<words.length;i++){
+    const w=words[i];
+    if(!w || Math.abs(w.length-token.length)>maxDist) continue;
+    if(_levenshteinWithin(w, token, maxDist)) return true;
+  }
+  return false;
+}
+
+function _searchScore(queryNorm, queryTokens, fields){
+  if(!queryNorm) return 0;
+  const name=fields.name||'';
+  const chapter=fields.chapter||'';
+  const sub=fields.sub||'';
+  const cr=fields.cr||'';
+  const desc=fields.desc||'';
+  const type=fields.type||'';
+  let score=0;
+
+  if(name===queryNorm) score+=280;
+  else if(name.startsWith(queryNorm)) score+=230;
+  else if(name.includes(queryNorm)) score+=190;
+
+  if(chapter.startsWith(queryNorm)) score+=70;
+  else if(chapter.includes(queryNorm)) score+=52;
+
+  if(sub.includes(queryNorm)) score+=42;
+  if(cr.includes(queryNorm)) score+=36;
+  if(type.includes(queryNorm)) score+=18;
+  if(desc.includes(queryNorm)) score+=12;
+
+  let coverageCount=0;
+  queryTokens.forEach(tok=>{
+    let covered=false;
+
+    if(name.startsWith(tok)){ score+=34; covered=true; }
+    if(name.includes(tok)){ score+=24; covered=true; }
+    if(chapter.includes(tok)){ score+=14; covered=true; }
+    if(sub.includes(tok)){ score+=11; covered=true; }
+    if(cr.includes(tok)){ score+=9; covered=true; }
+    if(desc.includes(tok)){ score+=5; covered=true; }
+
+    if(!name.includes(tok) && _fieldHasFuzzyToken(name, tok)){ score+=13; covered=true; }
+    if(!chapter.includes(tok) && _fieldHasFuzzyToken(chapter, tok)){ score+=8; covered=true; }
+    if(!sub.includes(tok) && _fieldHasFuzzyToken(sub, tok)){ score+=6; covered=true; }
+    if(!cr.includes(tok) && _fieldHasFuzzyToken(cr, tok)){ score+=5; covered=true; }
+
+    if(covered) coverageCount+=1;
   });
+
+  if(queryTokens.length>1){
+    score+=coverageCount*8;
+  }
+  return score;
+}
+
+function _escapeRegExp(str){
+  return String(str||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+}
+
+function _highlightSearchText(text, query){
+  const source=String(text||'');
+  const tokens=_searchTokens(query).sort((a,b)=>b.length-a.length).slice(0,5);
+  if(!tokens.length) return esc(source);
+  const rx=new RegExp(tokens.map(_escapeRegExp).join('|'),'ig');
+  let out='';
+  let last=0;
+  let m;
+  while((m=rx.exec(source))){
+    const start=m.index;
+    out+=esc(source.slice(last,start));
+    out+=`<mark>${esc(source.slice(start,rx.lastIndex))}</mark>`;
+    last=rx.lastIndex;
+    if(!m[0]) rx.lastIndex+=1;
+  }
+  out+=esc(source.slice(last));
+  return out;
+}
+
+function _restoreChapterText(item){
+  const nameEl=item.querySelector('.ch-name');
+  const subEl=item.querySelector('.ch-sub');
+  if(nameEl){
+    if(!nameEl.dataset.rawText) nameEl.dataset.rawText=nameEl.textContent||'';
+    nameEl.innerHTML=esc(nameEl.dataset.rawText);
+  }
+  if(subEl){
+    if(!subEl.dataset.rawText) subEl.dataset.rawText=subEl.textContent||'';
+    subEl.innerHTML=esc(subEl.dataset.rawText);
+  }
+}
+
+function _highlightChapterText(item, query){
+  const nameEl=item.querySelector('.ch-name');
+  const subEl=item.querySelector('.ch-sub');
+  if(nameEl){
+    if(!nameEl.dataset.rawText) nameEl.dataset.rawText=nameEl.textContent||'';
+    nameEl.innerHTML=_highlightSearchText(nameEl.dataset.rawText, query);
+  }
+  if(subEl){
+    if(!subEl.dataset.rawText) subEl.dataset.rawText=subEl.textContent||'';
+    subEl.innerHTML=_highlightSearchText(subEl.dataset.rawText, query);
+  }
+}
+
+function clearLearnSearch(){
+  const input=document.getElementById('learnSearch');
+  if(!input) return;
+  input.value='';
+  filterChapters();
+  input.focus();
+}
+
+function learnSearchKeydown(e){
+  if(!e) return;
+  if(e.key==='Escape'){
+    e.preventDefault();
+    clearLearnSearch();
+    return;
+  }
+  if(e.key==='Enter'){
+    const first=[...document.querySelectorAll('#learnChList > div')].find(item=>item.style.display!=='none');
+    const btn=first?.querySelector('.ch-btn');
+    if(btn){
+      e.preventDefault();
+      btn.click();
+    }
+  }
+}
+
+function filterChapters(){
+  const input=document.getElementById('learnSearch');
+  const list=document.getElementById('learnChList');
+  const meta=document.getElementById('learnSearchMeta');
+  const clearBtn=document.getElementById('learnSearchClear');
+  if(!input || !list) return;
+
+  const queryRaw=(input.value||'').trim();
+  const queryNorm=_searchNormalize(queryRaw);
+  const queryTokens=_searchTokens(queryRaw);
+  const items=[...list.querySelectorAll(':scope > div')];
+
+  if(clearBtn) clearBtn.classList.toggle('show', !!queryRaw);
+
+  if(!queryNorm){
+    items
+      .sort((a,b)=>(Number(a.dataset.chOrder)||0)-(Number(b.dataset.chOrder)||0))
+      .forEach(item=>{
+        item.style.display='';
+        item.classList.remove('chapter-search-hit');
+        _restoreChapterText(item);
+        list.appendChild(item);
+      });
+    if(meta) meta.textContent=items.length?`Showing ${items.length} chapters`:'No chapters available';
+    return;
+  }
+
+  const visible=[];
+  items.forEach(item=>{
+    const nameRaw=item.dataset.searchName||item.querySelector('.ch-name')?.textContent||'';
+    const subRaw=item.dataset.searchSub||item.querySelector('.ch-sub')?.textContent||'';
+    const score=_searchScore(queryNorm,queryTokens,{
+      name:_searchNormalize(nameRaw),
+      chapter:_searchNormalize(nameRaw),
+      sub:_searchNormalize(subRaw),
+      cr:'',
+      desc:'',
+      type:''
+    });
+
+    if(score>0){
+      visible.push({item,score,order:Number(item.dataset.chOrder)||0});
+      item.style.display='';
+      item.classList.add('chapter-search-hit');
+      _highlightChapterText(item, queryRaw);
+    } else {
+      item.style.display='none';
+      item.classList.remove('chapter-search-hit');
+      _restoreChapterText(item);
+    }
+  });
+
+  visible
+    .sort((a,b)=>b.score-a.score||a.order-b.order)
+    .forEach(({item})=>list.appendChild(item));
+
+  if(meta){
+    meta.textContent=visible.length
+      ? `${visible.length} match${visible.length!==1?'es':''} for "${queryRaw}"`
+      : `No chapters match "${queryRaw}"`;
+  }
+}
+
+function clearQuizSearch(){
+  const input=document.getElementById('quizSearch');
+  if(!input) return;
+  input.value='';
+  filterQuizChapters();
+  input.focus();
+}
+
+function quizSearchKeydown(e){
+  if(!e) return;
+  if(e.key==='Escape'){
+    e.preventDefault();
+    clearQuizSearch();
+    return;
+  }
+  if(e.key==='Enter'){
+    const first=[...document.querySelectorAll('#quizChList > div')].find(item=>item.style.display!=='none');
+    const btn=first?.querySelector('.ch-btn');
+    if(btn){
+      e.preventDefault();
+      btn.click();
+    }
+  }
+}
+
+function filterQuizChapters(){
+  const input=document.getElementById('quizSearch');
+  const list=document.getElementById('quizChList');
+  const meta=document.getElementById('quizSearchMeta');
+  const clearBtn=document.getElementById('quizSearchClear');
+  if(!input || !list) return;
+
+  const queryRaw=(input.value||'').trim();
+  const queryNorm=_searchNormalize(queryRaw);
+  const queryTokens=_searchTokens(queryRaw);
+  const items=[...list.querySelectorAll(':scope > div')];
+
+  if(clearBtn) clearBtn.classList.toggle('show', !!queryRaw);
+
+  if(!queryNorm){
+    items
+      .sort((a,b)=>(Number(a.dataset.chOrder)||0)-(Number(b.dataset.chOrder)||0))
+      .forEach(item=>{
+        item.style.display='';
+        item.classList.remove('chapter-search-hit');
+        _restoreChapterText(item);
+        list.appendChild(item);
+      });
+    if(meta) meta.textContent=items.length?`Showing ${items.length} quiz chapters`:'No quiz chapters available';
+    return;
+  }
+
+  const visible=[];
+  items.forEach(item=>{
+    const nameRaw=item.dataset.searchName||item.querySelector('.ch-name')?.textContent||'';
+    const subRaw=item.dataset.searchSub||item.querySelector('.ch-sub')?.textContent||'';
+    const score=_searchScore(queryNorm,queryTokens,{
+      name:_searchNormalize(nameRaw),
+      chapter:_searchNormalize(nameRaw),
+      sub:_searchNormalize(subRaw),
+      cr:'',
+      desc:'',
+      type:''
+    });
+
+    if(score>0){
+      visible.push({item,score,order:Number(item.dataset.chOrder)||0});
+      item.style.display='';
+      item.classList.add('chapter-search-hit');
+      _highlightChapterText(item, queryRaw);
+    } else {
+      item.style.display='none';
+      item.classList.remove('chapter-search-hit');
+      _restoreChapterText(item);
+    }
+  });
+
+  visible
+    .sort((a,b)=>b.score-a.score||a.order-b.order)
+    .forEach(({item})=>list.appendChild(item));
+
+  if(meta){
+    meta.textContent=visible.length
+      ? `${visible.length} match${visible.length!==1?'es':''} for "${queryRaw}"`
+      : `No quiz chapters match "${queryRaw}"`;
+  }
 }
 
 function getPositionsForChap(chId, scId){
@@ -3026,13 +3420,14 @@ function openQuizSubChapters(chId){
   const topQKey=chId;
   if(QUIZ[topQKey]&&QUIZ[topQKey].length){
     const qn=QUIZ[topQKey].length;
+    const qImg=(QUIZ[topQKey]||[]).filter(q=>String(q.xrayImg||'').trim()).length;
     const allRow=document.createElement('div');
     allRow.className='sub-ch-indent';
     allRow.innerHTML=`<button class="sub-ch-btn">
       <span class="sub-ch-icon" style="font-size:15px">≡</span>
       <div class="sub-ch-info">
         <div class="sub-ch-name">All Questions</div>
-        <div class="sub-ch-sub">${qn} question${qn!==1?'s':''}</div>
+        <div class="sub-ch-sub">${qn} question${qn!==1?'s':''} · ${qImg} with images</div>
       </div>
       <span class="sub-ch-arrow">›</span>
     </button>`;
@@ -3044,13 +3439,14 @@ function openQuizSubChapters(chId){
     // Try both naming conventions: chId_scId AND chId_chId_scId (for nested patterns)
     const qKey=`${chId}_${scId}`;
     const qn=(QUIZ[qKey]||[]).length;
+    const qImg=(QUIZ[qKey]||[]).filter(q=>String(q.xrayImg||'').trim()).length;
     const row=document.createElement('div');
     row.className='sub-ch-indent';
     row.innerHTML=`<button class="sub-ch-btn">
       <span class="sub-ch-icon">${sc.icon||'📋'}</span>
       <div class="sub-ch-info">
         <div class="sub-ch-name">${sc.name}</div>
-        <div class="sub-ch-sub">${qn} question${qn!==1?'s':''}</div>
+        <div class="sub-ch-sub">${qn} question${qn!==1?'s':''} · ${qImg} with images</div>
       </div>
       <span class="sub-ch-arrow">›</span>
     </button>`;
@@ -3634,44 +4030,176 @@ function switchPosMode(mode){
 // ══════════════════════════════════════════════
 // HOME SEARCH
 // ══════════════════════════════════════════════
-function homeSearch(){
-  const q=document.getElementById('homeSearchInput').value.trim().toLowerCase();
-  const res=document.getElementById('homeSearchResults');
-  if(!q){res.classList.remove('open');res.innerHTML='';return;}
+let _homeSearchIndex=null;
+let _homeSearchHits=[];
+let _homeSearchActiveIndex=-1;
+
+function _invalidateHomeSearchIndex(){
+  _homeSearchIndex=null;
+  _homeSearchHits=[];
+  _homeSearchActiveIndex=-1;
+}
+
+function _buildHomeSearchIndex(){
   const all=_getAllPosFlat();
-  const hits=all.filter(({pos,chId,scId})=>{
-    const chObj=scId?(BOOK[chId]?.subchapters?.[scId]):BOOK[chId];
-    const haystack=(pos.name+' '+(pos.info?.cr||'')+' '+(pos.info?.desc||'').slice(0,120)+' '+(chObj?.name||'')).toLowerCase();
-    return haystack.includes(q);
-  }).slice(0,12);
-  if(!hits.length){
-    res.innerHTML=`<div class="search-no-results">No results for "${q}"</div>`;
-    res.classList.add('open');return;
+  _homeSearchIndex=all.map(({pos,chId,scId,posIdx})=>{
+    const chapter=BOOK[chId];
+    const chapterName=chapter?.name||chId;
+    const subName=scId?(chapter?.subchapters?.[scId]?.name||''):'';
+    const info=pos.info||{};
+    return {
+      pos,
+      chId,
+      scId,
+      posIdx,
+      icon:chapter?.icon||'📋',
+      chapterName,
+      subName,
+      chapterPath:subName?`${chapterName} · ${subName}`:chapterName,
+      fields:{
+        name:_searchNormalize(pos.name),
+        chapter:_searchNormalize(chapterName),
+        sub:_searchNormalize(subName),
+        cr:_searchNormalize(info.cr||''),
+        desc:_searchNormalize((info.desc||'').slice(0,260)),
+        type:_searchNormalize(pos.type||'')
+      }
+    };
+  });
+}
+
+function _renderHomeSearchResults(queryRaw){
+  const res=document.getElementById('homeSearchResults');
+  const input=document.getElementById('homeSearchInput');
+  if(!res || !input) return;
+
+  if(!_homeSearchHits.length){
+    res.innerHTML=`<div class="search-no-results">No results for <strong>${esc(queryRaw)}</strong></div>`;
+    res.classList.add('open');
+    input.setAttribute('aria-expanded','true');
+    return;
   }
-  res.innerHTML=hits.map(({pos,chId,scId,posIdx})=>{
-    const chObj=scId?(BOOK[chId]?.subchapters?.[scId]):BOOK[chId];
-    const chName=chObj?.name||chId;
-    return `<div class="search-result-item" onclick="homeSearchGo('${chId}','${scId||''}',${posIdx})">
-      <div class="sri-icon">${BOOK[chId]?.icon||'📋'}</div>
+
+  res.innerHTML=_homeSearchHits.map((hit,idx)=>{
+    const active=idx===_homeSearchActiveIndex;
+    return `<div class="search-result-item ${active?'active':''}" role="option" aria-selected="${active?'true':'false'}" data-index="${idx}" onmouseenter="setHomeSearchActive(${idx})" onclick="homeSearchSelect(${idx})">
+      <div class="sri-icon">${esc(hit.icon)}</div>
       <div class="sri-info">
-        <div class="sri-name">${esc(pos.name)}</div>
-        <div class="sri-ch">${esc(chName)}</div>
+        <div class="sri-name">${_highlightSearchText(hit.pos.name, queryRaw)}</div>
+        <div class="sri-ch">${_highlightSearchText(hit.chapterPath, queryRaw)}</div>
       </div>
-      <span class="sri-badge ${pos.type==='routine'?'sri-routine':'sri-special'}">${pos.type==='routine'?'Routine':'Special'}</span>
+      <span class="sri-badge ${hit.pos.type==='routine'?'sri-routine':'sri-special'}">${hit.pos.type==='routine'?'Routine':'Special'}</span>
     </div>`;
   }).join('');
+
   res.classList.add('open');
+  input.setAttribute('aria-expanded','true');
 }
+
+function setHomeSearchActive(index){
+  if(index<0 || index>=_homeSearchHits.length) return;
+  _homeSearchActiveIndex=index;
+  const rows=[...document.querySelectorAll('#homeSearchResults .search-result-item')];
+  rows.forEach((row,i)=>{
+    const active=i===index;
+    row.classList.toggle('active',active);
+    row.setAttribute('aria-selected',active?'true':'false');
+  });
+  const activeRow=rows[index];
+  if(activeRow) activeRow.scrollIntoView({block:'nearest'});
+}
+
+function homeSearchSelect(index){
+  const hit=_homeSearchHits[index];
+  if(!hit) return;
+  homeSearchGo(hit.chId, hit.scId||'', hit.posIdx);
+}
+
+function homeSearchKeydown(e){
+  if(!e) return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    if(!_homeSearchHits.length){ homeSearch(); return; }
+    setHomeSearchActive((_homeSearchActiveIndex+1)%_homeSearchHits.length);
+    return;
+  }
+  if(e.key==='ArrowUp'){
+    if(!_homeSearchHits.length) return;
+    e.preventDefault();
+    setHomeSearchActive((_homeSearchActiveIndex-1+_homeSearchHits.length)%_homeSearchHits.length);
+    return;
+  }
+  if(e.key==='Enter'){
+    if(!_homeSearchHits.length) return;
+    e.preventDefault();
+    homeSearchSelect(_homeSearchActiveIndex>=0?_homeSearchActiveIndex:0);
+    return;
+  }
+  if(e.key==='Escape'){
+    e.preventDefault();
+    clearHomeSearch();
+  }
+}
+
+function clearHomeSearch(){
+  const input=document.getElementById('homeSearchInput');
+  const clearBtn=document.getElementById('homeSearchClear');
+  if(input) input.value='';
+  if(clearBtn) clearBtn.classList.remove('show');
+  closeHomeSearch();
+  if(input) input.focus();
+}
+
+function homeSearch(){
+  const input=document.getElementById('homeSearchInput');
+  const res=document.getElementById('homeSearchResults');
+  const clearBtn=document.getElementById('homeSearchClear');
+  if(!input || !res) return;
+
+  const queryRaw=(input.value||'').trim();
+  const queryNorm=_searchNormalize(queryRaw);
+  const queryTokens=_searchTokens(queryRaw);
+  if(clearBtn) clearBtn.classList.toggle('show', !!queryRaw);
+
+  if(!queryNorm){
+    closeHomeSearch();
+    return;
+  }
+
+  if(!_homeSearchIndex) _buildHomeSearchIndex();
+
+  const scored=_homeSearchIndex
+    .map(entry=>({entry,score:_searchScore(queryNorm,queryTokens,entry.fields)}))
+    .filter(x=>x.score>0)
+    .sort((a,b)=>b.score-a.score||a.entry.pos.name.length-b.entry.pos.name.length)
+    .slice(0,14);
+
+  _homeSearchHits=scored.map(x=>x.entry);
+  _homeSearchActiveIndex=_homeSearchHits.length?0:-1;
+  _renderHomeSearchResults(queryRaw);
+}
+
 function homeSearchGo(chId,scId,posIdx){
   closeHomeSearch();
-  document.getElementById('homeSearchInput').value='';
+  const input=document.getElementById('homeSearchInput');
+  const clearBtn=document.getElementById('homeSearchClear');
+  if(input) input.value='';
+  if(clearBtn) clearBtn.classList.remove('show');
   const ch=BOOK[chId];if(!ch)return;
   const pos=scId?(ch.subchapters?.[scId]?.positions?.[posIdx]):(ch.positions?.[posIdx]);
   if(pos) openPos(pos,chId,scId||null,posIdx);
 }
+
 function closeHomeSearch(){
   const res=document.getElementById('homeSearchResults');
-  if(res){res.classList.remove('open');}
+  const input=document.getElementById('homeSearchInput');
+  if(res){
+    res.classList.remove('open');
+    res.innerHTML='';
+  }
+  if(input) input.setAttribute('aria-expanded','false');
+  _homeSearchHits=[];
+  _homeSearchActiveIndex=-1;
 }
 
 // ══════════════════════════════════════════════
@@ -4030,7 +4558,340 @@ function deleteCurrentPos(){
 let _pendingQuizId=null;
 let _selectedQCount=null;
 
+const _QUIZ_STOP_WORDS=new Set([
+  'the','a','an','is','are','what','which','for','of','in','on','to','and','or','with','from','this','that','these','those',
+  'what','when','where','why','how','during','using','used','into','your','you','does','must','should','could','would','can',
+  'من','في','على','الى','إلى','عن','ما','ماذا','كيف','متى','اين','أي','اي','هذا','هذه','ذلك','تلك','الذي','التي','كل','جميع'
+]);
+
+function _quizNorm(value){
+  return String(value||'')
+    .toLowerCase()
+    .replace(/[\u064B-\u065F]/g,'')
+    .replace(/[أإآ]/g,'ا')
+    .replace(/ة/g,'ه')
+    .replace(/ى/g,'ي')
+    .replace(/ؤ/g,'و')
+    .replace(/ئ/g,'ي')
+    .replace(/[^a-z0-9\u0600-\u06ff\s]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function _quizTokens(value){
+  return _quizNorm(value)
+    .split(' ')
+    .filter(t=>t.length>2 && !_QUIZ_STOP_WORDS.has(t));
+}
+
+function _quizResolveBankKey(qKey){
+  if(BOOK[qKey]) return {chId:qKey, scId:null};
+  for(const [chId,ch] of Object.entries(BOOK)){
+    if(!ch || !ch.subchapters) continue;
+    if(!qKey.startsWith(chId+'_')) continue;
+    const scId=qKey.slice(chId.length+1);
+    if(scId && ch.subchapters[scId]) return {chId, scId};
+  }
+  return {chId:qKey, scId:null};
+}
+
+function _quizLabelForKey(qKey){
+  const resolved=_quizResolveBankKey(qKey);
+  const ch=BOOK[resolved.chId];
+  if(!ch) return 'General Quiz';
+  if(!resolved.scId) return ch.name || 'General Quiz';
+  const sc=ch.subchapters && ch.subchapters[resolved.scId];
+  return sc ? `${ch.name} - ${sc.name}` : (ch.name || 'General Quiz');
+}
+
+function _quizGetPositionsForKey(qKey){
+  const resolved=_quizResolveBankKey(qKey);
+  const ch=BOOK[resolved.chId];
+  if(!ch) return [];
+
+  if(resolved.scId){
+    const sc=ch.subchapters && ch.subchapters[resolved.scId];
+    return (sc && Array.isArray(sc.positions)) ? sc.positions : [];
+  }
+
+  const out=[];
+  if(Array.isArray(ch.positions)) out.push(...ch.positions);
+  if(ch.subchapters){
+    Object.values(ch.subchapters).forEach(sc=>{
+      if(Array.isArray(sc.positions)) out.push(...sc.positions);
+    });
+  }
+  return out;
+}
+
+function _quizPickImageFromBundle(bundle){
+  if(!bundle) return '';
+  if(Array.isArray(bundle.xrays) && bundle.xrays.length) return bundle.xrays[0];
+  if(Array.isArray(bundle.positions) && bundle.positions.length) return bundle.positions[0];
+  return '';
+}
+
+function _resolveQuizImageSrc(imageRef){
+  const raw=String(imageRef||'').trim();
+  if(!raw) return '';
+  if(_looksLikeDataUri(raw) || /^https?:\/\//i.test(raw) || /^blob:/i.test(raw)) return raw;
+  return _resolveInlineImageSrc(raw, 'xray');
+}
+
+function _quizFindPositionForQuestion(q, qKey){
+  const positions=_quizGetPositionsForKey(qKey);
+  if(!positions.length) return null;
+
+  const sourceText=[q.questionText||'', q.correct||'', ...(Array.isArray(q.options)?q.options:[])].join(' ');
+  const sourceNorm=_quizNorm(sourceText);
+  const correctNorm=_quizNorm(q.correct||'');
+  const sourceTokens=_quizTokens(sourceText);
+  const sourceSet=new Set(sourceTokens);
+
+  let best=null;
+  let bestScore=0;
+  positions.forEach(pos=>{
+    const name=String(pos.name||'');
+    const nameNorm=_quizNorm(name);
+    if(!nameNorm) return;
+
+    let score=0;
+    if(correctNorm && (correctNorm===nameNorm || correctNorm.includes(nameNorm) || nameNorm.includes(correctNorm))) score+=85;
+    if(sourceNorm.includes(nameNorm)) score+=70;
+
+    const nameTokens=_quizTokens(nameNorm);
+    let shared=0;
+    nameTokens.forEach(t=>{ if(sourceSet.has(t)) shared++; });
+    score+=shared*10;
+    if(shared>=2) score+=12;
+
+    const desc=pos.info ? _quizNorm(pos.info.desc||'') : '';
+    if(desc){
+      sourceTokens.forEach(t=>{ if(t.length>3 && desc.includes(t)) score+=1; });
+    }
+
+    if(score>bestScore){
+      bestScore=score;
+      best=pos;
+    }
+  });
+
+  return bestScore>=18 ? best : null;
+}
+
+function _quizAutoImageForQuestion(q, qKey, matchedPos){
+  if(q.xrayImg) return q.xrayImg;
+
+  const posRef=matchedPos || _quizFindPositionForQuestion(q, qKey);
+  if(posRef){
+    const matchedBundle=_getImagesForPos(posRef);
+    const matchedImg=_quizPickImageFromBundle(matchedBundle);
+    if(matchedImg) return matchedImg;
+  }
+
+  if(q.correct){
+    const byCorrect=_quizPickImageFromBundle(_getImagesForPos(q.correct));
+    if(byCorrect) return byCorrect;
+  }
+
+  const qText=String(q.questionText||'');
+  const quoted=qText.match(/"([^"]{4,80})"|\*\*([^*]{4,80})\*\*/);
+  if(quoted){
+    const term=(quoted[1]||quoted[2]||'').trim();
+    if(term){
+      const byQuoted=_quizPickImageFromBundle(_getImagesForPos(term));
+      if(byQuoted) return byQuoted;
+    }
+  }
+
+  return '';
+}
+
+function _quizCleanQuestionText(text){
+  const raw=String(text||'Which projection is shown in this X-ray image?')
+    .replace(/\*\*(.*?)\*\*/g,'$1')
+    .replace(/\s+/g,' ')
+    .trim();
+  return raw || 'Which projection is shown in this X-ray image?';
+}
+
+function _quizEnsureOptions(optionsIn, correctIn, fallbackPool){
+  let correct=String(correctIn||'').trim();
+  const options=[];
+
+  (Array.isArray(optionsIn)?optionsIn:[]).forEach(opt=>{
+    const clean=String(opt||'').trim();
+    if(!clean) return;
+    if(!options.some(existing=>_quizNorm(existing)===_quizNorm(clean))) options.push(clean);
+  });
+
+  if(correct){
+    const foundIdx=options.findIndex(opt=>_quizNorm(opt)===_quizNorm(correct));
+    if(foundIdx!==-1) correct=options[foundIdx];
+    else options.unshift(correct);
+  } else if(options.length){
+    correct=options[0];
+  }
+
+  (Array.isArray(fallbackPool)?fallbackPool:[]).forEach(candidate=>{
+    if(options.length>=4) return;
+    const clean=String(candidate||'').trim();
+    if(!clean) return;
+    if(correct && _quizNorm(clean)===_quizNorm(correct)) return;
+    if(options.some(opt=>_quizNorm(opt)===_quizNorm(clean))) return;
+    options.push(clean);
+  });
+
+  while(options.length<2){
+    const filler=options.length===0 ? 'Not specified' : 'None of the above';
+    if(!options.some(opt=>_quizNorm(opt)===_quizNorm(filler))) options.push(filler);
+    else break;
+  }
+
+  let finalOptions=options.slice(0,6);
+  if(correct && !finalOptions.some(opt=>_quizNorm(opt)===_quizNorm(correct))){
+    if(finalOptions.length>=6) finalOptions[finalOptions.length-1]=correct;
+    else finalOptions.push(correct);
+  }
+
+  if(!correct && finalOptions.length) correct=finalOptions[0];
+  return {options:finalOptions, correct};
+}
+
+function _quizBuildLearningTip(q, pos){
+  const intent=_quizNorm(q.questionText||'');
+  const info=(pos && pos.info) ? pos.info : {};
+  let tip='';
+
+  if(/\bcr\b|central ray|زاويه|زاوية|angle/.test(intent) && info.cr){
+    tip=`CR: ${info.cr}`;
+  } else if(/kvp|k v p|kilovolt|كيلو/.test(intent) && info.kv){
+    tip=`kVp: ${info.kv}`;
+  } else if(/resp|breath|inspir|expir|تنفس/.test(intent) && info.resp){
+    tip=`Respiration: ${info.resp}`;
+  } else if(/sid|source image|مسافه|مسافة/.test(intent) && info.sid){
+    tip=`SID: ${info.sid}`;
+  } else if(pos && pos.name){
+    const mini=[];
+    if(info.cr) mini.push(`CR ${info.cr}`);
+    if(info.kv) mini.push(`kVp ${info.kv}`);
+    if(info.resp) mini.push(`Resp ${info.resp}`);
+    tip = mini.length ? `${pos.name}: ${mini.join(' | ')}` : `Review this position in Section 1: ${pos.name}`;
+  }
+
+  if(tip.length>220) return tip.slice(0,217)+'...';
+  return tip;
+}
+
+function _prepareQuizQuestion(rawQuestion, qKey, sourceIdx){
+  const q={...(rawQuestion||{})};
+  q.questionText=_quizCleanQuestionText(q.questionText);
+
+  const fallbackPool=_quizGetPositionsForKey(qKey).map(p=>p.name).filter(Boolean);
+  const ensured=_quizEnsureOptions(q.options, q.correct, fallbackPool);
+  q.options=ensured.options;
+  q.correct=ensured.correct;
+
+  const matchedPos=_quizFindPositionForQuestion(q, qKey);
+  if(!q.xrayImg){
+    q.xrayImg=_quizAutoImageForQuestion(q, qKey, matchedPos);
+  }
+
+  q._resolvedXray=_resolveQuizImageSrc(q.xrayImg);
+  q._topicLabel=_quizLabelForKey(qKey);
+  q._matchedPosition=matchedPos ? matchedPos.name : '';
+  q._learningTip=_quizBuildLearningTip(q, matchedPos);
+  q._sourceKey=qKey;
+  q._sourceIdx=sourceIdx;
+  q._recorded=false;
+  return q;
+}
+
+function _prepareQuizBankForKey(qKey){
+  const bank=QUIZ[qKey];
+  if(!Array.isArray(bank) || !bank.length) return;
+
+  for(let i=0;i<bank.length;i++){
+    const prepared=_prepareQuizQuestion(bank[i], qKey, i);
+    bank[i].questionText=prepared.questionText;
+    bank[i].options=[...prepared.options];
+    bank[i].correct=prepared.correct;
+    if(!bank[i].xrayImg && prepared.xrayImg) bank[i].xrayImg=prepared.xrayImg;
+  }
+}
+
+function _refreshQuizBankQuality(){
+  Object.keys(QUIZ).forEach(_prepareQuizBankForKey);
+}
+
+function _quizCountWithImages(keys){
+  let withImages=0;
+  let total=0;
+  keys.forEach(key=>{
+    const list=Array.isArray(QUIZ[key]) ? QUIZ[key] : [];
+    total+=list.length;
+    list.forEach(q=>{
+      if(String(q.xrayImg||'').trim()) withImages++;
+    });
+  });
+  return {withImages,total};
+}
+
+function _renderQuizQuestionImage(q){
+  const xi=document.getElementById('xrayImg');
+  const xph=document.getElementById('xrayPh');
+  const label=document.getElementById('qImageLabel');
+  const imageChip=document.getElementById('qImageChip');
+  if(!xi || !xph) return;
+
+  const src=q._resolvedXray || _resolveQuizImageSrc(q.xrayImg);
+  if(src){
+    xi.src=src;
+    xi.style.display='block';
+    xph.style.display='none';
+    if(label){
+      label.style.display='block';
+      label.textContent=q._matchedPosition ? q._matchedPosition : 'Radiographic reference image';
+    }
+    if(imageChip){
+      imageChip.textContent='Image: ready';
+      imageChip.classList.add('ready');
+    }
+  } else {
+    xi.style.display='none';
+    xi.removeAttribute('src');
+    xph.style.display='flex';
+    if(label){
+      label.style.display='none';
+      label.textContent='';
+    }
+    if(imageChip){
+      imageChip.textContent='Image: none';
+      imageChip.classList.remove('ready');
+    }
+  }
+}
+
+function _setQuizFeedback(mode, message, note){
+  const fb=document.getElementById('feedbackDiv');
+  if(!fb) return;
+  fb.textContent=message;
+  fb.className=`feedback ${mode} show`;
+
+  const helper=document.getElementById('qHelper');
+  if(helper){
+    if(note){
+      helper.textContent=note;
+      helper.classList.add('show');
+    } else {
+      helper.textContent='';
+      helper.classList.remove('show');
+    }
+  }
+}
+
 function startQuiz(chId){
+  _prepareQuizBankForKey(chId);
   const qs=QUIZ[chId];
   if(!qs||!qs.length){_showToast('No quiz questions for this chapter yet.','#b91c1c');return;}
   _pendingQuizId=chId;
@@ -4090,9 +4951,10 @@ function _qcStart(){
 function _launchQuiz(){
   const chId=_pendingQuizId;
   if(!chId) return;
+  _prepareQuizBankForKey(chId);
   const qs=QUIZ[chId];
   lastChId=chId;
-  let data=[...qs].map(q=>({...q,_recorded:false}));
+  let data=qs.map((q,idx)=>_prepareQuizQuestion(q,chId,idx));
   wrongAnswers=[];
   _quizActive=true;
   if(document.getElementById('shuffleToggle').classList.contains('on'))
@@ -4109,13 +4971,22 @@ function renderQ(){
   if(!quizData.length) return;
   const q=quizData[quizIdx];
   const total=quizData.length;
-  document.getElementById('qProgress').style.width=Math.round(quizIdx/total*100)+'%';
+  document.getElementById('qProgress').style.width=Math.round((quizIdx+1)/total*100)+'%';
   document.getElementById('qCounter').textContent=`Question ${quizIdx+1} / ${total}`;
   document.getElementById('qScore').textContent=`Score: ${quizScore}`;
-  const xi=document.getElementById('xrayImg'), xph=document.getElementById('xrayPh');
-  if(q.xrayImg){xi.src=q.xrayImg;xi.style.display='block';xph.style.display='none';const zh=document.getElementById('posImgZoomHint');if(zh)zh.style.display='flex';}
-  else{xi.style.display='none';xph.style.display='flex';}
+
+  const topicChip=document.getElementById('qTopicChip');
+  if(topicChip) topicChip.textContent=q._topicLabel || _quizLabelForKey(lastChId);
+
+  _renderQuizQuestionImage(q);
   document.getElementById('qText').textContent=q.questionText||'Which projection is shown in this X-ray image?';
+
+  const helper=document.getElementById('qHelper');
+  if(helper){
+    helper.textContent='';
+    helper.classList.remove('show');
+  }
+
   wrongCount=0;
   const grid=document.getElementById('optsGrid');
   grid.innerHTML='';
@@ -4123,6 +4994,8 @@ function renderQ(){
   opts.forEach((opt,i)=>{
     const btn=document.createElement('button');
     btn.className='opt';
+    btn.dataset.option=opt;
+    btn.setAttribute('aria-label', `Option ${LETTERS[i]}: ${opt}`);
     btn.innerHTML=`<span class="opt-letter">${LETTERS[i]}</span>${esc(opt)}`;
     btn.onclick=()=>selectOpt(opt,btn,q);
     grid.appendChild(btn);
@@ -4134,28 +5007,46 @@ function renderQ(){
 }
 
 function selectOpt(chosen,btn,q){
-  const fb=document.getElementById('feedbackDiv');
   const allBtns=document.querySelectorAll('.opt');
+  const sameOption=(a,b)=>_quizNorm(a)===_quizNorm(b);
+
   if(chosen===q.correct){
     btn.classList.add('correct');
     allBtns.forEach(b=>b.disabled=true);
     quizScore++;
     document.getElementById('qScore').textContent=`Score: ${quizScore}`;
-    fb.textContent='✓ Correct!'; fb.className='feedback ok show';
+    _setQuizFeedback('ok','✓ Correct!', q._learningTip || '');
     document.getElementById('nextBtn').className='next-btn show';
   } else {
     btn.classList.add('wrong');
     wrongCount++;
     const showHint=document.getElementById('hintToggle').classList.contains('on');
     if(showHint&&wrongCount>=2){
-      allBtns.forEach(b=>{b.disabled=true;if(b.textContent.includes(q.correct))b.classList.add('correct');});
+      allBtns.forEach(b=>{
+        b.disabled=true;
+        if(sameOption(b.dataset.option||'', q.correct)) b.classList.add('correct');
+      });
       // record wrong answer
-      if(!q._recorded){ q._recorded=true; wrongAnswers.push({q:q.questionText||'Question',given:chosen,correct:q.correct}); }
-      fb.textContent=`✗ The correct answer is: ${q.correct}`; fb.className='feedback bad show';
+      if(!q._recorded){
+        q._recorded=true;
+        wrongAnswers.push({
+          q:q.questionText||'Question',
+          given:chosen,
+          correct:q.correct,
+          topic:q._topicLabel||'',
+          position:q._matchedPosition||''
+        });
+      }
+      _setQuizFeedback('bad',`✗ The correct answer is: ${q.correct}`, q._learningTip || '');
       document.getElementById('nextBtn').className='next-btn show';
     } else {
-      fb.textContent='✗ Incorrect — try again!'; fb.className='feedback bad show';
-      setTimeout(()=>{btn.classList.remove('wrong');btn.disabled=false;fb.className='feedback';},950);
+      _setQuizFeedback('bad','✗ Incorrect — try again!','');
+      setTimeout(()=>{
+        btn.classList.remove('wrong');
+        btn.disabled=false;
+        const fb=document.getElementById('feedbackDiv');
+        if(fb) fb.className='feedback';
+      },950);
     }
   }
 }
@@ -4188,9 +5079,10 @@ function _updateHomeBest(){
 function showScore(){
   _quizActive=false;
   const pct=Math.round(quizScore/quizData.length*100);
+  const withImg=quizData.filter(q=>String(q.xrayImg||'').trim()).length;
   document.getElementById('scoreNum').textContent=pct+'%';
   document.getElementById('scoreTitle').textContent=pct>=85?'Excellent!':pct>=65?'Good job!':'Keep studying';
-  document.getElementById('scoreSub').textContent=`${quizScore} correct out of ${quizData.length} questions`;
+  document.getElementById('scoreSub').textContent=`${quizScore} correct out of ${quizData.length} questions · ${withImg}/${quizData.length} with images`;
   if(!bestScores[lastChId]||pct>bestScores[lastChId]){
     bestScores[lastChId]=pct;
     _saveBestScores();
@@ -4207,14 +5099,36 @@ function showScore(){
           <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5">${i+1}. ${esc(w.q)}</div>
           <div style="font-size:11px;color:var(--red);margin-bottom:4px">✗ إجابتك: <strong>${esc(w.given)}</strong></div>
           <div style="font-size:11px;color:var(--green)">✓ الإجابة الصحيحة: <strong>${esc(w.correct)}</strong></div>
+          ${w.position?`<div style="font-size:10.5px;color:var(--text3);margin-top:4px">Focus position: ${esc(w.position)}</div>`:''}
         </div>`;
       });
+
+      const focusMap={};
+      wrongAnswers.forEach(w=>{
+        const key=w.position||w.topic||'General review';
+        focusMap[key]=(focusMap[key]||0)+1;
+      });
+      const focusItems=Object.entries(focusMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      if(focusItems.length){
+        html+=`<div style="margin-top:10px;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--c-position-border);border-radius:var(--radius-sm)">
+          <div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Recommended focus</div>
+          ${focusItems.map(([name,count])=>`<div style="font-size:12px;color:var(--text);line-height:1.55">• ${esc(name)} <span style="color:var(--text3)">(${count} mistake${count!==1?'s':''})</span></div>`).join('')}
+        </div>`;
+      }
       html+=`</div>`;
       reviewDiv.innerHTML=html;
     } else {
       reviewDiv.innerHTML=`<div style="margin-top:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:13px">🏆 مبروك! إجاباتك كانت كلها صحيحة!</div>`;
     }
   }
+  lastQuizSession={
+    chapterId:lastChId,
+    score:quizScore,
+    total:quizData.length,
+    percentage:pct,
+    wrongAnswers:wrongAnswers.map(w=>({q:w.q,given:w.given,correct:w.correct})),
+    timestamp:Date.now()
+  };
   navTo('score');
 }
 
@@ -4224,9 +5138,16 @@ function deleteCurrentQ(){
   if(userRole!=='developer'||!lastChId||!QUIZ[lastChId]) return;
   showConfirm('Delete Question',`Delete Question ${quizIdx+1}?`,()=>{
     const origQ=quizData[quizIdx];
-    const gi=QUIZ[lastChId].indexOf(origQ);
+    let gi=-1;
+    if(Number.isInteger(origQ._sourceIdx) && QUIZ[lastChId][origQ._sourceIdx]) gi=origQ._sourceIdx;
+    if(gi===-1) gi=QUIZ[lastChId].indexOf(origQ);
     if(gi!==-1) QUIZ[lastChId].splice(gi,1);
     quizData.splice(quizIdx,1);
+    if(gi!==-1){
+      quizData.forEach(item=>{
+        if(Number.isInteger(item._sourceIdx) && item._sourceIdx>gi) item._sourceIdx-=1;
+      });
+    }
     if(!quizData.length){navTo('quiz-chapters');buildChapters();return;}
     if(quizIdx>=quizData.length) quizIdx=quizData.length-1;
     renderQ();
@@ -4350,10 +5271,24 @@ function saveEdit(){
     q.options=Array.from(document.querySelectorAll('.opt-input')).map(i=>i.value.trim()).filter(Boolean);
     const checked=document.querySelector('.correct-radio:checked');
     if(checked) q.correct=checked.value;
+    q._resolvedXray=_resolveQuizImageSrc(q.xrayImg);
+    q._learningTip=_quizBuildLearningTip(q, q._matchedPosition ? {name:q._matchedPosition,info:{}} : null);
     // Sync to QUIZ global
-    if(lastChId && QUIZ[lastChId]){
-      const oi=QUIZ[lastChId].findIndex(qq=>qq===quizData[quizIdx]||qq.correct===q.correct);
-      if(oi!==-1){ QUIZ[lastChId][oi].options=q.options; QUIZ[lastChId][oi].correct=q.correct; QUIZ[lastChId][oi].questionText=q.questionText; QUIZ[lastChId][oi].xrayImg=q.xrayImg; }
+    const sourceKey=q._sourceKey || lastChId;
+    if(sourceKey && QUIZ[sourceKey]){
+      let oi=-1;
+      if(Number.isInteger(q._sourceIdx) && QUIZ[sourceKey][q._sourceIdx]) oi=q._sourceIdx;
+      if(oi===-1) oi=QUIZ[sourceKey].findIndex(qq=>qq===quizData[quizIdx]||qq.correct===q.correct);
+      if(oi!==-1){
+        QUIZ[sourceKey][oi].options=[...q.options];
+        QUIZ[sourceKey][oi].correct=q.correct;
+        QUIZ[sourceKey][oi].questionText=q.questionText;
+        QUIZ[sourceKey][oi].xrayImg=q.xrayImg;
+        q._sourceIdx=oi;
+        q._sourceKey=sourceKey;
+      }
+      _prepareQuizBankForKey(sourceKey);
+      Object.assign(q, _prepareQuizQuestion(q, sourceKey, Number.isInteger(q._sourceIdx)?q._sourceIdx:quizIdx));
     }
     renderQ();
   } else if(editTarget==='quiz-new'){
@@ -4366,7 +5301,9 @@ function saveEdit(){
     const newQ={questionText:qText, xrayImg:xray, options:opts, correct:checked.value};
     if(!QUIZ[lastChId]) QUIZ[lastChId]=[];
     QUIZ[lastChId].push(newQ);
-    quizData.push(newQ);
+    _prepareQuizBankForKey(lastChId);
+    const newIdx=QUIZ[lastChId].length-1;
+    quizData.push(_prepareQuizQuestion(QUIZ[lastChId][newIdx], lastChId, newIdx));
     buildChapters();
   }
   closeEditModal();
@@ -4385,7 +5322,7 @@ function _refreshTokenUI(){
   if(!s) return;
   const total=_aiGetAllPositions().length;
   const qTotal=Object.values(QUIZ).reduce((a,v)=>a+(v?v.length:0),0);
-  s.innerHTML=`<div style="color:var(--green);font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px">✅ <span>المساعد يعمل محلياً · ${total} وضعية · ${qTotal} سؤال</span></div>`;
+  s.innerHTML=`<div style="color:var(--green);font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px">✅ <span>Local AI ready · ${total} positions · ${qTotal} quiz items</span></div>`;
 }
 
 function testAIConnection(){
@@ -4394,7 +5331,114 @@ function testAIConnection(){
   if(!dot||!txt) return;
   const total=_aiGetAllPositions().length;
   dot.style.background='var(--green)'; txt.style.color='var(--green)';
-  txt.textContent=`✓ المساعد جاهز — ${total} وضعية محملة`;
+  txt.textContent=`✓ AI ready — ${total} positions indexed`;
+}
+
+function _aiNormalizeText(value){
+  return String(value||'')
+    .toLowerCase()
+    .replace(/[\u064B-\u065F]/g,'')
+    .replace(/[أإآ]/g,'ا')
+    .replace(/ة/g,'ه')
+    .replace(/ى/g,'ي')
+    .replace(/ؤ/g,'و')
+    .replace(/ئ/g,'ي')
+    .replace(/[^a-z0-9\u0600-\u06ff\s]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function _aiExtractOpenTarget(query){
+  const q=String(query||'').trim();
+  if(!q) return '';
+  const m=q.match(/^(?:open|show|navigate to|go to|افتح|اعرض|اذهب الى|انتقل الى)\s+(.+)$/i);
+  if(!m) return '';
+  return m[1].replace(/^["'“”]+|["'“”]+$/g,'').trim();
+}
+
+function _aiFindPositionByName(name){
+  if(!name) return null;
+  const matches=_aiSearch(name);
+  return matches.length ? matches[0] : null;
+}
+
+function _aiOpenPositionByName(name){
+  const found=_aiFindPositionByName(name);
+  if(!found) return '';
+  openPos(found.pos, found.chId, found.scId, found.posIdx);
+  navTo('pos-view');
+  const section=found.sub?`${found.chapter} › ${found.sub}`:found.chapter;
+  return `Opened **${found.pos.name}** in _${section}_.`;
+}
+
+function _aiSummarizeMistakes(){
+  if(!lastQuizSession || !lastQuizSession.total){
+    return 'No recent quiz session found. Finish a quiz first, then ask me to analyze mistakes.';
+  }
+
+  const wrong=lastQuizSession.wrongAnswers||[];
+  if(!wrong.length){
+    return `Excellent work. In your latest quiz, you scored **${lastQuizSession.score}/${lastQuizSession.total}** with no recorded mistakes.`;
+  }
+
+  let r=`**Latest Quiz Mistake Analysis**\n`;
+  r+=`Score: **${lastQuizSession.score}/${lastQuizSession.total}** (${lastQuizSession.percentage}%)\n`;
+  r+=`Recorded mistakes: **${wrong.length}**\n\n`;
+  r+='**What to review now:**\n';
+  wrong.slice(0,5).forEach((w,i)=>{
+    r+=`${i+1}. ${w.q}\n`;
+    r+=`   • Your answer: ${w.given}\n`;
+    r+=`   • Correct answer: ${w.correct}\n`;
+  });
+  r+='\n**Quick review targets:**\n';
+  const uniq=[...new Set(wrong.map(w=>String(w.correct||'').trim()).filter(Boolean))].slice(0,4);
+  uniq.forEach(name=>{ r+=`• [[OPEN::${name}]]\n`; });
+  r+='\nAsk next: **"compare the first two corrected positions"** or **"build a 3-day recovery plan"**.';
+  return r;
+}
+
+function _aiBuildStudyPlan(days){
+  const d=Math.max(3,Math.min(14,parseInt(days,10)||7));
+  const chapters=Object.entries(BOOK).map(([id,ch])=>{
+    let total=0;
+    if(ch.positions) total+=ch.positions.length;
+    if(ch.subchapters) Object.values(ch.subchapters).forEach(sc=>{ total+=(sc.positions||[]).length; });
+    return {id,name:ch.name||id,total};
+  }).sort((a,b)=>b.total-a.total);
+
+  if(!chapters.length) return 'No chapter data available to build a study plan.';
+
+  let out=`**${d}-Day Positioning Study Plan**\n`;
+  out+='Goal: active recall + technique precision + error correction.\n\n';
+  for(let i=0;i<d;i++){
+    const ch=chapters[i%chapters.length];
+    out+=`**Day ${i+1}: ${ch.name}**\n`;
+    out+=`• Review 8-12 positions (focus on CR, SID, and respiration).\n`;
+    out+=`• Run one quiz block and mark mistakes.\n`;
+    out+=`• End with 5-minute rapid recap of common errors.\n`;
+  }
+  out+='\nIf you want, I can also generate a **compressed 3-day emergency plan** before an exam.';
+  return out;
+}
+
+function _aiBuildFollowupQuery(msg){
+  const raw=String(msg||'').trim();
+  if(!raw) return '';
+  const normalized=_aiNormalizeText(raw);
+  const explicit=/\b(open|show|compare|list|chapter|position|kvp|sid|cr|resp|ma|mas|quiz|mistake|plan)\b|افتح|اعرض|قارن|قائمه|فصل|وضعيه|تنفس|اختبار|اخطاء|خطا|خطأ|خطه/.test(normalized);
+  if(explicit) return raw;
+
+  const shortFollowup=/^(and|also|what about|then|next|ok|طيب|وماذا|وكمان|ايضا|ثم|بعدها)/i.test(raw) || normalized.split(' ').length<=3;
+  if(!shortFollowup) return raw;
+
+  const lastFocus=[...aiHistory].reverse().find(x=>x.role==='assistant' && x.focus);
+  if(!lastFocus || !lastFocus.focus) return raw;
+  return `${raw} about ${lastFocus.focus}`;
+}
+
+function aiOpenFromReply(name){
+  const result=_aiOpenPositionByName(name);
+  if(!result) _showToast('Position not found');
 }
 
 // ─── جمع كل الوضعيات ديناميكياً من BOOK (يتحدث تلقائياً عند إضافة بيانات) ───
@@ -4412,63 +5456,79 @@ function _aiGetAllPositions(){
 
 // ─── Intent detection ───
 function _aiDetectIntent(q){
-  const l=q.toLowerCase();
+  const l=_aiNormalizeText(q);
   return {
-    isCR:     /\bcr\b|central.?ray|angle|angulation|زاوية/.test(l),
-    isKV:     /\bkvp?\b|kilovolt|كيلو/.test(l),
-    isSID:    /\bsid\b|source.?image|مسافة/.test(l),
-    isResp:   /resp|breath|inspir|expir|تنفس/.test(l),
-    isIR:     /\bir\b|image.?receptor|cassette|film.?size/.test(l),
-    isMa:     /\bma\b|\bmas\b|milliamp|exposure.?factor/.test(l),
-    isRoutine:/routine|روتين/.test(l),
-    isSpecial:/special|خاص/.test(l),
-    isList:   /list|all|جميع|كل|enumerate|show.?all/.test(l),
-    isCompare:/\bvs\b|versus|differ|مقارنة|الفرق|compare/.test(l),
-    isChapter:/chapter|فصل|قسم/.test(l),
-    isError:  /error|mistake|wrong|common|artifact|خطأ/.test(l),
+    isCR:       /\bcr\b|central ray|angle|angulation|زاويه|زاوية/.test(l),
+    isKV:       /\bkvp?\b|kilovolt|كيلو/.test(l),
+    isSID:      /\bsid\b|source image|مسافه|مسافة/.test(l),
+    isResp:     /resp|breath|inspir|expir|تنفس/.test(l),
+    isIR:       /\bir\b|image receptor|cassette|film size/.test(l),
+    isMa:       /\bma\b|\bmas\b|milliamp|exposure factor/.test(l),
+    isRoutine:  /routine|روتين/.test(l),
+    isSpecial:  /special|خاص/.test(l),
+    isList:     /list|all|جميع|كل|enumerate|show all|اعرض الكل/.test(l),
+    isCompare:  /\bvs\b|versus|differ|مقارنه|مقارنة|الفرق|compare/.test(l),
+    isChapter:  /chapter|فصل|قسم/.test(l),
+    isError:    /error|mistake|wrong|common|artifact|خطا|خطأ|غلط|اخطاء/.test(l),
+    isOpen:     /\bopen\b|navigate|go to|show|افتح|انتقل|اذهب|اعرض/.test(l),
+    isStudyPlan:/study plan|roadmap|revision plan|خطه|خطة|جدول|مذاكره|مراجعه/.test(l),
+    isQuiz:     /quiz|اختبار|اسئله|اسئلة/.test(l),
+    isMistake:  /mistake|wrong|incorrect|error|خطا|خطأ|غلط|اخطاء/.test(l),
   };
 }
 
 // ─── Multi-level search with scoring ───
 function _aiSearch(query){
-  const q=query.toLowerCase().trim();
+  const qRaw=String(query||'').trim();
+  if(!qRaw) return [];
+  let q=_aiNormalizeText(qRaw);
+  q=q.replace(/^(open|show|navigate to|go to|افتح|اعرض|اذهب الى|انتقل الى)\s+/i,'').trim();
+  if(!q) return [];
+
   const all=_aiGetAllPositions();
   const results=[];
-  const stopWords=new Set(['the','a','an','is','are','what','how','which','for','of','in','on','at','to','and','or','with','from','about','this','that']);
-  const keywords=q.split(/[\s,?؟.،:;()\/]+/).filter(w=>w.length>1 && !stopWords.has(w));
+  const stopWords=new Set([
+    'the','a','an','is','are','what','how','which','for','of','in','on','at','to','and','or','with','from','about','this','that','please','need',
+    'all','any','show','open','tell','me','my','your','their','latest',
+    'من','في','على','عن','الى','إلى','ما','ماذا','كيف','كل','جميع','اعطني','اريد','اريدك','افتح','اعرض','ممكن'
+  ]);
+  const keywords=q.split(/\s+/).filter(w=>w.length>1 && !stopWords.has(w));
 
   all.forEach(({pos,chapter,sub,chId,scId,posIdx})=>{
     let score=0;
-    const pname=(pos.name||'').toLowerCase();
-    const pdesc=(pos.info?.desc||'').toLowerCase();
-    const pcr=(pos.info?.cr||'').toLowerCase();
-    const pkv=(pos.info?.kv||'').toLowerCase();
-    const pir=(pos.info?.ir||'').toLowerCase();
-    const psid=(pos.info?.sid||'').toLowerCase();
-    const presp=(pos.info?.resp||'').toLowerCase();
-    const chLow=(chapter+' '+sub).toLowerCase();
+    const pname=_aiNormalizeText(pos.name||'');
+    const pdesc=_aiNormalizeText(pos.info?.desc||'');
+    const pcr=_aiNormalizeText(pos.info?.cr||'');
+    const pkv=_aiNormalizeText(pos.info?.kv||'');
+    const pir=_aiNormalizeText(pos.info?.ir||'');
+    const psid=_aiNormalizeText(pos.info?.sid||'');
+    const presp=_aiNormalizeText(pos.info?.resp||'');
+    const chLow=_aiNormalizeText(chapter+' '+sub);
     const fulltext=pname+' '+pdesc+' '+pcr+' '+pkv+' '+pir+' '+psid+' '+presp+' '+chLow;
 
     // Exact phrase match — highest priority
-    if(pname===q) score+=100;
-    else if(pname.includes(q)) score+=60;
-    else if(pdesc.includes(q)) score+=20;
+    if(pname===q) score+=120;
+    else if(pname.startsWith(q)) score+=82;
+    else if(pname.includes(q)) score+=58;
+    if(pdesc.includes(q)) score+=18;
 
+    let overlap=0;
     keywords.forEach(kw=>{
       if(kw.length<2) return;
-      if(pname===kw) score+=35;
-      else if(pname.startsWith(kw)) score+=22;
+      if(pname===kw) score+=32;
+      else if(pname.startsWith(kw)) score+=21;
       else if(pname.includes(kw)) score+=14;
-      if(pcr.includes(kw)) score+=8;
-      if(pdesc.includes(kw)) score+=6;
-      if(chLow.includes(kw)) score+=5;
-      if(pkv.includes(kw)||pir.includes(kw)||psid.includes(kw)) score+=4;
-      if(fulltext.includes(kw)) score+=2;
+      if(pcr.includes(kw)) score+=9;
+      if(pdesc.includes(kw)) score+=7;
+      if(chLow.includes(kw)) score+=6;
+      if(pkv.includes(kw)||pir.includes(kw)||psid.includes(kw)) score+=5;
+      if(fulltext.includes(kw)){ score+=2; overlap++; }
     });
+    score+=Math.min(overlap*2,12);
 
     // Abbreviation matching: "PA" matches "PA Chest", "PA Projection"
-    const abbrevMatch=q.match(/^([A-Z]{1,5})(\s|$)/);
-    if(abbrevMatch && pname.toLowerCase().startsWith(abbrevMatch[1].toLowerCase())) score+=15;
+    const abbrevMatch=qRaw.match(/^([A-Za-z]{1,5})(\s|$)/);
+    if(abbrevMatch && pname.startsWith(abbrevMatch[1].toLowerCase())) score+=15;
 
     if(score>0) results.push({pos,chapter,sub,score,chId,scId,posIdx});
   });
@@ -4479,7 +5539,7 @@ function _aiSearch(query){
 
 // ─── Build structured answer ───
 function _aiBuildAnswer(query, matches){
-  const q=query.toLowerCase();
+  const q=_aiNormalizeText(query);
   const intent=_aiDetectIntent(q);
 
   if(intent.isList && intent.isChapter) return _aiListChapters();
@@ -4542,6 +5602,11 @@ function _aiBuildAnswer(query, matches){
     });
   }
 
+  response+=`\n\n[[OPEN::${pos.name}]]`;
+  if(!intent.isCompare){
+    response+=`\n\nTry next:\n• "${pos.name} CR"\n• "${pos.name} kVp"\n• "compare ${pos.name} vs ..."`;
+  }
+
   return response;
 }
 
@@ -4595,6 +5660,10 @@ function _aiCompare(query, matches){
     tableHtml+=`<div style="margin-top:8px;padding:8px 12px;background:var(--accent-bg);border-radius:8px;border:1px solid var(--c-position-border);font-size:12px;color:var(--text2)"><strong style="color:var(--accent)">Key differences:</strong> ${diffs.join(' · ')}</div>`;
   }
 
+  const openA=encodeURIComponent(a.pos.name);
+  const openB=encodeURIComponent(b.pos.name);
+  tableHtml+=`<div class="ai-open-actions"><button class="ai-open-btn" onclick="aiOpenFromReply(decodeURIComponent('${openA}'))">Open ${esc(a.pos.name)}</button><button class="ai-open-btn" onclick="aiOpenFromReply(decodeURIComponent('${openB}'))">Open ${esc(b.pos.name)}</button></div>`;
+
   return '[[HTML]]'+tableHtml;
 }
 
@@ -4637,8 +5706,18 @@ function _aiListByType(type){
 
 // ─── Dynamic knowledge from live BOOK data ───
 function _aiDynamicKnowledge(query){
-  const q=query.toLowerCase();
+  const q=_aiNormalizeText(query);
   const all=_aiGetAllPositions();
+
+  if(/(quiz|اختبار).*(mistake|wrong|incorrect|error|خطا|خطأ|اخطاء|غلط)/.test(q)){
+    return _aiSummarizeMistakes();
+  }
+
+  if(/study plan|revision plan|roadmap|خطة|خطه|جدول|مذاكره|مراجعه/.test(q)){
+    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days|يوم|ايام|أيام)/i);
+    const days=dayMatch ? parseInt(dayMatch[1],10) : 7;
+    return _aiBuildStudyPlan(days);
+  }
 
   // kVp by region
   const kvBodyMatch=q.match(/kvp?.*(chest|abdomen|spine|rib|sternum|hand|wrist|elbow|forearm|shoulder|humerus|knee|leg|foot|ankle|hip|pelvis|finger|thumb|toe)/i)
@@ -4696,10 +5775,30 @@ function _aiDynamicKnowledge(query){
 
 // ─── General + fixed knowledge bank ───
 function _aiGeneralAnswer(query){
-  const q=query.toLowerCase();
+  const q=_aiNormalizeText(query);
+
+  const openTarget=_aiExtractOpenTarget(query);
+  if(openTarget){
+    const opened=_aiOpenPositionByName(openTarget);
+    if(opened) return opened;
+    return `I could not find a position close to "${openTarget}". Try a simpler name like "open PA Chest" or "open Mortise Ankle".`;
+  }
 
   const dyn=_aiDynamicKnowledge(query);
   if(dyn) return dyn;
+
+  if(/help|what can you do|how can you help|ماذا يمكنك|مساعده|مساعدة/.test(q)){
+    return `**How I can help right now:**\n\n• Explain any projection (CR, SID, kVp, respiration, IR)\n• Compare two positions\n• Analyze your latest quiz mistakes\n• Build study plans (3-14 days)\n• Open any position directly\n\nTry: **"open PA chest"**, **"analyze my latest quiz mistakes"**, or **"build a 7-day plan"**.`;
+  }
+
+  if(/(quiz|اختبار).*(mistake|wrong|error|incorrect|خطا|خطأ|اخطاء|غلط)/.test(q)){
+    return _aiSummarizeMistakes();
+  }
+
+  if(/study plan|revision plan|roadmap|خطة|خطه|جدول|مذاكره|مراجعه/.test(q)){
+    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days|يوم|ايام|أيام)/i);
+    return _aiBuildStudyPlan(dayMatch ? parseInt(dayMatch[1],10) : 7);
+  }
 
   if(/(list|show|all|every).*(chapter|position|content)/i.test(q)) return _aiListChapters();
 
@@ -4761,12 +5860,21 @@ function _aiGeneralAnswer(query){
   if(fallback.length) return _aiBuildAnswer(query, fallback);
 
   const totalPos=_aiGetAllPositions().length;
-  return `**No specific result for: "${query}"**\n\nThe program has **${totalPos} positions** ready to search. Try:\n• Position name: _PA Chest, Lateral Knee, Mortise Ankle_\n• Technical term: _CR, kVp, SID, IR, respiration, grid_\n• Anatomy: _wrist, spine, hip, shoulder, foot_\n• Pathology: _pneumothorax, fracture, effusion, Bennett_\n• Type: _routine, special_\n\nOr type **"list all chapters"** to see everything.`;
+  return `**No specific result for: "${query}"**\n\nThe program has **${totalPos} positions** ready to search. Try:\n• Position name: _PA Chest, Lateral Knee, Mortise Ankle_\n• Technical term: _CR, kVp, SID, IR, respiration, grid_\n• Open command: _open PA chest_\n• Quiz support: _analyze my latest quiz mistakes_\n• Study mode: _build a 7-day plan_\n\nOr type **"list all chapters"** to browse everything.`;
 }
 
 function _aiSuggestedAnswer(query){
-  const q=query.toLowerCase().trim();
+  const q=_aiNormalizeText(query);
   if(q==='list all chapters') return _aiListChapters();
+  if(q==='analyze my latest quiz mistakes' || q==='analyse my latest quiz mistakes' || q==='quiz mistakes'){
+    return _aiSummarizeMistakes();
+  }
+  if(q==='build a 7 day study plan for bontrager positioning' || q==='build a 7 day plan' || q==='7 day plan'){
+    return _aiBuildStudyPlan(7);
+  }
+  if(q==='open mortise ankle'){
+    return _aiGeneralAnswer('open mortise ankle');
+  }
   if(q==='pa chest cr and technique' || q==='pa chest cr & technique'){
     const matches=_aiSearch('pa chest');
     return matches.length?_aiBuildAnswer('pa chest',matches):_aiGeneralAnswer(query);
@@ -4806,14 +5914,34 @@ function _aiSuggestedAnswer(query){
 
 // ─── Format reply with markdown-like rendering ───
 function _aiFormatReply(text){
+  const raw=String(text||'');
   // Raw HTML passthrough for compare tables
-  if(text.startsWith('[[HTML]]')) return text.slice(8);
-  return text
+  if(raw.startsWith('[[HTML]]')) return raw.slice(8);
+
+  const openTargets=[];
+  const tokenized=raw.replace(/\[\[OPEN::(.*?)\]\]/g, (_,name)=>{
+    const clean=String(name||'').trim();
+    if(!clean) return '';
+    const token=`__AI_OPEN_${openTargets.length}__`;
+    openTargets.push(clean);
+    return token;
+  });
+
+  let out=esc(tokenized)
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.*?)\*/g,'<em>$1</em>')
     .replace(/`(.*?)`/g,'<code style="background:var(--bg3);padding:2px 5px;border-radius:4px;font-size:12px;font-family:monospace">$1</code>')
     .replace(/^---$/gm,'<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
     .replace(/\n/g,'<br>');
+
+  openTargets.forEach((name,idx)=>{
+    const token=`__AI_OPEN_${idx}__`;
+    const encoded=encodeURIComponent(name);
+    const buttonHtml=`<button class="ai-open-btn" onclick="aiOpenFromReply(decodeURIComponent('${encoded}'))">Open ${esc(name)}</button>`;
+    out=out.replace(token, buttonHtml);
+  });
+
+  return out;
 }
 
 // ─── Main send function ───
@@ -4823,25 +5951,32 @@ function sendAI(prompt){
   if(!msg) return;
   input.value='';
   var chat=document.getElementById('aiChat');
-  document.getElementById('aiSuggestions').style.display='none';
+  const sug=document.getElementById('aiSuggestions');
+  if(sug) sug.style.display='none';
   chat.innerHTML+=`<div class="ai-bubble user">${esc(msg)}</div>`;
+
+  const contextualMsg=_aiBuildFollowupQuery(msg);
+  aiHistory.push({role:'user',text:msg,time:Date.now()});
+  if(aiHistory.length>24) aiHistory=aiHistory.slice(-24);
 
   var tid='think-'+Date.now();
   const totalPos=_aiGetAllPositions().length;
-  chat.innerHTML+=`<div class="ai-bubble thinking" id="${tid}">Searching ${totalPos} positions…</div>`;
+  chat.innerHTML+=`<div class="ai-bubble thinking" id="${tid}">Analyzing ${totalPos} indexed positions…</div>`;
   chat.scrollTop=chat.scrollHeight;
 
   setTimeout(()=>{
-    const suggested=_aiSuggestedAnswer(msg);
     let reply;
+    let focusName='';
+    const suggested=_aiSuggestedAnswer(contextualMsg);
     if(suggested){
       reply=suggested;
     } else {
-      const intent=_aiDetectIntent(msg);
-      const matches=_aiSearch(msg);
+      const intent=_aiDetectIntent(contextualMsg);
+      const matches=_aiSearch(contextualMsg);
+      if(matches.length) focusName=matches[0].pos.name;
 
       // Compare intent: "RAO vs LAO", "PA vs AP", "compare X vs Y"
-      const compareMatch=msg.match(/compare\s+(.+?)\s+(?:vs?|versus|and)\s+(.+)/i)||msg.match(/(.+?)\s+vs?\.?\s+(.+)/i);
+      const compareMatch=contextualMsg.match(/compare\s+(.+?)\s+(?:vs?|versus|and)\s+(.+)/i)||contextualMsg.match(/(.+?)\s+vs?\.?\s+(.+)/i);
       if((intent.isCompare || compareMatch) && matches.length>=2){
         // Try to find the two named positions if explicit
         let cmpMatches=matches;
@@ -4855,12 +5990,18 @@ function sendAI(prompt){
           const foundA=findPos(nameA), foundB=findPos(nameB);
           if(foundA && foundB) cmpMatches=[foundA, foundB];
         }
-        const cmp=_aiCompare(msg, cmpMatches);
-        reply = cmp || _aiBuildAnswer(msg, matches);
+        const cmp=_aiCompare(contextualMsg, cmpMatches);
+        reply = cmp || _aiBuildAnswer(contextualMsg, matches);
+        if(cmpMatches.length) focusName=cmpMatches[0].pos.name;
       } else if(matches.length>0){
-        reply=_aiBuildAnswer(msg, matches);
+        reply=_aiBuildAnswer(contextualMsg, matches);
       } else {
-        reply=_aiGeneralAnswer(msg);
+        reply=_aiGeneralAnswer(contextualMsg);
+        const openTarget=_aiExtractOpenTarget(contextualMsg);
+        if(openTarget){
+          const found=_aiFindPositionByName(openTarget);
+          if(found) focusName=found.pos.name;
+        }
       }
     }
 
@@ -4868,7 +6009,24 @@ function sendAI(prompt){
     if(tel) tel.remove();
     chat.innerHTML+=`<div class="ai-bubble bot">${_aiFormatReply(reply)}</div>`;
     chat.scrollTop=chat.scrollHeight;
+    aiHistory.push({role:'assistant',text:String(reply||''),focus:focusName,time:Date.now()});
+    if(aiHistory.length>24) aiHistory=aiHistory.slice(-24);
   }, 220);
+}
+
+function aiClearChat(){
+  const chat=document.getElementById('aiChat');
+  if(!chat) return;
+  chat.innerHTML=`<div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية، بما في ذلك أسئلة المقارنة وتصحيح الأخطاء.<br><br>Try prompts like:<br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO Chest vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>`;
+  const sug=document.getElementById('aiSuggestions');
+  if(sug) sug.style.display='flex';
+  aiHistory=[];
+  _showToast('AI chat cleared');
+}
+
+function askAIAboutMistakes(){
+  navTo('ai');
+  setTimeout(()=>sendAI('Analyze my latest quiz mistakes'),60);
 }
 
 // ══════════════════════════════════════════════
@@ -5535,10 +6693,9 @@ function devChangeQuizImg(){
   const url=prompt('Enter new X-ray image URL:', q.xrayImg||'');
   if(url===null) return;
   q.xrayImg=url.trim();
+  q._resolvedXray=_resolveQuizImageSrc(q.xrayImg);
   _syncQuizImgToGlobal(q);
-  const xi=document.getElementById('xrayImg'), xph=document.getElementById('xrayPh');
-  if(q.xrayImg){xi.src=q.xrayImg;xi.style.display='block';xph.style.display='none';}
-  else{xi.style.display='none';xph.style.display='flex';}
+  _renderQuizQuestionImage(q);
 }
 
 function devUploadQuizImg(){
@@ -5554,9 +6711,9 @@ function handleQuizImgFile(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     q.xrayImg=ev.target.result;
+    q._resolvedXray=_resolveQuizImageSrc(q.xrayImg);
     _syncQuizImgToGlobal(q);
-    const xi=document.getElementById('xrayImg'), xph=document.getElementById('xrayPh');
-    xi.src=q.xrayImg; xi.style.display='block'; xph.style.display='none';
+    _renderQuizQuestionImage(q);
   };
   reader.readAsDataURL(file);
   e.target.value='';
@@ -5567,16 +6724,22 @@ function devDeleteQuizImg(){
   const q=quizData[quizIdx];
   showConfirm('Delete X-Ray Image','Remove the X-ray image from this question?',()=>{
     q.xrayImg='';
+    q._resolvedXray='';
     _syncQuizImgToGlobal(q);
-    const xi=document.getElementById('xrayImg'), xph=document.getElementById('xrayPh');
-    xi.style.display='none'; xi.src=''; xph.style.display='flex';
+    _renderQuizQuestionImage(q);
   });
 }
 
 function _syncQuizImgToGlobal(q){
-  if(!lastChId||!QUIZ[lastChId]) return;
-  const i=QUIZ[lastChId].indexOf(q);
-  if(i!==-1) QUIZ[lastChId][i].xrayImg=q.xrayImg;
+  const key=q && q._sourceKey ? q._sourceKey : lastChId;
+  if(!key || !QUIZ[key]) return;
+  let i=-1;
+  if(q && Number.isInteger(q._sourceIdx) && QUIZ[key][q._sourceIdx]) i=q._sourceIdx;
+  if(i===-1) i=QUIZ[key].indexOf(q);
+  if(i!==-1){
+    QUIZ[key][i].xrayImg=q.xrayImg;
+    if(q){ q._sourceIdx=i; q._sourceKey=key; }
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -6014,6 +7177,7 @@ function handleDevImport(e){
       showConfirm('Import Data','This will replace all current BOOK and QUIZ data. Continue?',()=>{
         if(d.BOOK){Object.keys(BOOK).forEach(k=>delete BOOK[k]);Object.assign(BOOK,d.BOOK);}
         if(d.QUIZ){Object.keys(QUIZ).forEach(k=>delete QUIZ[k]);Object.assign(QUIZ,d.QUIZ);}
+        _refreshQuizBankQuality();
         if(d.extra) _saveExtraButtons(d.extra);
         buildChapters();
         buildDevManager();
@@ -6026,6 +7190,7 @@ function handleDevImport(e){
 }
 
 
+_refreshQuizBankQuality();
 buildChapters();
 _loadBestScores();
 updateStats();
@@ -6091,6 +7256,7 @@ setTimeout(_applyExtraButtons,200);
     if(confirm('يوجد تعديلات محفوظة من '+label+'\nهل تريد استعادتها؟')){
       Object.keys(BOOK).forEach(k=>delete BOOK[k]);Object.assign(BOOK,saved.BOOK);
       Object.keys(QUIZ).forEach(k=>delete QUIZ[k]);Object.assign(QUIZ,saved.QUIZ);
+      _refreshQuizBankQuality();
       buildChapters();updateStats();setTimeout(_applyExtraButtons,100);_showToast('تم استعادة التعديلات');
     }
   },600);
@@ -6802,6 +7968,7 @@ function _zoomUnbindEvents(){
 }
 
 initAppFont();
+_refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
