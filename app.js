@@ -166,6 +166,27 @@ const CH10_PAGE_IMAGE_MAP = (typeof window !== 'undefined')
   ? (window.CH10_PAGE_IMAGE_MAP || Object.create(null))
   : Object.create(null);
 
+// Keep viewport height in sync for mobile browser chrome changes.
+function _setAppViewportHeight(){
+  if(typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+  const height = vv ? vv.height : (typeof window !== 'undefined' ? window.innerHeight : 0);
+  if(!height) return;
+  root.style.setProperty('--app-height', height + 'px');
+}
+
+(function(){
+  if(typeof window === 'undefined') return;
+  _setAppViewportHeight();
+  window.addEventListener('resize', _setAppViewportHeight, {passive:true});
+  window.addEventListener('orientationchange', _setAppViewportHeight, {passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', _setAppViewportHeight, {passive:true});
+    window.visualViewport.addEventListener('scroll', _setAppViewportHeight, {passive:true});
+  }
+})();
+
 
 function _escapeHtml(s){
   return String(s || '')
