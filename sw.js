@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bontrager-v5-20260418';
+const CACHE_NAME = 'bontrager-v6-20260419-smart-hit';
 const APP_SHELL = [
   './',
   './index.html',

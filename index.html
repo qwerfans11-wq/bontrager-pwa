@@ -1167,7 +1167,7 @@
 <script src="./data/ch3/ch3-images-part1.js"></script>
 <script src="./data/ch3/ch3-images-part2.js"></script>
 <script src="./data/ch3/ch3-reference-pdf.js"></script>
-<script src="./app.js"></script>
+<script src="./app.js?v=20260419-smart-hit-v2"></script>
 
 <!-- ═══ PWA Service Worker Registration & Install Handler ═══ -->
 <script>
@@ -1182,22 +1182,40 @@
     return;
   }
 
+  let _swReloaded = false;
+  function _reloadOnceForSW(){
+    if (_swReloaded) return;
+    _swReloaded = true;
+    location.reload();
+  }
+
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    _reloadOnceForSW();
+  });
+
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
       .then(function(registration) {
         console.log('✅ Service Worker registered successfully');
         console.log('   Scope:', registration.scope);
         console.log('   Active:', registration.active ? 'Yes' : 'No');
+
+        // Force check for newer SW immediately.
+        registration.update().catch(function(){});
+
+        // If an updated worker is already waiting, activate it now.
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
         
         // Check for updates
         registration.addEventListener('updatefound', function() {
           const newWorker = registration.installing;
           newWorker.addEventListener('statechange', function() {
-            if (newWorker.state === 'activated') {
-              console.log('✅ New Service Worker activated');
-              // Notify user about update
-              if (window._notifyAppUpdate) {
-                window._notifyAppUpdate();
+            if (newWorker.state === 'installed') {
+              // Activate immediately instead of waiting for next full app close.
+              if (navigator.serviceWorker.controller) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
               }
             }
           });

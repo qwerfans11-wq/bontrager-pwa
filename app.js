@@ -8286,6 +8286,412 @@ const ANATOMY_DATA = {
   }
 };
 
+const ANATOMY_SMART_HOTSPOTS = {
+  head_neck:[
+    {x:500,y:88,r:150},
+    {x:500,y:168,r:125},
+    {x:430,y:170,r:95},
+    {x:570,y:170,r:95}
+  ],
+  shoulder:[
+    {x:160,y:288,r:132},
+    {x:840,y:288,r:132},
+    {x:280,y:312,r:120},
+    {x:720,y:312,r:120},
+    {x:500,y:300,r:96}
+  ],
+  thorax:[
+    {x:500,y:385,r:210},
+    {x:500,y:500,r:220},
+    {x:500,y:620,r:210},
+    {x:395,y:520,r:145},
+    {x:605,y:520,r:145}
+  ],
+  upper_arm:[
+    {x:135,y:392,r:120},
+    {x:865,y:392,r:120},
+    {x:135,y:512,r:132},
+    {x:865,y:512,r:132},
+    {x:132,y:650,r:120},
+    {x:868,y:650,r:120}
+  ],
+  forearm_hand:[
+    {x:98,y:806,r:165},
+    {x:902,y:806,r:165},
+    {x:92,y:922,r:165},
+    {x:908,y:922,r:165},
+    {x:86,y:1048,r:130},
+    {x:914,y:1048,r:130}
+  ],
+  abdomen:[
+    {x:500,y:772,r:165},
+    {x:500,y:850,r:175},
+    {x:500,y:928,r:165},
+    {x:410,y:900,r:115},
+    {x:590,y:900,r:115}
+  ],
+  hip_femur:[
+    {x:315,y:998,r:165},
+    {x:685,y:998,r:165},
+    {x:315,y:1102,r:165},
+    {x:685,y:1102,r:165},
+    {x:315,y:1180,r:140},
+    {x:685,y:1180,r:140}
+  ],
+  knee_leg:[
+    {x:315,y:1238,r:150},
+    {x:685,y:1238,r:150},
+    {x:308,y:1306,r:142},
+    {x:692,y:1306,r:142},
+    {x:300,y:1364,r:122},
+    {x:700,y:1364,r:122}
+  ],
+  foot_ankle:[
+    {x:295,y:1402,r:140},
+    {x:705,y:1402,r:140},
+    {x:250,y:1468,r:132},
+    {x:750,y:1468,r:132},
+    {x:322,y:1474,r:120},
+    {x:678,y:1474,r:120}
+  ],
+  spine:[
+    {x:500,y:258,r:90},
+    {x:500,y:364,r:92},
+    {x:500,y:472,r:92},
+    {x:500,y:582,r:92},
+    {x:500,y:690,r:92},
+    {x:500,y:798,r:92},
+    {x:500,y:906,r:92}
+  ]
+};
+
+const ANATOMY_REGION_GUARDS = {
+  head_neck:{
+    ranges:[{x:[280,720],y:[0,260]}],
+    insideBoost:16,
+    maxPenalty:30,
+    penaltyScale:0.23
+  },
+  shoulder:{
+    ranges:[{x:[45,955],y:[210,395]}],
+    insideBoost:11,
+    maxPenalty:18,
+    penaltyScale:0.16
+  },
+  thorax:{
+    ranges:[{x:[220,780],y:[260,760]}],
+    insideBoost:18,
+    maxPenalty:34,
+    penaltyScale:0.25
+  },
+  upper_arm:{
+    ranges:[{x:[25,250],y:[215,740]},{x:[750,975],y:[215,740]}],
+    insideBoost:16,
+    maxPenalty:30,
+    penaltyScale:0.24
+  },
+  forearm_hand:{
+    ranges:[{x:[0,265],y:[680,1135]},{x:[735,1000],y:[680,1135]}],
+    insideBoost:16,
+    maxPenalty:30,
+    penaltyScale:0.24
+  },
+  abdomen:{
+    ranges:[{x:[235,765],y:[700,1000]}],
+    insideBoost:15,
+    maxPenalty:28,
+    penaltyScale:0.22
+  },
+  hip_femur:{
+    ranges:[{x:[180,450],y:[915,1215]},{x:[550,820],y:[915,1215]}],
+    insideBoost:15,
+    maxPenalty:28,
+    penaltyScale:0.22
+  },
+  knee_leg:{
+    ranges:[{x:[165,450],y:[1170,1375]},{x:[550,835],y:[1170,1375]}],
+    insideBoost:14,
+    maxPenalty:24,
+    penaltyScale:0.2
+  },
+  foot_ankle:{
+    ranges:[{x:[80,505],y:[1330,1500]},{x:[495,920],y:[1330,1500]}],
+    insideBoost:14,
+    maxPenalty:24,
+    penaltyScale:0.2
+  },
+  spine:{
+    ranges:[{x:[445,555],y:[205,980]}],
+    insideBoost:18,
+    maxPenalty:26,
+    penaltyScale:0.22
+  }
+};
+
+function _svgPointFromEvent(svg, ev){
+  if(!svg || !ev) return null;
+  const rect = svg.getBoundingClientRect();
+  if(!rect.width || !rect.height) return null;
+  const p = svg.viewBox && svg.viewBox.baseVal
+    ? svg.viewBox.baseVal
+    : {x:0,y:0,width:1000,height:1500};
+  const touch = ev.changedTouches && ev.changedTouches.length ? ev.changedTouches[0]
+    : (ev.touches && ev.touches.length ? ev.touches[0] : null);
+  const clientX = typeof ev.clientX === 'number' ? ev.clientX : (touch && typeof touch.clientX === 'number' ? touch.clientX : null);
+  const clientY = typeof ev.clientY === 'number' ? ev.clientY : (touch && typeof touch.clientY === 'number' ? touch.clientY : null);
+  if(clientX === null || clientY === null) return null;
+  const x = p.x + ((clientX - rect.left) / rect.width) * p.width;
+  const y = p.y + ((clientY - rect.top) / rect.height) * p.height;
+  return {x,y};
+}
+
+function _parsePolygonPoints(pointsStr){
+  return String(pointsStr || '')
+    .trim()
+    .split(/\s+/)
+    .map(pair=>pair.split(','))
+    .filter(pair=>pair.length === 2)
+    .map(pair=>({x:parseFloat(pair[0]), y:parseFloat(pair[1])}))
+    .filter(pt=>Number.isFinite(pt.x) && Number.isFinite(pt.y));
+}
+
+function _pointInPolygon(point, polygon){
+  const x = point.x;
+  const y = point.y;
+  let inside = false;
+  for(let i=0, j=polygon.length-1; i<polygon.length; j=i++){
+    const xi = polygon[i].x;
+    const yi = polygon[i].y;
+    const xj = polygon[j].x;
+    const yj = polygon[j].y;
+    const intersects = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-9) + xi);
+    if(intersects) inside = !inside;
+  }
+  return inside;
+}
+
+function _distanceToSegment(px, py, x1, y1, x2, y2){
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  if(dx === 0 && dy === 0){
+    return Math.hypot(px - x1, py - y1);
+  }
+  const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy)));
+  const cx = x1 + t * dx;
+  const cy = y1 + t * dy;
+  return Math.hypot(px - cx, py - cy);
+}
+
+function _distanceToPolygon(point, polygon){
+  if(!polygon || polygon.length < 2) return Number.POSITIVE_INFINITY;
+  if(_pointInPolygon(point, polygon)) return 0;
+  let min = Number.POSITIVE_INFINITY;
+  for(let i=0;i<polygon.length;i++){
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    const d = _distanceToSegment(point.x, point.y, a.x, a.y, b.x, b.y);
+    if(d < min) min = d;
+  }
+  return min;
+}
+
+function _distanceToRect(point, rect){
+  const dx = Math.max(rect.x - point.x, 0, point.x - (rect.x + rect.width));
+  const dy = Math.max(rect.y - point.y, 0, point.y - (rect.y + rect.height));
+  return Math.hypot(dx, dy);
+}
+
+function _pointInRect(point, rect){
+  return point.x >= rect.x && point.x <= (rect.x + rect.width) && point.y >= rect.y && point.y <= (rect.y + rect.height);
+}
+
+function _distanceToRange(value, min, max){
+  if(value < min) return min - value;
+  if(value > max) return value - max;
+  return 0;
+}
+
+function _regionGuardScore(regionId, point){
+  const guard = ANATOMY_REGION_GUARDS[regionId];
+  if(!guard || !Array.isArray(guard.ranges) || !guard.ranges.length) return 0;
+  let insideAny = false;
+  let minDistance = Number.POSITIVE_INFINITY;
+
+  guard.ranges.forEach(range=>{
+    const xRange = Array.isArray(range.x) ? range.x : [0, 0];
+    const yRange = Array.isArray(range.y) ? range.y : [0, 0];
+    const dx = _distanceToRange(point.x, xRange[0], xRange[1]);
+    const dy = _distanceToRange(point.y, yRange[0], yRange[1]);
+    const d = Math.hypot(dx, dy);
+    if(d === 0) insideAny = true;
+    if(d < minDistance) minDistance = d;
+  });
+
+  if(insideAny) return guard.insideBoost || 16;
+  const penaltyScale = typeof guard.penaltyScale === 'number' ? guard.penaltyScale : 0.2;
+  const maxPenalty = typeof guard.maxPenalty === 'number' ? guard.maxPenalty : 26;
+  return -Math.min(maxPenalty, minDistance * penaltyScale);
+}
+
+function _buildAnatomyGeometry(svg){
+  const regionMap = Object.create(null);
+  if(!svg) return regionMap;
+  svg.querySelectorAll('.skel-region[data-region]').forEach(regionEl=>{
+    const regionId = regionEl.dataset.region;
+    if(!regionId) return;
+    const shapes = [];
+    regionEl.querySelectorAll('polygon.ab-overlay, rect.ab-overlay').forEach(shapeEl=>{
+      const tag = shapeEl.tagName.toLowerCase();
+      if(tag === 'polygon'){
+        const pts = _parsePolygonPoints(shapeEl.getAttribute('points'));
+        if(pts.length >= 3) shapes.push({type:'polygon', points:pts});
+        return;
+      }
+      const x = parseFloat(shapeEl.getAttribute('x') || '0');
+      const y = parseFloat(shapeEl.getAttribute('y') || '0');
+      const width = parseFloat(shapeEl.getAttribute('width') || '0');
+      const height = parseFloat(shapeEl.getAttribute('height') || '0');
+      if(Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0){
+        shapes.push({type:'rect', x, y, width, height});
+      }
+    });
+    regionMap[regionId] = shapes;
+  });
+  return regionMap;
+}
+
+function _anatomyRegionScore(regionId, point, geometry){
+  let inside = false;
+  let edgeDistance = Number.POSITIVE_INFINITY;
+  const shapes = geometry[regionId] || [];
+  shapes.forEach(shape=>{
+    if(shape.type === 'polygon'){
+      if(_pointInPolygon(point, shape.points)) inside = true;
+      const d = _distanceToPolygon(point, shape.points);
+      if(d < edgeDistance) edgeDistance = d;
+      return;
+    }
+    if(_pointInRect(point, shape)) inside = true;
+    const d = _distanceToRect(point, shape);
+    if(d < edgeDistance) edgeDistance = d;
+  });
+
+  const hotspots = ANATOMY_SMART_HOTSPOTS[regionId] || [];
+  let hotspotScore = 0;
+  hotspots.forEach(h=>{
+    const d = Math.hypot(point.x - h.x, point.y - h.y);
+    const ratio = d / (h.r || 1);
+    if(ratio <= 1){
+      const s = (1 - ratio * ratio) * 135;
+      if(s > hotspotScore) hotspotScore = s;
+      return;
+    }
+    const s = Math.max(0, 24 - (ratio - 1) * 18);
+    if(s > hotspotScore) hotspotScore = s;
+  });
+
+  const shapeScore = inside ? 125 : Math.max(0, 52 - edgeDistance * 0.24);
+  const guardScore = _regionGuardScore(regionId, point);
+  let total = hotspotScore + shapeScore + guardScore;
+
+  if(regionId === 'spine'){
+    total += Math.max(0, 28 - Math.abs(point.x - 500) * 0.2);
+  }
+
+  return {
+    score: total,
+    inside,
+    edgeDistance,
+    hotspotScore,
+    guardScore
+  };
+}
+
+function _resolveAnatomyRegionByPoint(point, geometry, hintedRegion){
+  if(!point) return hintedRegion || null;
+  const regionIds = Object.keys(ANATOMY_DATA);
+  const ranked = [];
+
+  regionIds.forEach(regionId=>{
+    const sc = _anatomyRegionScore(regionId, point, geometry);
+    ranked.push({regionId, ...sc});
+  });
+
+  if(!ranked.length) return hintedRegion || null;
+  ranked.sort((a,b)=>b.score - a.score);
+  const best = ranked[0];
+  const second = ranked.length > 1 ? ranked[1] : null;
+
+  if(hintedRegion && hintedRegion !== best.regionId){
+    const hinted = ranked.find(r=>r.regionId === hintedRegion);
+    if(hinted && hinted.score >= best.score - 10){
+      return hintedRegion;
+    }
+  }
+
+  if(second && (best.score - second.score) < 8){
+    if(best.inside !== second.inside){
+      return best.inside ? best.regionId : second.regionId;
+    }
+    if(Math.abs(best.edgeDistance - second.edgeDistance) > 3){
+      return best.edgeDistance < second.edgeDistance ? best.regionId : second.regionId;
+    }
+    if(Math.abs(best.hotspotScore - second.hotspotScore) > 5){
+      return best.hotspotScore > second.hotspotScore ? best.regionId : second.regionId;
+    }
+  }
+
+  if(best.score < 58) return null;
+  return best.regionId;
+}
+
+function _initSmartAnatomyHitTest(){
+  const svg = document.getElementById('anatomyBodySVG');
+  if(!svg) return;
+
+  const geometry = _buildAnatomyGeometry(svg);
+  let lastPointerHandledAt = 0;
+
+  function activateRegionFromEvent(e){
+    const point = _svgPointFromEvent(svg, e);
+    if(!point) return;
+    const regionEl = e.target && e.target.closest ? e.target.closest('[data-region]') : null;
+    const hintedRegion = regionEl && regionEl.dataset ? regionEl.dataset.region : null;
+    const regionId = _resolveAnatomyRegionByPoint(point, geometry, null) || hintedRegion;
+    if(!regionId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openAnatomyRegion(regionId);
+  }
+
+  svg.addEventListener('pointerup', function(e){
+    if(typeof e.button === 'number' && e.button !== 0) return;
+    lastPointerHandledAt = Date.now();
+    activateRegionFromEvent(e);
+  }, true);
+
+  svg.addEventListener('mouseup', function(e){
+    if(typeof e.button === 'number' && e.button !== 0) return;
+    lastPointerHandledAt = Date.now();
+    activateRegionFromEvent(e);
+  }, true);
+
+  svg.addEventListener('touchend', function(e){
+    lastPointerHandledAt = Date.now();
+    activateRegionFromEvent(e);
+  }, {capture:true, passive:false});
+
+  svg.addEventListener('click', function(e){
+    if(Date.now() - lastPointerHandledAt < 450){
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    if(typeof e.button === 'number' && e.button !== 0) return;
+    activateRegionFromEvent(e);
+  }, true);
+}
+
 function openAnatomyRegion(regionId){
   if(!ANATOMY_DATA[regionId]) return;
   buildAnatomyDetail(regionId);
@@ -8373,10 +8779,11 @@ buildChapters();
 updateStats();
 _warmupOfflineImages();
 
-// Keyboard navigation for anatomy SVG overlay regions (Enter / Space = click)
+// Smart anatomy hit-testing + keyboard navigation.
 (function(){
   var svg = document.getElementById('anatomyBodySVG');
   if(!svg) return;
+  _initSmartAnatomyHitTest();
   svg.addEventListener('keydown', function(e){
     if(e.key==='Enter' || e.key===' '){
       var el = e.target && e.target.closest ? e.target.closest('[data-region]') : null;
