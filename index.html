@@ -152,7 +152,7 @@
   </div>
   <div class="nav-item" id="nav-anatomy" onclick="navTo('anatomy');closeSidebar()">
     <span style="font-size:18px;">🫀</span>
-    Anatomy — التشريح
+    Anatomy
   </div>
   <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
     <span style="font-size:18px;">⚙️</span>
@@ -231,8 +231,8 @@
       <div class="sec-card" onclick="navTo('anatomy')" style="text-align:left;display:flex;align-items:center;gap:14px;padding:14px 16px">
         <div style="flex-shrink:0;width:44px;height:44px;background:linear-gradient(135deg,#b3e5fc,#81d4fa);border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font-size:22px;">🫀</span></div>
         <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Anatomy — التشريح</div>
-          <div style="font-size:11px;color:var(--text2);line-height:1.4">مجسم جسم الإنسان التفاعلي · اضغط على أي منطقة لعرض تشريحها</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Anatomy</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.4">Interactive human body model · Tap any region to view its anatomy</div>
         </div>
       </div>
     </div>
@@ -541,21 +541,25 @@
 <div class="page" id="page-anatomy">
   <div class="scroll">
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
-    <div class="ptitle">Anatomy — علم التشريح</div>
+    <div class="ptitle">Anatomy</div>
     <div class="anat-intro">
-      🫀 مجسم جسم الإنسان التفاعلي — اضغط على أي منطقة من المجسم لعرض التشريح التفصيلي والمعلومات الإشعاعية الخاصة بها.<br>
-      <span style="font-size:12px;opacity:.8">Interactive human body model — tap any region to view its anatomy &amp; radiographic details.</span>
+      🫀 Interactive human body model — tap any region to view its anatomy &amp; radiographic details.
+    </div>
+    <div class="anat-offline-toolbar" style="display:flex;align-items:center;gap:8px;padding:6px 16px 0;flex-wrap:wrap">
+      <span id="anatOfflineIndicator" class="anat-offline-badge" style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text3)"></span>
+      <button id="anatOfflineBtn" class="anat-offline-dl-btn" onclick="downloadAnatomyOffline()" style="font-size:11px;padding:3px 12px;border-radius:20px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600">⬇ Save for Offline</button>
+      <span id="anatOfflineStatus" style="font-size:11px;color:var(--text3)"></span>
     </div>
     <div class="anat-body-container">
-      <div class="anat-tap-hint">🖐 اضغط على أي منطقة لعرض التشريح</div>
+      <div class="anat-tap-hint">🖐 Tap any region to view anatomy</div>
       <div class="anat-body-svg-wrap">
         <!-- 3D skeleton photo background -->
         <img id="anatSkeletonImg"
              src="https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19"
              alt="Human Skeleton — Full Body Anatomy"
              draggable="false" loading="eager"
-             onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='block'">
-        <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image unavailable offline</div>
+             onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='flex'">
+        <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image — tap "Save for Offline" above to cache</div>
 
         <!-- Transparent clickable overlay — preserveAspectRatio=none maps viewBox 1:1 to image pixels -->
         <svg id="anatomyBodySVG" viewBox="0 0 1000 1500"
