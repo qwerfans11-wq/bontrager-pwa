@@ -8666,6 +8666,44 @@ function _initSmartAnatomyHitTest(){
 
   const geometry = _buildAnatomyGeometry(svg);
   let lastPointerHandledAt = 0;
+  const TAP_MOVE_THRESHOLD = 10;
+
+  // Touch tracking — distinguish tap from scroll
+  let _touchStartX = 0, _touchStartY = 0, _touchMoved = false;
+
+  svg.addEventListener('touchstart', function(e){
+    const t = e.touches[0];
+    _touchStartX = t ? t.clientX : 0;
+    _touchStartY = t ? t.clientY : 0;
+    _touchMoved = false;
+  }, {capture:true, passive:true});
+
+  svg.addEventListener('touchmove', function(e){
+    if(_touchMoved) return;
+    const t = e.touches[0];
+    if(!t) return;
+    const dx = t.clientX - _touchStartX;
+    const dy = t.clientY - _touchStartY;
+    if(Math.hypot(dx, dy) > TAP_MOVE_THRESHOLD) _touchMoved = true;
+  }, {capture:true, passive:true});
+
+  // Pointer tracking — distinguish click from drag on non-touch devices
+  let _pointerStartX = 0, _pointerStartY = 0, _pointerMoved = false;
+
+  svg.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'touch') return; // handled by touch events
+    _pointerStartX = e.clientX;
+    _pointerStartY = e.clientY;
+    _pointerMoved = false;
+  }, {capture:true, passive:true});
+
+  svg.addEventListener('pointermove', function(e){
+    if(e.pointerType === 'touch') return;
+    if(_pointerMoved) return;
+    const dx = e.clientX - _pointerStartX;
+    const dy = e.clientY - _pointerStartY;
+    if(Math.hypot(dx, dy) > TAP_MOVE_THRESHOLD) _pointerMoved = true;
+  }, {capture:true, passive:true});
 
   function activateRegionFromEvent(e){
     const point = _svgPointFromEvent(svg, e);
@@ -8680,7 +8718,9 @@ function _initSmartAnatomyHitTest(){
   }
 
   svg.addEventListener('pointerup', function(e){
+    if(e.pointerType === 'touch') return; // handled by touch events
     if(typeof e.button === 'number' && e.button !== 0) return;
+    if(_pointerMoved) return;
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, true);
@@ -8692,6 +8732,7 @@ function _initSmartAnatomyHitTest(){
   }, true);
 
   svg.addEventListener('touchend', function(e){
+    if(_touchMoved) return; // user was scrolling, not tapping
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, {capture:true, passive:false});
