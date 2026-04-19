@@ -8111,7 +8111,8 @@ const ANATOMY_DATA = {
     positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
     chapterKey:'chest',
     anatImages:[
-      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4'
+      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4',
+      'https://github.com/user-attachments/assets/f409b0ea-b52f-410e-85c4-0c171f1f8e02'
     ]
   },
   abdomen:{
@@ -8219,7 +8220,11 @@ const ANATOMY_DATA = {
     clinicalIndications:'Colles fracture (dorsal angulation), Smith fracture (volar), scaphoid fracture (most commonly missed — AVN risk if untreated), Galeazzi (radius + DRUJ), Monteggia (ulna + radial head dislocation), Bennett (1st CMC), Gamekeeper\'s thumb (UCL).',
     kVpRange:'55–65 kVp (fingers/hand), 60–70 kVp (wrist/forearm)',
     positioning:'Patient seated at end of table, hand/forearm resting on IR. PA for hand (minimizes OID). Elbow at 90° for forearm lateral view.',
-    chapterKey:'upper_limb'
+    chapterKey:'upper_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28',
+      'https://github.com/user-attachments/assets/c2a42a2b-20fb-486f-8dcd-bb199f714819'
+    ]
   },
   hip_femur:{
     name:'Pelvis, Hip & Femur',arabicName:'الحوض والورك والفخذ',icon:'🦴',
