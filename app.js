@@ -8070,286 +8070,295 @@ function _zoomUnbindEvents(){
 // ANATOMY SECTION
 // ══════════════════════════════════════════════
 const ANATOMY_DATA = {
-  head_neck:{
-    name:'Head & Neck',arabicName:'الرأس والرقبة',icon:'🧠',
+  skull:{
+    name:'Skull',arabicName:'الجمجمة',icon:'💀',
     structures:[
-      'Skull — calvarium (frontal, parietal, temporal, occipital)',
+      'Calvarium (frontal, parietal, temporal, occipital bones)',
       'Base of skull (sphenoid, ethmoid)',
       'Facial bones (mandible, maxilla, nasal, zygomatic)',
-      'C1 Atlas & C2 Axis — atlantoaxial joint',
-      'Cervical vertebrae C3–C7',
-      'Odontoid process (dens) of C2',
-      'Intervertebral foramina (IVF) — exit for nerve roots',
-      'Hyoid bone',
-      'Larynx & upper trachea',
-      'Thyroid & parathyroid glands',
+      'Temporal bone (mastoid process, internal/external acoustic meatus)',
+      'Sella turcica & pituitary fossa',
+      'Orbits (orbital plates, optic foramina)',
+      'Paranasal sinuses (frontal, maxillary, ethmoid, sphenoid)',
+      'Mastoid air cells & petrous pyramids',
+      'Foramen magnum',
     ],
-    radiographyNotes:'Cervical spine: AP open mouth C1–C2 (odontoid), AP axial 15–20° cephalad C3–C7, lateral (SID 180 cm), obliques RAO/LAO or RPO/LPO for IVF, trauma lateral (horizontal beam — do NOT move patient), Swimmer\'s position C7–T1. Skull: AP/PA, Caldwell, Waters, Lateral, submentovertical.',
-    clinicalIndications:'Cervical fractures (Jefferson C1, odontoid, hangman\'s C2), degenerative disc disease, skull fractures, sinusitis, foreign body in airway, epiglottitis, croup, TMJ disorders.',
-    kVpRange:'65–80 kVp (cervical), 70–80 kVp (skull)',
-    positioning:'Erect preferred for cervical. Horizontal beam lateral for trauma — DO NOT move patient before all 7 cervical vertebrae are demonstrated.',
-    chapterKey:'spine',
+    radiographyNotes:'Skull: AP/PA, PA Caldwell (15° caudad — frontal sinuses & orbits), Waters/PA 37° (maxillary sinuses, orbits), lateral, submentovertical (SMV/full-basal — skull base). Facial bones: Waters, Caldwell, lateral. Mandible: PA, lateral oblique, Towne (30° caudad — condyles). Orbits: PA Caldwell, lateral, Waters.',
+    clinicalIndications:'Skull fractures (linear, depressed, basilar — "Battle sign", "raccoon eyes"), sinusitis & opacification, orbital floor blow-out fracture, orbital foreign body, pituitary adenoma (enlarged sella), mastoiditis, TMJ disorders, craniosynostosis.',
+    kVpRange:'70–80 kVp',
+    positioning:'Patient supine or seated erect. Precise angulation critical for each projection. Immobilisation recommended.',
+    chapterKey:null,
     anatImages:[
       'https://github.com/user-attachments/assets/a29241d0-35aa-40c4-9f10-7fbee68a8a90'
     ]
   },
-  thorax_right:{
-    name:'Right Chest',arabicName:'الصدر الأيمن',icon:'🫁',
+  cervical_spine:{
+    name:'Cervical Spine',arabicName:'العمود الفقري العنقي',icon:'🦴',
     structures:[
-      'Right lung (upper, middle & lower lobes)',
-      'Right pleural cavity & costophrenic angle',
-      'Right hemidiaphragm (right is higher due to liver)',
-      'Right ribs 1–12 (posterior, axillary, anterior portions)',
-      'Right side of heart & right atrium',
-      'Superior & inferior vena cava',
-      'Right clavicle & sternoclavicular joint',
-      'Right side of sternum (manubrium, body)',
-      'Right mediastinum',
-      'Liver dome (under right hemidiaphragm)',
-    ],
-    radiographyNotes:'Chest: PA erect (SID 180 cm, 110–125 kVp, full inspiration, 2nd breath), lateral, RAO/LPO 45° obliques. Right ribs: AP unilateral, RPO/RAO axillary obliques. AP supine for non-ambulatory.',
-    clinicalIndications:'Right pneumonia, right pleural effusion, right pneumothorax, right rib fractures, right-sided cardiomegaly, right lung masses, right hemidiaphragm elevation (liver masses), right pleural mesothelioma.',
-    kVpRange:'110–125 kVp (chest), 75–85 kVp (ribs)',
-    positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
-    chapterKey:'chest',
-    anatImages:[
-      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4'
-    ]
-  },
-  thorax_left:{
-    name:'Left Chest',arabicName:'الصدر الأيسر',icon:'🫁',
-    structures:[
-      'Left lung (upper & lower lobes)',
-      'Left pleural cavity & costophrenic angle',
-      'Left hemidiaphragm (lower than right)',
-      'Left ribs 1–12 (posterior, axillary, anterior portions)',
-      'Left side of heart & left ventricle (cardiac apex)',
-      'Aortic arch & descending thoracic aorta',
-      'Left clavicle & sternoclavicular joint',
-      'Left side of sternum (manubrium, body)',
-      'Pulmonary trunk & left pulmonary artery',
-      'Stomach air bubble (under left hemidiaphragm)',
-    ],
-    radiographyNotes:'Chest: PA erect (SID 180 cm, 110–125 kVp, full inspiration, 2nd breath), lateral, LAO/RPO 45° obliques. Left ribs: AP unilateral, LPO/LAO axillary obliques. AP supine for non-ambulatory.',
-    clinicalIndications:'Left pneumonia, left pleural effusion, left pneumothorax, left rib fractures, cardiomegaly (cardiac apex leftward displacement), aortic aneurysm/dissection, left lung masses, pericardial effusion.',
-    kVpRange:'110–125 kVp (chest), 75–85 kVp (ribs)',
-    positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
-    chapterKey:'chest',
-    anatImages:[
-      'https://github.com/user-attachments/assets/f409b0ea-b52f-410e-85c4-0c171f1f8e02'
-    ]
-  },
-  abdomen:{
-    name:'Abdomen',arabicName:'البطن',icon:'🫃',
-    structures:[
-      'Liver (right lobe, left lobe, caudate & quadrate lobes)',
-      'Gallbladder & biliary ducts (cystic duct, common bile duct)',
-      'Spleen (upper left quadrant — retroperitoneal)',
-      'Pancreas (head, body, tail — retroperitoneal)',
-      'Kidneys & adrenal glands (bilateral — retroperitoneal)',
-      'Ureters (retroperitoneal, course to bladder)',
-      'Aorta & inferior vena cava (retroperitoneal)',
-      'Stomach',
-      'Small intestine (duodenum — retroperitoneal, jejunum, ileum)',
-      'Large intestine (cecum, ascending, transverse, descending & sigmoid colon)',
-      'Peritoneal cavity & greater omentum',
-    ],
-    radiographyNotes:'AP supine KUB (centering at iliac crest, 70–85 kVp, full expiration), AP erect (centering 2" above iliac crest — demonstrates air-fluid levels), left lateral decubitus (free peritoneal air), PA prone, dorsal decubitus, lateral abdomen. Acute abdomen series: AP supine + AP erect + PA chest.',
-    clinicalIndications:'Bowel obstruction (air-fluid levels on erect/decubitus), pneumoperitoneum (free air under diaphragm on erect/decubitus), kidney & ureteral calculi (KUB), ascites, paralytic ileus, volvulus, intussusception, appendicitis.',
-    kVpRange:'70–85 kVp',
-    positioning:'Supine preferred. Erect or lateral decubitus for free air/fluid levels. Minimum 5–20 min in decubitus position before exposure to allow air redistribution.',
-    chapterKey:'abdomen',
-    anatImages:[
-      'https://github.com/user-attachments/assets/0c31f769-6d7c-4f98-849e-aa8b79ee53ef'
-    ]
-  },
-  spine:{
-    name:'Vertebral Column (Spine)',arabicName:'العمود الفقري',icon:'🦴',
-    structures:[
-      'Cervical spine: C1 (Atlas) – C7 (7 vertebrae)',
-      'Thoracic spine: T1 – T12 (12 vertebrae)',
-      'Lumbar spine: L1 – L5 (5 vertebrae)',
-      'Sacrum: S1–S5 (5 fused segments)',
-      'Coccyx (3–5 fused segments)',
-      'Intervertebral discs (nucleus pulposus + annulus fibrosus)',
+      'C1 Atlas (ring — no body/spinous process, anterior/posterior arch)',
+      'C2 Axis (odontoid process/dens, bifid spinous process)',
+      'C3–C7 cervical vertebrae (vertebral bodies, pedicles, transverse foramina)',
+      'Atlantoaxial joint (C1–C2)',
+      'Intervertebral discs C2–C7',
       'Facet (zygapophyseal) joints',
-      'Pedicles, laminae, spinous & transverse processes',
-      'Neural foramina (IVF)',
-      'Sacroiliac joints',
+      'Intervertebral foramina (IVF) — neural exit points',
+      'Spinous processes (bifid C2–C5, C6)',
+      'Uncovertebral joints of Luschka',
+      'Hyoid bone',
     ],
-    radiographyNotes:'Cervical: AP open mouth + AP axial 15° + lateral + obliques. Thoracic: AP + lateral (orthostatic 3–4 sec breathing technique) + obliques 70°. Lumbar: AP + lateral + obliques 45° (Scottie dog) + L5–S1 spot lateral. Sacrum: AP axial 15° ceph + lateral. Coccyx: AP axial 10° caud + lateral. Scoliosis: PA full-spine, lateral, bending series.',
-    clinicalIndications:'Vertebral compression fractures, disc herniation, spondylolisthesis, spondylolysis (broken collar/neck on Scottie dog = pars interarticularis defect), spinal stenosis, scoliosis (Cobb angle), degenerative joint disease.',
-    kVpRange:'65–80 kVp (cervical), 75–90 kVp (thoracic), 80–95 kVp (lumbar), 70–80 kVp (sacrum/coccyx)',
-    positioning:'Erect preferred for functional studies. Supine for detailed vertebral views. Flex knees (support under knees) for lumbar AP to reduce lordosis and open disc spaces.',
+    radiographyNotes:'AP open-mouth C1–C2 (odontoid), AP axial C3–C7 (15–20° cephalad), lateral (SID 180 cm — reduce magnification), obliques RAO/LAO or RPO/LPO (45°) for IVF, Trauma lateral (horizontal beam — DO NOT move patient), Swimmer\'s position for C7–T1. Flexion/extension lateral for instability.',
+    clinicalIndications:'Jefferson fracture (C1 burst), odontoid fracture (Types I–III), hangman\'s fracture (C2 pars), cervical cord injury, disc herniation, degenerative cervical spondylosis, cervical instability, torticollis, rheumatoid atlantoaxial instability.',
+    kVpRange:'65–80 kVp',
+    positioning:'Erect preferred for routine. Horizontal beam lateral for ALL trauma — do NOT flex, extend, or rotate neck before all 7 cervical vertebrae are demonstrated.',
     chapterKey:'spine',
     anatImages:[
       'https://github.com/user-attachments/assets/efc22033-8e60-49f0-aeb6-91b5ef3f62fc'
     ]
   },
-  shoulder:{
-    name:'Shoulder & Clavicle',arabicName:'الكتف والترقوة',icon:'💪',
+  clavicles:{
+    name:'Clavicles (Collarbones)',arabicName:'عظمتا الترقوة',icon:'🦴',
     structures:[
-      'Glenohumeral joint (ball-and-socket)',
-      'Glenoid fossa of scapula',
-      'Humeral head (greater & lesser tubercles)',
-      'Intertubercular (bicipital) groove',
-      'Coracoid process',
-      'Acromion process',
-      'Acromioclavicular (AC) joint',
-      'Clavicle (medial, shaft, lateral ends)',
-      'Scapula (spine, body, glenoid, coracoid, acromion)',
-      'Subacromial space (≥7 mm normal)',
+      'Clavicle — medial (sternal) end, shaft, lateral (acromial) end',
+      'Sternoclavicular (SC) joint (medial)',
+      'Acromioclavicular (AC) joint (lateral)',
+      'Coracoclavicular ligaments (trapezoid & conoid)',
+      'AC ligament complex',
+      'Coracoid process of scapula (nearby)',
     ],
-    radiographyNotes:'Shoulder: AP external rotation (greater tubercle in profile), AP internal rotation (lesser tubercle in profile), AP neutral. Axial: inferosuperior Lawrence, Clements modification, Bernageau. Obliques: Grashey (true AP for joint space), Scapular Y (trauma). Clavicle: AP, AP axial 15–30° cephalad. AC joints: bilateral AP with & without weights (5–15 lb, comparison). Scapula: AP, lateral.',
-    clinicalIndications:'Shoulder dislocations (anterior 95%, posterior rare), rotator cuff tears, AC joint separation (grades I–VI), Hill-Sachs lesion (posterior humeral head), Bankart lesion (anterior glenoid), clavicle fractures, scapular fractures.',
-    kVpRange:'65–80 kVp',
-    positioning:'Erect preferred; patient rotated to specific angles for each projection. Supine for post-trauma axial views. DO NOT force internal rotation in suspected posterior dislocation.',
+    radiographyNotes:'Clavicle: AP (CR perpendicular), AP axial 15–30° cephalad (separates clavicle from ribs — preferred). SC joints: bilateral PA 15° obliques, Serendipity view (40° cephalad). AC joints: bilateral AP erect with and without weights (5–15 lb) for grading separation.',
+    clinicalIndications:'Clavicle fractures (most common in mid-shaft "S-shaped"), AC joint separation (grades I–VI — Tossy/Rockwood), SC joint dislocations (anterior > posterior; posterior = surgical emergency), physeal injuries in children.',
+    kVpRange:'65–75 kVp',
+    positioning:'Erect or supine. For AC joints with weights, patient must stand. AC joint comparison views required. Anode-heel effect: use thicker end toward anode.',
     chapterKey:'upper_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/e089ff67-05e5-4870-8f3e-7a9724cbdec5',
-      'https://github.com/user-attachments/assets/eb54dce0-51b6-4afc-a537-c26d4561d594'
+      'https://github.com/user-attachments/assets/e089ff67-05e5-4870-8f3e-7a9724cbdec5'
     ]
   },
-  upper_arm:{
-    name:'Upper Arm (Humerus)',arabicName:'العضد',icon:'🦾',
+  sternum_ribcage:{
+    name:'Sternum & Rib Cage',arabicName:'القص وقفص الصدر',icon:'🫀',
     structures:[
-      'Humerus (head, anatomical neck, surgical neck)',
-      'Greater & lesser tubercles, bicipital (intertubercular) groove',
-      'Humeral shaft (diaphysis)',
-      'Medial & lateral epicondyles (distal humerus)',
-      'Capitellum & trochlea (distal articular surface)',
-      'Olecranon fossa (posterior), coronoid fossa (anterior)',
+      'Sternum: manubrium (jugular notch), body, xiphoid process',
+      'Manubriosternal joint (angle of Louis — T4–T5 level)',
+      'Costal cartilages (1st–10th anterior ribs)',
+      'True ribs 1–7 (articulate directly with sternum)',
+      'False ribs 8–10 (attach to costal margin)',
+      'Floating ribs 11–12 (no anterior attachment)',
+      'Costovertebral joints (rib heads — posteriorly)',
+      'Costotransverse joints',
+      'Intercostal spaces (muscles, vessels, nerves)',
+      'Scapulae (shoulder blades, posterior thorax)',
     ],
-    radiographyNotes:'Humerus: AP (external rotation), AP (internal rotation), lateral mediolateral/lateromedial, transthoracic lateral (proximal humerus trauma — do not move patient), horizontal beam lateral. Include both shoulder and elbow joints for shaft views.',
-    clinicalIndications:'Proximal humerus fractures (surgical neck, greater tuberosity — most common after 40 years), humeral shaft fractures (radial nerve injury risk), pathological fractures, bone tumours.',
+    radiographyNotes:'Sternum: RAO 15–20° (projects sternum over heart shadow), lateral erect. Ribs above diaphragm (posterior): AP bilateral, AP unilateral, RPO/LPO obliques 45°. Ribs below diaphragm: AP bilateral, AP unilateral obliques. Chest PA/AP also demonstrates rib cage.',
+    clinicalIndications:'Rib fractures (flail chest if ≥3 consecutive), sternal fractures (high-energy trauma), costochondral separation, metastatic lesions, multiple myeloma, Paget disease (rib thickening), pleural calcifications.',
+    kVpRange:'110–125 kVp (chest views), 75–85 kVp (ribs above diaphragm), 80–90 kVp (ribs below diaphragm)',
+    positioning:'PA erect for chest; obliques for rib detail. Full expiration for ribs below diaphragm (moves diaphragm up). Inspiration for ribs above diaphragm.',
+    chapterKey:'bony_thorax',
+    anatImages:[
+      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4'
+    ]
+  },
+  thoracolumbar_spine:{
+    name:'Thoracic & Lumbar Spine',arabicName:'العمود الفقري الصدري والقطني',icon:'🦴',
+    structures:[
+      'Thoracic spine T1–T12 (12 vertebrae — articulate with ribs)',
+      'Lumbar spine L1–L5 (5 vertebrae — largest vertebral bodies)',
+      'Thoracic intervertebral discs',
+      'Lumbar intervertebral discs (L4–L5 & L5–S1 most commonly involved)',
+      'Pedicles, laminae, spinous & transverse processes',
+      'Facet (zygapophyseal) joints',
+      'Sacrum (S1–S5, sacral promontory, sacral foramina)',
+      'Coccyx (3–5 fused segments)',
+      'Sacroiliac (SI) joints',
+      'Neural foramina (IVF)',
+    ],
+    radiographyNotes:'Thoracic: AP + lateral (orthostatic 3–4 sec breathing technique to blur ribs) + obliques 70°. Lumbar: AP (flex knees) + lateral + obliques 45° (Scottie dog — pars interarticularis) + L5–S1 spot lateral. Sacrum: AP axial 15° cephalad + lateral. Coccyx: AP axial 10° caudad + lateral. Scoliosis: PA full-spine, lateral, bending series (Cobb angle).',
+    clinicalIndications:'Vertebral compression fractures (osteoporosis), disc herniation (L4–L5, L5–S1 most common), spondylolisthesis, spondylolysis (pars defect = broken Scottie dog collar), spinal stenosis, Scheuermann disease, scoliosis, ankylosing spondylitis, burst fractures.',
+    kVpRange:'75–90 kVp (thoracic), 80–95 kVp (lumbar), 70–80 kVp (sacrum/coccyx)',
+    positioning:'Erect preferred for scoliosis/functional. Supine for detailed vertebral views. Flex knees for lumbar AP (reduces lordosis, opens disc spaces). Lateral — collimate to spine.',
+    chapterKey:'spine',
+    anatImages:[
+      'https://github.com/user-attachments/assets/efc22033-8e60-49f0-aeb6-91b5ef3f62fc'
+    ]
+  },
+  humerus:{
+    name:'Humerus (Upper Arm)',arabicName:'عظمة العضد',icon:'🦾',
+    structures:[
+      'Humeral head, anatomical neck, surgical neck',
+      'Greater tubercle (supraspinatus attachment)',
+      'Lesser tubercle (subscapularis attachment)',
+      'Intertubercular (bicipital) groove',
+      'Humeral shaft (diaphysis)',
+      'Medial & lateral supracondylar ridges',
+      'Medial epicondyle (common flexor origin)',
+      'Lateral epicondyle (common extensor origin)',
+      'Capitellum (articulates with radial head)',
+      'Trochlea (articulates with ulna/coronoid)',
+    ],
+    radiographyNotes:'Humerus: AP external rotation (greater tubercle in profile — lateral), AP internal rotation (lesser tubercle in profile — medial). Lateral mediolateral or lateromedial. Transthoracic lateral (proximal humerus trauma — do NOT move patient). Horizontal beam lateral alternative. Both shoulder and elbow joints included for shaft views.',
+    clinicalIndications:'Surgical neck fractures (most common proximal humerus fracture — 40–70 yr), greater tuberosity fractures, humeral shaft fractures (radial nerve palsy — Holstein-Lewis), proximal physeal injuries (children), pathological fractures (metastases), Neer classification for proximal humerus.',
     kVpRange:'60–70 kVp',
-    positioning:'Erect preferred. IR includes both joints for shaft views. Transthoracic or horizontal beam for trauma. DO NOT rotate arm if fracture/dislocation suspected.',
+    positioning:'Erect preferred. Include both joints for shaft views (2 IRs may be needed). Transthoracic or horizontal beam for trauma. DO NOT externally rotate if fracture/dislocation suspected.',
     chapterKey:'upper_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
     ]
   },
-  forearm:{
-    name:'Forearm, Elbow & Hand',arabicName:'الساعد والكوع والكف',icon:'🦾',
+  radius_ulna:{
+    name:'Radius & Ulna (Forearm)',arabicName:'عظمتا الكعبرة والزند',icon:'🦾',
     structures:[
-      'Radius (head, neck, shaft, radial tuberosity)',
-      'Ulna (olecranon, coronoid process, shaft)',
-      'Proximal radioulnar joint (PRUJ)',
-      'Interosseous membrane (radius–ulna)',
-      'Capitellum (articulates with radial head)',
-      'Trochlea (articulates with ulna)',
-      'Medial & lateral epicondyles',
-      'Olecranon fossa (posterior), coronoid fossa (anterior)',
-      'Anterior fat pad (normal) & posterior fat pad (abnormal = effusion)',
-      'Distal radius & ulna (styloid processes)',
+      'Radius: head, neck, radial tuberosity (biceps attachment)',
+      'Radial shaft (convex lateral bow)',
+      'Distal radius (styloid process, Lister\'s tubercle)',
+      'Ulna: olecranon process, coronoid process',
+      'Ulnar shaft (straight, interosseous membrane attachment)',
+      'Distal ulna (ulnar styloid, ulnar head)',
+      'Proximal radioulnar joint (PRUJ — radial head on ulna)',
       'Distal radioulnar joint (DRUJ)',
-      'Carpal bones — proximal row: Scaphoid, Lunate, Triquetrum, Pisiform',
-      'Carpal bones — distal row: Trapezium, Trapezoid, Capitate, Hamate',
-      'Hook of hamate & pisiform (carpal canal boundaries)',
-      'Metacarpals 1–5',
-      'Phalanges: proximal, middle (2nd–5th), distal',
-      'MCP, PIP, DIP, CMC joints',
-      'Carpal tunnel (median nerve passage)',
+      'Interosseous membrane',
+      'Elbow joint (capitellum, trochlea, anterior/posterior fat pads)',
     ],
-    radiographyNotes:'Forearm: AP, lateral (include wrist and elbow joints). Elbow: AP in full extension, lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, radial head series (Coyle method — 4 positions around 90°). Wrist: PA, oblique 45°, lateral, ulnar deviation (scaphoid/Stecher method), radial deviation, carpal canal (Gaynor-Hart). Hand: PA, oblique 45°, fan lateral, Brewerton, Norgaard. Fingers: PA, oblique, lateral. Thumb: AP, oblique, lateral, Modified Robert (1st CMC in true AP).',
-    clinicalIndications:'Radial head fractures, supracondylar fractures (children — most common), condylar fractures, fat pad sign (joint effusion/hemarthrosis), elbow dislocations, Monteggia (ulna + radial head dislocation), Galeazzi (radius + DRUJ), forearm shaft fractures. Colles fracture (dorsal angulation), Smith fracture (volar), scaphoid fracture (most commonly missed — AVN risk if untreated), Bennett (1st CMC), Gamekeeper\'s thumb (UCL tear), TFCC injury, carpal tunnel syndrome.',
-    kVpRange:'55–65 kVp (hand/fingers), 60–70 kVp (wrist/forearm/elbow)',
-    positioning:'Patient seated at end of table, arm resting on IR. AP with arm fully extended. Elbow at exactly 90° flexion for true lateral. PA for hand (minimises OID). Ulnar deviation for scaphoid views. Horizontal beam alternatives for trauma.',
+    radiographyNotes:'Forearm: AP (elbow fully extended, hand supinated — prevents crossing), lateral at 90° elbow flexion (include both joints). Elbow: AP in full extension, lateral at 90°, medial oblique 45° (coronoid), lateral oblique 45° (radial head), radial head series — 4 Coyle positions (90° flexion, rotate tube around elbow). Include both joints for forearm views.',
+    clinicalIndications:'Radial head fractures (most common adult elbow fracture — fat pad sign positive), supracondylar fractures (most common pediatric fracture), Monteggia fracture-dislocation (ulna + radial head dislocation), Galeazzi fracture (radius + DRUJ), Essex-Lopresti injury, nightstick (isolated ulna) fracture.',
+    kVpRange:'60–70 kVp',
+    positioning:'Patient seated at end of table, arm resting on IR. AP with full elbow extension and supination. Elbow at exactly 90° for true lateral.',
     chapterKey:'upper_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28',
+      'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28'
+    ]
+  },
+  hands:{
+    name:'Hands (Carpals & Digits)',arabicName:'اليدان — الرسغان والأصابع',icon:'🤚',
+    structures:[
+      'Carpal bones — proximal row: Scaphoid, Lunate, Triquetrum, Pisiform',
+      'Carpal bones — distal row: Trapezium, Trapezoid, Capitate, Hamate (hook)',
+      'Radiocarpal joint (wrist joint proper)',
+      'Intercarpal joints & midcarpal joint',
+      'Carpal tunnel (median nerve, flexor tendons)',
+      'Metacarpals 1–5 (base, shaft, head)',
+      'MCP joints (metacarpophalangeal)',
+      'Proximal, middle (2nd–5th), distal phalanges',
+      'PIP & DIP joints',
+      'Sesamoid bones (1st MCP joint — 2 sesamoids)',
+    ],
+    radiographyNotes:'Wrist: PA, oblique 45°, lateral (lunate), ulnar deviation (scaphoid), radial deviation (triquetrum), carpal canal (Gaynor-Hart 25–30°). Hand: PA, oblique 45°, fan lateral, Brewerton 15° (MCP erosions), Norgaard (bilateral oblique). Fingers: PA, oblique, lateral (per digit). Thumb: AP, oblique, lateral, Modified Robert (1st CMC). Scaphoid: Stecher method, ulnar deviation PA.',
+    clinicalIndications:'Scaphoid fractures (most commonly missed — AVN risk if untreated, "anatomical snuffbox" tenderness), Colles fracture (distal radius, dorsal angulation), Smith fracture (volar angulation), Bennett fracture (1st CMC — intra-articular), Gamekeeper\'s/skier\'s thumb (UCL tear), TFCC injury, carpal tunnel syndrome, Kienböck disease (lunate AVN).',
+    kVpRange:'55–65 kVp (hand/fingers), 60–70 kVp (wrist)',
+    positioning:'Patient seated at end of table. PA for hand (minimises OID). Ulnar deviation for scaphoid. PA oblique on 45° foam wedge.',
+    chapterKey:'upper_limb',
+    anatImages:[
       'https://github.com/user-attachments/assets/c2a42a2b-20fb-486f-8dcd-bb199f714819'
     ]
   },
-  pelvis_hip:{
-    name:'Pelvis, Hip & Femur',arabicName:'الحوض والورك وعظمة الفخذ',icon:'🦴',
+  pelvis:{
+    name:'Pelvis (Hip Bone)',arabicName:'حزام الحوض',icon:'🦴',
     structures:[
-      'Ilium (iliac crest, ASIS, PSIS, iliac fossa, iliac wings)',
-      'Ischium (ischial tuberosity, ischial spine)',
-      'Pubis (pubic symphysis, superior & inferior rami)',
-      'Sacrum (S1–S5, sacral foramina, sacral promontory)',
-      'Coccyx (3–5 fused segments)',
-      'Sacroiliac joints (SI joints)',
-      'Acetabulum (weight-bearing dome, anterior & posterior columns)',
-      'Femoral head & neck (proximal femur)',
-      'Greater & lesser trochanters',
-      'Hip joint — ball-and-socket (deepest joint in body)',
+      'Ilium (iliac crest, ASIS, PSIS, iliac fossa, greater sciatic notch)',
+      'Ischium (ischial tuberosity, ischial spine, lesser sciatic notch)',
+      'Pubis (pubic symphysis, superior & inferior pubic rami)',
+      'Acetabulum (articular dome, anterior column, posterior column)',
       'Obturator foramen',
-      'Femoral shaft (diaphysis — from trochanters to supracondylar ridge)',
+      'Sacrum (S1–S5, sacral promontory, sacral foramina, sacral hiatus)',
+      'Coccyx (3–5 fused segments)',
+      'Sacroiliac (SI) joints',
+      'Hip joint — ball-and-socket (femoral head in acetabulum)',
+      'Linea terminalis (pelvic inlet/brim)',
     ],
-    radiographyNotes:'Pelvis: AP bilateral (internal rotation 15° of feet), bilateral frog-leg Cleaves. Hip: AP unilateral, frog-leg Modified Cleaves, axiolateral inferosuperior Danelius-Miller (trauma — keep injured leg extended), Clements-Nakayama. Acetabulum: Judet method 45° RPO/LPO obliques, Teufel PA axial oblique. Femur: AP (include hip and knee joints for shaft views), lateral mediolateral/lateromedial. Sacrum: AP axial 15° cephalad + lateral. Coccyx: AP axial 10° caudad + lateral.',
-    clinicalIndications:'Hip fractures (femoral neck, intertrochanteric, subtrochanteric), hip dislocations (posterior 90%), avascular necrosis (AVN) of femoral head, acetabular fractures (Judet), pelvic ring fractures, sacral fractures, developmental dysplasia of hip (DDH), femoral shaft fractures. WARNING: DO NOT use frog-leg for suspected hip fracture/dislocation.',
-    kVpRange:'70–85 kVp (hip/pelvis), 75–85 kVp (femur)',
-    positioning:'AP supine standard. Injured leg in neutral position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval. Femur: include both hip and knee joints on all shaft views.',
+    radiographyNotes:'Pelvis: AP bilateral (internal rotation 15° — greater trochanters in profile, tear-drop figures), bilateral frog-leg Modified Cleaves (hip abduction 40–45°). Hip: AP unilateral, frog-leg Modified Cleaves, axiolateral inferosuperior Danelius-Miller (trauma — injured leg extended, CR perpendicular to femoral neck). Acetabulum: Judet method 45° RPO/LPO (anterior + posterior columns). SI joints: AP, AP axial (30–35° cephalad), obliques.',
+    clinicalIndications:'Pelvic ring fractures (open-book, lateral compression, vertical shear), hip dislocations (posterior 90% — dashboard injury), acetabular fractures (Judet classification), sacral fractures, SI joint pathology (ankylosing spondylitis, sacroiliitis), developmental dysplasia (DDH — Hilgenreiner\'s line), avulsion fractures (ASIS/AIIS in adolescents).',
+    kVpRange:'70–85 kVp',
+    positioning:'AP supine standard. DO NOT rotate or abduct injured leg without physician approval. Danelius-Miller: uninjured leg elevated, injured leg extended, CR horizontal.',
     chapterKey:'lower_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c'
     ]
   },
-  thigh_knee:{
-    name:'Knee',arabicName:'الركبة',icon:'🦵',
+  femur:{
+    name:'Femur (Thigh)',arabicName:'عظمة الفخذ',icon:'🦵',
     structures:[
-      'Distal femur (medial & lateral condyles, trochlear groove)',
-      'Patella (kneecap — sesamoid bone in quadriceps tendon)',
-      'Proximal tibia — intercondylar eminence, medial & lateral plateaus',
+      'Femoral head (spherical, 2/3 sphere — epiphysis in children)',
+      'Femoral neck (anteversion 10–15° normal)',
+      'Greater trochanter (gluteal muscles)',
+      'Lesser trochanter (iliopsoas attachment)',
+      'Intertrochanteric line (anterior) & crest (posterior)',
+      'Femoral shaft (diaphysis — thickest cortex in body)',
+      'Linea aspera (posterior ridge)',
+      'Medial & lateral supracondylar ridges',
+      'Distal femoral condyles (medial & lateral)',
+      'Trochlear groove (patellar articulation)',
+    ],
+    radiographyNotes:'Femur: AP (include hip and knee joints — 2 IRs if needed; internal rotation 15° for proximal), lateral mediolateral or lateromedial. Proximal femur/hip: AP, frog-leg Modified Cleaves. TRAUMA: DO NOT use frog-leg for suspected hip fracture/dislocation — use axiolateral Danelius-Miller instead.',
+    clinicalIndications:'Femoral neck fractures (most common hip fracture — Garden classification I–IV, AVN risk), intertrochanteric fractures (extracapsular — Kyle classification), subtrochanteric fractures, femoral shaft fractures (high-energy — fat embolism risk), pathological fractures (metastases, multiple myeloma), Paget disease.',
+    kVpRange:'75–85 kVp',
+    positioning:'Include both joints for shaft views. Internal rotation 15° for true AP of femoral neck. Horizontal beam lateral for non-ambulatory. DO NOT abduct femur if fracture/dislocation suspected.',
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c'
+    ]
+  },
+  patella:{
+    name:'Patella (Knee Cap)',arabicName:'الرضفة والركبة',icon:'🦵',
+    structures:[
+      'Patella (sesamoid bone in quadriceps tendon)',
+      'Articular surface of patella (medial & lateral facets)',
+      'Patellofemoral joint',
+      'Distal femoral condyles (medial & lateral)',
+      'Tibial plateaus (medial & lateral)',
+      'Intercondylar eminence (tibial spines)',
       'Tibial tuberosity (patellar tendon attachment)',
       'Fibula head & neck (proximal tibiofibular joint)',
       'Menisci (medial & lateral fibrocartilage)',
-      'ACL, PCL (cruciate ligaments)',
-      'MCL, LCL (collateral ligaments)',
-      'Suprapatellar bursa & infrapatellar fat pad',
-      'Patellofemoral joint',
+      'ACL, PCL, MCL, LCL',
     ],
-    radiographyNotes:'Knee: AP (CR parallel to tibial plateau — adjust for body habitus), lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, tunnel/notch AP axial intercondylar fossa (Holmblad/PA axial Camp-Coventry/AP axial Béclère), tangential patella Merchant/Settegast. PA projection of patella before flexion if fracture suspected.',
-    clinicalIndications:'Tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, fat pad sign (joint effusion), Osgood-Schlatter (tibial tuberosity apophysitis), knee ligament and meniscal injuries, Segond fracture (ACL avulsion).',
+    radiographyNotes:'Knee: AP (CR parallel to tibial plateau), lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, tunnel/notch (Holmblad PA, Camp-Coventry PA, or Béclère AP axial — intercondylar fossa). Patella: Merchant (45° flexion, 30° cephalad), Settegast (tangential, 115–120° flexion), PA before flexion if fracture suspected. Stress views with caution.',
+    clinicalIndications:'Patellar fractures (transverse most common), bipartite patella (distinguished by smooth margins), patellar dislocation/subluxation, tibial plateau fractures, femoral condyle fractures, fat pad sign/joint effusion, Osgood-Schlatter (tibial tuberosity), Blount disease, Segond fracture (lateral tibial plateau — ACL avulsion).',
     kVpRange:'65–80 kVp',
-    positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel/notch views. Horizontal beam for trauma non-ambulatory patients.',
+    positioning:'Supine AP. 90° flexion for true lateral. PA before any flexion if fracture suspected. Horizontal beam for trauma or non-ambulatory.',
     chapterKey:'lower_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/1980cde7-e841-4d94-868d-72d2afe30fad'
     ]
   },
-  leg_ankle:{
-    name:'Leg & Ankle',arabicName:'الساق والكاحل',icon:'🦵',
+  tibia_fibula:{
+    name:'Tibia & Fibula (Leg)',arabicName:'عظمتا الظنبوب والشظية',icon:'🦵',
     structures:[
-      'Tibia shaft (anterior border, interosseous membrane attachment)',
+      'Tibia shaft (anterior border — "shin bone")',
+      'Tibial crest (subcutaneous — easily palpable)',
       'Fibula shaft (interosseous membrane attachment)',
+      'Proximal tibiofibular joint',
       'Distal tibiofibular joint (syndesmosis)',
       'Medial malleolus (distal tibia)',
       'Lateral malleolus (distal fibula)',
-      'Talus trochlea (articulates with tibia/fibula mortise)',
-      'Tibiotalar joint (ankle joint proper)',
-      'Deltoid ligament (medial), lateral ankle ligaments (ATFL, CFL, PTFL)',
-      'Ankle mortise (tibia, fibula, talus)',
-      'Distal interosseous membrane',
+      'Ankle mortise (tibia + fibula + talus)',
+      'Deltoid ligament (medial — tibiocalcaneal, tibiotalar)',
+      'Lateral ankle ligaments: ATFL, CFL, PTFL',
     ],
-    radiographyNotes:'Tibia-Fibula: AP, lateral (include both joints). Ankle: AP, mortise (15–20° internal rotation — opens full mortise joint space), lateral, oblique 45°, stress views (with caution). Weight-bearing ankle lateral (functional assessment).',
-    clinicalIndications:'Tibia/fibula shaft fractures, ankle fractures (bimalleolar, trimalleolar), Maisonneuve fracture (proximal fibula + deltoid ligament injury), Pott fracture, ankle sprains (Ottawa rules), distal tibiofibular syndesmosis injury.',
+    radiographyNotes:'Tibia/fibula shaft: AP (include both joints), lateral (include both joints). Ankle: AP (CR to mid-ankle), mortise view (15–20° internal rotation to open full ankle mortise — both malleoli equidistant from IR), lateral (mediolateral), oblique 45°. Weight-bearing ankle lateral for arch assessment. Stress views (Ottawa ankle rules).',
+    clinicalIndications:'Tibial shaft fractures, fibular shaft fractures, Maisonneuve fracture (proximal fibula fracture + deltoid injury + mortise disruption), ankle fractures (Weber A/B/C — Danis-Weber; Lauge-Hansen), bimalleolar, trimalleolar, Pott fracture, ankle sprains (Ottawa rules).',
     kVpRange:'60–75 kVp',
-    positioning:'Supine or seated for non-weight-bearing. Standing for functional ankle assessment. Mortise view requires 15–20° internal rotation.',
+    positioning:'Supine for non-weight-bearing. Both joints included for shaft views. Mortise view: 15–20° internal rotation. Standing/weight-bearing for functional ankle assessment.',
     chapterKey:'lower_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
     ]
   },
-  foot:{
-    name:'Foot',arabicName:'القدم',icon:'🦶',
+  feet:{
+    name:'Feet (Tarsals & Digits)',arabicName:'القدمان — عظام الرسغ والأصابع',icon:'🦶',
     structures:[
-      'Talus (head, neck — connects to foot from ankle)',
-      'Calcaneus (heel bone, sustentaculum tali, tuberosity)',
+      'Talus (head, neck, trochlea — articulates with tibia/fibula mortise)',
+      'Calcaneus (heel bone — sustentaculum tali, tuberosity, posterior facet)',
       'Navicular bone',
       'Cuboid bone',
       'Cuneiforms (medial, intermediate, lateral)',
       'Metatarsals 1–5 (base, shaft, head)',
-      'Phalanges of toes (proximal, middle, distal)',
-      'Sesamoids (plantar surface of 1st MTP joint)',
+      'Proximal, middle, distal phalanges of toes',
+      'Sesamoids (plantar surface of 1st MTP — 2 sesamoids)',
       'Subtalar joint (talocalcaneal)',
       'Lisfranc joint complex (tarsometatarsal joints)',
     ],
-    radiographyNotes:'Foot: AP/dorsoplantar (10° posterior CR), medial oblique 30–40°, lateral. Weight-bearing AP & lateral (arch evaluation, Lisfranc injury). Calcaneus: axial plantodorsal (40° cephalad), lateral. Toes: AP (10–15° cephalad to MTP), oblique, lateral. Sesamoids: tangential (Lewis modification).',
-    clinicalIndications:'Calcaneal fractures (falls from height — check Böhler angle), Lisfranc injuries (1st–2nd metatarsal base alignment), 5th metatarsal Jones fracture, navicular stress fractures, hallux valgus, pes planus/cavus, sesamoid fractures, talus fractures.',
+    radiographyNotes:'Foot: AP/dorsoplantar (10° posterior CR), medial oblique 30–40°, lateral. Weight-bearing AP & lateral (Lisfranc, arch evaluation). Calcaneus: axial plantodorsal (40° cephalad — Böhler angle), lateral. Toes: AP (10–15° cephalad to MTP), oblique, lateral (per toe). Sesamoids: tangential Lewis modification. Heel spur: lateral.',
+    clinicalIndications:'Calcaneal fractures (axial load — Böhler angle <20° abnormal), Lisfranc injuries (1st–2nd metatarsal base malalignment), 5th metatarsal Jones fracture (diaphyseal) vs avulsion (base), navicular stress fractures, talus fractures, hallux valgus, pes planus (flat foot — arch angle), pes cavus, sesamoid fractures.',
     kVpRange:'50–65 kVp (toes/foot), 60–70 kVp (calcaneus)',
-    positioning:'Patient supine or seated for non-weight-bearing. Standing for weight-bearing projections (arch and functional assessment).',
+    positioning:'Supine or seated for non-weight-bearing. Standing for weight-bearing. Böhler angle: 20–40° normal — measure on lateral calcaneus view.',
     chapterKey:'lower_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/90759fa9-df11-4f2b-85e6-8b6fbff09763'
@@ -8362,8 +8371,8 @@ const ANATOMY_DATA = {
 function _getAnatomyImageURLs(){
   const seen = new Set();
   const urls = [];
-  // Skeleton background
-  const skeletonSrc = 'https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19';
+  // Color mask skeleton background
+  const skeletonSrc = 'https://github.com/user-attachments/assets/8fd79983-5893-483b-8369-d5d2d27cff1d';
   seen.add(skeletonSrc);
   urls.push(skeletonSrc);
   for(const r of Object.values(ANATOMY_DATA)){
@@ -8480,164 +8489,173 @@ function _updateAnatomyOfflineIndicator(){
 }
 
 const ANATOMY_SMART_HOTSPOTS = {
-  head_neck:[
-    {x:500,y:88,r:150},
-    {x:500,y:168,r:125},
-    {x:430,y:170,r:95},
-    {x:570,y:170,r:95}
+  skull:[
+    {x:500,y:80,r:160},
+    {x:500,y:160,r:140},
+    {x:420,y:160,r:100},
+    {x:580,y:160,r:100}
   ],
-  shoulder:[
-    {x:155,y:280,r:115},
-    {x:845,y:280,r:115},
-    {x:160,y:340,r:105},
-    {x:840,y:340,r:105}
+  cervical_spine:[
+    {x:500,y:310,r:80},
+    {x:500,y:342,r:78},
+    {x:500,y:370,r:70}
   ],
-  thorax_right:[
-    {x:367,y:390,r:140},
-    {x:367,y:510,r:155},
-    {x:367,y:630,r:145}
+  clavicles:[
+    {x:330,y:282,r:90},
+    {x:200,y:292,r:80},
+    {x:670,y:282,r:90},
+    {x:800,y:292,r:80}
   ],
-  thorax_left:[
-    {x:633,y:390,r:140},
-    {x:633,y:510,r:155},
-    {x:633,y:630,r:145}
+  sternum_ribcage:[
+    {x:152,y:310,r:120},
+    {x:848,y:310,r:120},
+    {x:370,y:420,r:140},
+    {x:630,y:420,r:140},
+    {x:370,y:560,r:145},
+    {x:630,y:560,r:145},
+    {x:500,y:490,r:80}
   ],
-  upper_arm:[
-    {x:128,y:460,r:110},
-    {x:872,y:460,r:110},
-    {x:126,y:570,r:118},
-    {x:874,y:570,r:118},
-    {x:124,y:660,r:106},
-    {x:876,y:660,r:106}
+  thoracolumbar_spine:[
+    {x:500,y:420,r:90},
+    {x:500,y:530,r:92},
+    {x:500,y:640,r:92},
+    {x:500,y:750,r:92},
+    {x:500,y:860,r:92},
+    {x:500,y:960,r:88}
   ],
-  forearm:[
-    {x:108,y:780,r:140},
-    {x:892,y:780,r:140},
-    {x:104,y:880,r:130},
-    {x:896,y:880,r:130},
-    {x:100,y:980,r:120},
-    {x:900,y:980,r:120},
-    {x:96,y:1060,r:110},
-    {x:904,y:1060,r:110}
+  humerus:[
+    {x:128,y:450,r:110},
+    {x:872,y:450,r:110},
+    {x:125,y:560,r:118},
+    {x:875,y:560,r:118},
+    {x:122,y:650,r:106},
+    {x:878,y:650,r:106}
   ],
-  abdomen:[
-    {x:500,y:758,r:145},
-    {x:500,y:808,r:150},
-    {x:420,y:790,r:100},
-    {x:580,y:790,r:100}
+  radius_ulna:[
+    {x:108,y:750,r:120},
+    {x:892,y:750,r:120},
+    {x:104,y:840,r:115},
+    {x:896,y:840,r:115},
+    {x:100,y:930,r:108},
+    {x:900,y:930,r:108}
   ],
-  pelvis_hip:[
-    {x:316,y:940,r:145},
-    {x:684,y:940,r:145},
-    {x:340,y:1010,r:125},
-    {x:660,y:1010,r:125},
-    {x:500,y:960,r:115},
-    {x:310,y:1100,r:130},
-    {x:690,y:1100,r:130},
-    {x:308,y:1170,r:110},
-    {x:692,y:1170,r:110}
+  hands:[
+    {x:96,y:1010,r:100},
+    {x:904,y:1010,r:100},
+    {x:90,y:1068,r:95},
+    {x:910,y:1068,r:95}
   ],
-  thigh_knee:[
-    {x:305,y:1230,r:120},
-    {x:695,y:1230,r:120},
-    {x:303,y:1285,r:110},
-    {x:697,y:1285,r:110}
+  pelvis:[
+    {x:316,y:920,r:145},
+    {x:684,y:920,r:145},
+    {x:340,y:990,r:125},
+    {x:660,y:990,r:125},
+    {x:500,y:950,r:115}
   ],
-  leg_ankle:[
-    {x:304,y:1360,r:128},
-    {x:696,y:1360,r:128},
-    {x:300,y:1415,r:112},
-    {x:700,y:1415,r:112}
+  femur:[
+    {x:308,y:1120,r:125},
+    {x:692,y:1120,r:125},
+    {x:306,y:1175,r:110},
+    {x:694,y:1175,r:110}
   ],
-  foot:[
-    {x:294,y:1462,r:130},
-    {x:706,y:1462,r:130},
-    {x:298,y:1490,r:100},
-    {x:702,y:1490,r:100}
+  patella:[
+    {x:305,y:1250,r:115},
+    {x:695,y:1250,r:115},
+    {x:303,y:1295,r:100},
+    {x:697,y:1295,r:100}
   ],
-  spine:[
-    {x:500,y:258,r:90},
-    {x:500,y:364,r:92},
-    {x:500,y:472,r:92},
-    {x:500,y:582,r:92},
-    {x:500,y:690,r:92},
-    {x:500,y:798,r:92},
-    {x:500,y:906,r:92}
+  tibia_fibula:[
+    {x:305,y:1380,r:120},
+    {x:695,y:1380,r:120},
+    {x:300,y:1440,r:108},
+    {x:700,y:1440,r:108}
+  ],
+  feet:[
+    {x:294,y:1470,r:125},
+    {x:706,y:1470,r:125},
+    {x:298,y:1498,r:95},
+    {x:702,y:1498,r:95}
   ]
 };
 
 const ANATOMY_REGION_GUARDS = {
-  head_neck:{
-    ranges:[{x:[280,720],y:[0,260]}],
+  skull:{
+    ranges:[{x:[280,720],y:[0,268]}],
     insideBoost:16,
     maxPenalty:30,
     penaltyScale:0.23
   },
-  shoulder:{
-    ranges:[{x:[40,283],y:[246,392]},{x:[717,960],y:[246,392]}],
-    insideBoost:18,
-    maxPenalty:34,
+  cervical_spine:{
+    ranges:[{x:[440,560],y:[280,398]}],
+    insideBoost:22,
+    maxPenalty:28,
     penaltyScale:0.26
   },
-  thorax_right:{
-    ranges:[{x:[283,452],y:[246,712]}],
-    insideBoost:20,
-    maxPenalty:38,
-    penaltyScale:0.28
+  clavicles:{
+    ranges:[{x:[158,478],y:[252,334]},{x:[522,842],y:[252,334]}],
+    insideBoost:24,
+    maxPenalty:36,
+    penaltyScale:0.30
   },
-  thorax_left:{
-    ranges:[{x:[548,717],y:[246,712]}],
-    insideBoost:20,
-    maxPenalty:38,
-    penaltyScale:0.28
+  sternum_ribcage:{
+    ranges:[{x:[22,294],y:[244,458]},{x:[283,717],y:[268,716]},{x:[706,978],y:[244,458]}],
+    insideBoost:18,
+    maxPenalty:36,
+    penaltyScale:0.26
   },
-  upper_arm:{
-    ranges:[{x:[20,270],y:[388,708]},{x:[730,980],y:[388,708]}],
+  thoracolumbar_spine:{
+    ranges:[{x:[445,555],y:[318,1036]}],
+    insideBoost:18,
+    maxPenalty:26,
+    penaltyScale:0.22
+  },
+  humerus:{
+    ranges:[{x:[18,272],y:[354,750]},{x:[728,982],y:[354,750]}],
     insideBoost:18,
     maxPenalty:32,
     penaltyScale:0.25
   },
-  forearm:{
-    ranges:[{x:[0,260],y:[704,1116]},{x:[740,1000],y:[704,1116]}],
+  radius_ulna:{
+    ranges:[{x:[0,278],y:[692,992]},{x:[722,1000],y:[692,992]}],
     insideBoost:16,
     maxPenalty:30,
     penaltyScale:0.24
   },
-  abdomen:{
-    ranges:[{x:[283,717],y:[708,880]}],
+  hands:{
+    ranges:[{x:[0,266],y:[978,1130]},{x:[734,1000],y:[978,1130]}],
     insideBoost:16,
-    maxPenalty:30,
+    maxPenalty:28,
     penaltyScale:0.23
   },
-  pelvis_hip:{
-    ranges:[{x:[155,845],y:[876,1202]}],
+  pelvis:{
+    ranges:[{x:[148,852],y:[820,1108]}],
     insideBoost:15,
     maxPenalty:28,
     penaltyScale:0.22
   },
-  thigh_knee:{
-    ranges:[{x:[164,456],y:[1198,1312]},{x:[544,836],y:[1198,1312]}],
+  femur:{
+    ranges:[{x:[153,442],y:[1068,1232]},{x:[558,847],y:[1068,1232]}],
+    insideBoost:16,
+    maxPenalty:28,
+    penaltyScale:0.22
+  },
+  patella:{
+    ranges:[{x:[153,472],y:[1198,1348]},{x:[528,847],y:[1198,1348]}],
     insideBoost:14,
     maxPenalty:26,
     penaltyScale:0.21
   },
-  leg_ankle:{
-    ranges:[{x:[140,462],y:[1298,1432]},{x:[538,860],y:[1298,1432]}],
+  tibia_fibula:{
+    ranges:[{x:[138,467],y:[1314,1514]},{x:[533,862],y:[1314,1514]}],
     insideBoost:14,
     maxPenalty:24,
-    penaltyScale:0.2
+    penaltyScale:0.20
   },
-  foot:{
-    ranges:[{x:[78,510],y:[1418,1500]},{x:[490,922],y:[1418,1500]}],
+  feet:{
+    ranges:[{x:[60,512],y:[1413,1515]},{x:[488,940],y:[1413,1515]}],
     insideBoost:14,
     maxPenalty:22,
     penaltyScale:0.19
-  },
-  spine:{
-    ranges:[{x:[445,555],y:[205,980]}],
-    insideBoost:18,
-    maxPenalty:26,
-    penaltyScale:0.22
   }
 };
 
@@ -8828,7 +8846,7 @@ function _anatomyRegionScore(regionId, point, geometry){
   const guardScore = _regionGuardScore(regionId, point);
   let total = hotspotScore + shapeScore + guardScore;
 
-  if(regionId === 'spine'){
+  if(regionId === 'thoracolumbar_spine' || regionId === 'cervical_spine'){
     total += Math.max(0, 28 - Math.abs(point.x - 500) * 0.2);
   }
 
