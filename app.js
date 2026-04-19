@@ -8200,7 +8200,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Proximal humerus fractures (surgical neck, greater tuberosity), mid-shaft fractures, supracondylar fractures (children — most common), condylar fractures, radial head fractures, fat pad sign (joint effusion/hemarthrosis), elbow dislocations.',
     kVpRange:'60–70 kVp (humerus), 60–70 kVp (elbow)',
     positioning:'Erect preferred. IR includes both joints for shaft views. Elbow at exactly 90° flexion for true lateral. Horizontal beam alternatives for trauma.',
-    chapterKey:'upper_limb'
+    chapterKey:'upper_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
+    ]
   },
   forearm_hand:{
     name:'Forearm, Wrist & Hand',arabicName:'الساعد والمعصم والكف',icon:'✋',
@@ -8243,7 +8246,11 @@ const ANATOMY_DATA = {
     clinicalIndications:'Hip fractures (femoral neck, intertrochanteric, subtrochanteric), hip dislocations (posterior 90%), avascular necrosis (AVN) of femoral head, acetabular fractures, developmental dysplasia of hip (DDH). WARNING: DO NOT use frog-leg for suspected hip fracture/dislocation.',
     kVpRange:'70–85 kVp (hip/pelvis), 70–85 kVp (femur)',
     positioning:'AP supine standard. Injured leg in neutral (anatomic) position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval.',
-    chapterKey:'lower_limb'
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c',
+      'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
+    ]
   },
   knee_leg:{
     name:'Knee & Lower Leg',arabicName:'الركبة والساق السفلية',icon:'🦵',
@@ -8282,7 +8289,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Calcaneal fractures (falls from height — check Böhler angle), Lisfranc injuries (1st–2nd metatarsal base alignment), 5th metatarsal Jones fracture, navicular stress fractures, hallux valgus, pes planus/cavus, sesamoid fractures, talus fractures.',
     kVpRange:'50–65 kVp (toes/foot), 60–75 kVp (ankle/calcaneus)',
     positioning:'Patient supine or seated for non-weight-bearing. Standing for weight-bearing projections (arch and functional assessment).',
-    chapterKey:'lower_limb'
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/90759fa9-df11-4f2b-85e6-8b6fbff09763'
+    ]
   }
 };
 
@@ -8294,26 +8304,25 @@ const ANATOMY_SMART_HOTSPOTS = {
     {x:570,y:170,r:95}
   ],
   shoulder:[
-    {x:160,y:288,r:132},
-    {x:840,y:288,r:132},
-    {x:280,y:312,r:120},
-    {x:720,y:312,r:120},
-    {x:500,y:300,r:96}
+    {x:155,y:280,r:115},
+    {x:845,y:280,r:115},
+    {x:160,y:340,r:105},
+    {x:840,y:340,r:105}
   ],
   thorax:[
-    {x:500,y:385,r:210},
-    {x:500,y:500,r:220},
-    {x:500,y:620,r:210},
-    {x:395,y:520,r:145},
-    {x:605,y:520,r:145}
+    {x:500,y:390,r:185},
+    {x:500,y:510,r:210},
+    {x:500,y:630,r:200},
+    {x:400,y:510,r:130},
+    {x:600,y:510,r:130}
   ],
   upper_arm:[
-    {x:135,y:392,r:120},
-    {x:865,y:392,r:120},
-    {x:135,y:512,r:132},
-    {x:865,y:512,r:132},
-    {x:132,y:650,r:120},
-    {x:868,y:650,r:120}
+    {x:132,y:450,r:110},
+    {x:868,y:450,r:110},
+    {x:130,y:570,r:122},
+    {x:870,y:570,r:122},
+    {x:128,y:668,r:110},
+    {x:872,y:668,r:110}
   ],
   forearm_hand:[
     {x:98,y:806,r:165},
@@ -8373,22 +8382,22 @@ const ANATOMY_REGION_GUARDS = {
     penaltyScale:0.23
   },
   shoulder:{
-    ranges:[{x:[45,955],y:[210,395]}],
-    insideBoost:11,
-    maxPenalty:18,
-    penaltyScale:0.16
-  },
-  thorax:{
-    ranges:[{x:[220,780],y:[260,760]}],
+    ranges:[{x:[40,286],y:[246,394]},{x:[714,960],y:[246,394]}],
     insideBoost:18,
     maxPenalty:34,
-    penaltyScale:0.25
+    penaltyScale:0.26
+  },
+  thorax:{
+    ranges:[{x:[232,768],y:[255,734]}],
+    insideBoost:20,
+    maxPenalty:38,
+    penaltyScale:0.28
   },
   upper_arm:{
-    ranges:[{x:[25,250],y:[215,740]},{x:[750,975],y:[215,740]}],
-    insideBoost:16,
-    maxPenalty:30,
-    penaltyScale:0.24
+    ranges:[{x:[20,272],y:[370,718]},{x:[728,980],y:[370,718]}],
+    insideBoost:18,
+    maxPenalty:32,
+    penaltyScale:0.25
   },
   forearm_hand:{
     ranges:[{x:[0,265],y:[680,1135]},{x:[735,1000],y:[680,1135]}],
@@ -8629,7 +8638,7 @@ function _resolveAnatomyRegionByPoint(point, geometry, hintedRegion){
     }
   }
 
-  if(second && (best.score - second.score) < 8){
+  if(second && (best.score - second.score) < 15){
     if(best.inside !== second.inside){
       return best.inside ? best.regionId : second.regionId;
     }
@@ -8641,7 +8650,7 @@ function _resolveAnatomyRegionByPoint(point, geometry, hintedRegion){
     }
   }
 
-  if(best.score < 58) return null;
+  if(best.score < 70) return null;
   return best.regionId;
 }
 
