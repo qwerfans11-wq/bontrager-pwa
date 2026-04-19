@@ -2470,7 +2470,7 @@ function navTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy — علم التشريح','anatomy-detail':'Anatomy Detail'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -8770,7 +8770,6 @@ function buildAnatomyDetail(regionId){
       <div class="anat-detail-icon">${r.icon}</div>
       <div>
         <div class="anat-detail-title">${r.name}</div>
-        <div class="anat-detail-ar">${r.arabicName}</div>
       </div>
     </div>
 
@@ -8783,7 +8782,7 @@ function buildAnatomyDetail(regionId){
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-        Anatomical Structures — الهياكل التشريحية
+        Anatomical Structures
       </div>
       <div class="anat-detail-section-body">
         <ul class="anat-struct-list">${structHTML}</ul>
@@ -8793,7 +8792,7 @@ function buildAnatomyDetail(regionId){
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Radiographic Technique — تقنية الأشعة
+        Radiographic Technique
       </div>
       <div class="anat-detail-section-body">
         <div class="anat-info-row">
@@ -8814,7 +8813,7 @@ function buildAnatomyDetail(regionId){
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        Clinical Indications — المؤشرات السريرية
+        Clinical Indications
       </div>
       <div class="anat-detail-section-body">
         <div class="anat-info-val">${r.clinicalIndications}</div>
