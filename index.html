@@ -697,6 +697,36 @@
             <text class="ab-lbl" x="500" y="530" text-anchor="middle" font-size="16" fill="rgba(255,160,185,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">القص وقفص الصدر</text>
           </g>
 
+          <!-- ══ SHOULDER & SCAPULA (Orange-Amber) ══
+               Rendered AFTER sternum_ribcage so shoulder joint takes click priority.
+          ──────────────────────────────────────────────── -->
+          <g class="ab-zone skel-region" data-region="shoulder" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder and Scapula" tabindex="0">
+            <!-- Left shoulder joint area -->
+            <path class="ab-overlay" d="
+              M 28,266
+              C 52,248 100,236 154,236
+              C 200,236 240,248 268,268
+              C 288,286 296,312 290,342
+              C 283,374 262,402 234,420
+              C 208,434 172,440 136,432
+              C 98,424 68,406 48,382
+              C 32,360 24,334 28,306 Z
+            "/>
+            <!-- Right shoulder joint area -->
+            <path class="ab-overlay" d="
+              M 972,266
+              C 948,248 900,236 846,236
+              C 800,236 760,248 732,268
+              C 712,286 704,312 710,342
+              C 717,374 738,402 766,420
+              C 792,434 828,440 864,432
+              C 902,424 932,406 952,382
+              C 968,360 976,334 972,306 Z
+            "/>
+            <text class="ab-lbl" x="156" y="316" text-anchor="middle" font-size="14" fill="rgba(255,165,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="844" y="316" text-anchor="middle" font-size="14" fill="rgba(255,165,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Shoulder</text>
+          </g>
+
           <!-- ══ THORACIC/LUMBAR SPINE (Bright Red) ══
                Rendered high z-order so spine clicks take priority over ribs/pelvis.
           ──────────────────────────────────────────────── -->
@@ -976,6 +1006,13 @@
         <div class="anat-region-info">
           <div class="anat-region-name">Sternum &amp; Rib Cage</div>
           <div class="anat-region-ar">القص وقفص الصدر</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('shoulder')">
+        <div class="anat-region-icon">🦴</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Shoulder &amp; Scapula</div>
+          <div class="anat-region-ar">مفصل الكتف والكتف</div>
         </div>
       </div>
       <div class="anat-region-card" onclick="openAnatomyRegion('thoracolumbar_spine')">
