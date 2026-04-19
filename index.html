@@ -152,7 +152,7 @@
   </div>
   <div class="nav-item" id="nav-anatomy" onclick="navTo('anatomy');closeSidebar()">
     <span style="font-size:18px;">🫀</span>
-    Anatomy
+    Anatomy — التشريح
   </div>
   <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
     <span style="font-size:18px;">⚙️</span>
@@ -231,8 +231,8 @@
       <div class="sec-card" onclick="navTo('anatomy')" style="text-align:left;display:flex;align-items:center;gap:14px;padding:14px 16px">
         <div style="flex-shrink:0;width:44px;height:44px;background:linear-gradient(135deg,#b3e5fc,#81d4fa);border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font-size:22px;">🫀</span></div>
         <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Anatomy</div>
-          <div style="font-size:11px;color:var(--text2);line-height:1.4">Interactive human body model · Tap any region to view its anatomy</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Anatomy — التشريح</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.4">مجسم جسم الإنسان التفاعلي · اضغط على أي منطقة لعرض تشريحها</div>
         </div>
       </div>
     </div>
@@ -541,541 +541,237 @@
 <div class="page" id="page-anatomy">
   <div class="scroll">
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
-    <div class="ptitle">Anatomy</div>
+    <div class="ptitle">Anatomy — علم التشريح</div>
     <div class="anat-intro">
-      🫀 Interactive human body model — tap any region to view its anatomy &amp; radiographic details.
-    </div>
-    <div class="anat-offline-toolbar" style="display:flex;align-items:center;gap:8px;padding:6px 16px 0;flex-wrap:wrap">
-      <span id="anatOfflineIndicator" class="anat-offline-badge" style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text3)"></span>
-      <button id="anatOfflineBtn" class="anat-offline-dl-btn" onclick="downloadAnatomyOffline()" style="font-size:11px;padding:3px 12px;border-radius:20px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600">⬇ Save for Offline</button>
-      <span id="anatOfflineStatus" style="font-size:11px;color:var(--text3)"></span>
+      🫀 مجسم جسم الإنسان التفاعلي — اضغط على أي منطقة من المجسم لعرض التشريح التفصيلي والمعلومات الإشعاعية الخاصة بها.<br>
+      <span style="font-size:12px;opacity:.8">Interactive human body model — tap any region to view its anatomy &amp; radiographic details.</span>
     </div>
     <div class="anat-body-container">
-      <div class="anat-tap-hint">🖐 Tap any region to view anatomy</div>
+      <div class="anat-tap-hint">🖐 اضغط على أي منطقة لعرض التشريح</div>
       <div class="anat-body-svg-wrap">
-        <!-- Color mask skeleton background -->
+        <!-- 3D skeleton photo background -->
         <img id="anatSkeletonImg"
-             src="https://github.com/user-attachments/assets/c56fd319-797f-4a02-8e24-1db26c9d8fba"
-             alt="Human Skeleton — Interactive Anatomy"
+             src="https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19"
+             alt="Human Skeleton — Full Body Anatomy"
              draggable="false" loading="eager"
-             onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='flex'">
-        <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image — tap "Save for Offline" above to cache</div>
+             onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='block'">
+        <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image unavailable offline</div>
 
-        <!-- SVG vector body map — color mask regions -->
+        <!-- Transparent clickable overlay — preserveAspectRatio=none maps viewBox 1:1 to image pixels -->
         <svg id="anatomyBodySVG" viewBox="0 0 1000 1500"
              xmlns="http://www.w3.org/2000/svg"
              preserveAspectRatio="none"
-             role="img" aria-label="Interactive human skeleton color mask body map">
+             role="img" aria-label="Interactive human skeleton body map">
 
-          <!-- ══ SKULL (Cyan / Light Blue) ══ -->
-          <g class="ab-zone skel-region" data-region="skull" onclick="openAnatomyRegion('skull')" role="button" aria-label="Skull" tabindex="0">
-            <path class="ab-overlay" d="
-              M 500,8
-              C 558,6 618,28 656,70
-              C 694,112 708,166 702,208
-              C 696,240 678,262 654,274
-              C 636,284 610,292 582,296
-              C 562,298 535,300 516,301
-              L 500,302 484,301
-              C 465,300 438,298 418,296
-              C 390,292 364,284 346,274
-              C 322,262 304,240 298,208
-              C 292,166 306,112 344,70
-              C 382,28 442,6 500,8 Z
-            "/>
-            <text class="ab-lbl" x="500" y="110" text-anchor="middle" font-size="22" fill="rgba(0,230,240,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Skull</text>
-            <text class="ab-lbl" x="500" y="140" text-anchor="middle" font-size="18" fill="rgba(0,230,240,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الجمجمة</text>
+          <!-- ── HEAD & NECK ── -->
+          <g class="ab-zone skel-region" data-region="head_neck" onclick="openAnatomyRegion('head_neck')" role="button" aria-label="Head and Neck" tabindex="0">
+            <polygon class="ab-overlay" points="338,0 662,0 708,78 685,178 600,244 400,244 315,178 292,78"/>
+            <text class="ab-lbl" x="500" y="88" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Head &amp; Neck</text>
+            <text class="ab-lbl" x="500" y="125" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الرأس والرقبة</text>
           </g>
 
-          <!-- ══ CERVICAL SPINE (Red) ══ -->
-          <g class="ab-zone skel-region" data-region="cervical_spine" onclick="openAnatomyRegion('cervical_spine')" role="button" aria-label="Cervical Spine" tabindex="0">
-            <path class="ab-overlay" d="
-              M 456,298
-              C 468,294 482,292 500,292
-              C 518,292 532,294 544,298
-              L 546,304
-              C 548,316 548,334 544,352
-              C 540,366 530,376 516,380
-              C 508,382 504,383 500,383
-              C 496,383 492,382 484,380
-              C 470,376 460,366 456,352
-              C 452,334 452,316 454,304 Z
-            "/>
-            <text class="ab-lbl" x="500" y="338" text-anchor="middle" font-size="17" fill="rgba(240,80,80,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Cervical Spine</text>
+          <!-- ── SHOULDER (two narrow side zones — lateral to chest, no chest overlap) ── -->
+          <g class="ab-zone skel-region" data-region="shoulder" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder" tabindex="0">
+            <polygon class="ab-overlay" points="40,248 283,248 268,390 40,378"/>
+            <polygon class="ab-overlay" points="717,248 960,248 960,378 732,390"/>
+            <text class="ab-lbl" x="155" y="284" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="155" y="317" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
+            <text class="ab-lbl" x="845" y="284" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="845" y="317" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
           </g>
 
-          <!-- ══ CLAVICLES (Yellow) ══ -->
-          <g class="ab-zone skel-region" data-region="clavicles" onclick="openAnatomyRegion('clavicles')" role="button" aria-label="Clavicles" tabindex="0">
-            <!-- Left clavicle -->
-            <path class="ab-overlay" d="
-              M 462,272
-              C 422,266 360,258 300,260
-              C 258,262 216,272 190,290
-              C 182,296 176,306 180,314
-              C 184,322 194,326 210,322
-              C 238,314 278,302 318,294
-              C 370,286 428,284 464,284 Z
-            "/>
-            <!-- Right clavicle -->
-            <path class="ab-overlay" d="
-              M 538,272
-              C 578,266 640,258 700,260
-              C 742,262 784,272 810,290
-              C 818,296 824,306 820,314
-              C 816,322 806,326 790,322
-              C 762,314 722,302 682,294
-              C 630,286 572,284 536,284 Z
-            "/>
-            <text class="ab-lbl" x="170" y="292" text-anchor="middle" font-size="17" fill="rgba(255,245,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Clavicle</text>
-            <text class="ab-lbl" x="830" y="292" text-anchor="middle" font-size="17" fill="rgba(255,245,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Clavicle</text>
+          <!-- ── RIGHT CHEST (patient right = left of image, x 283–452, beside spine) ── -->
+          <g class="ab-zone skel-region" data-region="thorax_right" onclick="openAnatomyRegion('thorax_right')" role="button" aria-label="Right Chest" tabindex="0">
+            <polygon class="ab-overlay" points="283,248 452,248 452,710 283,710"/>
+            <text class="ab-lbl" x="367" y="450" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Right</text>
+            <text class="ab-lbl" x="367" y="478" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Chest</text>
+            <text class="ab-lbl" x="367" y="506" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الصدر الأيمن</text>
           </g>
 
-          <!-- ══ STERNUM & RIB CAGE (Pink) ══ -->
-          <g class="ab-zone skel-region" data-region="sternum_ribcage" onclick="openAnatomyRegion('sternum_ribcage')" role="button" aria-label="Sternum and Rib Cage" tabindex="0">
-            <!-- Left shoulder/scapula area -->
-            <path class="ab-overlay" d="
-              M 46,274
-              C 90,262 152,252 212,252
-              C 252,252 280,260 290,274
-              C 293,298 288,330 278,358
-              C 266,390 244,414 216,428
-              C 186,442 146,446 108,438
-              C 70,430 44,414 30,396
-              C 22,380 24,360 34,340
-              C 38,316 42,296 46,274 Z
-            "/>
-            <!-- Left chest (ribs) -->
-            <path class="ab-overlay" d="
-              M 290,300
-              C 316,286 358,274 396,270
-              C 428,268 454,270 470,280
-              L 472,378
-              C 472,462 470,552 468,630
-              C 466,662 462,686 454,698
-              L 296,698
-              C 288,686 285,662 284,630
-              L 284,378
-              C 284,340 286,318 290,300 Z
-            "/>
-            <!-- Center sternum strip -->
-            <path class="ab-overlay" d="
-              M 468,280 L 532,280
-              C 534,380 534,480 532,600
-              C 530,658 528,694 524,704
-              L 476,704
-              C 472,694 470,658 468,600
-              C 466,480 466,380 468,280 Z
-            "/>
-            <!-- Right chest (ribs) -->
-            <path class="ab-overlay" d="
-              M 710,300
-              C 684,286 642,274 604,270
-              C 572,268 546,270 530,280
-              L 528,378
-              C 528,462 530,552 532,630
-              C 534,662 538,686 546,698
-              L 704,698
-              C 712,686 715,662 716,630
-              L 716,378
-              C 716,340 714,318 710,300 Z
-            "/>
-            <!-- Right shoulder/scapula area -->
-            <path class="ab-overlay" d="
-              M 954,274
-              C 910,262 848,252 788,252
-              C 748,252 720,260 710,274
-              C 707,298 712,330 722,358
-              C 734,390 756,414 784,428
-              C 814,442 854,446 892,438
-              C 930,430 956,414 970,396
-              C 978,380 976,360 966,340
-              C 962,316 958,296 954,274 Z
-            "/>
-            <text class="ab-lbl" x="152" y="352" text-anchor="middle" font-size="14" fill="rgba(255,160,185,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Rib Cage</text>
-            <text class="ab-lbl" x="848" y="352" text-anchor="middle" font-size="14" fill="rgba(255,160,185,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Rib Cage</text>
-            <text class="ab-lbl" x="500" y="502" text-anchor="middle" font-size="18" fill="rgba(255,160,185,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Sternum &amp; Ribs</text>
-            <text class="ab-lbl" x="500" y="530" text-anchor="middle" font-size="16" fill="rgba(255,160,185,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">القص وقفص الصدر</text>
+          <!-- ── LEFT CHEST (patient left = right of image, x 548–717, beside spine) ── -->
+          <g class="ab-zone skel-region" data-region="thorax_left" onclick="openAnatomyRegion('thorax_left')" role="button" aria-label="Left Chest" tabindex="0">
+            <polygon class="ab-overlay" points="548,248 717,248 717,710 548,710"/>
+            <text class="ab-lbl" x="632" y="450" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Left</text>
+            <text class="ab-lbl" x="632" y="478" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Chest</text>
+            <text class="ab-lbl" x="632" y="506" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الصدر الأيسر</text>
           </g>
 
-          <!-- ══ SHOULDER & SCAPULA (Orange-Amber) ══
-               Rendered AFTER sternum_ribcage so shoulder joint takes click priority.
-          ──────────────────────────────────────────────── -->
-          <g class="ab-zone skel-region" data-region="shoulder" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder and Scapula" tabindex="0">
-            <!-- Left shoulder joint area -->
-            <path class="ab-overlay" d="
-              M 28,266
-              C 52,248 100,236 154,236
-              C 200,236 240,248 268,268
-              C 288,286 296,312 290,342
-              C 283,374 262,402 234,420
-              C 208,434 172,440 136,432
-              C 98,424 68,406 48,382
-              C 32,360 24,334 28,306 Z
-            "/>
-            <!-- Right shoulder joint area -->
-            <path class="ab-overlay" d="
-              M 972,266
-              C 948,248 900,236 846,236
-              C 800,236 760,248 732,268
-              C 712,286 704,312 710,342
-              C 717,374 738,402 766,420
-              C 792,434 828,440 864,432
-              C 902,424 932,406 952,382
-              C 968,360 976,334 972,306 Z
-            "/>
-            <text class="ab-lbl" x="156" y="316" text-anchor="middle" font-size="14" fill="rgba(255,165,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Shoulder</text>
-            <text class="ab-lbl" x="844" y="316" text-anchor="middle" font-size="14" fill="rgba(255,165,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Shoulder</text>
+          <!-- ── UPPER ARM / HUMERUS (both sides, starts at shoulder bottom y=390) ── -->
+          <g class="ab-zone skel-region" data-region="upper_arm" onclick="openAnatomyRegion('upper_arm')" role="button" aria-label="Upper Arm Humerus" tabindex="0">
+            <polygon class="ab-overlay" points="40,390 268,390 252,706 22,700"/>
+            <polygon class="ab-overlay" points="732,390 960,390 978,700 748,706"/>
+            <text class="ab-lbl" x="128" y="524" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
+            <text class="ab-lbl" x="128" y="552" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
+            <text class="ab-lbl" x="872" y="524" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
+            <text class="ab-lbl" x="872" y="552" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
           </g>
 
-          <!-- ══ THORACIC/LUMBAR SPINE (Bright Red) ══
-               Rendered high z-order so spine clicks take priority over ribs/pelvis.
-          ──────────────────────────────────────────────── -->
-          <g class="ab-zone skel-region" data-region="thoracolumbar_spine" onclick="openAnatomyRegion('thoracolumbar_spine')" role="button" aria-label="Thoracic and Lumbar Spine" tabindex="0">
-            <path class="ab-overlay ab-spine-overlay" d="
-              M 476,330
-              C 482,324 490,320 500,320
-              C 510,320 518,324 524,330
-              C 532,346 535,380 535,420
-              L 534,520 532,620 530,720
-              L 528,820 525,908 523,980
-              C 520,1000 516,1014 509,1020
-              C 506,1022 503,1023 500,1023
-              C 497,1023 494,1022 491,1020
-              C 484,1014 480,1000 477,980
-              L 475,908 472,820 470,720
-              L 468,620 466,520 465,420
-              C 465,380 468,346 476,330 Z
-            "/>
-            <text class="ab-lbl" x="500" y="660" text-anchor="middle" font-size="18" fill="rgba(255,60,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">T–L Spine</text>
-            <text class="ab-lbl" x="500" y="688" text-anchor="middle" font-size="15" fill="rgba(255,60,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العمود الفقري</text>
+          <!-- ── FOREARM / ELBOW-TO-WRIST (both sides, y=706–960) ── -->
+          <g class="ab-zone skel-region" data-region="forearm" onclick="openAnatomyRegion('forearm')" role="button" aria-label="Forearm and Elbow" tabindex="0">
+            <polygon class="ab-overlay" points="4,706 252,706 258,960 2,952"/>
+            <polygon class="ab-overlay" points="748,706 996,706 998,952 742,960"/>
+            <text class="ab-lbl" x="108" y="816" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
+            <text class="ab-lbl" x="108" y="844" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
+            <text class="ab-lbl" x="892" y="816" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
+            <text class="ab-lbl" x="892" y="844" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
           </g>
 
-          <!-- ══ HUMERUS (Green) ══ -->
-          <g class="ab-zone skel-region" data-region="humerus" onclick="openAnatomyRegion('humerus')" role="button" aria-label="Humerus Upper Arm" tabindex="0">
-            <!-- Left humerus -->
-            <path class="ab-overlay" d="
-              M 40,368
-              C 78,356 134,350 182,352
-              C 218,354 246,364 264,378
-              C 267,420 264,474 258,530
-              C 252,590 242,648 232,692
-              C 226,718 216,734 204,738
-              C 178,744 140,740 98,728
-              C 62,718 36,702 22,686
-              C 14,670 16,648 26,620
-              L 36,520 40,420 Z
-            "/>
-            <!-- Right humerus -->
-            <path class="ab-overlay" d="
-              M 960,368
-              C 922,356 866,350 818,352
-              C 782,354 754,364 736,378
-              C 733,420 736,474 742,530
-              C 748,590 758,648 768,692
-              C 774,718 784,734 796,738
-              C 822,744 860,740 902,728
-              C 938,718 964,702 978,686
-              C 986,670 984,648 974,620
-              L 964,520 960,420 Z
-            "/>
-            <text class="ab-lbl" x="130" y="555" text-anchor="middle" font-size="18" fill="rgba(30,210,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Humerus</text>
-            <text class="ab-lbl" x="130" y="580" text-anchor="middle" font-size="15" fill="rgba(30,210,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العضد</text>
-            <text class="ab-lbl" x="870" y="555" text-anchor="middle" font-size="18" fill="rgba(30,210,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Humerus</text>
-            <text class="ab-lbl" x="870" y="580" text-anchor="middle" font-size="15" fill="rgba(30,210,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العضد</text>
+          <!-- ── HAND / WRIST-TO-FINGERTIPS (both sides, y=952–1114) ── -->
+          <g class="ab-zone skel-region" data-region="hand" onclick="openAnatomyRegion('hand')" role="button" aria-label="Wrist and Hand" tabindex="0">
+            <polygon class="ab-overlay" points="2,950 258,958 272,1114 0,1104"/>
+            <polygon class="ab-overlay" points="742,958 998,950 1000,1104 728,1114"/>
+            <text class="ab-lbl" x="104" y="1024" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hand</text>
+            <text class="ab-lbl" x="104" y="1050" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكف</text>
+            <text class="ab-lbl" x="896" y="1024" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hand</text>
+            <text class="ab-lbl" x="896" y="1050" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكف</text>
           </g>
 
-          <!-- ══ RADIUS & ULNA (Orange) ══ -->
-          <g class="ab-zone skel-region" data-region="radius_ulna" onclick="openAnatomyRegion('radius_ulna')" role="button" aria-label="Radius and Ulna Forearm" tabindex="0">
-            <!-- Left radius/ulna -->
-            <path class="ab-overlay" d="
-              M 24,700
-              C 62,714 104,728 146,740
-              C 170,748 196,748 222,738
-              C 248,728 264,714 268,698
-              L 272,820
-              C 275,880 271,934 260,980
-              L 0,980 0,702 Z
-            "/>
-            <!-- Right radius/ulna -->
-            <path class="ab-overlay" d="
-              M 976,700
-              C 938,714 896,728 854,740
-              C 830,748 804,748 778,738
-              C 752,728 736,714 732,698
-              L 728,820
-              C 725,880 729,934 740,980
-              L 1000,980 1000,702 Z
-            "/>
-            <text class="ab-lbl" x="112" y="848" text-anchor="middle" font-size="16" fill="rgba(255,140,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Radius &amp; Ulna</text>
-            <text class="ab-lbl" x="112" y="870" text-anchor="middle" font-size="14" fill="rgba(255,140,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الكعبرة والزند</text>
-            <text class="ab-lbl" x="888" y="848" text-anchor="middle" font-size="16" fill="rgba(255,140,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Radius &amp; Ulna</text>
-            <text class="ab-lbl" x="888" y="870" text-anchor="middle" font-size="14" fill="rgba(255,140,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الكعبرة والزند</text>
+          <!-- ── ABDOMEN (standalone — between chest and pelvis, y=710–878) ── -->
+          <g class="ab-zone skel-region" data-region="abdomen" onclick="openAnatomyRegion('abdomen')" role="button" aria-label="Abdomen" tabindex="0">
+            <polygon class="ab-overlay" points="283,710 717,710 714,878 286,878"/>
+            <text class="ab-lbl" x="500" y="778" text-anchor="middle" font-size="28" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Abdomen</text>
+            <text class="ab-lbl" x="500" y="814" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">البطن</text>
           </g>
 
-          <!-- ══ HANDS (Teal) ══ -->
-          <g class="ab-zone skel-region" data-region="hands" onclick="openAnatomyRegion('hands')" role="button" aria-label="Hands Carpals and Digits" tabindex="0">
-            <!-- Left hand -->
-            <path class="ab-overlay" d="
-              M 0,980
-              L 260,980
-              C 252,1028 246,1072 240,1120
-              L 0,1120 Z
-            "/>
-            <!-- Right hand -->
-            <path class="ab-overlay" d="
-              M 740,980
-              L 1000,980
-              L 1000,1120
-              L 760,1120
-              C 754,1072 748,1028 740,980 Z
-            "/>
-            <text class="ab-lbl" x="102" y="1058" text-anchor="middle" font-size="18" fill="rgba(0,200,190,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Hands</text>
-            <text class="ab-lbl" x="102" y="1082" text-anchor="middle" font-size="15" fill="rgba(0,200,190,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">اليدان</text>
-            <text class="ab-lbl" x="898" y="1058" text-anchor="middle" font-size="18" fill="rgba(0,200,190,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Hands</text>
-            <text class="ab-lbl" x="898" y="1082" text-anchor="middle" font-size="15" fill="rgba(0,200,190,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">اليدان</text>
+          <!-- ── PELVIS & HIP (pelvis bowl + hip joints, y=878–1060) ── -->
+          <g class="ab-zone skel-region" data-region="pelvis_hip" onclick="openAnatomyRegion('pelvis_hip')" role="button" aria-label="Pelvis and Hip" tabindex="0">
+            <polygon class="ab-overlay" points="155,878 845,878 822,1058 540,1068 460,1068 178,1058"/>
+            <text class="ab-lbl" x="500" y="950" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Pelvis &amp; Hip</text>
+            <text class="ab-lbl" x="500" y="980" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الحوض والورك</text>
           </g>
 
-          <!-- ══ PELVIS (Purple) ══ -->
-          <g class="ab-zone skel-region" data-region="pelvis" onclick="openAnatomyRegion('pelvis')" role="button" aria-label="Pelvis Hip Bone" tabindex="0">
-            <path class="ab-overlay" d="
-              M 174,850
-              C 258,836 380,826 466,826
-              L 534,826
-              C 620,826 742,836 826,850
-              C 842,888 846,934 834,980
-              C 822,1018 806,1048 786,1066
-              L 752,1080
-              C 706,1090 612,1096 546,1098
-              L 500,1099 454,1098
-              C 388,1096 294,1090 248,1080
-              L 214,1066
-              C 194,1048 178,1018 166,980
-              C 154,934 158,888 174,850 Z
-            "/>
-            <text class="ab-lbl" x="500" y="952" text-anchor="middle" font-size="20" fill="rgba(200,80,240,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Pelvis</text>
-            <text class="ab-lbl" x="500" y="978" text-anchor="middle" font-size="17" fill="rgba(200,80,240,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الحوض</text>
+          <!-- ── THIGH & KNEE (both sides, y=1068–1310) ── -->
+          <g class="ab-zone skel-region" data-region="thigh_knee" onclick="openAnatomyRegion('thigh_knee')" role="button" aria-label="Thigh and Knee" tabindex="0">
+            <polygon class="ab-overlay" points="178,1058 456,1058 444,1310 164,1303"/>
+            <polygon class="ab-overlay" points="544,1058 822,1058 836,1303 556,1310"/>
+            <text class="ab-lbl" x="314" y="1166" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thigh &amp; Knee</text>
+            <text class="ab-lbl" x="314" y="1196" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ والركبة</text>
+            <text class="ab-lbl" x="686" y="1166" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thigh &amp; Knee</text>
+            <text class="ab-lbl" x="686" y="1196" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ والركبة</text>
           </g>
 
-          <!-- ══ FEMUR (Brown) ══ -->
-          <g class="ab-zone skel-region" data-region="femur" onclick="openAnatomyRegion('femur')" role="button" aria-label="Femur Thigh" tabindex="0">
-            <!-- Left femur -->
-            <path class="ab-overlay" d="
-              M 176,1092
-              C 202,1084 238,1078 274,1078
-              C 316,1078 376,1084 422,1098
-              C 434,1130 442,1168 446,1220
-              L 180,1220 Z
-            "/>
-            <!-- Right femur -->
-            <path class="ab-overlay" d="
-              M 824,1092
-              C 798,1084 762,1078 726,1078
-              C 684,1078 624,1084 578,1098
-              C 566,1130 558,1168 554,1220
-              L 820,1220 Z
-            "/>
-            <text class="ab-lbl" x="308" y="1158" text-anchor="middle" font-size="18" fill="rgba(200,120,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Femur</text>
-            <text class="ab-lbl" x="308" y="1182" text-anchor="middle" font-size="15" fill="rgba(200,120,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الفخذ</text>
-            <text class="ab-lbl" x="692" y="1158" text-anchor="middle" font-size="18" fill="rgba(200,120,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Femur</text>
-            <text class="ab-lbl" x="692" y="1182" text-anchor="middle" font-size="15" fill="rgba(200,120,60,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الفخذ</text>
+          <!-- ── LEG & ANKLE (both sides, y=1310–1430) ── -->
+          <g class="ab-zone skel-region" data-region="leg_ankle" onclick="openAnatomyRegion('leg_ankle')" role="button" aria-label="Leg and Ankle" tabindex="0">
+            <polygon class="ab-overlay" points="162,1300 440,1300 460,1430 140,1424"/>
+            <polygon class="ab-overlay" points="560,1300 838,1300 860,1424 540,1430"/>
+            <text class="ab-lbl" x="306" y="1358" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Leg &amp; Ankle</text>
+            <text class="ab-lbl" x="306" y="1386" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساق والكاحل</text>
+            <text class="ab-lbl" x="694" y="1358" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Leg &amp; Ankle</text>
+            <text class="ab-lbl" x="694" y="1386" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساق والكاحل</text>
           </g>
 
-          <!-- ══ PATELLA / KNEE (Gold / Dark Yellow) ══ -->
-          <g class="ab-zone skel-region" data-region="patella" onclick="openAnatomyRegion('patella')" role="button" aria-label="Patella Knee Cap" tabindex="0">
-            <!-- Left knee -->
-            <path class="ab-overlay" d="
-              M 176,1224
-              C 214,1212 270,1206 330,1206
-              C 386,1206 434,1214 458,1228
-              C 462,1252 460,1278 452,1300
-              C 440,1324 412,1334 372,1336
-              C 332,1338 290,1330 258,1318
-              C 220,1304 188,1286 172,1266
-              C 166,1252 168,1238 176,1224 Z
-            "/>
-            <!-- Right knee -->
-            <path class="ab-overlay" d="
-              M 824,1224
-              C 786,1212 730,1206 670,1206
-              C 614,1206 566,1214 542,1228
-              C 538,1252 540,1278 548,1300
-              C 560,1324 588,1334 628,1336
-              C 668,1338 710,1330 742,1318
-              C 780,1304 812,1286 828,1266
-              C 834,1252 832,1238 824,1224 Z
-            "/>
-            <text class="ab-lbl" x="316" y="1266" text-anchor="middle" font-size="18" fill="rgba(230,190,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Patella</text>
-            <text class="ab-lbl" x="316" y="1290" text-anchor="middle" font-size="15" fill="rgba(230,190,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الرضفة</text>
-            <text class="ab-lbl" x="684" y="1266" text-anchor="middle" font-size="18" fill="rgba(230,190,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Patella</text>
-            <text class="ab-lbl" x="684" y="1290" text-anchor="middle" font-size="15" fill="rgba(230,190,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الرضفة</text>
+          <!-- ── FOOT (both sides, y=1430–1500) ── -->
+          <g class="ab-zone skel-region" data-region="foot" onclick="openAnatomyRegion('foot')" role="button" aria-label="Foot" tabindex="0">
+            <polygon class="ab-overlay" points="100,1420 492,1420 510,1500 78,1500"/>
+            <polygon class="ab-overlay" points="508,1420 900,1420 922,1500 490,1500"/>
+            <text class="ab-lbl" x="300" y="1468" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot</text>
+            <text class="ab-lbl" x="300" y="1494" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم</text>
+            <text class="ab-lbl" x="700" y="1468" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot</text>
+            <text class="ab-lbl" x="700" y="1494" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم</text>
           </g>
 
-          <!-- ══ TIBIA & FIBULA (Lime Green) ══ -->
-          <g class="ab-zone skel-region" data-region="tibia_fibula" onclick="openAnatomyRegion('tibia_fibula')" role="button" aria-label="Tibia and Fibula Leg" tabindex="0">
-            <!-- Left tibia/fibula -->
-            <path class="ab-overlay" d="
-              M 172,1344
-              C 212,1332 268,1324 324,1322
-              C 374,1320 420,1324 450,1340
-              L 462,1440
-              C 464,1462 460,1480 450,1494
-              C 438,1504 418,1508 392,1506
-              C 358,1504 316,1492 280,1476
-              C 244,1460 216,1440 194,1416
-              C 174,1392 162,1368 158,1350 Z
-            "/>
-            <!-- Right tibia/fibula -->
-            <path class="ab-overlay" d="
-              M 828,1344
-              C 788,1332 732,1324 676,1322
-              C 626,1320 580,1324 550,1340
-              L 538,1440
-              C 536,1462 540,1480 550,1494
-              C 562,1504 582,1508 608,1506
-              C 642,1504 684,1492 720,1476
-              C 756,1460 784,1440 806,1416
-              C 826,1392 838,1368 842,1350 Z
-            "/>
-            <text class="ab-lbl" x="314" y="1404" text-anchor="middle" font-size="16" fill="rgba(110,240,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Tibia &amp; Fibula</text>
-            <text class="ab-lbl" x="314" y="1426" text-anchor="middle" font-size="14" fill="rgba(110,240,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الظنبوب والشظية</text>
-            <text class="ab-lbl" x="686" y="1404" text-anchor="middle" font-size="16" fill="rgba(110,240,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Tibia &amp; Fibula</text>
-            <text class="ab-lbl" x="686" y="1426" text-anchor="middle" font-size="14" fill="rgba(110,240,0,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">الظنبوب والشظية</text>
+          <!-- ── SPINE (dashed overlay — highest z-order) ── -->
+          <g class="ab-zone skel-region" data-region="spine" onclick="openAnatomyRegion('spine')" role="button" aria-label="Spine" tabindex="0">
+            <rect class="ab-overlay ab-spine-overlay" x="452" y="215" width="96" height="752" rx="22"
+                  fill="rgba(160,100,210,0)" stroke="rgba(160,100,210,0)" stroke-width="2.5" stroke-dasharray="10,6"/>
+            <text class="ab-lbl" x="500" y="498" text-anchor="middle" font-size="22" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Spine</text>
+            <text class="ab-lbl" x="500" y="530" text-anchor="middle" font-size="18" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العمود الفقري</text>
           </g>
-
-          <!-- ══ FEET (Dark Blue / Indigo) ══ -->
-          <g class="ab-zone skel-region" data-region="feet" onclick="openAnatomyRegion('feet')" role="button" aria-label="Feet Tarsals and Digits" tabindex="0">
-            <!-- Left foot -->
-            <path class="ab-overlay" d="
-              M 146,1444
-              C 172,1434 210,1424 256,1420
-              C 298,1416 344,1420 380,1432
-              L 432,1450
-              C 456,1462 474,1478 478,1494
-              C 480,1504 474,1510 460,1510
-              L 230,1510
-              C 156,1508 94,1496 70,1478
-              C 56,1466 58,1452 72,1442
-              C 94,1434 122,1444 146,1444 Z
-            "/>
-            <!-- Right foot -->
-            <path class="ab-overlay" d="
-              M 854,1444
-              C 828,1434 790,1424 744,1420
-              C 702,1416 656,1420 620,1432
-              L 568,1450
-              C 544,1462 526,1478 522,1494
-              C 520,1504 526,1510 540,1510
-              L 770,1510
-              C 844,1508 906,1496 930,1478
-              C 944,1466 942,1452 928,1442
-              C 906,1434 878,1444 854,1444 Z
-            "/>
-            <text class="ab-lbl" x="292" y="1476" text-anchor="middle" font-size="20" fill="rgba(80,100,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Feet</text>
-            <text class="ab-lbl" x="292" y="1500" text-anchor="middle" font-size="17" fill="rgba(80,100,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">القدمان</text>
-            <text class="ab-lbl" x="708" y="1476" text-anchor="middle" font-size="20" fill="rgba(80,100,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Feet</text>
-            <text class="ab-lbl" x="708" y="1500" text-anchor="middle" font-size="17" fill="rgba(80,100,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">القدمان</text>
-          </g>
-
         </svg>
+      </div>
+    </div>
 
-              <!-- Quick-access region grid -->
+    <!-- Quick-access region grid -->
     <div class="anat-regions-grid">
-      <div class="anat-region-card" onclick="openAnatomyRegion('skull')">
-        <div class="anat-region-icon">💀</div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('head_neck')">
+        <div class="anat-region-icon">🧠</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Skull</div>
-          <div class="anat-region-ar">الجمجمة</div>
+          <div class="anat-region-name">Head &amp; Neck</div>
+          <div class="anat-region-ar">الرأس والرقبة</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('cervical_spine')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('thorax_right')">
+        <div class="anat-region-icon">🫁</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Right Chest</div>
+          <div class="anat-region-ar">الصدر الأيمن</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('thorax_left')">
+        <div class="anat-region-icon">🫁</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Left Chest</div>
+          <div class="anat-region-ar">الصدر الأيسر</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('spine')">
         <div class="anat-region-icon">🦴</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Cervical Spine</div>
-          <div class="anat-region-ar">العمود الفقري العنقي</div>
-        </div>
-      </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('clavicles')">
-        <div class="anat-region-icon">🦴</div>
-        <div class="anat-region-info">
-          <div class="anat-region-name">Clavicles</div>
-          <div class="anat-region-ar">عظمتا الترقوة</div>
-        </div>
-      </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('sternum_ribcage')">
-        <div class="anat-region-icon">🫀</div>
-        <div class="anat-region-info">
-          <div class="anat-region-name">Sternum &amp; Rib Cage</div>
-          <div class="anat-region-ar">القص وقفص الصدر</div>
+          <div class="anat-region-name">Vertebral Column</div>
+          <div class="anat-region-ar">العمود الفقري</div>
         </div>
       </div>
       <div class="anat-region-card" onclick="openAnatomyRegion('shoulder')">
-        <div class="anat-region-icon">🦴</div>
+        <div class="anat-region-icon">💪</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Shoulder &amp; Scapula</div>
-          <div class="anat-region-ar">مفصل الكتف والكتف</div>
+          <div class="anat-region-name">Shoulder &amp; Clavicle</div>
+          <div class="anat-region-ar">الكتف والترقوة</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('thoracolumbar_spine')">
-        <div class="anat-region-icon">🦴</div>
-        <div class="anat-region-info">
-          <div class="anat-region-name">Thoracic &amp; Lumbar Spine</div>
-          <div class="anat-region-ar">العمود الفقري الصدري والقطني</div>
-        </div>
-      </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('humerus')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('upper_arm')">
         <div class="anat-region-icon">🦾</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Humerus (Upper Arm)</div>
-          <div class="anat-region-ar">عظمة العضد</div>
+          <div class="anat-region-name">Upper Arm (Humerus)</div>
+          <div class="anat-region-ar">العضد</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('radius_ulna')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('forearm')">
         <div class="anat-region-icon">🦾</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Radius &amp; Ulna</div>
-          <div class="anat-region-ar">الكعبرة والزند</div>
+          <div class="anat-region-name">Forearm &amp; Elbow</div>
+          <div class="anat-region-ar">الساعد والكوع</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('hands')">
-        <div class="anat-region-icon">🤚</div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('hand')">
+        <div class="anat-region-icon">✋</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Hands (Carpals &amp; Digits)</div>
-          <div class="anat-region-ar">اليدان</div>
+          <div class="anat-region-name">Wrist &amp; Hand</div>
+          <div class="anat-region-ar">المعصم والكف</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('pelvis')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('abdomen')">
+        <div class="anat-region-icon">🫃</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Abdomen</div>
+          <div class="anat-region-ar">البطن</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('pelvis_hip')">
         <div class="anat-region-icon">🦴</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Pelvis (Hip Bone)</div>
-          <div class="anat-region-ar">حزام الحوض</div>
+          <div class="anat-region-name">Pelvis &amp; Hip</div>
+          <div class="anat-region-ar">الحوض والورك</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('femur')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('thigh_knee')">
         <div class="anat-region-icon">🦵</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Femur (Thigh)</div>
-          <div class="anat-region-ar">عظمة الفخذ</div>
+          <div class="anat-region-name">Thigh &amp; Knee</div>
+          <div class="anat-region-ar">الفخذ والركبة</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('patella')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('leg_ankle')">
         <div class="anat-region-icon">🦵</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Patella (Knee Cap)</div>
-          <div class="anat-region-ar">الرضفة والركبة</div>
+          <div class="anat-region-name">Leg &amp; Ankle</div>
+          <div class="anat-region-ar">الساق والكاحل</div>
         </div>
       </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('tibia_fibula')">
-        <div class="anat-region-icon">🦵</div>
-        <div class="anat-region-info">
-          <div class="anat-region-name">Tibia &amp; Fibula (Leg)</div>
-          <div class="anat-region-ar">الظنبوب والشظية</div>
-        </div>
-      </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('feet')">
+      <div class="anat-region-card" onclick="openAnatomyRegion('foot')">
         <div class="anat-region-icon">🦶</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Feet (Tarsals &amp; Digits)</div>
-          <div class="anat-region-ar">القدمان</div>
+          <div class="anat-region-name">Foot</div>
+          <div class="anat-region-ar">القدم</div>
         </div>
       </div>
     </div>
