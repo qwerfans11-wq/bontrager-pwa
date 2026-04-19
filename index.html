@@ -606,24 +606,14 @@
             <text class="ab-lbl" x="872" y="552" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
           </g>
 
-          <!-- ── FOREARM / ELBOW-TO-WRIST (both sides, y=706–960) ── -->
-          <g class="ab-zone skel-region" data-region="forearm" onclick="openAnatomyRegion('forearm')" role="button" aria-label="Forearm and Elbow" tabindex="0">
-            <polygon class="ab-overlay" points="4,706 252,706 258,960 2,952"/>
-            <polygon class="ab-overlay" points="748,706 996,706 998,952 742,960"/>
-            <text class="ab-lbl" x="108" y="816" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
-            <text class="ab-lbl" x="108" y="844" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
-            <text class="ab-lbl" x="892" y="816" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
-            <text class="ab-lbl" x="892" y="844" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
-          </g>
-
-          <!-- ── HAND / WRIST-TO-FINGERTIPS (both sides, y=952–1114) ── -->
-          <g class="ab-zone skel-region" data-region="hand" onclick="openAnatomyRegion('hand')" role="button" aria-label="Wrist and Hand" tabindex="0">
-            <polygon class="ab-overlay" points="2,950 258,958 272,1114 0,1104"/>
-            <polygon class="ab-overlay" points="742,958 998,950 1000,1104 728,1114"/>
-            <text class="ab-lbl" x="104" y="1024" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hand</text>
-            <text class="ab-lbl" x="104" y="1050" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكف</text>
-            <text class="ab-lbl" x="896" y="1024" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hand</text>
-            <text class="ab-lbl" x="896" y="1050" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكف</text>
+          <!-- ── FOREARM / ELBOW-TO-FINGERTIPS (both sides, y=706–1114) ── -->
+          <g class="ab-zone skel-region" data-region="forearm" onclick="openAnatomyRegion('forearm')" role="button" aria-label="Forearm, Elbow and Hand" tabindex="0">
+            <polygon class="ab-overlay" points="4,706 252,706 272,1114 0,1104"/>
+            <polygon class="ab-overlay" points="748,706 996,706 1000,1104 728,1114"/>
+            <text class="ab-lbl" x="108" y="900" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm &amp; Hand</text>
+            <text class="ab-lbl" x="108" y="928" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد والكف</text>
+            <text class="ab-lbl" x="892" y="900" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm &amp; Hand</text>
+            <text class="ab-lbl" x="892" y="928" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد والكف</text>
           </g>
 
           <!-- ── ABDOMEN (standalone — between chest and pelvis, y=710–878) ── -->
@@ -633,21 +623,25 @@
             <text class="ab-lbl" x="500" y="814" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">البطن</text>
           </g>
 
-          <!-- ── PELVIS & HIP (pelvis bowl + hip joints, y=878–1060) ── -->
-          <g class="ab-zone skel-region" data-region="pelvis_hip" onclick="openAnatomyRegion('pelvis_hip')" role="button" aria-label="Pelvis and Hip" tabindex="0">
+          <!-- ── PELVIS, HIP & FEMUR (pelvis bowl + hip joints + femur shafts, y=878–1200) ── -->
+          <g class="ab-zone skel-region" data-region="pelvis_hip" onclick="openAnatomyRegion('pelvis_hip')" role="button" aria-label="Pelvis, Hip and Femur" tabindex="0">
             <polygon class="ab-overlay" points="155,878 845,878 822,1058 540,1068 460,1068 178,1058"/>
+            <polygon class="ab-overlay" points="178,1058 456,1058 449,1200 170,1200"/>
+            <polygon class="ab-overlay" points="544,1058 822,1058 830,1200 551,1200"/>
             <text class="ab-lbl" x="500" y="950" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Pelvis &amp; Hip</text>
             <text class="ab-lbl" x="500" y="980" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الحوض والورك</text>
+            <text class="ab-lbl" x="310" y="1140" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Femur</text>
+            <text class="ab-lbl" x="690" y="1140" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Femur</text>
           </g>
 
-          <!-- ── THIGH & KNEE (both sides, y=1068–1310) ── -->
-          <g class="ab-zone skel-region" data-region="thigh_knee" onclick="openAnatomyRegion('thigh_knee')" role="button" aria-label="Thigh and Knee" tabindex="0">
-            <polygon class="ab-overlay" points="178,1058 456,1058 444,1310 164,1303"/>
-            <polygon class="ab-overlay" points="544,1058 822,1058 836,1303 556,1310"/>
-            <text class="ab-lbl" x="314" y="1166" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thigh &amp; Knee</text>
-            <text class="ab-lbl" x="314" y="1196" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ والركبة</text>
-            <text class="ab-lbl" x="686" y="1166" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thigh &amp; Knee</text>
-            <text class="ab-lbl" x="686" y="1196" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ والركبة</text>
+          <!-- ── KNEE (knee joint only, y=1200–1310) ── -->
+          <g class="ab-zone skel-region" data-region="thigh_knee" onclick="openAnatomyRegion('thigh_knee')" role="button" aria-label="Knee" tabindex="0">
+            <polygon class="ab-overlay" points="170,1200 449,1200 444,1310 164,1303"/>
+            <polygon class="ab-overlay" points="551,1200 830,1200 836,1303 556,1310"/>
+            <text class="ab-lbl" x="306" y="1255" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee</text>
+            <text class="ab-lbl" x="306" y="1283" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة</text>
+            <text class="ab-lbl" x="694" y="1255" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee</text>
+            <text class="ab-lbl" x="694" y="1283" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة</text>
           </g>
 
           <!-- ── LEG & ANKLE (both sides, y=1310–1430) ── -->
@@ -728,15 +722,8 @@
       <div class="anat-region-card" onclick="openAnatomyRegion('forearm')">
         <div class="anat-region-icon">🦾</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Forearm &amp; Elbow</div>
-          <div class="anat-region-ar">الساعد والكوع</div>
-        </div>
-      </div>
-      <div class="anat-region-card" onclick="openAnatomyRegion('hand')">
-        <div class="anat-region-icon">✋</div>
-        <div class="anat-region-info">
-          <div class="anat-region-name">Wrist &amp; Hand</div>
-          <div class="anat-region-ar">المعصم والكف</div>
+          <div class="anat-region-name">Forearm &amp; Hand</div>
+          <div class="anat-region-ar">الساعد والكف</div>
         </div>
       </div>
       <div class="anat-region-card" onclick="openAnatomyRegion('abdomen')">
@@ -749,15 +736,15 @@
       <div class="anat-region-card" onclick="openAnatomyRegion('pelvis_hip')">
         <div class="anat-region-icon">🦴</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Pelvis &amp; Hip</div>
-          <div class="anat-region-ar">الحوض والورك</div>
+          <div class="anat-region-name">Pelvis, Hip &amp; Femur</div>
+          <div class="anat-region-ar">الحوض والورك وعظمة الفخذ</div>
         </div>
       </div>
       <div class="anat-region-card" onclick="openAnatomyRegion('thigh_knee')">
         <div class="anat-region-icon">🦵</div>
         <div class="anat-region-info">
-          <div class="anat-region-name">Thigh &amp; Knee</div>
-          <div class="anat-region-ar">الفخذ والركبة</div>
+          <div class="anat-region-name">Knee</div>
+          <div class="anat-region-ar">الركبة</div>
         </div>
       </div>
       <div class="anat-region-card" onclick="openAnatomyRegion('leg_ankle')">

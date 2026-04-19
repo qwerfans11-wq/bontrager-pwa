@@ -8230,7 +8230,7 @@ const ANATOMY_DATA = {
     ]
   },
   forearm:{
-    name:'Forearm & Elbow',arabicName:'الساعد والكوع',icon:'🦾',
+    name:'Forearm, Elbow & Hand',arabicName:'الساعد والكوع والكف',icon:'🦾',
     structures:[
       'Radius (head, neck, shaft, radial tuberosity)',
       'Ulna (olecranon, coronoid process, shaft)',
@@ -8241,19 +8241,6 @@ const ANATOMY_DATA = {
       'Medial & lateral epicondyles',
       'Olecranon fossa (posterior), coronoid fossa (anterior)',
       'Anterior fat pad (normal) & posterior fat pad (abnormal = effusion)',
-    ],
-    radiographyNotes:'Forearm: AP, lateral (include wrist and elbow joints). Elbow: AP in full extension, lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, radial head series (Coyle method — 4 positions around 90°).',
-    clinicalIndications:'Radial head fractures, supracondylar fractures (children — most common), condylar fractures, fat pad sign (joint effusion/hemarthrosis), elbow dislocations, Monteggia (ulna + radial head dislocation), Galeazzi (radius + DRUJ), forearm shaft fractures.',
-    kVpRange:'60–70 kVp',
-    positioning:'Patient seated at end of table, arm resting on IR. AP with arm fully extended. Elbow at exactly 90° flexion for true lateral. Horizontal beam alternatives for trauma.',
-    chapterKey:'upper_limb',
-    anatImages:[
-      'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
-    ]
-  },
-  hand:{
-    name:'Wrist & Hand',arabicName:'المعصم والكف',icon:'✋',
-    structures:[
       'Distal radius & ulna (styloid processes)',
       'Distal radioulnar joint (DRUJ)',
       'Carpal bones — proximal row: Scaphoid, Lunate, Triquetrum, Pisiform',
@@ -8264,10 +8251,10 @@ const ANATOMY_DATA = {
       'MCP, PIP, DIP, CMC joints',
       'Carpal tunnel (median nerve passage)',
     ],
-    radiographyNotes:'Wrist: PA, oblique 45°, lateral, ulnar deviation (scaphoid/Stecher method), radial deviation, carpal canal (Gaynor-Hart). Hand: PA, oblique 45°, fan lateral, Brewerton, Norgaard. Fingers: PA, oblique, lateral. Thumb: AP, oblique, lateral, Modified Robert (1st CMC in true AP).',
-    clinicalIndications:'Colles fracture (dorsal angulation), Smith fracture (volar), scaphoid fracture (most commonly missed — AVN risk if untreated), Bennett (1st CMC), Gamekeeper\'s thumb (UCL tear), TFCC injury, carpal tunnel syndrome.',
-    kVpRange:'55–65 kVp (fingers/hand), 60–70 kVp (wrist)',
-    positioning:'Patient seated at end of table, hand/forearm resting on IR. PA for hand (minimises OID). Ulnar deviation for scaphoid views.',
+    radiographyNotes:'Forearm: AP, lateral (include wrist and elbow joints). Elbow: AP in full extension, lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, radial head series (Coyle method — 4 positions around 90°). Wrist: PA, oblique 45°, lateral, ulnar deviation (scaphoid/Stecher method), radial deviation, carpal canal (Gaynor-Hart). Hand: PA, oblique 45°, fan lateral, Brewerton, Norgaard. Fingers: PA, oblique, lateral. Thumb: AP, oblique, lateral, Modified Robert (1st CMC in true AP).',
+    clinicalIndications:'Radial head fractures, supracondylar fractures (children — most common), condylar fractures, fat pad sign (joint effusion/hemarthrosis), elbow dislocations, Monteggia (ulna + radial head dislocation), Galeazzi (radius + DRUJ), forearm shaft fractures. Colles fracture (dorsal angulation), Smith fracture (volar), scaphoid fracture (most commonly missed — AVN risk if untreated), Bennett (1st CMC), Gamekeeper\'s thumb (UCL tear), TFCC injury, carpal tunnel syndrome.',
+    kVpRange:'55–65 kVp (hand/fingers), 60–70 kVp (wrist/forearm/elbow)',
+    positioning:'Patient seated at end of table, arm resting on IR. AP with arm fully extended. Elbow at exactly 90° flexion for true lateral. PA for hand (minimises OID). Ulnar deviation for scaphoid views. Horizontal beam alternatives for trauma.',
     chapterKey:'upper_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28',
@@ -8275,7 +8262,7 @@ const ANATOMY_DATA = {
     ]
   },
   pelvis_hip:{
-    name:'Pelvis & Hip',arabicName:'الحوض والورك',icon:'🦴',
+    name:'Pelvis, Hip & Femur',arabicName:'الحوض والورك وعظمة الفخذ',icon:'🦴',
     structures:[
       'Ilium (iliac crest, ASIS, PSIS, iliac fossa, iliac wings)',
       'Ischium (ischial tuberosity, ischial spine)',
@@ -8288,21 +8275,20 @@ const ANATOMY_DATA = {
       'Greater & lesser trochanters',
       'Hip joint — ball-and-socket (deepest joint in body)',
       'Obturator foramen',
+      'Femoral shaft (diaphysis — from trochanters to supracondylar ridge)',
     ],
-    radiographyNotes:'Pelvis: AP bilateral (internal rotation 15° of feet), bilateral frog-leg Cleaves. Hip: AP unilateral, frog-leg Modified Cleaves, axiolateral inferosuperior Danelius-Miller (trauma — keep injured leg extended), Clements-Nakayama. Acetabulum: Judet method 45° RPO/LPO obliques, Teufel PA axial oblique. Sacrum: AP axial 15° cephalad + lateral. Coccyx: AP axial 10° caudad + lateral.',
-    clinicalIndications:'Hip fractures (femoral neck, intertrochanteric, subtrochanteric), hip dislocations (posterior 90%), avascular necrosis (AVN) of femoral head, acetabular fractures (Judet), pelvic ring fractures, sacral fractures, developmental dysplasia of hip (DDH). WARNING: DO NOT use frog-leg for suspected hip fracture/dislocation.',
-    kVpRange:'70–85 kVp (hip/pelvis)',
-    positioning:'AP supine standard. Injured leg in neutral position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval.',
+    radiographyNotes:'Pelvis: AP bilateral (internal rotation 15° of feet), bilateral frog-leg Cleaves. Hip: AP unilateral, frog-leg Modified Cleaves, axiolateral inferosuperior Danelius-Miller (trauma — keep injured leg extended), Clements-Nakayama. Acetabulum: Judet method 45° RPO/LPO obliques, Teufel PA axial oblique. Femur: AP (include hip and knee joints for shaft views), lateral mediolateral/lateromedial. Sacrum: AP axial 15° cephalad + lateral. Coccyx: AP axial 10° caudad + lateral.',
+    clinicalIndications:'Hip fractures (femoral neck, intertrochanteric, subtrochanteric), hip dislocations (posterior 90%), avascular necrosis (AVN) of femoral head, acetabular fractures (Judet), pelvic ring fractures, sacral fractures, developmental dysplasia of hip (DDH), femoral shaft fractures. WARNING: DO NOT use frog-leg for suspected hip fracture/dislocation.',
+    kVpRange:'70–85 kVp (hip/pelvis), 75–85 kVp (femur)',
+    positioning:'AP supine standard. Injured leg in neutral position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval. Femur: include both hip and knee joints on all shaft views.',
     chapterKey:'lower_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c',
-      'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
+      'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c'
     ]
   },
   thigh_knee:{
-    name:'Thigh & Knee',arabicName:'الفخذ والركبة',icon:'🦵',
+    name:'Knee',arabicName:'الركبة',icon:'🦵',
     structures:[
-      'Femur shaft (diaphysis)',
       'Distal femur (medial & lateral condyles, trochlear groove)',
       'Patella (kneecap — sesamoid bone in quadriceps tendon)',
       'Proximal tibia — intercondylar eminence, medial & lateral plateaus',
@@ -8312,11 +8298,12 @@ const ANATOMY_DATA = {
       'ACL, PCL (cruciate ligaments)',
       'MCL, LCL (collateral ligaments)',
       'Suprapatellar bursa & infrapatellar fat pad',
+      'Patellofemoral joint',
     ],
-    radiographyNotes:'Femur: AP, mediolateral/lateromedial lateral (include both hip and knee joints for shaft views). Knee: AP (CR parallel to tibial plateau — adjust for body habitus), lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, tunnel/notch (intercondylar fossa), tangential patella Merchant/Settegast.',
-    clinicalIndications:'Femoral shaft fractures, distal femur fractures, tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, fat pad sign (joint effusion), Osgood-Schlatter (tibial tuberosity apophysitis), knee ligament and meniscal injuries.',
-    kVpRange:'70–80 kVp (femur), 65–80 kVp (knee)',
-    positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel view. Horizontal beam for trauma non-ambulatory patients.',
+    radiographyNotes:'Knee: AP (CR parallel to tibial plateau — adjust for body habitus), lateral at 90° flexion, medial oblique 45°, lateral oblique 45°, tunnel/notch AP axial intercondylar fossa (Holmblad/PA axial Camp-Coventry/AP axial Béclère), tangential patella Merchant/Settegast. PA projection of patella before flexion if fracture suspected.',
+    clinicalIndications:'Tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, fat pad sign (joint effusion), Osgood-Schlatter (tibial tuberosity apophysitis), knee ligament and meniscal injuries, Segond fracture (ACL avulsion).',
+    kVpRange:'65–80 kVp',
+    positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel/notch views. Horizontal beam for trauma non-ambulatory patients.',
     chapterKey:'lower_limb',
     anatImages:[
       'https://github.com/user-attachments/assets/1980cde7-e841-4d94-868d-72d2afe30fad'
@@ -8340,7 +8327,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Tibia/fibula shaft fractures, ankle fractures (bimalleolar, trimalleolar), Maisonneuve fracture (proximal fibula + deltoid ligament injury), Pott fracture, ankle sprains (Ottawa rules), distal tibiofibular syndesmosis injury.',
     kVpRange:'60–75 kVp',
     positioning:'Supine or seated for non-weight-bearing. Standing for functional ankle assessment. Mortise view requires 15–20° internal rotation.',
-    chapterKey:'lower_limb'
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
+    ]
   },
   foot:{
     name:'Foot',arabicName:'القدم',icon:'🦶',
@@ -8402,13 +8392,11 @@ const ANATOMY_SMART_HOTSPOTS = {
     {x:108,y:780,r:140},
     {x:892,y:780,r:140},
     {x:104,y:880,r:130},
-    {x:896,y:880,r:130}
-  ],
-  hand:[
-    {x:100,y:1010,r:120},
-    {x:900,y:1010,r:120},
-    {x:96,y:1090,r:110},
-    {x:904,y:1090,r:110}
+    {x:896,y:880,r:130},
+    {x:100,y:980,r:120},
+    {x:900,y:980,r:120},
+    {x:96,y:1060,r:110},
+    {x:904,y:1060,r:110}
   ],
   abdomen:[
     {x:500,y:758,r:145},
@@ -8421,15 +8409,17 @@ const ANATOMY_SMART_HOTSPOTS = {
     {x:684,y:940,r:145},
     {x:340,y:1010,r:125},
     {x:660,y:1010,r:125},
-    {x:500,y:960,r:115}
+    {x:500,y:960,r:115},
+    {x:310,y:1100,r:130},
+    {x:690,y:1100,r:130},
+    {x:308,y:1170,r:110},
+    {x:692,y:1170,r:110}
   ],
   thigh_knee:[
-    {x:310,y:1130,r:145},
-    {x:690,y:1130,r:145},
-    {x:305,y:1230,r:138},
-    {x:695,y:1230,r:138},
-    {x:300,y:1295,r:118},
-    {x:700,y:1295,r:118}
+    {x:305,y:1230,r:120},
+    {x:695,y:1230,r:120},
+    {x:303,y:1285,r:110},
+    {x:697,y:1285,r:110}
   ],
   leg_ankle:[
     {x:304,y:1360,r:128},
@@ -8486,16 +8476,10 @@ const ANATOMY_REGION_GUARDS = {
     penaltyScale:0.25
   },
   forearm:{
-    ranges:[{x:[0,260],y:[704,962]},{x:[740,1000],y:[704,962]}],
+    ranges:[{x:[0,260],y:[704,1116]},{x:[740,1000],y:[704,1116]}],
     insideBoost:16,
     maxPenalty:30,
     penaltyScale:0.24
-  },
-  hand:{
-    ranges:[{x:[0,262],y:[948,1116]},{x:[738,1000],y:[948,1116]}],
-    insideBoost:14,
-    maxPenalty:26,
-    penaltyScale:0.22
   },
   abdomen:{
     ranges:[{x:[283,717],y:[708,880]}],
@@ -8504,13 +8488,13 @@ const ANATOMY_REGION_GUARDS = {
     penaltyScale:0.23
   },
   pelvis_hip:{
-    ranges:[{x:[155,845],y:[876,1070]}],
+    ranges:[{x:[155,845],y:[876,1202]}],
     insideBoost:15,
     maxPenalty:28,
     penaltyScale:0.22
   },
   thigh_knee:{
-    ranges:[{x:[164,456],y:[1056,1312]},{x:[544,836],y:[1056,1312]}],
+    ranges:[{x:[164,456],y:[1198,1312]},{x:[544,836],y:[1198,1312]}],
     insideBoost:14,
     maxPenalty:26,
     penaltyScale:0.21
@@ -8760,7 +8744,15 @@ function _initSmartAnatomyHitTest(){
   let lastPointerHandledAt = 0;
   let _tapStartY = null;
   let _tapStartX = null;
-  const SCROLL_TAP_THRESHOLD = 12;
+  let _tapOnSVG = false;
+  let _pointerDownOnSVG = false;
+  let _mouseDownOnSVG = false;
+  const SCROLL_TAP_THRESHOLD = 18;
+
+  // Track whether the gesture started on the SVG (prevents accidental triggers
+  // from scroll gestures that begin elsewhere and end over the SVG).
+  document.addEventListener('pointerdown', function(){ _pointerDownOnSVG = false; }, true);
+  document.addEventListener('mousedown', function(){ _mouseDownOnSVG = false; }, true);
 
   function activateRegionFromEvent(e){
     const point = _svgPointFromEvent(svg, e);
@@ -8775,39 +8767,55 @@ function _initSmartAnatomyHitTest(){
   }
 
   svg.addEventListener('touchstart', function(e){
+    _tapOnSVG = true;
     const t = e.touches && e.touches.length ? e.touches[0] : null;
     _tapStartY = t ? t.clientY : null;
     _tapStartX = t ? t.clientX : null;
   }, {capture:true, passive:true});
 
   svg.addEventListener('pointerdown', function(e){
+    _pointerDownOnSVG = true;
     if(e.pointerType === 'touch' || e.pointerType === 'pen'){
       _tapStartY = e.clientY;
       _tapStartX = e.clientX;
     }
   }, {capture:true, passive:true});
 
+  svg.addEventListener('mousedown', function(){
+    _mouseDownOnSVG = true;
+  }, {capture:true, passive:true});
+
   svg.addEventListener('pointerup', function(e){
+    if(!_pointerDownOnSVG) return;
     if(typeof e.button === 'number' && e.button !== 0) return;
     if((e.pointerType === 'touch' || e.pointerType === 'pen') && _tapStartY !== null){
-      if(Math.abs(e.clientY - _tapStartY) > SCROLL_TAP_THRESHOLD) return;
+      const dy = Math.abs(e.clientY - _tapStartY);
+      const dx = Math.abs(e.clientX - (_tapStartX || e.clientX));
+      if(Math.hypot(dx, dy) > SCROLL_TAP_THRESHOLD) return;
     }
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, true);
 
   svg.addEventListener('mouseup', function(e){
+    if(!_mouseDownOnSVG) return;
     if(typeof e.button === 'number' && e.button !== 0) return;
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, true);
 
   svg.addEventListener('touchend', function(e){
+    if(!_tapOnSVG){ _tapStartY = null; return; }
+    _tapOnSVG = false;
     if(_tapStartY !== null){
       const t = e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : null;
-      if(t && Math.abs(t.clientY - _tapStartY) > SCROLL_TAP_THRESHOLD){
-        _tapStartY = null;
-        return;
+      if(t){
+        const dy = Math.abs(t.clientY - _tapStartY);
+        const dx = Math.abs(t.clientX - (_tapStartX || t.clientX));
+        if(Math.hypot(dx, dy) > SCROLL_TAP_THRESHOLD){
+          _tapStartY = null;
+          return;
+        }
       }
     }
     _tapStartY = null;
