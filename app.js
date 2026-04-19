@@ -8304,7 +8304,9 @@ function buildAnatomyDetail(regionId){
       </div>
     </div>
 
-    ${r.anatSVG ? `<div class="anat-diagram-wrap" aria-label="Anatomical diagram">${r.anatSVG}</div>` : ''}
+    ${r.anatImage
+      ? `<div class="anat-diagram-wrap" aria-label="Anatomical image"><img src="${r.anatImage}" alt="${r.name} anatomy" loading="lazy"/></div>`
+      : (r.anatSVG ? `<div class="anat-diagram-wrap" aria-label="Anatomical diagram">${r.anatSVG}</div>` : '')}
 
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
