@@ -551,93 +551,104 @@
       <div class="anat-body-svg-wrap">
         <!-- 3D skeleton photo background -->
         <img id="anatSkeletonImg"
-             src="https://github.com/user-attachments/assets/e4eee605-05d1-4088-9fa9-6eba32b039b1"
+             src="https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19"
              alt="Human Skeleton — Full Body Anatomy"
              draggable="false" loading="eager"
              onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='block'">
         <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image unavailable offline</div>
 
-        <!-- Transparent clickable overlay — viewBox matches image aspect ratio (≈ 2:3) -->
+        <!-- Transparent clickable overlay — preserveAspectRatio=none maps viewBox 1:1 to image pixels -->
         <svg id="anatomyBodySVG" viewBox="0 0 1000 1500"
              xmlns="http://www.w3.org/2000/svg"
+             preserveAspectRatio="none"
              role="img" aria-label="Interactive human skeleton body map">
 
           <!-- ── HEAD & NECK ── -->
           <g class="ab-zone skel-region" data-region="head_neck" onclick="openAnatomyRegion('head_neck')" role="button" aria-label="Head and Neck" tabindex="0">
-            <polygon class="ab-overlay" points="355,10 645,10 645,168 578,248 422,248 355,168"/>
-            <text class="ab-lbl" x="500" y="98" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Head &amp; Neck</text>
-            <text class="ab-lbl" x="500" y="138" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الرأس والرقبة</text>
+            <polygon class="ab-overlay" points="338,0 662,0 708,78 685,178 600,244 400,244 315,178 292,78"/>
+            <text class="ab-lbl" x="500" y="88" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Head &amp; Neck</text>
+            <text class="ab-lbl" x="500" y="125" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الرأس والرقبة</text>
           </g>
 
           <!-- ── SHOULDER ── -->
           <g class="ab-zone skel-region" data-region="shoulder" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder" tabindex="0">
-            <polygon class="ab-overlay" points="62,238 938,238 918,335 572,362 428,362 82,335"/>
-            <text class="ab-lbl" x="156" y="288" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
-            <text class="ab-lbl" x="844" y="288" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
+            <polygon class="ab-overlay" points="58,228 942,228 912,330 612,370 388,370 88,330"/>
+            <text class="ab-lbl" x="162" y="272" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="162" y="305" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
+            <text class="ab-lbl" x="838" y="272" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="838" y="305" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
           </g>
 
           <!-- ── THORAX ── -->
           <g class="ab-zone skel-region" data-region="thorax" onclick="openAnatomyRegion('thorax')" role="button" aria-label="Thorax" tabindex="0">
-            <polygon class="ab-overlay" points="248,268 752,268 722,578 278,578"/>
-            <text class="ab-lbl" x="500" y="410" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thorax</text>
-            <text class="ab-lbl" x="500" y="450" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الصدر</text>
+            <polygon class="ab-overlay" points="232,280 768,280 742,722 258,722"/>
+            <text class="ab-lbl" x="500" y="478" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thorax</text>
+            <text class="ab-lbl" x="500" y="515" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الصدر</text>
           </g>
 
           <!-- ── UPPER ARM (both sides) ── -->
           <g class="ab-zone skel-region" data-region="upper_arm" onclick="openAnatomyRegion('upper_arm')" role="button" aria-label="Humerus and Elbow" tabindex="0">
-            <polygon class="ab-overlay" points="58,252 208,252 202,618 48,612"/>
-            <polygon class="ab-overlay" points="792,252 942,252 952,612 798,618"/>
-            <text class="ab-lbl" x="128" y="435" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
-            <text class="ab-lbl" x="872" y="435" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
+            <polygon class="ab-overlay" points="58,228 220,228 224,710 40,698"/>
+            <polygon class="ab-overlay" points="780,228 942,228 960,698 776,710"/>
+            <text class="ab-lbl" x="128" y="462" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
+            <text class="ab-lbl" x="128" y="492" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
+            <text class="ab-lbl" x="872" y="462" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
+            <text class="ab-lbl" x="872" y="492" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
           </g>
 
           <!-- ── FOREARM & HAND (both sides) ── -->
           <g class="ab-zone skel-region" data-region="forearm_hand" onclick="openAnatomyRegion('forearm_hand')" role="button" aria-label="Forearm Wrist and Hand" tabindex="0">
-            <polygon class="ab-overlay" points="12,605 202,605 235,968 0,960"/>
-            <polygon class="ab-overlay" points="798,605 988,605 1000,960 765,968"/>
-            <text class="ab-lbl" x="112" y="768" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
-            <text class="ab-lbl" x="112" y="796" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">&amp; Hand</text>
-            <text class="ab-lbl" x="888" y="768" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
-            <text class="ab-lbl" x="888" y="796" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">والكف</text>
+            <polygon class="ab-overlay" points="5,702 224,702 248,1114 0,1102"/>
+            <polygon class="ab-overlay" points="776,702 995,702 1000,1102 752,1114"/>
+            <text class="ab-lbl" x="112" y="878" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
+            <text class="ab-lbl" x="112" y="906" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">&amp; Hand</text>
+            <text class="ab-lbl" x="888" y="878" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
+            <text class="ab-lbl" x="888" y="906" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">والكف</text>
           </g>
 
           <!-- ── ABDOMEN & PELVIS ── -->
           <g class="ab-zone skel-region" data-region="abdomen" onclick="openAnatomyRegion('abdomen')" role="button" aria-label="Abdomen and Pelvis" tabindex="0">
-            <polygon class="ab-overlay" points="248,562 752,562 728,758 272,758"/>
-            <text class="ab-lbl" x="500" y="645" text-anchor="middle" font-size="28" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Abdomen</text>
-            <text class="ab-lbl" x="500" y="682" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">البطن والحوض</text>
+            <polygon class="ab-overlay" points="240,715 760,715 732,970 268,970"/>
+            <text class="ab-lbl" x="500" y="822" text-anchor="middle" font-size="28" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Abdomen</text>
+            <text class="ab-lbl" x="500" y="858" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">البطن والحوض</text>
           </g>
 
           <!-- ── HIP & FEMUR (both sides) ── -->
           <g class="ab-zone skel-region" data-region="hip_femur" onclick="openAnatomyRegion('hip_femur')" role="button" aria-label="Hip and Femur" tabindex="0">
-            <polygon class="ab-overlay" points="225,735 438,735 425,968 212,962"/>
-            <polygon class="ab-overlay" points="562,735 775,735 788,962 575,968"/>
-            <text class="ab-lbl" x="328" y="848" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hip &amp; Femur</text>
-            <text class="ab-lbl" x="672" y="848" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ</text>
+            <polygon class="ab-overlay" points="200,942 432,942 435,1204 198,1198"/>
+            <polygon class="ab-overlay" points="568,942 800,942 802,1198 565,1204"/>
+            <text class="ab-lbl" x="316" y="1062" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hip &amp; Femur</text>
+            <text class="ab-lbl" x="316" y="1094" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ</text>
+            <text class="ab-lbl" x="684" y="1062" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hip &amp; Femur</text>
+            <text class="ab-lbl" x="684" y="1094" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ</text>
           </g>
 
           <!-- ── KNEE & LOWER LEG (both sides) ── -->
           <g class="ab-zone skel-region" data-region="knee_leg" onclick="openAnatomyRegion('knee_leg')" role="button" aria-label="Knee and Lower Leg" tabindex="0">
-            <polygon class="ab-overlay" points="205,960 425,960 408,1178 188,1172"/>
-            <polygon class="ab-overlay" points="575,960 795,960 812,1172 592,1178"/>
-            <text class="ab-lbl" x="312" y="1068" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee &amp; Leg</text>
-            <text class="ab-lbl" x="688" y="1068" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة والساق</text>
+            <polygon class="ab-overlay" points="196,1192 430,1192 416,1364 180,1357"/>
+            <polygon class="ab-overlay" points="570,1192 804,1192 820,1357 584,1364"/>
+            <text class="ab-lbl" x="308" y="1274" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee &amp; Leg</text>
+            <text class="ab-lbl" x="308" y="1306" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة والساق</text>
+            <text class="ab-lbl" x="692" y="1274" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee &amp; Leg</text>
+            <text class="ab-lbl" x="692" y="1306" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة والساق</text>
           </g>
 
           <!-- ── FOOT & ANKLE (both sides) ── -->
           <g class="ab-zone skel-region" data-region="foot_ankle" onclick="openAnatomyRegion('foot_ankle')" role="button" aria-label="Foot and Ankle" tabindex="0">
-            <polygon class="ab-overlay" points="158,1165 428,1165 468,1500 128,1500"/>
-            <polygon class="ab-overlay" points="572,1165 842,1165 872,1500 532,1500"/>
-            <text class="ab-lbl" x="300" y="1332" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot &amp; Ankle</text>
-            <text class="ab-lbl" x="700" y="1332" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم والكاحل</text>
+            <polygon class="ab-overlay" points="125,1352 464,1352 490,1500 90,1500"/>
+            <polygon class="ab-overlay" points="536,1352 875,1352 910,1500 510,1500"/>
+            <text class="ab-lbl" x="298" y="1426" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot &amp; Ankle</text>
+            <text class="ab-lbl" x="298" y="1460" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم والكاحل</text>
+            <text class="ab-lbl" x="702" y="1426" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot &amp; Ankle</text>
+            <text class="ab-lbl" x="702" y="1460" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم والكاحل</text>
           </g>
 
           <!-- ── SPINE (dashed overlay — highest z-order) ── -->
           <g class="ab-zone skel-region" data-region="spine" onclick="openAnatomyRegion('spine')" role="button" aria-label="Spine" tabindex="0">
-            <rect class="ab-overlay ab-spine-overlay" x="452" y="232" width="96" height="530" rx="22"
+            <rect class="ab-overlay ab-spine-overlay" x="452" y="215" width="96" height="752" rx="22"
                   fill="rgba(160,100,210,0)" stroke="rgba(160,100,210,0)" stroke-width="2.5" stroke-dasharray="10,6"/>
-            <text class="ab-lbl" x="500" y="505" text-anchor="middle" font-size="22" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Spine</text>
-            <text class="ab-lbl" x="500" y="538" text-anchor="middle" font-size="18" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العمود الفقري</text>
+            <text class="ab-lbl" x="500" y="498" text-anchor="middle" font-size="22" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Spine</text>
+            <text class="ab-lbl" x="500" y="530" text-anchor="middle" font-size="18" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العمود الفقري</text>
           </g>
         </svg>
       </div>
