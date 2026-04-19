@@ -3602,6 +3602,15 @@ function buildQuickReview(){
   const container=document.getElementById('qrContent');
   if(!container) return;
 
+  // Reset section toggle state — show all sections on each build
+  _qrState={ref:true,routine:true,special:true,cr:true,errors:true};
+  document.querySelectorAll('[data-qr-section]').forEach(btn=>{
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed','true');
+  });
+  const refEl=document.getElementById('qrs-ref');
+  if(refEl) refEl.style.display='';
+
   // Collect all positions
   const all=[];
   Object.entries(BOOK).forEach(([chId,ch])=>{
@@ -3644,17 +3653,17 @@ function buildQuickReview(){
   ];
 
   let html='';
-  html+=`<div class="qr-section">
+  html+=`<div class="qr-section" id="qrs-routine">
     <div class="qr-section-title"><span class="dot dot-r"></span> Top 10 Routine Positions</div>
     ${routines.map(x=>posCard(x)).join('')}
   </div>`;
 
-  html+=`<div class="qr-section">
+  html+=`<div class="qr-section" id="qrs-special">
     <div class="qr-section-title"><span style="width:8px;height:8px;border-radius:50%;background:#ec4899;display:inline-block"></span> Key Special Positions</div>
     ${specials.map(x=>posCard(x)).join('')}
   </div>`;
 
-  html+=`<div class="qr-section">
+  html+=`<div class="qr-section" id="qrs-cr">
     <div class="qr-section-title">🟢 Key CR Angles (non-perpendicular)</div>
     ${crAngles.map(x=>{
       const info=x.pos.info||{};
@@ -3666,7 +3675,7 @@ function buildQuickReview(){
     }).join('')}
   </div>`;
 
-  html+=`<div class="qr-section">
+  html+=`<div class="qr-section" id="qrs-errors">
     <div class="qr-section-title">🔴 Top 10 Fatal Errors</div>
     ${topErrors.map(e=>`
       <div class="qr-card">
@@ -4037,6 +4046,19 @@ function toggleLayer(name){
   // Toggle all elements with id="layer-{name}" in both panels
   document.querySelectorAll(`#layer-${name}`).forEach(el=>{
     el.style.display=_layerState[name]?'':'none';
+  });
+}
+
+// ── Quick Review section toggle ──
+let _qrState={ref:true,routine:true,special:true,cr:true,errors:true};
+function toggleQRSection(name){
+  _qrState[name]=!_qrState[name];
+  document.querySelectorAll(`[data-qr-section="${name}"]`).forEach(btn=>{
+    btn.classList.toggle('active',_qrState[name]);
+    btn.setAttribute('aria-pressed',_qrState[name]?'true':'false');
+  });
+  document.querySelectorAll(`#qrs-${name}`).forEach(el=>{
+    el.style.display=_qrState[name]?'':'none';
   });
 }
 

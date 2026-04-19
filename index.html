@@ -509,27 +509,39 @@
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
     <div class="ptitle" style="display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="9" y1="13" x2="15" y2="13"/></svg> Quick Review</div>
 
-    <!-- GLOBAL REFERENCE BOX -->
-    <div class="global-ref-card">
-      <h3 style="display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Standard Technical Reference</h3>
-      <div class="gref-row"><span class="gref-label">SID (standard)</span><span class="gref-val">100 cm (40 in)</span></div>
-      <div class="gref-row"><span class="gref-label">SID (chest / bucky)</span><span class="gref-val">180 cm (72 in)</span></div>
-      <div class="gref-row"><span class="gref-label">Grid — required above</span><span class="gref-val">≥ 10 cm part thickness</span></div>
-      <div class="gref-row"><span class="gref-label">Extremities kVp</span><span class="gref-val">55–65 kVp</span></div>
-      <div class="gref-row"><span class="gref-label">Wrist / Elbow kVp</span><span class="gref-val">55–70 kVp</span></div>
-      <div class="gref-row"><span class="gref-label">Chest kVp</span><span class="gref-val">110–125 kVp</span></div>
-      <div class="gref-row"><span class="gref-label">Abdomen / Pelvis kVp</span><span class="gref-val">70–80 kVp</span></div>
-      <div class="gref-row"><span class="gref-label">Spine kVp</span><span class="gref-val">70–85 kVp</span></div>
-      <div class="gref-row"><span class="gref-label">CR perpendicular = angle</span><span class="gref-val">0° unless stated</span></div>
+    <!-- SECTION TOGGLE BAR -->
+    <div class="layer-toggle-bar" id="qrToggleBar" role="toolbar" aria-label="Toggle Quick Review sections">
+      <span>Show:</span>
+      <button class="ltog-btn active" data-qr-section="ref" onclick="toggleQRSection('ref')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Reference</button>
+      <button class="ltog-btn active" data-qr-section="routine" onclick="toggleQRSection('routine')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 8 12 12 14 14"/></svg> Routine</button>
+      <button class="ltog-btn active" data-qr-section="special" onclick="toggleQRSection('special')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Special</button>
+      <button class="ltog-btn active" data-qr-section="cr" onclick="toggleQRSection('cr')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR Angles</button>
+      <button class="ltog-btn active" data-qr-section="errors" onclick="toggleQRSection('errors')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Errors</button>
     </div>
 
-    <div class="global-ref-card">
-      <h3 style="display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Standard Abbreviations</h3>
-      <div class="gref-row"><span class="gref-label">↑ CR cephalad</span><span class="gref-val">Angled toward head</span></div>
-      <div class="gref-row"><span class="gref-label">↓ CR caudad</span><span class="gref-val">Angled toward feet</span></div>
-      <div class="gref-row"><span class="gref-label">↺ Internal rotation</span><span class="gref-val">Medial rotation</span></div>
-      <div class="gref-row"><span class="gref-label">↻ External rotation</span><span class="gref-val">Lateral rotation</span></div>
-      <div class="gref-row"><span class="gref-label">⊥ Perpendicular</span><span class="gref-val">90° to IR</span></div>
+    <!-- GLOBAL REFERENCE BOX -->
+    <div id="qrs-ref">
+      <div class="global-ref-card">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Standard Technical Reference</h3>
+        <div class="gref-row"><span class="gref-label">SID (standard)</span><span class="gref-val">100 cm (40 in)</span></div>
+        <div class="gref-row"><span class="gref-label">SID (chest / bucky)</span><span class="gref-val">180 cm (72 in)</span></div>
+        <div class="gref-row"><span class="gref-label">Grid — required above</span><span class="gref-val">≥ 10 cm part thickness</span></div>
+        <div class="gref-row"><span class="gref-label">Extremities kVp</span><span class="gref-val">55–65 kVp</span></div>
+        <div class="gref-row"><span class="gref-label">Wrist / Elbow kVp</span><span class="gref-val">55–70 kVp</span></div>
+        <div class="gref-row"><span class="gref-label">Chest kVp</span><span class="gref-val">110–125 kVp</span></div>
+        <div class="gref-row"><span class="gref-label">Abdomen / Pelvis kVp</span><span class="gref-val">70–80 kVp</span></div>
+        <div class="gref-row"><span class="gref-label">Spine kVp</span><span class="gref-val">70–85 kVp</span></div>
+        <div class="gref-row"><span class="gref-label">CR perpendicular = angle</span><span class="gref-val">0° unless stated</span></div>
+      </div>
+
+      <div class="global-ref-card">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Standard Abbreviations</h3>
+        <div class="gref-row"><span class="gref-label">↑ CR cephalad</span><span class="gref-val">Angled toward head</span></div>
+        <div class="gref-row"><span class="gref-label">↓ CR caudad</span><span class="gref-val">Angled toward feet</span></div>
+        <div class="gref-row"><span class="gref-label">↺ Internal rotation</span><span class="gref-val">Medial rotation</span></div>
+        <div class="gref-row"><span class="gref-label">↻ External rotation</span><span class="gref-val">Lateral rotation</span></div>
+        <div class="gref-row"><span class="gref-label">⊥ Perpendicular</span><span class="gref-val">90° to IR</span></div>
+      </div>
     </div>
 
     <!-- DYNAMIC CONTENT -->
@@ -1168,6 +1180,14 @@
   navigator.serviceWorker.addEventListener('controllerchange', function() {
     _reloadOnceForSW();
   });
+
+  // Request persistent storage so the browser won't evict the SW cache
+  // during long offline periods.
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().then(function(granted) {
+      console.log('💾 Persistent storage:', granted ? 'granted' : 'denied');
+    });
+  }
 
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
