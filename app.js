@@ -2508,6 +2508,13 @@ function updateDevUI(){
   if(qib) qib.style.display=isDev?'flex':'none';
   // Add chapter panel
   buildAddChapterPanel();
+  // Restore session sidebar button (dev-only)
+  const rsb=document.getElementById('sbRestoreSession');
+  if(rsb) rsb.style.display=isDev?'flex':'none';
+  if(isDev){
+    const badge=document.getElementById('sbRestoreBadge');
+    if(badge) badge.style.display=_loadSaved()?'inline':'none';
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -6914,6 +6921,48 @@ function _loadSaved(){
   try{var r=localStorage.getItem(_SAVE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}
 }
 
+function offerRestoreSession(){
+  var saved=_loadSaved();
+  var msg=document.getElementById('restoreSessionMsg');
+  if(!saved){
+    if(msg) msg.textContent='لا توجد تعديلات محفوظة حالياً.';
+    var btn=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_doRestoreSession()"]');
+    if(btn) btn.style.display='none';
+    var dbtn=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_discardSavedSession()"]');
+    if(dbtn) dbtn.style.display='none';
+  } else {
+    var d=new Date(saved.ts);
+    if(msg) msg.textContent='تم العثور على تعديلات محفوظة من '+d.toLocaleString()+'. هل تريد استعادتها؟';
+    var btn2=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_doRestoreSession()"]');
+    if(btn2) btn2.style.display='';
+    var dbtn2=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_discardSavedSession()"]');
+    if(dbtn2) dbtn2.style.display='';
+  }
+  document.getElementById('restoreSessionOverlay').classList.add('open');
+  closeSidebar();
+}
+
+function _doRestoreSession(){
+  var saved=_loadSaved();
+  document.getElementById('restoreSessionOverlay').classList.remove('open');
+  if(!saved) return;
+  Object.keys(BOOK).forEach(k=>delete BOOK[k]);Object.assign(BOOK,saved.BOOK);
+  Object.keys(QUIZ).forEach(k=>delete QUIZ[k]);Object.assign(QUIZ,saved.QUIZ);
+  _refreshQuizBankQuality();
+  buildChapters();updateStats();setTimeout(_applyExtraButtons,100);
+  _showToast('✅ تم استعادة التعديلات');
+  var badge=document.getElementById('sbRestoreBadge');
+  if(badge) badge.style.display='none';
+}
+
+function _discardSavedSession(){
+  document.getElementById('restoreSessionOverlay').classList.remove('open');
+  try{localStorage.removeItem(_SAVE_KEY);}catch(e){}
+  _showToast('🗑️ تم حذف التعديلات المحفوظة','#ef4444');
+  var badge=document.getElementById('sbRestoreBadge');
+  if(badge) badge.style.display='none';
+}
+
 function _showToast(msg,color){
   color=color||'var(--green)';
   var t=document.getElementById('_devToast');
@@ -7312,20 +7361,12 @@ _loadUserProfile();
 setTimeout(_refreshTokenUI,100);
 // Apply any saved extra buttons
 setTimeout(_applyExtraButtons,200);
-// Offer to restore saved dev data
+// Check for saved dev data and update sidebar badge (no auto-popup)
 (function(){
   var saved=_loadSaved();
   if(!saved) return;
-  var d=new Date(saved.ts);
-  var label=d.toLocaleString();
-  setTimeout(()=>{
-    if(confirm('يوجد تعديلات محفوظة من '+label+'\nهل تريد استعادتها؟')){
-      Object.keys(BOOK).forEach(k=>delete BOOK[k]);Object.assign(BOOK,saved.BOOK);
-      Object.keys(QUIZ).forEach(k=>delete QUIZ[k]);Object.assign(QUIZ,saved.QUIZ);
-      _refreshQuizBankQuality();
-      buildChapters();updateStats();setTimeout(_applyExtraButtons,100);_showToast('تم استعادة التعديلات');
-    }
-  },600);
+  var badge=document.getElementById('sbRestoreBadge');
+  if(badge) badge.style.display='inline';
 })();
 // First-run: show profile modal if name not yet set
 (function(){

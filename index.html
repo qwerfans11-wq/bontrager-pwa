@@ -114,6 +114,19 @@
   </div>
 </div>
 
+<!-- RESTORE SESSION DIALOG -->
+<div class="confirm-overlay" id="restoreSessionOverlay">
+  <div class="confirm-box">
+    <h4>💾 استعادة الجلسة السابقة</h4>
+    <p id="restoreSessionMsg">تم العثور على تعديلات محفوظة. هل تريد استعادتها؟</p>
+    <div class="confirm-actions" style="gap:8px;flex-wrap:wrap">
+      <button class="modal-btn secondary" onclick="document.getElementById('restoreSessionOverlay').classList.remove('open')">إغلاق</button>
+      <button class="modal-btn danger" onclick="_discardSavedSession()">تجاهل وحذف</button>
+      <button class="modal-btn" onclick="_doRestoreSession()" style="background:var(--accent);color:#fff">استعادة</button>
+    </div>
+  </div>
+</div>
+
 <!-- SIDEBAR OVERLAY -->
 <div class="soverlay" id="overlay" onclick="closeSidebar()"></div>
 
@@ -162,6 +175,11 @@
   <div class="nav-item" onclick="openProfileModal()">
     <span style="font-size:18px;">👨‍⚕️</span>
     User Profile
+  </div>
+  <div class="nav-item" id="sbRestoreSession" onclick="offerRestoreSession()" style="display:none" title="بحث عن تعديلات محفوظة واستعادتها">
+    <span style="font-size:18px;">💾</span>
+    استعادة الجلسة السابقة
+    <span id="sbRestoreBadge" style="margin-left:auto;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;flex-shrink:0;display:none">!</span>
   </div>
   <div class="sb-footer">
     <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:8px">Switch mode</div>
