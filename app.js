@@ -8256,12 +8256,15 @@ const ANATOMY_DATA = {
     name:'Knee & Lower Leg',arabicName:'الركبة والساق السفلية',icon:'🦵',
     structures:[
       'Distal femur (medial & lateral condyles, trochlear groove)',
-      'Proximal tibia (medial & lateral plateaus, tibial tuberosity)',
-      'Fibula head & neck (proximal)',
       'Patella (kneecap)',
-      'Tibia shaft & medial malleolus',
-      'Fibula shaft & lateral malleolus',
-      'Ankle mortise (tibiotalar joint)',
+      'Proximal tibia — intercondylar eminence, medial & lateral plateaus, tibial tuberosity',
+      'Fibula head & neck (proximal tibiofibular joint)',
+      'Tibia shaft (anterior border, interosseous membrane attachment)',
+      'Fibula shaft (interosseous membrane attachment)',
+      'Distal tibiofibular joint (syndesmosis)',
+      'Medial malleolus (distal tibia)',
+      'Lateral malleolus (distal fibula)',
+      'Articular surface of tibia (tibiotalar joint)',
       'Menisci (medial & lateral fibrocartilage)',
       'ACL, PCL (cruciate), MCL, LCL (collateral ligaments)',
     ],
@@ -8269,7 +8272,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, ligament/meniscal tears, Osgood-Schlatter (tibial tuberosity apophysitis), tibia/fibula shaft fractures, ankle fractures (bimalleolar, trimalleolar), Maisonneuve.',
     kVpRange:'65–80 kVp (knee), 60–75 kVp (ankle/leg)',
     positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel view. Horizontal beam for trauma non-ambulatory patients.',
-    chapterKey:'lower_limb'
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/1980cde7-e841-4d94-868d-72d2afe30fad'
+    ]
   },
   foot_ankle:{
     name:'Foot & Ankle',arabicName:'القدم والكاحل',icon:'🦶',
@@ -8337,7 +8343,8 @@ const ANATOMY_SMART_HOTSPOTS = {
     {x:500,y:850,r:175},
     {x:500,y:928,r:165},
     {x:410,y:900,r:115},
-    {x:590,y:900,r:115}
+    {x:590,y:900,r:115},
+    {x:500,y:1025,r:110}
   ],
   hip_femur:[
     {x:315,y:998,r:165},
@@ -8388,7 +8395,7 @@ const ANATOMY_REGION_GUARDS = {
     penaltyScale:0.26
   },
   thorax:{
-    ranges:[{x:[232,768],y:[255,734]}],
+    ranges:[{x:[232,768],y:[244,716]}],
     insideBoost:20,
     maxPenalty:38,
     penaltyScale:0.28
@@ -8406,7 +8413,7 @@ const ANATOMY_REGION_GUARDS = {
     penaltyScale:0.24
   },
   abdomen:{
-    ranges:[{x:[235,765],y:[700,1000]}],
+    ranges:[{x:[235,765],y:[706,1080]}],
     insideBoost:15,
     maxPenalty:28,
     penaltyScale:0.22
@@ -8660,6 +8667,9 @@ function _initSmartAnatomyHitTest(){
 
   const geometry = _buildAnatomyGeometry(svg);
   let lastPointerHandledAt = 0;
+  let _tapStartY = null;
+  let _tapStartX = null;
+  const SCROLL_TAP_THRESHOLD = 12;
 
   function activateRegionFromEvent(e){
     const point = _svgPointFromEvent(svg, e);
@@ -8673,8 +8683,24 @@ function _initSmartAnatomyHitTest(){
     openAnatomyRegion(regionId);
   }
 
+  svg.addEventListener('touchstart', function(e){
+    const t = e.touches && e.touches.length ? e.touches[0] : null;
+    _tapStartY = t ? t.clientY : null;
+    _tapStartX = t ? t.clientX : null;
+  }, {capture:true, passive:true});
+
+  svg.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'touch' || e.pointerType === 'pen'){
+      _tapStartY = e.clientY;
+      _tapStartX = e.clientX;
+    }
+  }, {capture:true, passive:true});
+
   svg.addEventListener('pointerup', function(e){
     if(typeof e.button === 'number' && e.button !== 0) return;
+    if((e.pointerType === 'touch' || e.pointerType === 'pen') && _tapStartY !== null){
+      if(Math.abs(e.clientY - _tapStartY) > SCROLL_TAP_THRESHOLD) return;
+    }
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, true);
@@ -8686,6 +8712,14 @@ function _initSmartAnatomyHitTest(){
   }, true);
 
   svg.addEventListener('touchend', function(e){
+    if(_tapStartY !== null){
+      const t = e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : null;
+      if(t && Math.abs(t.clientY - _tapStartY) > SCROLL_TAP_THRESHOLD){
+        _tapStartY = null;
+        return;
+      }
+    }
+    _tapStartY = null;
     lastPointerHandledAt = Date.now();
     activateRegionFromEvent(e);
   }, {capture:true, passive:false});
