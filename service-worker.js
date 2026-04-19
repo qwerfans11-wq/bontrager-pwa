@@ -68,11 +68,33 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Skip cross-origin requests
-  if (url.origin !== location.origin) {
+  // Allow GitHub user-attachments (anatomy images) through; skip all other cross-origin
+  const isGitHubAsset =
+    (url.hostname === 'github.com' && url.pathname.startsWith('/user-attachments/')) ||
+    url.hostname === 'objects.githubusercontent.com';
+
+  if (url.origin !== location.origin && !isGitHubAsset) {
     return;
   }
-  
+
+  // Cache-first strategy for GitHub anatomy images
+  if (isGitHubAsset) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache =>
+        cache.match(event.request).then(cached => {
+          if (cached) return cached;
+          return fetch(event.request).then(response => {
+            if (response && (response.status === 200 || response.type === 'opaque')) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          }).catch(() => new Response('', { status: 503, statusText: 'Offline' }));
+        })
+      )
+    );
+    return;
+  }
+
   // Network-first strategy for HTML documents
   if (request.headers.get('accept').includes('text/html')) {
     event.respondWith(

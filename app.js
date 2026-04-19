@@ -558,6 +558,53 @@ function _warmupOfflineImages(){
   });
 }
 
+let _anatomyImageWarmupStarted = false;
+function _warmupAnatomyImages(){
+  if(_anatomyImageWarmupStarted || !('caches' in window)) return;
+  _anatomyImageWarmupStarted = true;
+  const allUrls = [];
+  const seen = new Set();
+  for(const region of Object.values(ANATOMY_DATA)){
+    const imgs = Array.isArray(region.anatImages) ? region.anatImages : [];
+    for(const url of imgs){
+      if(url && !seen.has(url)){ seen.add(url); allUrls.push(url); }
+    }
+  }
+  if(!allUrls.length) return;
+
+  const warmOne = (url) => caches.open('bontrager-cache-v1').then(cache =>
+    cache.match(url).then(hit => {
+      if(hit) return;
+      return fetch(url, {mode:'cors', credentials:'omit'})
+        .then(r => { if(r && r.ok) return cache.put(url, r); })
+        .catch(()=>{});
+    })
+  ).catch(()=>{});
+
+  const batchSize = 2;
+  let index = 0;
+  const pump = () => {
+    const batch = allUrls.slice(index, index + batchSize);
+    index += batch.length;
+    if(!batch.length) return;
+    Promise.all(batch.map(warmOne)).finally(() => {
+      if(index < allUrls.length){
+        if(typeof requestIdleCallback === 'function'){
+          requestIdleCallback(pump, {timeout:2000});
+        } else {
+          setTimeout(pump, 250);
+        }
+      }
+    });
+  };
+
+  if(typeof requestIdleCallback === 'function'){
+    requestIdleCallback(pump, {timeout:4000});
+  } else {
+    setTimeout(pump, 1000);
+  }
+}
+
 
 // ══════════════════════════════════════════════
 // CLOSE CONFIRMATION WITH DUA
@@ -8855,6 +8902,7 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
+_warmupAnatomyImages();
 
 // Smart anatomy hit-testing + keyboard navigation.
 (function(){
