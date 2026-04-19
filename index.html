@@ -549,293 +549,95 @@
     <div class="anat-body-container">
       <div class="anat-tap-hint">🖐 اضغط على أي منطقة لعرض التشريح</div>
       <div class="anat-body-svg-wrap">
-        <svg id="anatomyBodySVG" viewBox="0 0 300 650" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive human skeleton body map">
+        <!-- 3D skeleton photo background -->
+        <img id="anatSkeletonImg"
+             src="https://github.com/user-attachments/assets/e4eee605-05d1-4088-9fa9-6eba32b039b1"
+             alt="Human Skeleton — Full Body Anatomy"
+             draggable="false" loading="eager"
+             onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='block'">
+        <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image unavailable offline</div>
+
+        <!-- Transparent clickable overlay — viewBox matches image aspect ratio (≈ 2:3) -->
+        <svg id="anatomyBodySVG" viewBox="0 0 1000 1500"
+             xmlns="http://www.w3.org/2000/svg"
+             role="img" aria-label="Interactive human skeleton body map">
 
           <!-- ── HEAD & NECK ── -->
           <g class="ab-zone skel-region" data-region="head_neck" onclick="openAnatomyRegion('head_neck')" role="button" aria-label="Head and Neck" tabindex="0">
-            <!-- Cranium -->
-            <path class="sk-b" d="M150 6 C126 6 104 22 104 44 C104 64 116 76 130 82 L150 85 L170 82 C184 76 196 64 196 44 C196 22 174 6 150 6 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Eye orbits (fill=none) -->
-            <ellipse cx="135" cy="50" rx="9" ry="7" fill="none" stroke="#c4a882" stroke-width="1"/>
-            <ellipse cx="165" cy="50" rx="9" ry="7" fill="none" stroke="#c4a882" stroke-width="1"/>
-            <!-- Zygomatic arches (fill=none) -->
-            <path d="M126 52 C118 52 110 58 110 64" fill="none" stroke="#c4a882" stroke-width="1"/>
-            <path d="M174 52 C182 52 190 58 190 64" fill="none" stroke="#c4a882" stroke-width="1"/>
-            <!-- Nasal bone -->
-            <path class="sk-b" d="M148 46 L148 62 L150 65 L152 62 L152 46 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Mandible -->
-            <path class="sk-b" d="M124 76 C118 82 116 92 118 100 L124 102 L150 105 L176 102 L182 100 C184 92 182 82 176 76 L168 74 L150 72 L132 74 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- C1–C7 vertebrae -->
-            <rect class="sk-b" x="142" y="104" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="115" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="126" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="137" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="148" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="159" width="16" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="142" y="170" width="16" height="8" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="150" y="40" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#5a3e1e">Head &amp; Neck</text>
-            <text class="skel-lbl" x="150" y="97" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">الرأس والرقبة</text>
+            <polygon class="ab-overlay" points="355,10 645,10 645,168 578,248 422,248 355,168"/>
+            <text class="ab-lbl" x="500" y="98" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Head &amp; Neck</text>
+            <text class="ab-lbl" x="500" y="138" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الرأس والرقبة</text>
           </g>
 
           <!-- ── SHOULDER ── -->
           <g class="ab-zone skel-region" data-region="shoulder" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder" tabindex="0">
-            <!-- Left clavicle (stroke-width=3.5, fill=none) -->
-            <path d="M150 183 C136 180 116 179 96 184 C88 186 82 183 78 181" fill="none" stroke="#c4a882" stroke-width="3.5"/>
-            <!-- Right clavicle (mirror) -->
-            <path d="M150 183 C164 180 184 179 204 184 C212 186 218 183 222 181" fill="none" stroke="#c4a882" stroke-width="3.5"/>
-            <!-- Left scapula -->
-            <path class="sk-b" d="M66 188 L94 188 L98 250 L70 246 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right scapula (mirror) -->
-            <path class="sk-b" d="M234 188 L206 188 L202 250 L230 246 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="74" y="222" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Shoulder</text>
-            <text class="skel-lbl" x="226" y="222" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">الكتف</text>
+            <polygon class="ab-overlay" points="62,238 938,238 918,335 572,362 428,362 82,335"/>
+            <text class="ab-lbl" x="156" y="288" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Shoulder</text>
+            <text class="ab-lbl" x="844" y="288" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الكتف</text>
           </g>
 
           <!-- ── THORAX ── -->
           <g class="ab-zone skel-region" data-region="thorax" onclick="openAnatomyRegion('thorax')" role="button" aria-label="Thorax" tabindex="0">
-            <!-- Sternum: manubrium wider top, narrow body, xiphoid tip -->
-            <path class="sk-b" d="M144 183 L156 183 L158 195 L155 255 L150 263 L145 255 L142 195 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- T1–T12 as small rounded rects -->
-            <rect class="sk-b" x="141" y="183" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="194" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="205" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="216" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="227" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="238" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="249" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="260" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="271" width="18" height="9" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="141" y="282" width="18" height="8" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- True ribs 1–7 left (fill=none, curving from T-verts to sternum) -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.5" d="M142 187 C124 187 108 196 108 206 C108 212 122 214 142 214"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.5" d="M142 198 C122 198 104 208 103 219 C103 226 118 228 142 228"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.4" d="M142 209 C120 209 100 220 100 232 C100 239 115 241 142 241"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.4" d="M142 220 C117 220 97 232 97 245 C97 252 113 254 142 254"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.3" d="M142 231 C116 231 96 244 97 258 C98 265 114 265 142 263"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.3" d="M142 242 C117 242 98 255 99 268 C100 274 116 274 142 263"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M142 253 C119 253 101 265 102 277 C103 282 117 281 142 263"/>
-            <!-- True ribs 1–7 right (mirror) -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.5" d="M158 187 C176 187 192 196 192 206 C192 212 178 214 158 214"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.5" d="M158 198 C178 198 196 208 197 219 C197 226 182 228 158 228"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.4" d="M158 209 C180 209 200 220 200 232 C200 239 185 241 158 241"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.4" d="M158 220 C183 220 203 232 203 245 C203 252 187 254 158 254"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.3" d="M158 231 C184 231 204 244 203 258 C202 265 186 265 158 263"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.3" d="M158 242 C183 242 202 255 201 268 C200 274 184 274 158 263"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M158 253 C181 253 199 265 198 277 C197 282 183 281 158 263"/>
-            <!-- False ribs 8–10 left -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M142 263 C124 265 110 272 108 280"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M142 271 C126 273 114 280 113 287"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.1" d="M142 279 C128 281 118 286 117 292"/>
-            <!-- False ribs 8–10 right -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M158 263 C176 265 190 272 192 280"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.2" d="M158 271 C174 273 186 280 187 287"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1.1" d="M158 279 C172 281 182 286 183 292"/>
-            <!-- Floating ribs 11–12 left -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.1" d="M142 285 C130 286 122 290 119 295"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1" d="M142 288 C132 289 125 293 122 298"/>
-            <!-- Floating ribs 11–12 right -->
-            <path fill="none" stroke="#c4a882" stroke-width="1.1" d="M158 285 C170 286 178 290 181 295"/>
-            <path fill="none" stroke="#c4a882" stroke-width="1" d="M158 288 C168 289 175 293 178 298"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="150" y="213" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Thorax</text>
-            <text class="skel-lbl" x="150" y="223" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">الصدر</text>
+            <polygon class="ab-overlay" points="248,268 752,268 722,578 278,578"/>
+            <text class="ab-lbl" x="500" y="410" text-anchor="middle" font-size="30" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Thorax</text>
+            <text class="ab-lbl" x="500" y="450" text-anchor="middle" font-size="24" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الصدر</text>
           </g>
 
-          <!-- ── UPPER ARM ── -->
+          <!-- ── UPPER ARM (both sides) ── -->
           <g class="ab-zone skel-region" data-region="upper_arm" onclick="openAnatomyRegion('upper_arm')" role="button" aria-label="Humerus and Elbow" tabindex="0">
-            <!-- Left humerus (banana-shaped filled path) -->
-            <path class="sk-b" d="M74 183 C68 183 64 188 63 194 L62 260 C62 275 64 285 68 292 L74 298 C77 298 82 296 85 290 L88 285 C90 278 90 265 88 248 L87 194 C87 188 83 183 77 183 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Left distal humerus ellipse (elbow) -->
-            <ellipse class="sk-b" cx="75" cy="295" rx="13" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Right humerus (mirror) -->
-            <path class="sk-b" d="M226 183 C232 183 236 188 237 194 L238 260 C238 275 236 285 232 292 L226 298 C223 298 218 296 215 290 L212 285 C210 278 210 265 212 248 L213 194 C213 188 217 183 223 183 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right distal humerus ellipse -->
-            <ellipse class="sk-b" cx="225" cy="295" rx="13" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="75" y="242" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Upper Arm</text>
-            <text class="skel-lbl" x="225" y="242" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">العضد</text>
+            <polygon class="ab-overlay" points="58,252 208,252 202,618 48,612"/>
+            <polygon class="ab-overlay" points="792,252 942,252 952,612 798,618"/>
+            <text class="ab-lbl" x="128" y="435" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Upper Arm</text>
+            <text class="ab-lbl" x="872" y="435" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">العضد</text>
           </g>
 
-          <!-- ── FOREARM & HAND ── -->
+          <!-- ── FOREARM & HAND (both sides) ── -->
           <g class="ab-zone skel-region" data-region="forearm_hand" onclick="openAnatomyRegion('forearm_hand')" role="button" aria-label="Forearm Wrist and Hand" tabindex="0">
-            <!-- Left radius (narrow, lateral) -->
-            <path class="sk-b" d="M78 302 C75 302 73 306 73 310 L74 382 C74 386 76 390 80 390 C84 390 86 386 86 382 L87 310 C87 306 85 302 82 302 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Left ulna (with olecranon tip at top) -->
-            <path class="sk-b" d="M66 298 C70 296 72 300 72 304 L70 382 C70 387 67 390 63 390 C59 390 57 387 57 382 L58 308 C58 304 62 298 66 298 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Left carpals ellipse cluster -->
-            <ellipse class="sk-b" cx="72" cy="393" rx="15" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Left metacarpals 1–5 -->
-            <rect class="sk-b" x="58" y="399" width="5" height="18" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="64" y="399" width="5" height="20" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="70" y="399" width="5" height="20" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="76" y="399" width="5" height="19" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="82" y="400" width="4" height="17" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Left proximal phalanges -->
-            <rect class="sk-b" x="58" y="419" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="64" y="421" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="70" y="421" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="76" y="420" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="82" y="419" width="4" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Left middle phalanges -->
-            <rect class="sk-b" x="64" y="432" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="70" y="432" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="76" y="431" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="82" y="430" width="4" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Left distal phalanges -->
-            <rect class="sk-b" x="58" y="430" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="64" y="442" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="70" y="442" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="76" y="441" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="82" y="439" width="4" height="6" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Right radius (mirror) -->
-            <path class="sk-b" d="M222 302 C225 302 227 306 227 310 L226 382 C226 386 224 390 220 390 C216 390 214 386 214 382 L213 310 C213 306 215 302 218 302 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right ulna (mirror) -->
-            <path class="sk-b" d="M234 298 C230 296 228 300 228 304 L230 382 C230 387 233 390 237 390 C241 390 243 387 243 382 L242 308 C242 304 238 298 234 298 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right carpals -->
-            <ellipse class="sk-b" cx="228" cy="393" rx="15" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Right metacarpals 1–5 (mirror) -->
-            <rect class="sk-b" x="214" y="399" width="4" height="17" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="219" y="399" width="5" height="19" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="225" y="399" width="5" height="20" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="231" y="399" width="5" height="20" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="237" y="399" width="5" height="18" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Right proximal phalanges -->
-            <rect class="sk-b" x="214" y="418" width="4" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="219" y="420" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="225" y="421" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="231" y="421" width="5" height="9" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="237" y="420" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Right middle phalanges -->
-            <rect class="sk-b" x="219" y="431" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="225" y="432" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="231" y="432" width="5" height="8" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="237" y="430" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Right distal phalanges -->
-            <rect class="sk-b" x="214" y="428" width="4" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="219" y="441" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="225" y="442" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="231" y="442" width="5" height="7" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="237" y="439" width="5" height="6" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="72" y="358" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Forearm</text>
-            <text class="skel-lbl" x="228" y="358" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Hand</text>
-            <text class="skel-lbl" x="72" y="432" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">الساعد والكف</text>
+            <polygon class="ab-overlay" points="12,605 202,605 235,968 0,960"/>
+            <polygon class="ab-overlay" points="798,605 988,605 1000,960 765,968"/>
+            <text class="ab-lbl" x="112" y="768" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Forearm</text>
+            <text class="ab-lbl" x="112" y="796" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">&amp; Hand</text>
+            <text class="ab-lbl" x="888" y="768" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الساعد</text>
+            <text class="ab-lbl" x="888" y="796" text-anchor="middle" font-size="18" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">والكف</text>
           </g>
 
-          <!-- ── ABDOMEN ── -->
+          <!-- ── ABDOMEN & PELVIS ── -->
           <g class="ab-zone skel-region" data-region="abdomen" onclick="openAnatomyRegion('abdomen')" role="button" aria-label="Abdomen and Pelvis" tabindex="0">
-            <!-- L1–L5 vertebrae -->
-            <rect class="sk-b" x="139" y="293" width="22" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <rect class="sk-b" x="139" y="305" width="22" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <rect class="sk-b" x="139" y="317" width="22" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <rect class="sk-b" x="139" y="329" width="22" height="10" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <rect class="sk-b" x="139" y="341" width="22" height="8" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Sacrum (triangular) -->
-            <path class="sk-b" d="M138 351 L162 351 L157 384 L143 384 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Coccyx (tiny wedge) -->
-            <path class="sk-b" d="M143 384 L157 384 L154 395 L146 395 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Iliac crests (curved outlines, fill=none) -->
-            <path fill="none" stroke="#c4a882" stroke-width="2" d="M150 297 C140 294 118 293 103 300 C96 304 94 312 95 320 L98 334 C100 342 104 350 108 356"/>
-            <path fill="none" stroke="#c4a882" stroke-width="2" d="M150 297 C160 294 182 293 197 300 C204 304 206 312 205 320 L202 334 C200 342 196 350 192 356"/>
-            <!-- Pubic symphysis -->
-            <rect class="sk-b" x="144" y="394" width="12" height="8" rx="2" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="150" y="325" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Abdomen</text>
-            <text class="skel-lbl" x="150" y="374" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">البطن والحوض</text>
+            <polygon class="ab-overlay" points="248,562 752,562 728,758 272,758"/>
+            <text class="ab-lbl" x="500" y="645" text-anchor="middle" font-size="28" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Abdomen</text>
+            <text class="ab-lbl" x="500" y="682" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">البطن والحوض</text>
           </g>
 
-          <!-- ── HIP & FEMUR ── -->
+          <!-- ── HIP & FEMUR (both sides) ── -->
           <g class="ab-zone skel-region" data-region="hip_femur" onclick="openAnatomyRegion('hip_femur')" role="button" aria-label="Hip and Femur" tabindex="0">
-            <!-- Left ilium arc -->
-            <path class="sk-b" d="M108 356 C115 360 120 365 122 370 L118 404" fill="none" stroke="#c4a882" stroke-width="2"/>
-            <!-- Left femoral head -->
-            <circle class="sk-b" cx="119" cy="404" r="10" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Left femur shaft (tapered) -->
-            <path class="sk-b" d="M112 414 C110 422 109 445 110 468 L112 498 C113 514 116 526 119 530 L122 526 C124 514 126 498 127 468 L128 445 C128 422 127 414 124 414 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right ilium arc (mirror) -->
-            <path class="sk-b" d="M192 356 C185 360 180 365 178 370 L182 404" fill="none" stroke="#c4a882" stroke-width="2"/>
-            <!-- Right femoral head -->
-            <circle class="sk-b" cx="181" cy="404" r="10" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right femur shaft (mirror) -->
-            <path class="sk-b" d="M188 414 C190 422 191 445 190 468 L188 498 C187 514 184 526 181 530 L178 526 C176 514 174 498 173 468 L172 445 C172 422 173 414 176 414 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="118" y="472" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Hip &amp; Femur</text>
-            <text class="skel-lbl" x="182" y="472" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">الفخذ</text>
+            <polygon class="ab-overlay" points="225,735 438,735 425,968 212,962"/>
+            <polygon class="ab-overlay" points="562,735 775,735 788,962 575,968"/>
+            <text class="ab-lbl" x="328" y="848" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Hip &amp; Femur</text>
+            <text class="ab-lbl" x="672" y="848" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الفخذ</text>
           </g>
 
-          <!-- ── KNEE & LEG ── -->
+          <!-- ── KNEE & LOWER LEG (both sides) ── -->
           <g class="ab-zone skel-region" data-region="knee_leg" onclick="openAnatomyRegion('knee_leg')" role="button" aria-label="Knee and Lower Leg" tabindex="0">
-            <!-- Left distal femur condyles ellipse -->
-            <ellipse class="sk-b" cx="119" cy="533" rx="14" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Left patella -->
-            <ellipse class="sk-b" cx="118" cy="527" rx="7" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Left tibia (wider top plateau, narrows to shaft) -->
-            <path class="sk-b" d="M109 540 C107 543 106 550 107 558 L108 614 C108 619 112 622 118 622 C124 622 128 619 128 614 L129 558 C129 550 128 543 127 540 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Left fibula (narrow) -->
-            <path class="sk-b" d="M105 546 C104 549 103 555 104 562 L105 612 C105 617 108 619 111 618 C114 617 115 613 115 608 L114 562 C113 555 111 549 109 546 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Right distal femur condyles ellipse -->
-            <ellipse class="sk-b" cx="181" cy="533" rx="14" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Right patella -->
-            <ellipse class="sk-b" cx="182" cy="527" rx="7" ry="5" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Right tibia (mirror) -->
-            <path class="sk-b" d="M191 540 C193 543 194 550 193 558 L192 614 C192 619 188 622 182 622 C176 622 172 619 172 614 L171 558 C171 550 172 543 173 540 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.5"/>
-            <!-- Right fibula (mirror) -->
-            <path class="sk-b" d="M195 546 C196 549 197 555 196 562 L195 612 C195 617 192 619 189 618 C186 617 185 613 185 608 L186 562 C187 555 189 549 191 546 Z" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.2"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="118" y="582" text-anchor="middle" font-family="sans-serif" font-size="6.5" fill="#5a3e1e">Knee &amp; Leg</text>
-            <text class="skel-lbl" x="182" y="582" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">الساق</text>
+            <polygon class="ab-overlay" points="205,960 425,960 408,1178 188,1172"/>
+            <polygon class="ab-overlay" points="575,960 795,960 812,1172 592,1178"/>
+            <text class="ab-lbl" x="312" y="1068" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Knee &amp; Leg</text>
+            <text class="ab-lbl" x="688" y="1068" text-anchor="middle" font-size="20" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">الركبة والساق</text>
           </g>
 
-          <!-- ── FOOT & ANKLE ── -->
+          <!-- ── FOOT & ANKLE (both sides) ── -->
           <g class="ab-zone skel-region" data-region="foot_ankle" onclick="openAnatomyRegion('foot_ankle')" role="button" aria-label="Foot and Ankle" tabindex="0">
-            <!-- Left calcaneus -->
-            <ellipse class="sk-b" cx="108" cy="628" rx="12" ry="8" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Left talus -->
-            <ellipse class="sk-b" cx="120" cy="624" rx="8" ry="6" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Left navicular + cuneiform block -->
-            <rect class="sk-b" x="117" y="620" width="12" height="5" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Left metatarsals 1–5 -->
-            <rect class="sk-b" x="96" y="630" width="5" height="12" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="102" y="629" width="5" height="13" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="108" y="629" width="5" height="13" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="114" y="630" width="5" height="12" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="120" y="631" width="4" height="11" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Left toe phalanges -->
-            <rect class="sk-b" x="96" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="102" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="108" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="114" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="120" y="644" width="4" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Right calcaneus (centered around x=192) -->
-            <ellipse class="sk-b" cx="192" cy="628" rx="12" ry="8" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Right talus -->
-            <ellipse class="sk-b" cx="180" cy="624" rx="8" ry="6" fill="#f0ebe0" stroke="#c4a882" stroke-width="1.3"/>
-            <!-- Right navicular + cuneiform block -->
-            <rect class="sk-b" x="171" y="620" width="12" height="5" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Right metatarsals 1–5 (mirror) -->
-            <rect class="sk-b" x="175" y="631" width="4" height="11" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="181" y="630" width="5" height="12" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="187" y="629" width="5" height="13" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="193" y="629" width="5" height="13" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <rect class="sk-b" x="199" y="630" width="5" height="12" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="1"/>
-            <!-- Right toe phalanges -->
-            <rect class="sk-b" x="175" y="644" width="4" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="181" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="187" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="193" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <rect class="sk-b" x="199" y="644" width="5" height="4" rx="1" fill="#f0ebe0" stroke="#c4a882" stroke-width="0.8"/>
-            <!-- Labels -->
-            <text class="skel-lbl" x="108" y="648" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">Foot</text>
-            <text class="skel-lbl" x="192" y="648" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#5a3e1e">القدم</text>
+            <polygon class="ab-overlay" points="158,1165 428,1165 468,1500 128,1500"/>
+            <polygon class="ab-overlay" points="572,1165 842,1165 872,1500 532,1500"/>
+            <text class="ab-lbl" x="300" y="1332" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">Foot &amp; Ankle</text>
+            <text class="ab-lbl" x="700" y="1332" text-anchor="middle" font-size="22" fill="white" stroke="rgba(0,0,0,.82)" stroke-width="5" paint-order="stroke">القدم والكاحل</text>
           </g>
 
-          <!-- ── SPINE (LAST — highest z-order, overlays everything) ── -->
+          <!-- ── SPINE (dashed overlay — highest z-order) ── -->
           <g class="ab-zone skel-region" data-region="spine" onclick="openAnatomyRegion('spine')" role="button" aria-label="Spine" tabindex="0">
-            <rect x="139" y="102" width="22" height="243" rx="6" fill="rgba(160,100,210,0.08)" stroke="rgba(160,100,210,0.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <text class="skel-lbl" x="150" y="256" text-anchor="middle" font-family="sans-serif" font-size="6" fill="rgba(140,60,200,0.9)">Spine</text>
-            <text class="skel-lbl" x="150" y="265" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="rgba(140,60,200,0.9)">العمود</text>
+            <rect class="ab-overlay ab-spine-overlay" x="452" y="232" width="96" height="530" rx="22"
+                  fill="rgba(160,100,210,0)" stroke="rgba(160,100,210,0)" stroke-width="2.5" stroke-dasharray="10,6"/>
+            <text class="ab-lbl" x="500" y="505" text-anchor="middle" font-size="22" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Spine</text>
+            <text class="ab-lbl" x="500" y="538" text-anchor="middle" font-size="18" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">العمود الفقري</text>
           </g>
         </svg>
       </div>

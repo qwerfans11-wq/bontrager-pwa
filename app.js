@@ -8304,7 +8304,9 @@ function buildAnatomyDetail(regionId){
       </div>
     </div>
 
-    ${r.anatSVG ? `<div class="anat-diagram-wrap" aria-label="Anatomical diagram">${r.anatSVG}</div>` : ''}
+    ${r.anatImage
+      ? `<div class="anat-diagram-wrap" aria-label="Anatomical image"><img src="${r.anatImage}" alt="${r.name} anatomy" loading="lazy"/></div>`
+      : (r.anatSVG ? `<div class="anat-diagram-wrap" aria-label="Anatomical diagram">${r.anatSVG}</div>` : '')}
 
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
@@ -8360,4 +8362,19 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
+
+// Keyboard navigation for anatomy SVG overlay regions (Enter / Space = click)
+(function(){
+  var svg = document.getElementById('anatomyBodySVG');
+  if(!svg) return;
+  svg.addEventListener('keydown', function(e){
+    if(e.key==='Enter' || e.key===' '){
+      var el = e.target && e.target.closest ? e.target.closest('[data-region]') : null;
+      if(el && el.dataset && el.dataset.region){
+        e.preventDefault();
+        openAnatomyRegion(el.dataset.region);
+      }
+    }
+  });
+}());
 
