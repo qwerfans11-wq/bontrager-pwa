@@ -1542,7 +1542,7 @@ html, body {
 .skel-region:hover .ab-overlay{fill:rgba(255,195,0,.18);stroke:rgba(200,130,0,.62);stroke-width:2.5}
 .skel-region:active .ab-overlay{fill:rgba(255,195,0,.34)}
 /* Spine overlay special colour */
-.skel-region:hover .ab-spine-overlay{fill:rgba(160,100,210,.15);stroke:rgba(160,100,210,.80);stroke-dasharray:10,6}
+.skel-region:hover .ab-spine-overlay{fill:rgba(160,100,210,.15);stroke:rgba(160,100,210,.80);stroke-width:2.5;stroke-dasharray:10,6}
 /* Hover labels — hidden by default, shown on hover */
 .ab-lbl{pointer-events:none;opacity:0;transition:opacity .18s;font-family:Inter,-apple-system,sans-serif;font-weight:800}
 .skel-region:hover .ab-lbl{opacity:1}
