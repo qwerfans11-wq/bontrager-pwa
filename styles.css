@@ -1536,4 +1536,12 @@ html, body {
 .anat-goto-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;color:var(--accent);font-size:calc(13px * var(--font-scale));font-weight:700;width:100%;margin-top:12px;transition:background .15s}
 .anat-goto-btn:hover{background:var(--accent);color:#fff}
 
+/* ── Anatomy skeleton & diagram additions ── */
+.anat-diagram-wrap{max-width:100%;margin:0 auto 14px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#f8f7f5}
+.anat-diagram-wrap svg{display:block;width:100%;height:auto}
+.skel-region{cursor:pointer;transition:filter .15s}
+.skel-region:hover{filter:drop-shadow(0 0 6px rgba(210,140,0,.7))}
+.skel-region:hover .sk-b{fill:#ffe088!important}
+.skel-region:hover .skel-lbl{fill:#7a3800!important}
+
 
