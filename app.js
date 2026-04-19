@@ -2470,7 +2470,7 @@ function navTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy — علم التشريح','anatomy-detail':'Anatomy Detail'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -2485,6 +2485,8 @@ function navTo(id){
   }
   // Build dev manager
   if(id==='dev-manager') buildDevManager();
+  // Update anatomy offline status on first visit
+  if(id==='anatomy') setTimeout(_updateAnatomyOfflineIndicator, 200);
   window.scrollTo(0,0);
   // refresh stats on home
   if(id==='home') updateStats();
@@ -8111,8 +8113,7 @@ const ANATOMY_DATA = {
     positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
     chapterKey:'chest',
     anatImages:[
-      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4',
-      'https://github.com/user-attachments/assets/f409b0ea-b52f-410e-85c4-0c171f1f8e02'
+      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4'
     ]
   },
   thorax_left:{
@@ -8135,7 +8136,6 @@ const ANATOMY_DATA = {
     positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
     chapterKey:'chest',
     anatImages:[
-      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4',
       'https://github.com/user-attachments/assets/f409b0ea-b52f-410e-85c4-0c171f1f8e02'
     ]
   },
@@ -8356,6 +8356,128 @@ const ANATOMY_DATA = {
     ]
   }
 };
+
+// ── Anatomy image offline cache helpers ──────────────────────────────────────
+// Collect all unique anatomy image URLs from ANATOMY_DATA
+function _getAnatomyImageURLs(){
+  const seen = new Set();
+  const urls = [];
+  // Skeleton background
+  const skeletonSrc = 'https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19';
+  seen.add(skeletonSrc);
+  urls.push(skeletonSrc);
+  for(const r of Object.values(ANATOMY_DATA)){
+    const imgs = Array.isArray(r.anatImages) ? r.anatImages : (r.anatImage ? [r.anatImage] : []);
+    for(const u of imgs){
+      if(u && !seen.has(u)){ seen.add(u); urls.push(u); }
+    }
+  }
+  return urls;
+}
+
+// Pre-warm anatomy images via fetch (browser caches the responses including opaque CDN images)
+function _warmupAnatomyImages(){
+  if(!navigator.onLine) return;
+  const urls = _getAnatomyImageURLs();
+  let i = 0;
+  const batchSize = 2;
+  const pump = () => {
+    const batch = urls.slice(i, i + batchSize);
+    i += batch.length;
+    if(!batch.length) return;
+    batch.forEach(url => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.crossOrigin = 'anonymous';
+      img.onerror = () => {};
+      img.src = url;
+    });
+    if(i < urls.length){
+      if(typeof requestIdleCallback === 'function'){
+        requestIdleCallback(pump, {timeout:2000});
+      } else {
+        setTimeout(pump, 300);
+      }
+    }
+  };
+  if(typeof requestIdleCallback === 'function'){
+    requestIdleCallback(pump, {timeout:3000});
+  } else {
+    setTimeout(pump, 1000);
+  }
+}
+
+// Check how many anatomy images are cached (via SW message channel)
+function _checkAnatomyCacheStatus(cb){
+  if(!('serviceWorker' in navigator) || !navigator.serviceWorker.controller){
+    cb(null); return;
+  }
+  const mc = new MessageChannel();
+  mc.port1.onmessage = e => { if(e.data && e.data.type === 'ANATOMY_CACHE_STATUS') cb(e.data); };
+  navigator.serviceWorker.controller.postMessage({type:'CHECK_ANATOMY_CACHE'}, [mc.port2]);
+  setTimeout(() => cb(null), 3000);
+}
+
+// Download all anatomy images for offline use via SW
+function downloadAnatomyOffline(){
+  const btn = document.getElementById('anatOfflineBtn');
+  const status = document.getElementById('anatOfflineStatus');
+  if(btn) btn.disabled = true;
+  if(status) status.textContent = 'Downloading… 0%';
+  if(!('serviceWorker' in navigator) || !navigator.serviceWorker.controller){
+    // Fallback: just preload images directly
+    const urls = _getAnatomyImageURLs();
+    let done = 0;
+    urls.forEach(url => {
+      const img = new Image();
+      img.onload = img.onerror = () => {
+        done++;
+        if(status) status.textContent = `Downloading… ${Math.round(done/urls.length*100)}%`;
+        if(done === urls.length && status) status.textContent = '✅ All images saved for offline use!';
+      };
+      img.src = url;
+    });
+    return;
+  }
+  const mc = new MessageChannel();
+  const total = _getAnatomyImageURLs().length;
+  mc.port1.onmessage = e => {
+    if(!e.data) return;
+    if(e.data.type === 'ANATOMY_CACHE_PROGRESS'){
+      const pct = Math.round(e.data.done / (e.data.total||total) * 100);
+      if(status) status.textContent = `Downloading… ${pct}%`;
+    }
+    if(e.data.type === 'ANATOMY_CACHE_DONE'){
+      if(status) status.textContent = '✅ All anatomy images saved for offline use!';
+      if(btn){ btn.disabled = false; btn.textContent = '✅ Offline Ready'; }
+    }
+  };
+  navigator.serviceWorker.controller.postMessage({type:'CACHE_ANATOMY_IMAGES'}, [mc.port2]);
+}
+
+// Update the offline status indicator in the anatomy page
+function _updateAnatomyOfflineIndicator(){
+  const ind = document.getElementById('anatOfflineIndicator');
+  if(!ind) return;
+  if(!navigator.onLine){
+    ind.textContent = '📵 Offline — images served from cache';
+    ind.className = 'anat-offline-badge offline';
+    return;
+  }
+  _checkAnatomyCacheStatus(data => {
+    if(!data){ ind.style.display='none'; return; }
+    if(data.cached >= data.total){
+      ind.textContent = '✅ Fully available offline';
+      ind.className = 'anat-offline-badge ready';
+    } else if(data.cached > 0){
+      ind.textContent = `⬇️ ${data.cached}/${data.total} images cached`;
+      ind.className = 'anat-offline-badge partial';
+    } else {
+      ind.textContent = '⚠️ Not cached offline yet';
+      ind.className = 'anat-offline-badge none';
+    }
+  });
+}
 
 const ANATOMY_SMART_HOTSPOTS = {
   head_neck:[
@@ -8631,8 +8753,13 @@ function _buildAnatomyGeometry(svg){
     const regionId = regionEl.dataset.region;
     if(!regionId) return;
     const shapes = [];
-    regionEl.querySelectorAll('polygon.ab-overlay, rect.ab-overlay').forEach(shapeEl=>{
+    regionEl.querySelectorAll('polygon.ab-overlay, rect.ab-overlay, path.ab-overlay').forEach(shapeEl=>{
       const tag = shapeEl.tagName.toLowerCase();
+      if(tag === 'path'){
+        // Store reference to DOM element; hit-test via native isPointInFill
+        shapes.push({type:'path', el:shapeEl});
+        return;
+      }
       if(tag === 'polygon'){
         const pts = _parsePolygonPoints(shapeEl.getAttribute('points'));
         if(pts.length >= 3) shapes.push({type:'polygon', points:pts});
@@ -8656,6 +8783,22 @@ function _anatomyRegionScore(regionId, point, geometry){
   let edgeDistance = Number.POSITIVE_INFINITY;
   const shapes = geometry[regionId] || [];
   shapes.forEach(shape=>{
+    if(shape.type === 'path'){
+      // Use native SVG hit-testing — most accurate for curved anatomical paths
+      try {
+        const svgEl = shape.el.ownerSVGElement;
+        if(svgEl && typeof shape.el.isPointInFill === 'function'){
+          const pt = svgEl.createSVGPoint();
+          pt.x = point.x;
+          pt.y = point.y;
+          if(shape.el.isPointInFill(pt)){
+            inside = true;
+            edgeDistance = 0;
+          }
+        }
+      } catch(e){}
+      return;
+    }
     if(shape.type === 'polygon'){
       if(_pointInPolygon(point, shape.points)) inside = true;
       const d = _distanceToPolygon(point, shape.points);
@@ -8920,6 +9063,12 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
+// Pre-cache anatomy images in background for offline use
+if(typeof requestIdleCallback === 'function'){
+  requestIdleCallback(() => _warmupAnatomyImages(), {timeout:5000});
+} else {
+  setTimeout(_warmupAnatomyImages, 2000);
+}
 
 // Smart anatomy hit-testing + keyboard navigation.
 (function(){
