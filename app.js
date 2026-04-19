@@ -8133,7 +8133,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Bowel obstruction (air-fluid levels), pneumoperitoneum (free air under diaphragm), kidney/ureteral calculi (KUB), ascites, ileus, volvulus, intussusception, appendicitis.',
     kVpRange:'70–85 kVp',
     positioning:'Supine preferred. Erect or lateral decubitus for free air/fluid. Minimum 5–20 min in decubitus position before exposure.',
-    chapterKey:'abdomen'
+    chapterKey:'abdomen',
+    anatImages:[
+      'https://github.com/user-attachments/assets/7061ada0-45ed-4db2-b01d-41785ac55a27'
+    ]
   },
   spine:{
     name:'Vertebral Column (Spine)',arabicName:'العمود الفقري',icon:'🦴',
@@ -8269,7 +8272,10 @@ const ANATOMY_DATA = {
     clinicalIndications:'Tibial plateau fractures, femoral condyle fractures, patellar fractures/dislocations, ligament/meniscal tears, Osgood-Schlatter (tibial tuberosity apophysitis), tibia/fibula shaft fractures, ankle fractures (bimalleolar, trimalleolar), Maisonneuve.',
     kVpRange:'65–80 kVp (knee), 60–75 kVp (ankle/leg)',
     positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel view. Horizontal beam for trauma non-ambulatory patients.',
-    chapterKey:'lower_limb'
+    chapterKey:'lower_limb',
+    anatImages:[
+      'https://github.com/user-attachments/assets/ba1795ad-c8bd-4169-9a61-a0b9d5b24c0b'
+    ]
   },
   foot_ankle:{
     name:'Foot & Ankle',arabicName:'القدم والكاحل',icon:'🦶',
