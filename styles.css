@@ -1532,6 +1532,15 @@ html, body {
 .anat-kvp-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--c-eval-bg);border:1px solid var(--c-eval-border);color:var(--amber);font-size:calc(12px * var(--font-scale));font-weight:700}
 .anat-goto-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;color:var(--accent);font-size:calc(13px * var(--font-scale));font-weight:700;width:100%;margin-top:12px;transition:background .15s}
 .anat-goto-btn:hover{background:var(--accent);color:#fff}
+.anat-pos-subch{margin-bottom:14px}
+.anat-pos-subch:last-child{margin-bottom:0}
+.anat-pos-subch-name{font-size:calc(11px * var(--font-scale));font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;padding:4px 0 6px;display:flex;align-items:center;gap:5px}
+.anat-pos-subch-count{font-weight:400;opacity:.65}
+.anat-pos-list{display:flex;flex-direction:column;gap:3px}
+.anat-pos-card{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);text-align:left;width:100%;transition:background .12s}
+.anat-pos-card:hover,.anat-pos-card:active{background:var(--bg3)}
+.anat-pos-card-name{flex:1;font-size:calc(12px * var(--font-scale));font-weight:500;line-height:1.35}
+.anat-pos-card-chevron{color:var(--text3);flex-shrink:0}
 
 /* ── Anatomy skeleton & diagram additions ── */
 .anat-diagram-wrap{max-width:100%;margin:0 auto 14px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#f8f7f5}

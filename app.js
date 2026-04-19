@@ -8088,6 +8088,7 @@ const ANATOMY_DATA = {
     kVpRange:'70–80 kVp',
     positioning:'Patient supine or seated erect. Precise angulation critical for each projection. Immobilisation recommended.',
     chapterKey:null,
+    subchapterRefs:[],
     anatImages:[
       'https://github.com/user-attachments/assets/a29241d0-35aa-40c4-9f10-7fbee68a8a90'
     ]
@@ -8111,6 +8112,7 @@ const ANATOMY_DATA = {
     kVpRange:'65–80 kVp',
     positioning:'Erect preferred for routine. Horizontal beam lateral for ALL trauma — do NOT flex, extend, or rotate neck before all 7 cervical vertebrae are demonstrated.',
     chapterKey:'spine',
+    subchapterRefs:[{chId:'spine',scId:'cervical'}],
     anatImages:[
       'https://github.com/user-attachments/assets/efc22033-8e60-49f0-aeb6-91b5ef3f62fc'
     ]
@@ -8130,8 +8132,10 @@ const ANATOMY_DATA = {
     kVpRange:'65–75 kVp',
     positioning:'Erect or supine. For AC joints with weights, patient must stand. AC joint comparison views required. Anode-heel effect: use thicker end toward anode.',
     chapterKey:'upper_limb',
+    subchapterRefs:[{chId:'upper_limb',scId:'humerus_shoulder'},{chId:'bony_thorax',scId:'sc_joints'}],
     anatImages:[
-      'https://github.com/user-attachments/assets/e089ff67-05e5-4870-8f3e-7a9724cbdec5'
+      'https://github.com/user-attachments/assets/e089ff67-05e5-4870-8f3e-7a9724cbdec5',
+      'https://github.com/user-attachments/assets/eb54dce0-51b6-4afc-a537-c26d4561d594'
     ]
   },
   sternum_ribcage:{
@@ -8153,8 +8157,10 @@ const ANATOMY_DATA = {
     kVpRange:'110–125 kVp (chest views), 75–85 kVp (ribs above diaphragm), 80–90 kVp (ribs below diaphragm)',
     positioning:'PA erect for chest; obliques for rib detail. Full expiration for ribs below diaphragm (moves diaphragm up). Inspiration for ribs above diaphragm.',
     chapterKey:'bony_thorax',
+    subchapterRefs:[{chId:'bony_thorax',scId:'sternum'},{chId:'bony_thorax',scId:'sc_joints'},{chId:'bony_thorax',scId:'ribs'}],
     anatImages:[
-      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4'
+      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4',
+      'https://github.com/user-attachments/assets/62eabaa2-ae32-46ca-81b9-8e701c99babb'
     ]
   },
   thoracolumbar_spine:{
@@ -8176,8 +8182,9 @@ const ANATOMY_DATA = {
     kVpRange:'75–90 kVp (thoracic), 80–95 kVp (lumbar), 70–80 kVp (sacrum/coccyx)',
     positioning:'Erect preferred for scoliosis/functional. Supine for detailed vertebral views. Flex knees for lumbar AP (reduces lordosis, opens disc spaces). Lateral — collimate to spine.',
     chapterKey:'spine',
+    subchapterRefs:[{chId:'spine',scId:'thoracic'},{chId:'spine',scId:'lumbar'},{chId:'spine',scId:'scoliosis'},{chId:'spine',scId:'sacrum_coccyx'}],
     anatImages:[
-      'https://github.com/user-attachments/assets/efc22033-8e60-49f0-aeb6-91b5ef3f62fc'
+      'https://github.com/user-attachments/assets/8374214d-a692-4c34-b20b-109465af7b75'
     ]
   },
   humerus:{
@@ -8199,6 +8206,7 @@ const ANATOMY_DATA = {
     kVpRange:'60–70 kVp',
     positioning:'Erect preferred. Include both joints for shaft views (2 IRs may be needed). Transthoracic or horizontal beam for trauma. DO NOT externally rotate if fracture/dislocation suspected.',
     chapterKey:'upper_limb',
+    subchapterRefs:[{chId:'upper_limb',scId:'humerus_shoulder'}],
     anatImages:[
       'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
     ]
@@ -8222,6 +8230,7 @@ const ANATOMY_DATA = {
     kVpRange:'60–70 kVp',
     positioning:'Patient seated at end of table, arm resting on IR. AP with full elbow extension and supination. Elbow at exactly 90° for true lateral.',
     chapterKey:'upper_limb',
+    subchapterRefs:[{chId:'upper_limb',scId:'forearm'}],
     anatImages:[
       'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28'
     ]
@@ -8245,6 +8254,7 @@ const ANATOMY_DATA = {
     kVpRange:'55–65 kVp (hand/fingers), 60–70 kVp (wrist)',
     positioning:'Patient seated at end of table. PA for hand (minimises OID). Ulnar deviation for scaphoid. PA oblique on 45° foam wedge.',
     chapterKey:'upper_limb',
+    subchapterRefs:[{chId:'upper_limb',scId:'fingers_thumb'},{chId:'upper_limb',scId:'hand'}],
     anatImages:[
       'https://github.com/user-attachments/assets/c2a42a2b-20fb-486f-8dcd-bb199f714819'
     ]
@@ -8268,6 +8278,7 @@ const ANATOMY_DATA = {
     kVpRange:'70–85 kVp',
     positioning:'AP supine standard. DO NOT rotate or abduct injured leg without physician approval. Danelius-Miller: uninjured leg elevated, injured leg extended, CR horizontal.',
     chapterKey:'lower_limb',
+    subchapterRefs:[{chId:'lower_limb',scId:'hip'},{chId:'spine',scId:'sacroiliac'}],
     anatImages:[
       'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c'
     ]
@@ -8291,6 +8302,7 @@ const ANATOMY_DATA = {
     kVpRange:'75–85 kVp',
     positioning:'Include both joints for shaft views. Internal rotation 15° for true AP of femoral neck. Horizontal beam lateral for non-ambulatory. DO NOT abduct femur if fracture/dislocation suspected.',
     chapterKey:'lower_limb',
+    subchapterRefs:[{chId:'lower_limb',scId:'hip'}],
     anatImages:[
       'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c'
     ]
@@ -8314,6 +8326,7 @@ const ANATOMY_DATA = {
     kVpRange:'65–80 kVp',
     positioning:'Supine AP. 90° flexion for true lateral. PA before any flexion if fracture suspected. Horizontal beam for trauma or non-ambulatory.',
     chapterKey:'lower_limb',
+    subchapterRefs:[{chId:'lower_limb',scId:'leg'}],
     anatImages:[
       'https://github.com/user-attachments/assets/1980cde7-e841-4d94-868d-72d2afe30fad'
     ]
@@ -8337,6 +8350,7 @@ const ANATOMY_DATA = {
     kVpRange:'60–75 kVp',
     positioning:'Supine for non-weight-bearing. Both joints included for shaft views. Mortise view: 15–20° internal rotation. Standing/weight-bearing for functional ankle assessment.',
     chapterKey:'lower_limb',
+    subchapterRefs:[{chId:'lower_limb',scId:'leg'}],
     anatImages:[
       'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
     ]
@@ -8360,6 +8374,7 @@ const ANATOMY_DATA = {
     kVpRange:'50–65 kVp (toes/foot), 60–70 kVp (calcaneus)',
     positioning:'Supine or seated for non-weight-bearing. Standing for weight-bearing. Böhler angle: 20–40° normal — measure on lateral calcaneus view.',
     chapterKey:'lower_limb',
+    subchapterRefs:[{chId:'lower_limb',scId:'toes'},{chId:'lower_limb',scId:'foot'}],
     anatImages:[
       'https://github.com/user-attachments/assets/90759fa9-df11-4f2b-85e6-8b6fbff09763'
     ]
@@ -9001,6 +9016,23 @@ function openAnatomyRegion(regionId){
   navTo('anatomy-detail');
 }
 
+function openAnatomyPos(chId, scId, posIdx){
+  const ch = BOOK[chId];
+  if(!ch) return;
+  let positions;
+  if(scId && ch.subchapters){
+    const sc = ch.subchapters[scId];
+    if(!sc) return;
+    positions = sc.positions;
+  } else if(ch.positions){
+    positions = ch.positions;
+  }
+  if(!positions) return;
+  const pos = positions[posIdx];
+  if(!pos) return;
+  openPos(pos, chId, scId||null, posIdx);
+}
+
 function buildAnatomyDetail(regionId){
   const r = ANATOMY_DATA[regionId];
   if(!r) return;
@@ -9067,6 +9099,33 @@ function buildAnatomyDetail(regionId){
         <div class="anat-info-val">${r.clinicalIndications}</div>
       </div>
     </div>
+
+    ${(()=>{
+      const refs = r.subchapterRefs || [];
+      if(!refs.length) return '';
+      let sectionsHTML = '';
+      for(const {chId,scId} of refs){
+        const ch = BOOK[chId];
+        if(!ch) continue;
+        let sc, positions;
+        if(scId && ch.subchapters){
+          sc = ch.subchapters[scId];
+          if(!sc) continue;
+          positions = sc.positions;
+        } else if(ch.positions){
+          sc = {name:ch.name, icon:ch.icon||'📋'};
+          positions = ch.positions;
+        }
+        if(!positions || !positions.length) continue;
+        const posCardsHTML = positions.map((pos,idx)=>{
+          const isRoutine = (pos.type||'routine')==='routine';
+          return `<button class="anat-pos-card" onclick="openAnatomyPos('${esc(chId)}','${esc(scId||'')}',${idx})"><span class="dot dot-${isRoutine?'r':'s'}" style="flex-shrink:0"></span><span class="anat-pos-card-name">${esc(pos.name)}</span><svg class="anat-pos-card-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+        }).join('');
+        sectionsHTML += `<div class="anat-pos-subch"><div class="anat-pos-subch-name">${sc.icon||'📋'} ${esc(sc.name)} <span class="anat-pos-subch-count">(${positions.length})</span></div><div class="anat-pos-list">${posCardsHTML}</div></div>`;
+      }
+      if(!sectionsHTML) return '';
+      return `<div class="anat-detail-section"><div class="anat-detail-section-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Radiographic Positions — المناظر التصويرية</div><div class="anat-detail-section-body">${sectionsHTML}</div></div>`;
+    })()}
 
     ${chName ? `<button class="anat-goto-btn" onclick="navTo('learn-chapters')">
       <span>${chIcon} Go to ${chName} chapter in Section 1 — Learn</span>
