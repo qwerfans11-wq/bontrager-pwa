@@ -1497,7 +1497,7 @@ html, body {
 .anat-intro{padding:12px 16px;font-size:calc(13px * var(--font-scale));color:var(--text2);line-height:1.6;border-radius:var(--radius);background:var(--accent-bg);border:1px solid var(--accent);margin-bottom:16px}
 .anat-tap-hint{text-align:center;font-size:calc(12px * var(--font-scale));color:var(--text3);margin-bottom:10px;letter-spacing:.01em}
 .anat-body-container{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
-.anat-body-svg-wrap{width:100%;max-width:360px;padding:0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);position:relative;overflow:hidden}
+.anat-body-svg-wrap{width:100%;max-width:360px;padding:0;background:var(--bg);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);position:relative;overflow:hidden}
 .anat-body-svg-wrap > img{width:100%;height:auto;display:block;border-radius:var(--radius)}
 #anatomyBodySVG{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
 #anatomyBodySVG .ab-zone{cursor:pointer}
@@ -1518,8 +1518,6 @@ html, body {
 .anat-detail-icon{font-size:40px;flex-shrink:0}
 .anat-detail-title{font-size:calc(20px * var(--font-scale));font-weight:800;color:var(--text);line-height:1.2}
 .anat-detail-ar{font-size:calc(15px * var(--font-scale));color:var(--text2);direction:rtl;margin-top:3px}
-.anat-overview{margin-bottom:16px;padding:14px 16px;background:linear-gradient(135deg,var(--accent-bg),var(--bg));border-radius:var(--radius);border-left:3px solid var(--accent)}
-.anat-overview-text{margin:0;font-size:calc(13px * var(--font-scale));color:var(--text);line-height:1.7}
 .anat-detail-section{margin-bottom:16px;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden}
 .anat-detail-section-title{padding:11px 15px;background:var(--bg3);font-size:calc(12px * var(--font-scale));font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
 .anat-detail-section-body{padding:12px 15px;background:var(--bg)}
@@ -1534,51 +1532,17 @@ html, body {
 .anat-kvp-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--c-eval-bg);border:1px solid var(--c-eval-border);color:var(--amber);font-size:calc(12px * var(--font-scale));font-weight:700}
 .anat-goto-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:var(--accent-bg);border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;color:var(--accent);font-size:calc(13px * var(--font-scale));font-weight:700;width:100%;margin-top:12px;transition:background .15s}
 .anat-goto-btn:hover{background:var(--accent);color:#fff}
-.anat-pos-subch{margin-bottom:14px}
-.anat-pos-subch:last-child{margin-bottom:0}
-.anat-pos-subch-name{font-size:calc(11px * var(--font-scale));font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;padding:4px 0 6px;display:flex;align-items:center;gap:5px}
-.anat-pos-subch-count{font-weight:400;opacity:.65}
-.anat-pos-list{display:flex;flex-direction:column;gap:3px}
-.anat-pos-card{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);text-align:left;width:100%;transition:background .12s}
-.anat-pos-card:hover,.anat-pos-card:active{background:var(--bg3)}
-.anat-pos-card-name{flex:1;font-size:calc(12px * var(--font-scale));font-weight:500;line-height:1.35}
-.anat-pos-card-chevron{color:var(--text3);flex-shrink:0}
 
 /* ── Anatomy skeleton & diagram additions ── */
 .anat-diagram-wrap{max-width:100%;margin:0 auto 14px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#f8f7f5}
 .anat-diagram-wrap svg,.anat-diagram-wrap img{display:block;width:100%;height:auto}
-/* Transparent clickable overlay polygons — color mask system */
+/* Transparent clickable overlay polygons */
 .ab-overlay{fill:transparent;stroke:transparent;stroke-width:0;transition:fill .18s,stroke .18s}
 .skel-region{cursor:pointer}
-/* Per-region hover colors matching the color mask image */
-[data-region="skull"]:hover .ab-overlay{fill:rgba(0,230,240,.28);stroke:rgba(0,200,220,.85);stroke-width:2.5}
-[data-region="skull"]:active .ab-overlay{fill:rgba(0,230,240,.50)}
-[data-region="cervical_spine"]:hover .ab-overlay{fill:rgba(220,40,40,.28);stroke:rgba(200,20,20,.85);stroke-width:2.5}
-[data-region="cervical_spine"]:active .ab-overlay{fill:rgba(220,40,40,.50)}
-[data-region="clavicles"]:hover .ab-overlay{fill:rgba(255,245,0,.30);stroke:rgba(210,200,0,.90);stroke-width:2.5}
-[data-region="clavicles"]:active .ab-overlay{fill:rgba(255,245,0,.55)}
-[data-region="sternum_ribcage"]:hover .ab-overlay{fill:rgba(255,160,185,.28);stroke:rgba(230,110,140,.80);stroke-width:2.5}
-[data-region="sternum_ribcage"]:active .ab-overlay{fill:rgba(255,160,185,.50)}
-[data-region="thoracolumbar_spine"]:hover .ab-overlay{fill:rgba(255,20,20,.22);stroke:rgba(220,0,0,.88);stroke-width:2.5;stroke-dasharray:8,5}
-[data-region="thoracolumbar_spine"]:active .ab-overlay{fill:rgba(255,20,20,.44)}
-[data-region="humerus"]:hover .ab-overlay{fill:rgba(30,210,60,.26);stroke:rgba(20,170,40,.82);stroke-width:2.5}
-[data-region="humerus"]:active .ab-overlay{fill:rgba(30,210,60,.48)}
-[data-region="radius_ulna"]:hover .ab-overlay{fill:rgba(255,130,0,.26);stroke:rgba(220,100,0,.82);stroke-width:2.5}
-[data-region="radius_ulna"]:active .ab-overlay{fill:rgba(255,130,0,.48)}
-[data-region="hands"]:hover .ab-overlay{fill:rgba(0,180,175,.28);stroke:rgba(0,150,145,.85);stroke-width:2.5}
-[data-region="hands"]:active .ab-overlay{fill:rgba(0,180,175,.52)}
-[data-region="shoulder"]:hover .ab-overlay{fill:rgba(255,165,0,.28);stroke:rgba(220,140,0,.85);stroke-width:2.5}
-[data-region="shoulder"]:active .ab-overlay{fill:rgba(255,165,0,.52)}
-[data-region="pelvis"]:hover .ab-overlay{fill:rgba(148,40,200,.26);stroke:rgba(120,20,180,.82);stroke-width:2.5}
-[data-region="pelvis"]:active .ab-overlay{fill:rgba(148,40,200,.48)}
-[data-region="femur"]:hover .ab-overlay{fill:rgba(155,78,40,.30);stroke:rgba(125,58,20,.82);stroke-width:2.5}
-[data-region="femur"]:active .ab-overlay{fill:rgba(155,78,40,.55)}
-[data-region="patella"]:hover .ab-overlay{fill:rgba(218,168,0,.32);stroke:rgba(185,140,0,.88);stroke-width:2.5}
-[data-region="patella"]:active .ab-overlay{fill:rgba(218,168,0,.58)}
-[data-region="tibia_fibula"]:hover .ab-overlay{fill:rgba(100,235,0,.26);stroke:rgba(75,200,0,.82);stroke-width:2.5}
-[data-region="tibia_fibula"]:active .ab-overlay{fill:rgba(100,235,0,.48)}
-[data-region="feet"]:hover .ab-overlay{fill:rgba(40,40,210,.26);stroke:rgba(20,20,180,.82);stroke-width:2.5}
-[data-region="feet"]:active .ab-overlay{fill:rgba(40,40,210,.48)}
+.skel-region:hover .ab-overlay{fill:rgba(255,195,0,.18);stroke:rgba(200,130,0,.62);stroke-width:2.5}
+.skel-region:active .ab-overlay{fill:rgba(255,195,0,.34)}
+/* Spine overlay special colour */
+.skel-region:hover .ab-spine-overlay{fill:rgba(160,100,210,.15);stroke:rgba(160,100,210,.80);stroke-dasharray:10,6}
 /* Hover labels — hidden by default, shown on hover */
 .ab-lbl{pointer-events:none;opacity:0;transition:opacity .18s;font-family:Inter,-apple-system,sans-serif;font-weight:800}
 .skel-region:hover .ab-lbl{opacity:1}
