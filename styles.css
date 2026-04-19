@@ -1518,6 +1518,8 @@ html, body {
 .anat-detail-icon{font-size:40px;flex-shrink:0}
 .anat-detail-title{font-size:calc(20px * var(--font-scale));font-weight:800;color:var(--text);line-height:1.2}
 .anat-detail-ar{font-size:calc(15px * var(--font-scale));color:var(--text2);direction:rtl;margin-top:3px}
+.anat-overview{margin-bottom:16px;padding:14px 16px;background:linear-gradient(135deg,var(--accent-bg),var(--bg));border-radius:var(--radius);border-left:3px solid var(--accent)}
+.anat-overview-text{margin:0;font-size:calc(13px * var(--font-scale));color:var(--text);line-height:1.7}
 .anat-detail-section{margin-bottom:16px;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden}
 .anat-detail-section-title{padding:11px 15px;background:var(--bg3);font-size:calc(12px * var(--font-scale));font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
 .anat-detail-section-body{padding:12px 15px;background:var(--bg)}
@@ -1565,6 +1567,8 @@ html, body {
 [data-region="radius_ulna"]:active .ab-overlay{fill:rgba(255,130,0,.48)}
 [data-region="hands"]:hover .ab-overlay{fill:rgba(0,180,175,.28);stroke:rgba(0,150,145,.85);stroke-width:2.5}
 [data-region="hands"]:active .ab-overlay{fill:rgba(0,180,175,.52)}
+[data-region="shoulder"]:hover .ab-overlay{fill:rgba(255,165,0,.28);stroke:rgba(220,140,0,.85);stroke-width:2.5}
+[data-region="shoulder"]:active .ab-overlay{fill:rgba(255,165,0,.52)}
 [data-region="pelvis"]:hover .ab-overlay{fill:rgba(148,40,200,.26);stroke:rgba(120,20,180,.82);stroke-width:2.5}
 [data-region="pelvis"]:active .ab-overlay{fill:rgba(148,40,200,.48)}
 [data-region="femur"]:hover .ab-overlay{fill:rgba(155,78,40,.30);stroke:rgba(125,58,20,.82);stroke-width:2.5}

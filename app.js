@@ -8072,6 +8072,7 @@ function _zoomUnbindEvents(){
 const ANATOMY_DATA = {
   skull:{
     name:'Skull',arabicName:'الجمجمة',icon:'💀',
+    overview:'The skull is the bony framework of the head, divided into the neurocranium (protecting the brain) and the viscerocranium (forming the facial skeleton). It comprises 22 bones fused at immovable joints called sutures. The skull houses and protects the brain, sensory organs (eyes, ears, nose), and forms the upper and lower jaws. It articulates with the cervical spine at the atlanto-occipital joint.',
     structures:[
       'Calvarium (frontal, parietal, temporal, occipital bones)',
       'Base of skull (sphenoid, ethmoid)',
@@ -8095,6 +8096,7 @@ const ANATOMY_DATA = {
   },
   cervical_spine:{
     name:'Cervical Spine',arabicName:'العمود الفقري العنقي',icon:'🦴',
+    overview:'The cervical spine consists of 7 vertebrae (C1–C7) and forms the flexible neck region of the vertebral column. C1 (Atlas) and C2 (Axis) have unique structures that allow the wide range of head motion — the atlantoaxial joint permits about 50% of all rotational neck movement. The cervical spine protects the spinal cord, supports the skull, and allows movement of the head in all planes.',
     structures:[
       'C1 Atlas (ring — no body/spinous process, anterior/posterior arch)',
       'C2 Axis (odontoid process/dens, bifid spinous process)',
@@ -8119,6 +8121,7 @@ const ANATOMY_DATA = {
   },
   clavicles:{
     name:'Clavicles (Collarbones)',arabicName:'عظمتا الترقوة',icon:'🦴',
+    overview:'The clavicle is an S-shaped bone that serves as the only bony link between the upper limb and the axial skeleton. It acts as a strut that holds the shoulder laterally, enabling a wide range of arm movement. The clavicle transmits forces from the arm to the axial skeleton and protects underlying neurovascular structures (subclavian vessels, brachial plexus).',
     structures:[
       'Clavicle — medial (sternal) end, shaft, lateral (acromial) end',
       'Sternoclavicular (SC) joint (medial)',
@@ -8140,6 +8143,7 @@ const ANATOMY_DATA = {
   },
   sternum_ribcage:{
     name:'Sternum & Rib Cage',arabicName:'القص وقفص الصدر',icon:'🫀',
+    overview:'The bony thorax forms a protective cage around the heart, lungs, and great vessels. The sternum (breastbone) is the central flat bone of the anterior chest, composed of the manubrium, body, and xiphoid process. The 12 pairs of ribs articulate posteriorly with the thoracic vertebrae and are classified as true (1–7), false (8–10), and floating (11–12) based on their anterior attachment.',
     structures:[
       'Sternum: manubrium (jugular notch), body, xiphoid process',
       'Manubriosternal joint (angle of Louis — T4–T5 level)',
@@ -8165,6 +8169,7 @@ const ANATOMY_DATA = {
   },
   thoracolumbar_spine:{
     name:'Thoracic & Lumbar Spine',arabicName:'العمود الفقري الصدري والقطني',icon:'🦴',
+    overview:'The thoracic spine (T1–T12) articulates with the ribs and forms the posterior wall of the thoracic cage. It has a normal kyphotic curve (convex posteriorly). The lumbar spine (L1–L5) bears the greatest mechanical load of the vertebral column and has the largest vertebral bodies. The lumbar region has a lordotic curve (concave posteriorly). The sacrum and coccyx form the posterior pelvic wall.',
     structures:[
       'Thoracic spine T1–T12 (12 vertebrae — articulate with ribs)',
       'Lumbar spine L1–L5 (5 vertebrae — largest vertebral bodies)',
@@ -8187,8 +8192,34 @@ const ANATOMY_DATA = {
       'https://github.com/user-attachments/assets/8374214d-a692-4c34-b20b-109465af7b75'
     ]
   },
+  shoulder:{
+    name:'Shoulder & Scapula',arabicName:'مفصل الكتف والكتف',icon:'🦴',
+    overview:'The shoulder (glenohumeral) joint is the most mobile joint in the body, allowing flexion, extension, abduction, adduction, internal/external rotation, and circumduction. It is a ball-and-socket joint formed by the humeral head and the shallow glenoid fossa of the scapula. The scapula (shoulder blade) is a flat triangular bone that forms the posterior part of the shoulder girdle, providing attachment points for 17 muscles.',
+    structures:[
+      'Glenohumeral joint (humeral head — glenoid fossa)',
+      'Scapula: body, spine, acromion, coracoid process, glenoid fossa',
+      'Rotator cuff muscles (supraspinatus, infraspinatus, teres minor, subscapularis)',
+      'Acromioclavicular (AC) joint',
+      'Coracoacromial arch (supraspinatus outlet)',
+      'Subacromial bursa',
+      'Labrum (glenoid fibrocartilage rim)',
+      'Glenohumeral ligaments (superior, middle, inferior)',
+      'Long head of biceps tendon (originates from supraglenoid tubercle)',
+      'Subscapular fossa & infraspinous fossa',
+    ],
+    radiographyNotes:'Shoulder: AP external rotation (greater tubercle in profile), AP internal rotation (lesser tubercle in profile), AP neutral (trauma). Grashey (true AP — glenohumeral joint open, 35–45° oblique), Scapular Y lateral (PA oblique 45–60°, evaluates dislocation), Lawrence/axillary (inferosuperior axial — humeral head relation to glenoid), Neer supraspinatus outlet (10–15° caudad). Scapula: AP (arm abducted 90°, breathing technique), lateral (patient oblique until scapular body ⊥ IR).',
+    clinicalIndications:'Anterior shoulder dislocation (most common — humeral head inferior to coracoid on Y-view), posterior dislocation (lightbulb sign, rim sign), Hill-Sachs lesion (posterolateral humeral head defect), Bankart lesion (anterior glenoid rim), rotator cuff tears, AC joint separation (Rockwood grades I–VI), scapular fractures (high-energy trauma).',
+    kVpRange:'70–85 kVp',
+    positioning:'Erect preferred. External rotation for routine. Never rotate arm if fracture/dislocation suspected. Use axillary or Y-view for dislocation assessment.',
+    chapterKey:'upper_limb',
+    subchapterRefs:[{chId:'upper_limb',scId:'humerus_shoulder'}],
+    anatImages:[
+      'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
+    ]
+  },
   humerus:{
     name:'Humerus (Upper Arm)',arabicName:'عظمة العضد',icon:'🦾',
+    overview:'The humerus is the long bone of the upper arm, extending from the shoulder to the elbow. Proximally it articulates with the glenoid fossa of the scapula at the glenohumeral joint; distally it forms the elbow joint with the radius and ulna. The anatomical and surgical necks are critical landmarks — the surgical neck is the most common site of proximal humerus fractures.',
     structures:[
       'Humeral head, anatomical neck, surgical neck',
       'Greater tubercle (supraspinatus attachment)',
@@ -8213,6 +8244,7 @@ const ANATOMY_DATA = {
   },
   radius_ulna:{
     name:'Radius & Ulna (Forearm)',arabicName:'عظمتا الكعبرة والزند',icon:'🦾',
+    overview:'The radius and ulna are the two bones of the forearm. The radius is the lateral bone (thumb side), shorter proximally but wider distally where it forms most of the wrist joint. The ulna is the medial bone and forms the primary articulation at the elbow. The two bones are connected by the interosseous membrane and two radioulnar joints, allowing pronation and supination.',
     structures:[
       'Radius: head, neck, radial tuberosity (biceps attachment)',
       'Radial shaft (convex lateral bow)',
@@ -8237,6 +8269,7 @@ const ANATOMY_DATA = {
   },
   hands:{
     name:'Hands (Carpals & Digits)',arabicName:'اليدان — الرسغان والأصابع',icon:'🤚',
+    overview:'The hand is the most anatomically complex region of the upper extremity, containing 27 bones: 8 carpals, 5 metacarpals, and 14 phalanges. The wrist (radiocarpal joint) connects the forearm to the hand. The carpal bones are arranged in two rows and form complex intercarpal articulations. The scaphoid is the most commonly fractured carpal bone and has a precarious blood supply, making AVN a significant complication.',
     structures:[
       'Carpal bones — proximal row: Scaphoid, Lunate, Triquetrum, Pisiform',
       'Carpal bones — distal row: Trapezium, Trapezoid, Capitate, Hamate (hook)',
@@ -8261,6 +8294,7 @@ const ANATOMY_DATA = {
   },
   pelvis:{
     name:'Pelvis (Hip Bone)',arabicName:'حزام الحوض',icon:'🦴',
+    overview:'The pelvis is a basin-shaped bony ring formed by the two hip bones (os coxae), sacrum, and coccyx. Each hip bone is formed by the fusion of three bones — ilium, ischium, and pubis — at the acetabulum. The pelvis transmits the weight of the upper body to the lower limbs, protects pelvic viscera, and provides attachment for powerful trunk and lower limb muscles. The acetabulum forms the socket of the hip joint.',
     structures:[
       'Ilium (iliac crest, ASIS, PSIS, iliac fossa, greater sciatic notch)',
       'Ischium (ischial tuberosity, ischial spine, lesser sciatic notch)',
@@ -8285,6 +8319,7 @@ const ANATOMY_DATA = {
   },
   femur:{
     name:'Femur (Thigh)',arabicName:'عظمة الفخذ',icon:'🦵',
+    overview:'The femur is the longest, strongest, and heaviest bone in the human body. It extends from the hip to the knee, transmitting the body\'s weight from the pelvis to the lower limb. The femoral neck connects the head to the shaft at an angle of approximately 125° (neck-shaft angle). Fractures of the femoral neck are of great clinical significance due to risk of avascular necrosis from disrupted blood supply.',
     structures:[
       'Femoral head (spherical, 2/3 sphere — epiphysis in children)',
       'Femoral neck (anteversion 10–15° normal)',
@@ -8309,6 +8344,7 @@ const ANATOMY_DATA = {
   },
   patella:{
     name:'Patella (Knee Cap)',arabicName:'الرضفة والركبة',icon:'🦵',
+    overview:'The knee is the largest and most complex joint in the body, formed by the femur, tibia, and patella. The patella (kneecap) is the largest sesamoid bone in the body, embedded in the quadriceps tendon. It protects the knee joint and improves the mechanical advantage of the quadriceps muscle. The knee joint includes two compartments (medial and lateral) and two condylar articulations, stabilized by major ligaments (ACL, PCL, MCL, LCL) and the menisci.',
     structures:[
       'Patella (sesamoid bone in quadriceps tendon)',
       'Articular surface of patella (medial & lateral facets)',
@@ -8333,6 +8369,7 @@ const ANATOMY_DATA = {
   },
   tibia_fibula:{
     name:'Tibia & Fibula (Leg)',arabicName:'عظمتا الظنبوب والشظية',icon:'🦵',
+    overview:'The tibia and fibula are the two bones of the lower leg. The tibia is the larger, weight-bearing bone and is the second largest bone in the body. Its anterior border (the "shin bone") is subcutaneous and easily palpable. The fibula is a slender lateral bone that provides muscle attachment and forms the lateral wall of the ankle mortise. The two bones are connected by the interosseous membrane and two tibiofibular joints.',
     structures:[
       'Tibia shaft (anterior border — "shin bone")',
       'Tibial crest (subcutaneous — easily palpable)',
@@ -8357,6 +8394,7 @@ const ANATOMY_DATA = {
   },
   feet:{
     name:'Feet (Tarsals & Digits)',arabicName:'القدمان — عظام الرسغ والأصابع',icon:'🦶',
+    overview:'The foot is a complex structure of 26 bones and 33 joints designed to support body weight and provide propulsion during walking and running. It is divided into the hindfoot (talus and calcaneus), midfoot (navicular, cuboid, cuneiforms), and forefoot (metatarsals and phalanges). The longitudinal and transverse arches distribute weight and absorb shock. The Lisfranc joint complex is clinically important as its injury can be subtle on plain radiographs.',
     structures:[
       'Talus (head, neck, trochlea — articulates with tibia/fibula mortise)',
       'Calcaneus (heel bone — sustentaculum tali, tuberosity, posterior facet)',
@@ -8522,13 +8560,19 @@ const ANATOMY_SMART_HOTSPOTS = {
     {x:800,y:292,r:80}
   ],
   sternum_ribcage:[
-    {x:152,y:310,r:120},
-    {x:848,y:310,r:120},
+    {x:152,y:340,r:100},
+    {x:848,y:340,r:100},
     {x:370,y:420,r:140},
     {x:630,y:420,r:140},
     {x:370,y:560,r:145},
     {x:630,y:560,r:145},
     {x:500,y:490,r:80}
+  ],
+  shoulder:[
+    {x:152,y:306,r:110},
+    {x:848,y:306,r:110},
+    {x:200,y:340,r:95},
+    {x:800,y:340,r:95}
   ],
   thoracolumbar_spine:[
     {x:500,y:420,r:90},
@@ -8617,6 +8661,12 @@ const ANATOMY_REGION_GUARDS = {
     insideBoost:18,
     maxPenalty:36,
     penaltyScale:0.26
+  },
+  shoulder:{
+    ranges:[{x:[22,290],y:[226,436]},{x:[710,978],y:[226,436]}],
+    insideBoost:24,
+    maxPenalty:34,
+    penaltyScale:0.28
   },
   thoracolumbar_spine:{
     ranges:[{x:[445,555],y:[318,1036]}],
@@ -9058,6 +9108,8 @@ function buildAnatomyDetail(regionId){
       if(!imgs.length)return '';
       return imgs.map(src=>`<div class="anat-diagram-wrap" style="position:relative;cursor:zoom-in" role="button" tabindex="0" aria-label="${r.name} anatomy diagram — tap to enlarge" title="Tap to enlarge" onclick="openImgZoom(this.querySelector('img').src)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openImgZoom(this.querySelector('img').src)}"><img src="${src}" alt="${r.name} anatomy" loading="lazy" style="pointer-events:none"/><div style="position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;pointer-events:none;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> Tap to zoom</div></div>`).join('');
     })()}
+
+    ${r.overview ? `<div class="anat-overview"><p class="anat-overview-text">${r.overview}</p></div>` : ''}
 
     <div class="anat-detail-section">
       <div class="anat-detail-section-title">
