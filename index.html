@@ -150,6 +150,10 @@
     <span style="font-size:18px;">📋</span>
     Quick Review
   </div>
+  <div class="nav-item" id="nav-anatomy" onclick="navTo('anatomy');closeSidebar()">
+    <span style="font-size:18px;">🫀</span>
+    Anatomy — التشريح
+  </div>
   <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
     <span style="font-size:18px;">⚙️</span>
     Settings
@@ -220,6 +224,15 @@
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Quick Review</div>
           <div style="font-size:11px;color:var(--text2);line-height:1.4">Top positions · CR angles · Common errors · Reference values</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="sec-card" onclick="navTo('anatomy')" style="text-align:left;display:flex;align-items:center;gap:14px;padding:14px 16px">
+        <div style="flex-shrink:0;width:44px;height:44px;background:linear-gradient(135deg,#b3e5fc,#81d4fa);border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font-size:22px;">🫀</span></div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">Anatomy — التشريح</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.4">مجسم جسم الإنسان التفاعلي · اضغط على أي منطقة لعرض تشريحها</div>
         </div>
       </div>
     </div>
@@ -521,6 +534,228 @@
 
     <!-- DYNAMIC CONTENT -->
     <div id="qrContent"></div>
+  </div>
+</div>
+
+<!-- ═══ ANATOMY BODY MODEL ═══ -->
+<div class="page" id="page-anatomy">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
+    <div class="ptitle">Anatomy — علم التشريح</div>
+    <div class="anat-intro">
+      🫀 مجسم جسم الإنسان التفاعلي — اضغط على أي منطقة من المجسم لعرض التشريح التفصيلي والمعلومات الإشعاعية الخاصة بها.<br>
+      <span style="font-size:12px;opacity:.8">Interactive human body model — tap any region to view its anatomy &amp; radiographic details.</span>
+    </div>
+    <div class="anat-body-container">
+      <div class="anat-tap-hint">🖐 اضغط على أي منطقة لعرض التشريح</div>
+      <div class="anat-body-svg-wrap">
+        <svg id="anatomyBodySVG" viewBox="0 0 300 625" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive human anatomy body map">
+          <!-- ── BACKGROUND SILHOUETTE ── -->
+          <ellipse cx="150" cy="47" rx="38" ry="42" fill="#c8c8c8" opacity=".28"/>
+          <rect x="133" y="87" width="34" height="30" fill="#c8c8c8" opacity=".28"/>
+          <rect x="56" y="115" width="188" height="55" rx="6" fill="#c8c8c8" opacity=".28"/>
+          <rect x="54" y="168" width="44" height="228" rx="10" fill="#c8c8c8" opacity=".28"/>
+          <rect x="202" y="168" width="44" height="228" rx="10" fill="#c8c8c8" opacity=".28"/>
+          <rect x="98" y="168" width="104" height="225" fill="#c8c8c8" opacity=".28"/>
+          <rect x="98" y="391" width="104" height="228" rx="10" fill="#c8c8c8" opacity=".28"/>
+
+          <!-- ── HEAD & NECK ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('head_neck')" role="button" aria-label="Head and Neck">
+            <ellipse cx="150" cy="47" rx="38" ry="42" fill="#4fc3f7" opacity=".82"/>
+            <rect x="133" y="87" width="34" height="30" fill="#4fc3f7" opacity=".82"/>
+            <text class="ab-lbl" x="150" y="43" font-size="9">Head &amp; Neck</text>
+            <text class="ab-lbl" x="150" y="56" font-size="8">الرأس والرقبة</text>
+          </g>
+
+          <!-- ── LEFT SHOULDER (right side of image) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder">
+            <polygon points="58,115 100,115 98,168 56,172" fill="#64b5f6" opacity=".85"/>
+            <text class="ab-lbl" x="77" y="144" font-size="7.5">Shoulder</text>
+            <text class="ab-lbl" x="77" y="155" font-size="7">الكتف</text>
+          </g>
+
+          <!-- ── RIGHT SHOULDER (left side of image) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('shoulder')" role="button" aria-label="Shoulder">
+            <polygon points="200,115 242,115 244,172 202,168" fill="#64b5f6" opacity=".85"/>
+            <text class="ab-lbl" x="223" y="144" font-size="7.5">Shoulder</text>
+            <text class="ab-lbl" x="223" y="155" font-size="7">الكتف</text>
+          </g>
+
+          <!-- ── THORAX / CHEST ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('thorax')" role="button" aria-label="Thorax and Chest">
+            <rect x="98" y="115" width="104" height="150" fill="#81c784" opacity=".8"/>
+            <text class="ab-lbl" x="150" y="188" font-size="9">Thorax</text>
+            <text class="ab-lbl" x="150" y="200" font-size="8">الصدر والثوركس</text>
+          </g>
+
+          <!-- ── SPINE (thin strip, on top of thorax & abdomen) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('spine')" role="button" aria-label="Spine">
+            <rect x="141" y="115" width="18" height="278" rx="5" fill="#ce93d8" opacity=".72"/>
+            <text class="ab-lbl" x="150" y="258" font-size="6.5">Spine</text>
+            <text class="ab-lbl" x="150" y="268" font-size="6">العمود</text>
+          </g>
+
+          <!-- ── ABDOMEN / PELVIS ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('abdomen')" role="button" aria-label="Abdomen and Pelvis">
+            <polygon points="98,265 202,265 196,393 104,393" fill="#ffb74d" opacity=".82"/>
+            <text class="ab-lbl" x="150" y="320" font-size="9">Abdomen</text>
+            <text class="ab-lbl" x="150" y="333" font-size="8">البطن والحوض</text>
+          </g>
+
+          <!-- ── LEFT UPPER ARM + ELBOW (right side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('upper_arm')" role="button" aria-label="Humerus and Elbow">
+            <rect x="54" y="168" width="42" height="98" rx="8" fill="#4dd0e1" opacity=".85"/>
+            <text class="ab-lbl" x="75" y="212" font-size="7">Upper Arm</text>
+            <text class="ab-lbl" x="75" y="223" font-size="6.5">العضد</text>
+          </g>
+
+          <!-- ── RIGHT UPPER ARM + ELBOW (left side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('upper_arm')" role="button" aria-label="Humerus and Elbow">
+            <rect x="204" y="168" width="42" height="98" rx="8" fill="#4dd0e1" opacity=".85"/>
+            <text class="ab-lbl" x="225" y="212" font-size="7">Upper Arm</text>
+            <text class="ab-lbl" x="225" y="223" font-size="6.5">العضد</text>
+          </g>
+
+          <!-- ── LEFT FOREARM + HAND (right side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('forearm_hand')" role="button" aria-label="Forearm Wrist and Hand">
+            <rect x="50" y="268" width="40" height="92" rx="7" fill="#80cbc4" opacity=".85"/>
+            <ellipse cx="70" cy="378" rx="24" ry="22" fill="#80cbc4" opacity=".85"/>
+            <text class="ab-lbl" x="70" y="313" font-size="7">Forearm</text>
+            <text class="ab-lbl" x="70" y="379" font-size="7">Hand</text>
+          </g>
+
+          <!-- ── RIGHT FOREARM + HAND (left side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('forearm_hand')" role="button" aria-label="Forearm Wrist and Hand">
+            <rect x="210" y="268" width="40" height="92" rx="7" fill="#80cbc4" opacity=".85"/>
+            <ellipse cx="230" cy="378" rx="24" ry="22" fill="#80cbc4" opacity=".85"/>
+            <text class="ab-lbl" x="230" y="313" font-size="7">Forearm</text>
+            <text class="ab-lbl" x="230" y="379" font-size="7">Hand</text>
+          </g>
+
+          <!-- ── LEFT HIP + THIGH (right side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('hip_femur')" role="button" aria-label="Pelvis Hip and Femur">
+            <rect x="100" y="391" width="48" height="104" rx="8" fill="#f48fb1" opacity=".85"/>
+            <text class="ab-lbl" x="124" y="438" font-size="7">Hip &amp; Femur</text>
+            <text class="ab-lbl" x="124" y="449" font-size="6.5">الحوض والفخذ</text>
+          </g>
+
+          <!-- ── RIGHT HIP + THIGH (left side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('hip_femur')" role="button" aria-label="Pelvis Hip and Femur">
+            <rect x="152" y="391" width="48" height="104" rx="8" fill="#f48fb1" opacity=".85"/>
+            <text class="ab-lbl" x="176" y="438" font-size="7">Hip &amp; Femur</text>
+            <text class="ab-lbl" x="176" y="449" font-size="6.5">الحوض والفخذ</text>
+          </g>
+
+          <!-- ── LEFT KNEE + LOWER LEG (right side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('knee_leg')" role="button" aria-label="Knee and Lower Leg">
+            <rect x="102" y="497" width="44" height="88" rx="7" fill="#a5d6a7" opacity=".85"/>
+            <text class="ab-lbl" x="124" y="536" font-size="7">Knee &amp; Leg</text>
+            <text class="ab-lbl" x="124" y="547" font-size="6.5">الركبة والساق</text>
+          </g>
+
+          <!-- ── RIGHT KNEE + LOWER LEG (left side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('knee_leg')" role="button" aria-label="Knee and Lower Leg">
+            <rect x="154" y="497" width="44" height="88" rx="7" fill="#a5d6a7" opacity=".85"/>
+            <text class="ab-lbl" x="176" y="536" font-size="7">Knee &amp; Leg</text>
+            <text class="ab-lbl" x="176" y="547" font-size="6.5">الركبة والساق</text>
+          </g>
+
+          <!-- ── LEFT FOOT & ANKLE (right side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('foot_ankle')" role="button" aria-label="Foot and Ankle">
+            <ellipse cx="124" cy="600" rx="28" ry="17" fill="#ffe082" opacity=".9"/>
+            <text class="ab-lbl" x="124" y="601" font-size="6.5">Foot &amp; Ankle</text>
+          </g>
+
+          <!-- ── RIGHT FOOT & ANKLE (left side) ── -->
+          <g class="ab-zone" onclick="openAnatomyRegion('foot_ankle')" role="button" aria-label="Foot and Ankle">
+            <ellipse cx="176" cy="600" rx="28" ry="17" fill="#ffe082" opacity=".9"/>
+            <text class="ab-lbl" x="176" y="601" font-size="6.5">Foot &amp; Ankle</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Quick-access region grid -->
+    <div class="anat-regions-grid">
+      <div class="anat-region-card" onclick="openAnatomyRegion('head_neck')">
+        <div class="anat-region-icon">🧠</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Head &amp; Neck</div>
+          <div class="anat-region-ar">الرأس والرقبة</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('thorax')">
+        <div class="anat-region-icon">🫁</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Thorax &amp; Chest</div>
+          <div class="anat-region-ar">الصدر والثوركس</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('abdomen')">
+        <div class="anat-region-icon">🫃</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Abdomen &amp; Pelvis</div>
+          <div class="anat-region-ar">البطن والحوض</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('spine')">
+        <div class="anat-region-icon">🦴</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Vertebral Column</div>
+          <div class="anat-region-ar">العمود الفقري</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('shoulder')">
+        <div class="anat-region-icon">💪</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Shoulder &amp; Clavicle</div>
+          <div class="anat-region-ar">الكتف والترقوة</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('upper_arm')">
+        <div class="anat-region-icon">🦾</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Humerus &amp; Elbow</div>
+          <div class="anat-region-ar">العضد والكوع</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('forearm_hand')">
+        <div class="anat-region-icon">✋</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Forearm, Wrist &amp; Hand</div>
+          <div class="anat-region-ar">الساعد والمعصم والكف</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('hip_femur')">
+        <div class="anat-region-icon">🦴</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Pelvis, Hip &amp; Femur</div>
+          <div class="anat-region-ar">الحوض والورك والفخذ</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('knee_leg')">
+        <div class="anat-region-icon">🦵</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Knee &amp; Lower Leg</div>
+          <div class="anat-region-ar">الركبة والساق</div>
+        </div>
+      </div>
+      <div class="anat-region-card" onclick="openAnatomyRegion('foot_ankle')">
+        <div class="anat-region-icon">🦶</div>
+        <div class="anat-region-info">
+          <div class="anat-region-name">Foot &amp; Ankle</div>
+          <div class="anat-region-ar">القدم والكاحل</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ANATOMY DETAIL ═══ -->
+<div class="page" id="page-anatomy-detail">
+  <div class="scroll">
+    <button class="home-back-btn" onclick="navTo('anatomy')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Anatomy</button>
+    <div id="anatDetailContent"></div>
   </div>
 </div>
 
