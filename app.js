@@ -8753,8 +8753,13 @@ function _buildAnatomyGeometry(svg){
     const regionId = regionEl.dataset.region;
     if(!regionId) return;
     const shapes = [];
-    regionEl.querySelectorAll('polygon.ab-overlay, rect.ab-overlay').forEach(shapeEl=>{
+    regionEl.querySelectorAll('polygon.ab-overlay, rect.ab-overlay, path.ab-overlay').forEach(shapeEl=>{
       const tag = shapeEl.tagName.toLowerCase();
+      if(tag === 'path'){
+        // Store reference to DOM element; hit-test via native isPointInFill
+        shapes.push({type:'path', el:shapeEl});
+        return;
+      }
       if(tag === 'polygon'){
         const pts = _parsePolygonPoints(shapeEl.getAttribute('points'));
         if(pts.length >= 3) shapes.push({type:'polygon', points:pts});
@@ -8778,6 +8783,22 @@ function _anatomyRegionScore(regionId, point, geometry){
   let edgeDistance = Number.POSITIVE_INFINITY;
   const shapes = geometry[regionId] || [];
   shapes.forEach(shape=>{
+    if(shape.type === 'path'){
+      // Use native SVG hit-testing — most accurate for curved anatomical paths
+      try {
+        const svgEl = shape.el.ownerSVGElement;
+        if(svgEl && typeof shape.el.isPointInFill === 'function'){
+          const pt = svgEl.createSVGPoint();
+          pt.x = point.x;
+          pt.y = point.y;
+          if(shape.el.isPointInFill(pt)){
+            inside = true;
+            edgeDistance = 0;
+          }
+        }
+      } catch(e){}
+      return;
+    }
     if(shape.type === 'polygon'){
       if(_pointInPolygon(point, shape.points)) inside = true;
       const d = _distanceToPolygon(point, shape.points);
