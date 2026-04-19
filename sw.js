@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bontrager-v6-20260419-smart-hit';
+const CACHE_NAME = 'bontrager-v7-20260419-offline-anat';
 const APP_SHELL = [
   './',
   './index.html',
@@ -62,7 +62,8 @@ self.addEventListener('activate', event => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// FETCH EVENT - Network first, fallback to cache
+// FETCH EVENT - Network first for HTML, Cache first for everything else
+// Cross-origin images (anatomy diagrams) are cached for offline use
 // ═══════════════════════════════════════════════════════════════════
 self.addEventListener('fetch', event => {
   const { request } = event;
@@ -73,15 +74,13 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Skip external/cross-origin requests (but you can modify this)
-  if (url.origin !== self.location.origin) {
-    return;
-  }
+  // Strategy: Network First for same-origin HTML, Cache First for everything else
+  // Cross-origin image requests (anatomy images from GitHub CDN) are handled
+  // with cache-first so they work offline after the first visit.
   
-  // Strategy: Network First for HTML, Cache First for everything else
-  
-  // For HTML documents: try network first, fallback to cache
-  if (request.headers.get('accept').includes('text/html')) {
+  // For same-origin HTML documents: try network first, fallback to cache
+  const accept = request.headers.get('accept') || '';
+  if (url.origin === self.location.origin && accept.includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then(response => {
@@ -110,30 +109,36 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // For everything else (CSS, JS, images, etc.): cache first
+  // For everything else (same-origin assets AND cross-origin images): cache first
   event.respondWith(
     caches.match(request)
       .then(cachedResponse => {
         // Return from cache if available
         if (cachedResponse) {
-          // Update cache in background
-          fetch(request).then(response => {
-            if (response && response.status === 200) {
-              const responseClone = response.clone();
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(request, responseClone);
-              });
-            }
-          }).catch(() => {}); // Silently fail in background
-          
+          // Update cache in background for same-origin assets only
+          if (url.origin === self.location.origin) {
+            fetch(request).then(response => {
+              if (response && response.status === 200) {
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then(cache => {
+                  cache.put(request, responseClone);
+                });
+              }
+            }).catch(() => {}); // Silently fail in background
+          }
           return cachedResponse;
         }
         
         // Not in cache, try network
         return fetch(request)
           .then(response => {
-            // Cache successful responses
-            if (response && response.status === 200) {
+            // Cache successful same-origin responses and cross-origin image responses
+            // (opaque responses from cross-origin have type 'opaque' and status 0)
+            const cacheable = response && (
+              response.status === 200 ||
+              response.type === 'opaque'
+            );
+            if (cacheable) {
               const responseClone = response.clone();
               caches.open(CACHE_NAME).then(cache => {
                 cache.put(request, responseClone);
