@@ -304,6 +304,12 @@
     <!-- Breadcrumbs -->
     <div class="breadcrumbs" id="subChBreadcrumbs" style="font-size:12px;color:var(--text3);margin-bottom:8px;padding:0 16px">Home > Chapters</div>
     <div class="ptitle" id="subChTitle"></div>
+    <!-- Chapter navigation row -->
+    <div id="subChChapNav" style="display:none;justify-content:space-between;align-items:center;margin:0 0 10px 0;gap:8px">
+      <button id="subChPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'subchapters')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
+      <span id="subChNavLabel" style="font-size:11px;color:var(--text3);flex:1;text-align:center"></span>
+      <button id="subChNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'subchapters')">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
     <div id="subChList"></div>
     <!-- DEV: manage subchapters -->
     <div id="devSubChPanel" style="display:none"></div>
@@ -326,6 +332,12 @@
     <!-- Breadcrumbs -->
     <div class="breadcrumbs" id="learnPosBreadcrumbs" style="font-size:12px;color:var(--text3);margin-bottom:8px;padding:0 16px">Home > Chapters</div>
     <div class="ptitle" id="learnPosTitle"></div>
+    <!-- Chapter navigation row -->
+    <div id="learnPosChapNav" style="display:none;justify-content:space-between;align-items:center;margin:0 0 10px 0;gap:8px">
+      <button id="learnPosPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'positions')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
+      <span id="learnPosNavLabel" style="font-size:11px;color:var(--text3);flex:1;text-align:center"></span>
+      <button id="learnPosNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'positions')">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
     <!-- Flashcard Mode Toggle -->
     <div style="margin:8px 16px">
       <button onclick="toggleFlashcardMode()" id="flashcardToggle" class="flash-toggle-btn" aria-pressed="false" aria-controls="flashcardControls">🃏 Flashcard Mode</button>
@@ -739,7 +751,13 @@
 <!-- ═══ ANATOMY DETAIL ═══ -->
 <div class="page" id="page-anatomy-detail">
   <div class="scroll">
-    <button class="home-back-btn" onclick="navTo('anatomy')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Anatomy</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <button class="home-back-btn" onclick="navTo('anatomy')" style="margin-bottom:0"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Anatomy</button>
+      <div style="display:flex;gap:6px">
+        <button id="anatPrevBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(-1)" title="Previous region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button id="anatNextBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(1)" title="Next region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>
     <div id="anatDetailContent"></div>
   </div>
 </div>

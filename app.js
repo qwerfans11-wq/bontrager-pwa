@@ -3476,6 +3476,7 @@ function openSubChapters(chId){
   }
 
   navTo('learn-subchapters');
+  _setupSubChapNav(chId);
 }
 
 function addSubChapter(chId){
@@ -3553,6 +3554,9 @@ function openQuizSubChapters(chId){
   });
   document.getElementById('devSubChPanel').style.display='none';
   navTo('learn-subchapters');
+  // Hide chapter nav in quiz mode
+  const chapNavRow = document.getElementById('subChChapNav');
+  if(chapNavRow) chapNavRow.style.display='none';
 }
 
 // ══════════════════════════════════════════════
@@ -3631,6 +3635,7 @@ function openLearnChap(chId, scId){
 
   navTo('learn-positions');
   updateDevUI();
+  _setupLearnPosChapNav(chId);
 }
 
 function addPosition(chId, scId){
@@ -8930,14 +8935,219 @@ function buildAnatomyDetail(regionId){
       </div>
     </div>
 
-    ${chName ? `<button class="anat-goto-btn" onclick="navTo('learn-chapters')">
-      <span>${chIcon} Go to ${chName} chapter in Section 1 — Learn</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>` : ''}
+    ${chName ? (()=>{
+      const hasSubCh = !!(BOOK[r.chapterKey] && BOOK[r.chapterKey].subchapters);
+      const clickFn = hasSubCh ? `openSubChapters('${r.chapterKey}')` : `openLearnChap('${r.chapterKey}', null)`;
+      return `<button class="anat-goto-btn" onclick="${clickFn}">
+        <span>${chIcon} Go to ${chName} chapter in Section 1 — Learn</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>`;
+    })() : ''}
   `;
 }
 
-initAppFont();
+// ══════════════════════════════════════════════
+// SMART CHAPTER NAVIGATION (prev/next chapter)
+// ══════════════════════════════════════════════
+
+// Returns ordered array of top-level chapter IDs
+function _getChapterOrder(){
+  return Object.keys(BOOK);
+}
+
+// Sets up prev/next chapter nav row for learn-positions page (flat chapters only)
+function _setupLearnPosChapNav(chId){
+  const order = _getChapterOrder();
+  const idx = order.indexOf(chId);
+  const row = document.getElementById('learnPosChapNav');
+  const prevBtn = document.getElementById('learnPosPrevBtn');
+  const nextBtn = document.getElementById('learnPosNextBtn');
+  const label = document.getElementById('learnPosNavLabel');
+  if(!row) return;
+
+  // Only show for flat chapters (no subchapters)
+  const ch = BOOK[chId];
+  if(!ch || ch.subchapters){ row.style.display='none'; return; }
+
+  // find adjacent flat chapters
+  let prevId=null, nextId=null;
+  for(let i=idx-1;i>=0;i--){
+    if(!BOOK[order[i]].subchapters){ prevId=order[i]; break; }
+  }
+  for(let i=idx+1;i<order.length;i++){
+    if(!BOOK[order[i]].subchapters){ nextId=order[i]; break; }
+  }
+
+  row.style.display='flex';
+  if(prevBtn){ prevBtn.disabled=!prevId; prevBtn.title=prevId?BOOK[prevId].name:''; }
+  if(nextBtn){ nextBtn.disabled=!nextId; nextBtn.title=nextId?BOOK[nextId].name:''; }
+  if(label) label.textContent=`${idx+1} / ${order.length}`;
+  if(prevBtn) prevBtn._chapId=prevId;
+  if(nextBtn) nextBtn._chapId=nextId;
+}
+
+// Sets up prev/next chapter nav row for learn-subchapters page
+function _setupSubChapNav(chId){
+  const order = _getChapterOrder();
+  const idx = order.indexOf(chId);
+  const row = document.getElementById('subChChapNav');
+  const prevBtn = document.getElementById('subChPrevBtn');
+  const nextBtn = document.getElementById('subChNextBtn');
+  const label = document.getElementById('subChNavLabel');
+  if(!row) return;
+
+  const ch = BOOK[chId];
+  if(!ch || !ch.subchapters){ row.style.display='none'; return; }
+
+  // find adjacent chapters with subchapters
+  let prevId=null, nextId=null;
+  for(let i=idx-1;i>=0;i--){
+    if(BOOK[order[i]].subchapters){ prevId=order[i]; break; }
+  }
+  for(let i=idx+1;i<order.length;i++){
+    if(BOOK[order[i]].subchapters){ nextId=order[i]; break; }
+  }
+
+  row.style.display='flex';
+  if(prevBtn){ prevBtn.disabled=!prevId; prevBtn.title=prevId?BOOK[prevId].name:''; }
+  if(nextBtn){ nextBtn.disabled=!nextId; nextBtn.title=nextId?BOOK[nextId].name:''; }
+  if(label) label.textContent=`${idx+1} / ${order.length}`;
+  if(prevBtn) prevBtn._chapId=prevId;
+  if(nextBtn) nextBtn._chapId=nextId;
+}
+
+// Navigate to previous/next chapter from current page
+function navigateChapter(dir, mode){
+  const btnId = dir < 0
+    ? (mode==='subchapters' ? 'subChPrevBtn' : 'learnPosPrevBtn')
+    : (mode==='subchapters' ? 'subChNextBtn' : 'learnPosNextBtn');
+  const btn = document.getElementById(btnId);
+  if(!btn || !btn._chapId) return;
+  const chId = btn._chapId;
+  if(mode==='subchapters'){
+    openSubChapters(chId);
+  } else {
+    openLearnChap(chId, null);
+  }
+}
+
+// ── Anatomy region navigation ──
+let _currentAnatomyRegion = null;
+const _openAnatomyRegionOrig = openAnatomyRegion;
+openAnatomyRegion = function(regionId){
+  _currentAnatomyRegion = regionId;
+  _openAnatomyRegionOrig(regionId);
+  _updateAnatomyNavBtns(regionId);
+};
+
+function _updateAnatomyNavBtns(regionId){
+  const order = Object.keys(ANATOMY_DATA);
+  const idx = order.indexOf(regionId);
+  const prevBtn = document.getElementById('anatPrevBtn');
+  const nextBtn = document.getElementById('anatNextBtn');
+  if(prevBtn) prevBtn.disabled = idx <= 0;
+  if(nextBtn) nextBtn.disabled = idx >= order.length - 1;
+}
+
+function navigateAnatomyRegion(dir){
+  const order = Object.keys(ANATOMY_DATA);
+  const idx = order.indexOf(_currentAnatomyRegion);
+  const newIdx = idx + dir;
+  if(newIdx >= 0 && newIdx < order.length){
+    openAnatomyRegion(order[newIdx]);
+  }
+}
+
+// ══════════════════════════════════════════════
+// EDGE SWIPE BACK GESTURE
+// Starts from left edge (≤40px), requires ≥110px horizontal move,
+// must be more horizontal than vertical (ratio 1.6:1) to avoid accidental trigger.
+// Shows a visual indicator while swiping.
+// ══════════════════════════════════════════════
+(function(){
+  const EDGE_MAX_X   = 40;    // px from left edge to initiate
+  const MIN_DIST     = 110;   // minimum horizontal swipe distance to trigger
+  const RATIO_H_V    = 1.6;   // horizontal must exceed vertical by this ratio
+
+  let _sx=0, _sy=0, _active=false, _indicator=null;
+
+  function _getIndicator(){
+    if(!_indicator){
+      _indicator = document.createElement('div');
+      _indicator.id='_swipeBackIndicator';
+      _indicator.innerHTML=`<div id="_swipeBackArrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></div>`;
+      document.body.appendChild(_indicator);
+    }
+    return _indicator;
+  }
+
+  function _getBackAction(){
+    const active = document.querySelector('.page.active');
+    if(!active) return null;
+    const pid = active.id.replace('page-','');
+    switch(pid){
+      case 'learn-subchapters': return ()=>{ const b=document.getElementById('subChBackBtn'); if(b) b.click(); };
+      case 'learn-positions':   return ()=>{ const b=document.getElementById('learnPosBackBtn'); if(b) b.click(); };
+      case 'pos-view':          return ()=>{ const b=document.getElementById('posBackBtn'); if(b) b.click(); };
+      case 'learn-chapters':    return ()=>navTo('home');
+      case 'quiz-chapters':     return ()=>navTo('home');
+      case 'score':             return ()=>navTo('quiz-chapters');
+      case 'anatomy':           return ()=>navTo('home');
+      case 'anatomy-detail':    return ()=>navTo('anatomy');
+      case 'ai':                return ()=>navTo('home');
+      case 'quickreview':       return ()=>navTo('home');
+      case 'settings':          return ()=>navTo('home');
+      case 'about':             return ()=>navTo('home');
+      case 'dev-manager':       return ()=>navTo('home');
+      default:                  return null;
+    }
+  }
+
+  document.addEventListener('touchstart', function(e){
+    const t = e.touches[0];
+    if(!t || t.clientX > EDGE_MAX_X){ _active=false; return; }
+    _sx = t.clientX;
+    _sy = t.clientY;
+    _active = true;
+  }, {passive:true});
+
+  document.addEventListener('touchmove', function(e){
+    if(!_active) return;
+    const t = e.touches[0];
+    if(!t) return;
+    const dx = t.clientX - _sx;
+    const dy = Math.abs(t.clientY - _sy);
+    if(dx > 10 && dx > dy * RATIO_H_V){
+      const ind = _getIndicator();
+      ind.classList.toggle('active', dx > MIN_DIST * 0.5);
+    } else if(dy > 20){
+      // Clearly vertical — cancel
+      _active = false;
+      const ind = _getIndicator();
+      ind.classList.remove('active');
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchend', function(e){
+    if(!_active){ return; }
+    _active = false;
+    const ind = _getIndicator();
+    ind.classList.remove('active');
+
+    const t = e.changedTouches[0];
+    if(!t) return;
+    const dx = t.clientX - _sx;
+    const dy = Math.abs(t.clientY - _sy);
+
+    if(dx >= MIN_DIST && dx > dy * RATIO_H_V){
+      const action = _getBackAction();
+      if(action) action();
+    }
+  }, {passive:true});
+
+}());
+
+
 _bindResponsiveFontSizing();
 _refreshQuizBankQuality();
 buildChapters();
