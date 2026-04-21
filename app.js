@@ -3996,7 +3996,7 @@ function openPos(pos, chId, scId, posIdx){
       <button class="ltog-btn active" data-layer="position" onclick="toggleLayer('position')" aria-pressed="true">Position</button>
       <button class="ltog-btn active" data-layer="cr" onclick="toggleLayer('cr')" aria-pressed="true">🟢 CR</button>
       ${hasEvaluationCriteria ? '<button class="ltog-btn active" data-layer="evaluation" onclick="toggleLayer(\'evaluation\')" aria-pressed="true">✅ Evaluation</button>' : ''}
-      <button class="ltog-btn active" data-layer="anatomy" onclick="toggleLayer('anatomy')" aria-pressed="true">🧠 Anatomy</button>
+      <button class="ltog-btn active" data-layer="anatomy" onclick="toggleLayer('anatomy')" aria-pressed="true">🩻 X-ray</button>
       <button class="ltog-btn active" data-layer="errors" onclick="toggleLayer('errors')" aria-pressed="true">⚠️ Errors</button>
     </div>`;
 
