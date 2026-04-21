@@ -8865,8 +8865,10 @@ function _initSmartAnatomyHitTest(){
 
 function openAnatomyRegion(regionId){
   if(!ANATOMY_DATA[regionId]) return;
+  _currentAnatomyRegion = regionId;
   buildAnatomyDetail(regionId);
   navTo('anatomy-detail');
+  _updateAnatomyNavBtns(regionId);
 }
 
 function buildAnatomyDetail(regionId){
@@ -9033,12 +9035,6 @@ function navigateChapter(dir, mode){
 
 // ── Anatomy region navigation ──
 let _currentAnatomyRegion = null;
-const _openAnatomyRegionOrig = openAnatomyRegion;
-openAnatomyRegion = function(regionId){
-  _currentAnatomyRegion = regionId;
-  _openAnatomyRegionOrig(regionId);
-  _updateAnatomyNavBtns(regionId);
-};
 
 function _updateAnatomyNavBtns(regionId){
   const order = Object.keys(ANATOMY_DATA);
@@ -9069,7 +9065,7 @@ function navigateAnatomyRegion(dir){
   const MIN_DIST     = 110;   // minimum horizontal swipe distance to trigger
   const RATIO_H_V    = 1.6;   // horizontal must exceed vertical by this ratio
 
-  let _sx=0, _sy=0, _active=false, _indicator=null;
+  let _startX=0, _startY=0, _isSwipeActive=false, _indicator=null;
 
   function _getIndicator(){
     if(!_indicator){
@@ -9105,39 +9101,39 @@ function navigateAnatomyRegion(dir){
 
   document.addEventListener('touchstart', function(e){
     const t = e.touches[0];
-    if(!t || t.clientX > EDGE_MAX_X){ _active=false; return; }
-    _sx = t.clientX;
-    _sy = t.clientY;
-    _active = true;
+    if(!t || t.clientX > EDGE_MAX_X){ _isSwipeActive=false; return; }
+    _startX = t.clientX;
+    _startY = t.clientY;
+    _isSwipeActive = true;
   }, {passive:true});
 
   document.addEventListener('touchmove', function(e){
-    if(!_active) return;
+    if(!_isSwipeActive) return;
     const t = e.touches[0];
     if(!t) return;
-    const dx = t.clientX - _sx;
-    const dy = Math.abs(t.clientY - _sy);
+    const dx = t.clientX - _startX;
+    const dy = Math.abs(t.clientY - _startY);
     if(dx > 10 && dx > dy * RATIO_H_V){
       const ind = _getIndicator();
       ind.classList.toggle('active', dx > MIN_DIST * 0.5);
     } else if(dy > 20){
       // Clearly vertical — cancel
-      _active = false;
+      _isSwipeActive = false;
       const ind = _getIndicator();
       ind.classList.remove('active');
     }
   }, {passive:true});
 
   document.addEventListener('touchend', function(e){
-    if(!_active){ return; }
-    _active = false;
+    if(!_isSwipeActive){ return; }
+    _isSwipeActive = false;
     const ind = _getIndicator();
     ind.classList.remove('active');
 
     const t = e.changedTouches[0];
     if(!t) return;
-    const dx = t.clientX - _sx;
-    const dy = Math.abs(t.clientY - _sy);
+    const dx = t.clientX - _startX;
+    const dy = Math.abs(t.clientY - _startY);
 
     if(dx >= MIN_DIST && dx > dy * RATIO_H_V){
       const action = _getBackAction();
