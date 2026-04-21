@@ -9087,6 +9087,7 @@ function navigateAnatomyRegion(dir){
       case 'pos-view':          return ()=>{ const b=document.getElementById('posBackBtn'); if(b) b.click(); };
       case 'learn-chapters':    return ()=>navTo('home');
       case 'quiz-chapters':     return ()=>navTo('home');
+      case 'quiz':              return ()=>confirmExitQuiz();
       case 'score':             return ()=>navTo('quiz-chapters');
       case 'anatomy':           return ()=>navTo('home');
       case 'anatomy-detail':    return ()=>navTo('anatomy');
