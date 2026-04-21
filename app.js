@@ -572,7 +572,7 @@ function _warmupAnatomyImages(){
   }
   if(!allUrls.length) return;
 
-  const warmOne = (url) => caches.open('bontrager-cache-v1').then(cache =>
+  const warmOne = (url) => caches.open('bontrager-v7-20260419-offline-anat').then(cache =>
     cache.match(url).then(hit => {
       if(hit) return;
       return fetch(url, {mode:'cors', credentials:'omit'})
