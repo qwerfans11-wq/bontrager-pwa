@@ -2507,6 +2507,90 @@ function closeSidebar(){
   document.getElementById('overlay').classList.remove('open');
 }
 
+// ══════════════════════════════════════════════
+// BOOK READER
+// ══════════════════════════════════════════════
+
+const BONBOOK_CHAPTERS = [
+  {num:1,  title:'Terminology, Positioning & Imaging Principles', icon:'📐', file:'bonbook/Chapter_01_Terminology_Positioning_and_Imaging_Principles_FULL.pdf'},
+  {num:2,  title:'Chest',                                         icon:'🫁', file:'bonbook/Chapter_02_Chest.pdf'},
+  {num:3,  title:'Abdomen',                                       icon:'🫃', file:'bonbook/Chapter_03_Abdomen.pdf'},
+  {num:4,  title:'Upper Limb',                                    icon:'🦾', file:'bonbook/Chapter_04_Upper_Limb.pdf'},
+  {num:5,  title:'Humerus & Shoulder Girdle',                     icon:'💪', file:'bonbook/Chapter_05_Humerus_and_Shoulder_Girdle.pdf'},
+  {num:6,  title:'Lower Limb',                                    icon:'🦵', file:'bonbook/Chapter_06_Lower_Limb.pdf'},
+  {num:7,  title:'Femur & Pelvic Girdle',                         icon:'🦴', file:'bonbook/Chapter_07_Femur_and_Pelvic_Girdle.pdf'},
+  {num:8,  title:'Cervical & Thoracic Spine',                     icon:'🔬', file:'bonbook/Chapter_08_Cervical_and_Thoracic_Spine.pdf'},
+  {num:9,  title:'Lumbar Spine, Sacrum & Coccyx',                 icon:'🏥', file:'bonbook/Chapter_09_Lumbar_Spine_Sacrum_and_Coccyx.pdf'},
+  {num:10, title:'Bony Thorax, Sternum & Ribs',                   icon:'🦴', file:'bonbook/Chapter_10_Bony_Thorax_Sternum_and_Ribs.pdf'},
+  {num:11, title:'Cranium, Facial Bones & Paranasal Sinuses',     icon:'💀', file:'bonbook/Chapter_11_Cranium_Facial_Bones_and_Paranasal_Sinuses.pdf'},
+  {num:12, title:'Biliary Tract & Upper GI System',               icon:'🩺', file:'bonbook/Chapter_12_Biliary_Tract_and_Upper_Gastrointestinal_System.pdf'},
+  {num:13, title:'Lower Gastrointestinal System',                  icon:'🧫', file:'bonbook/Chapter_13_Lower_Gastrointestinal_System.pdf'},
+  {num:14, title:'Urinary System & Venipuncture',                 icon:'💉', file:'bonbook/Chapter_14_Urinary_System_and_Venipuncture.pdf'},
+  {num:15, title:'Trauma, Mobile & Surgical Radiography',         icon:'🚑', file:'bonbook/Chapter_15_Trauma_Mobile_and_Surgical_Radiography.pdf'},
+];
+
+// Returns the bonbook PDF file path for a given BOOK chapter/subchapter
+function _getBonbookPdfForPos(chId, scId){
+  if(chId === 'chest')      return 'bonbook/Chapter_02_Chest.pdf';
+  if(chId === 'abdomen')    return 'bonbook/Chapter_03_Abdomen.pdf';
+  if(chId === 'upper_limb'){
+    if(scId === 'humerus_shoulder') return 'bonbook/Chapter_05_Humerus_and_Shoulder_Girdle.pdf';
+    return 'bonbook/Chapter_04_Upper_Limb.pdf';
+  }
+  if(chId === 'lower_limb'){
+    if(scId === 'hip') return 'bonbook/Chapter_07_Femur_and_Pelvic_Girdle.pdf';
+    return 'bonbook/Chapter_06_Lower_Limb.pdf';
+  }
+  if(chId === 'spine'){
+    if(scId === 'lumbar' || scId === 'scoliosis' || scId === 'sacrum_coccyx' || scId === 'sacroiliac')
+      return 'bonbook/Chapter_09_Lumbar_Spine_Sacrum_and_Coccyx.pdf';
+    return 'bonbook/Chapter_08_Cervical_and_Thoracic_Spine.pdf';
+  }
+  if(chId === 'bony_thorax') return 'bonbook/Chapter_10_Bony_Thorax_Sternum_and_Ribs.pdf';
+  return null;
+}
+
+function viewInBook(){
+  const info = (curPos && curPos.info) || {};
+  const pageStart = info.pageStart || null;
+  const pdfFile = _getBonbookPdfForPos(editChId, curSubchapter);
+  if(!pdfFile) return;
+  const match = pdfFile.match(/Chapter_(\d+)/);
+  if(!match) return;
+  openBookChapter(+match[1], pageStart || undefined);
+}
+
+function buildBookChapterList(){
+  const list = document.getElementById('bookChapterList');
+  if(!list) return;
+  list.innerHTML = BONBOOK_CHAPTERS.map(ch => `
+    <div role="button" tabindex="0" onclick="openBookChapter(${ch.num})" onkeydown="if(event.key==='Enter'||event.key===' ')openBookChapter(${ch.num})" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .15s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='var(--bg2)'" aria-label="Chapter ${ch.num}: ${ch.title}">
+      <div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,var(--bg3),var(--bg));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid var(--border)">${ch.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px">Chapter ${ch.num}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ch.title}</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
+}
+
+function openBookChapter(chNum, pageNum){
+  const ch = BONBOOK_CHAPTERS.find(c => c.num === chNum);
+  if(!ch) return;
+  const pdfUrl = pageNum ? ch.file + '#page=' + pageNum : ch.file;
+  const titleEl = document.getElementById('bookReaderTitle');
+  const link = document.getElementById('bookReaderOpenLink');
+  const iframe = document.getElementById('bookReaderIframe');
+  if(titleEl) titleEl.textContent = 'Ch.' + ch.num + ' — ' + ch.title;
+  if(link)    { link.href = pdfUrl; link.textContent = 'Open ↗'; }
+  if(iframe)  {
+    // Set iframe height to fill remaining viewport
+    iframe.style.height = (window.innerHeight - 54) + 'px';
+    iframe.src = pdfUrl;
+  }
+  navTo('book-reader');
+}
+
 function navTo(id){
   // Close any open modals
   const flashcardModal = document.getElementById('flashcardModal');
@@ -2517,7 +2601,7 @@ function navTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
-  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail'};
+  const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail',book:'📖 Book','book-reader':'📖 Book'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
@@ -2532,6 +2616,7 @@ function navTo(id){
   }
   // Build dev manager
   if(id==='dev-manager') buildDevManager();
+  if(id==='book') buildBookChapterList();
   window.scrollTo(0,0);
   // refresh stats on home
   if(id==='home') updateStats();
@@ -3962,6 +4047,7 @@ function openPos(pos, chId, scId, posIdx){
       ${kv?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> kVp</span><span class="tech-ref-val">${kv}</span></div>`:''}
       ${resp?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Respiration</span><span class="tech-ref-val">${resp}</span></div>`:''}
       ${pageStart?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> PDF Page Start</span><span class="tech-ref-val">Page ${pageStart}</span></div>`:''}
+      ${pageStart && _getBonbookPdfForPos(chId,scId)?`<div style="margin-top:8px"><button onclick="viewInBook()" style="width:100%;padding:9px 12px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> View in Book — Page ${pageStart}</button></div>`:''}
     </div>
     ${_buildMaRefCard(kv,info)}`;
 
