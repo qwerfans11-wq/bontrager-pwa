@@ -2521,7 +2521,7 @@ const BONBOOK_CHAPTERS = [
   {num:7,  title:'Femur & Pelvic Girdle',                         icon:'🦴', file:'bonbook/Chapter_07_Femur_and_Pelvic_Girdle.pdf'},
   {num:8,  title:'Cervical & Thoracic Spine',                     icon:'🔬', file:'bonbook/Chapter_08_Cervical_and_Thoracic_Spine.pdf'},
   {num:9,  title:'Lumbar Spine, Sacrum & Coccyx',                 icon:'🏥', file:'bonbook/Chapter_09_Lumbar_Spine_Sacrum_and_Coccyx.pdf'},
-  {num:10, title:'Bony Thorax, Sternum & Ribs',                   icon:'🦷', file:'bonbook/Chapter_10_Bony_Thorax_Sternum_and_Ribs.pdf'},
+  {num:10, title:'Bony Thorax, Sternum & Ribs',                   icon:'🦴', file:'bonbook/Chapter_10_Bony_Thorax_Sternum_and_Ribs.pdf'},
   {num:11, title:'Cranium, Facial Bones & Paranasal Sinuses',     icon:'💀', file:'bonbook/Chapter_11_Cranium_Facial_Bones_and_Paranasal_Sinuses.pdf'},
   {num:12, title:'Biliary Tract & Upper GI System',               icon:'🩺', file:'bonbook/Chapter_12_Biliary_Tract_and_Upper_Gastrointestinal_System.pdf'},
   {num:13, title:'Lower Gastrointestinal System',                  icon:'🧫', file:'bonbook/Chapter_13_Lower_Gastrointestinal_System.pdf'},
@@ -2564,7 +2564,7 @@ function buildBookChapterList(){
   const list = document.getElementById('bookChapterList');
   if(!list) return;
   list.innerHTML = BONBOOK_CHAPTERS.map(ch => `
-    <div onclick="openBookChapter(${ch.num})" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .15s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='var(--bg2)'">
+    <div role="button" tabindex="0" onclick="openBookChapter(${ch.num})" onkeydown="if(event.key==='Enter'||event.key===' ')openBookChapter(${ch.num})" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .15s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='var(--bg2)'" aria-label="Chapter ${ch.num}: ${ch.title}">
       <div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,var(--bg3),var(--bg));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid var(--border)">${ch.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px">Chapter ${ch.num}</div>
