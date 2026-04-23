@@ -1557,6 +1557,95 @@ html, body {
 .ch-nav-btn:disabled{opacity:.35;cursor:default;pointer-events:none}
 .ch-nav-btn svg{flex-shrink:0}
 
+/* ══════════════════════════════════════════════
+   BOTTOM NAVIGATION BAR
+══════════════════════════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  display:flex;align-items:center;justify-content:space-around;
+  background:var(--bg);border-top:1px solid var(--border);
+  padding:4px 0 calc(4px + var(--safe-bottom));
+  z-index:490;box-shadow:0 -2px 12px rgba(0,0,0,.07);
+  transition:transform .22s ease,opacity .22s ease;
+}
+.bottom-nav.hidden{transform:translateX(-50%) translateY(100%);opacity:0;pointer-events:none}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;border:none;background:none;font-family:var(--font);
+  color:var(--text3);padding:5px 4px;min-height:52px;
+  transition:color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.bnav-item.active{color:var(--accent)}
+.bnav-icon{font-size:20px;line-height:1;transition:transform .15s}
+.bnav-label{font-size:calc(9.5px * var(--font-scale));font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.bnav-item:active .bnav-icon{transform:scale(.88)}
+.dark .bottom-nav{background:var(--bg2);border-top-color:var(--border2)}
+
+/* Adjust page bottom padding to account for bottom nav */
+.scroll{padding-bottom:calc(76px + var(--safe-bottom))!important}
+.pos-body{padding-bottom:calc(76px + var(--safe-bottom))}
+.quiz-body{padding-bottom:calc(76px + var(--safe-bottom))}
+
+/* ── Quick Action Link (cross-section navigation) ── */
+.quick-action-bar{
+  display:flex;gap:8px;margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--border);flex-wrap:wrap;
+}
+.quick-action-btn{
+  flex:1;min-width:130px;display:flex;align-items:center;gap:7px;
+  padding:11px 14px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--border2);background:var(--bg2);
+  color:var(--text2);font-size:calc(12.5px * var(--font-scale));
+  font-weight:700;cursor:pointer;font-family:var(--font);
+  transition:all .15s;
+}
+.quick-action-btn:hover{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.quick-action-btn.accent{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.quick-action-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ── Study wrong answers button on score page ── */
+.score-study-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px 16px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--accent);background:var(--accent-bg);
+  color:var(--accent);font-size:calc(13px * var(--font-scale));
+  font-weight:700;cursor:pointer;font-family:var(--font);margin-top:8px;
+  transition:all .18s;
+}
+.score-study-btn:hover,.score-study-btn:active{background:var(--accent);color:#fff}
+
+/* ── Improved scan3 chips: 3 columns ── */
+.scan3-items-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.scan3-items-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+
+/* ── AI context bar ── */
+.ai-context-strip{
+  display:flex;align-items:center;gap:8px;
+  background:var(--c-clinical-bg);border:1px solid var(--c-clinical-border);
+  border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:10px;
+  font-size:calc(12px * var(--font-scale));font-weight:600;color:var(--c-clinical);
+}
+.ai-context-strip svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ── Clickable breadcrumb ── */
+.bc-link{cursor:pointer;text-decoration:underline;text-underline-offset:2px;color:var(--accent);opacity:.85}
+.bc-link:hover{opacity:1}
+
+/* ── Settings: default mode selector ── */
+.mode-choice-row{display:flex;gap:8px;margin-top:8px}
+.mode-choice-btn{
+  flex:1;padding:9px 10px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--border2);background:var(--bg2);
+  color:var(--text2);font-size:calc(12px * var(--font-scale));
+  font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;
+}
+.mode-choice-btn.selected{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+
+/* hide bottom nav in study mode */
+body.study-mode .bottom-nav{display:none}
+
 /* ── Edge swipe back indicator ── */
 #_swipeBackIndicator{
   position:fixed;top:0;left:0;width:0;height:100%;
