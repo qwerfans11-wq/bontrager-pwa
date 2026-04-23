@@ -776,6 +776,12 @@
   <div class="scroll" id="aiScroll">
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
     <div class="ptitle">Ask AI — مساعد الأشعة</div>
+    <!-- Context strip — shows when coming from a position/chapter -->
+    <div class="ai-context-strip" id="aiContextStrip" style="display:none">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="aiContextText">Context from current chapter</span>
+      <button onclick="this.closest('.ai-context-strip').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--c-clinical);cursor:pointer;font-size:16px;padding:0;min-height:auto;min-width:auto">✕</button>
+    </div>
     <div class="ai-panel">
       <div id="aiStatusBar" class="ai-status" aria-live="polite">
         <span id="aiStatusDot" class="ai-status-dot" aria-hidden="true"></span>
@@ -785,13 +791,13 @@
         Local AI engine — no internet or API key needed
       </div>
       <div class="ai-tool-row">
-        <button class="ai-tool-btn" onclick="sendAI('Build a 7-day study plan for Bontrager positioning')">7-day plan</button>
-        <button class="ai-tool-btn" onclick="sendAI('Analyze my latest quiz mistakes')">Mistake analysis</button>
-        <button class="ai-tool-btn" onclick="aiClearChat()">Clear chat</button>
+        <button class="ai-tool-btn" onclick="sendAI('Build a 7-day study plan for Bontrager positioning')">📅 7-day plan</button>
+        <button class="ai-tool-btn" onclick="sendAI('Analyze my latest quiz mistakes')">📊 Mistake analysis</button>
+        <button class="ai-tool-btn" onclick="aiClearChat()">🗑 Clear chat</button>
       </div>
       <div class="ai-suggest-title">Quick prompts</div>
       <div class="ai-suggested" id="aiSuggestions">
-        <button class="ai-sug-btn" onclick="sendAI('List all chapters')">All chapters</button>
+        <button class="ai-sug-btn" onclick="sendAI('List all chapters')">📚 All chapters</button>
         <button class="ai-sug-btn" onclick="sendAI('PA Chest CR and technique')">PA Chest</button>
         <button class="ai-sug-btn" onclick="sendAI('Lateral Knee positioning')">Lateral Knee</button>
         <button class="ai-sug-btn" onclick="sendAI('compare PA Chest vs AP Chest')">PA vs AP Chest</button>
@@ -801,11 +807,15 @@
         <button class="ai-sug-btn" onclick="sendAI('Build a 7-day study plan for Bontrager positioning')">7-day plan</button>
         <button class="ai-sug-btn" onclick="sendAI('open Mortise ankle')">Open Mortise ankle</button>
         <button class="ai-sug-btn" onclick="sendAI('kVp ranges for all regions')">kVp reference</button>
+        <button class="ai-sug-btn" onclick="sendAI('What are the most common CR angle errors in exams?')">CR angle errors</button>
+        <button class="ai-sug-btn" onclick="sendAI('explain breathing instructions for each body region')">Breathing instructions</button>
+        <button class="ai-sug-btn" onclick="sendAI('List all special positions')">Special positions</button>
+        <button class="ai-sug-btn" onclick="sendAI('What positions require a grid?')">Grid positions</button>
       </div>
-      <div class="ai-hint">Tip: Ask in Arabic or English. You can also type "open PA Chest" to jump directly.</div>
+      <div class="ai-hint">💡 Tip: Ask in Arabic or English. Type "open PA Chest" to jump to a position, or "compare X vs Y" for side-by-side comparison.</div>
     </div>
     <div class="ai-chat-area" id="aiChat">
-      <div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية، بما في ذلك أسئلة المقارنة وتصحيح الأخطاء.<br><br>Try prompts like:<br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO Chest vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>
+      <div class="ai-bubble bot"><strong>Radiology AI Assistant 🤖</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية، بما في ذلك أسئلة المقارنة وتصحيح الأخطاء.<br><br><strong>Try:</strong><br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br>• <em>"What positions require a grid?"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>
     </div>
   </div>
 </div>
@@ -946,10 +956,20 @@
       </div>
     </div>
     <div class="settings-group">
-      <div class="settings-group-title">Image display</div>
+      <div class="settings-group-title">Position view</div>
+      <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div>
+          <div class="settings-row-label">Default position mode</div>
+          <div class="settings-row-sub">Choose which mode opens by default when viewing a position</div>
+        </div>
+        <div class="mode-choice-row" style="width:100%">
+          <button class="mode-choice-btn selected" id="defaultModeExam" onclick="setDefaultPosMode('exam')">Exam Mode</button>
+          <button class="mode-choice-btn" id="defaultModeClinical" onclick="setDefaultPosMode('clinical')">Clinical Mode</button>
+        </div>
+      </div>
       <div class="settings-row">
-        <div><div class="settings-row-label">Show evaluation criteria</div></div>
-        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+        <div><div class="settings-row-label">Show bottom navigation bar</div><div class="settings-row-sub">Fixed quick-access navigation at the bottom</div></div>
+        <button class="toggle on" id="bottomNavToggle" onclick="toggleBottomNav(this)"></button>
       </div>
     </div>
     <div class="settings-group">
@@ -961,6 +981,26 @@
             Install as App
           </div>
           <div class="settings-row-sub">Add to home screen — works fully offline</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="settings-row" style="cursor:pointer" onclick="navTo('quickreview')">
+        <div>
+          <div class="settings-row-label" style="display:flex;align-items:center;gap:8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Quick Review
+          </div>
+          <div class="settings-row-sub">Access the quick reference review sheet</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="settings-row" style="cursor:pointer" onclick="navTo('anatomy')">
+        <div>
+          <div class="settings-row-label" style="display:flex;align-items:center;gap:8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Anatomy
+          </div>
+          <div class="settings-row-sub">Interactive body map and anatomy viewer</div>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
@@ -1053,6 +1093,30 @@
     <div id="devManagerContent"></div>
   </div>
 </div>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav" id="bottomNav" role="navigation" aria-label="Main navigation">
+  <button class="bnav-item active" id="bnav-home" onclick="navTo('home');closeSidebar()" aria-label="Home">
+    <span class="bnav-icon">🏠</span>
+    <span class="bnav-label">Home</span>
+  </button>
+  <button class="bnav-item" id="bnav-learn" onclick="navTo('learn-chapters');closeSidebar()" aria-label="Learn">
+    <span class="bnav-icon">📚</span>
+    <span class="bnav-label">Learn</span>
+  </button>
+  <button class="bnav-item" id="bnav-quiz" onclick="navTo('quiz-chapters');closeSidebar()" aria-label="Quiz">
+    <span class="bnav-icon">🧠</span>
+    <span class="bnav-label">Quiz</span>
+  </button>
+  <button class="bnav-item" id="bnav-ai" onclick="navTo('ai');closeSidebar()" aria-label="AI Assistant">
+    <span class="bnav-icon">🤖</span>
+    <span class="bnav-label">AI</span>
+  </button>
+  <button class="bnav-item" id="bnav-more" onclick="toggleSidebar()" aria-label="More">
+    <span class="bnav-icon">☰</span>
+    <span class="bnav-label">More</span>
+  </button>
+</nav>
 
 <!-- AI INPUT BAR -->
 <div class="ai-input-bar" id="aiBar">

@@ -2625,6 +2625,21 @@ function navTo(id){
   window.scrollTo(0,0);
   // refresh stats on home
   if(id==='home') updateStats();
+  // Update bottom navigation active state
+  _updateBottomNav(id);
+}
+
+function _updateBottomNav(id){
+  const bnavMap={
+    'home':'bnav-home',
+    'learn-chapters':'bnav-learn','learn-subchapters':'bnav-learn','learn-positions':'bnav-learn','pos-view':'bnav-learn',
+    'quiz-chapters':'bnav-quiz','quiz':'bnav-quiz','score':'bnav-quiz',
+    'ai':'bnav-ai',
+    'quickreview':null,'anatomy':null,'anatomy-detail':null,'book':null,'book-reader':null,'settings':null,'about':null,'dev-manager':null
+  };
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const bnavId=bnavMap[id];
+  if(bnavId){const el=document.getElementById(bnavId);if(el)el.classList.add('active');}
 }
 
 function updateDevUI(){
@@ -3781,8 +3796,8 @@ function buildQuickReview(){
     const p=item.pos;
     const info=p.info||{};
     const crShort=(info.cr||'Perpendicular').replace(/CR\s+directed\s+/i,'').replace(/CR\s+/i,'').slice(0,70);
-    return `<div class="qr-card">
-      <div class="qr-card-name">${esc(p.name)}</div>
+    return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" data-qr-chid="${esc(item.chId)}" data-qr-scid="${esc(item.scId||'')}" data-qr-posname="${esc(p.name)}" title="Open this position">
+      <div class="qr-card-name" style="display:flex;justify-content:space-between;align-items:center">${esc(p.name)} <span style="font-size:11px;color:var(--accent);font-weight:700">Open ›</span></div>
       <div class="qr-card-cr">🟢 ${esc(crShort)}</div>
       <div class="qr-card-note">📁 ${esc(item.chapter)}</div>
     </div>`;
@@ -3816,8 +3831,8 @@ function buildQuickReview(){
     <div class="qr-section-title">🟢 Key CR Angles (non-perpendicular)</div>
     ${crAngles.map(x=>{
       const info=x.pos.info||{};
-      return `<div class="qr-card">
-        <div class="qr-card-name">${esc(x.pos.name)}</div>
+      return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" data-qr-chid="${esc(x.chId)}" data-qr-scid="${esc(x.scId||'')}" data-qr-posname="${esc(x.pos.name)}" title="Open this position">
+        <div class="qr-card-name" style="display:flex;justify-content:space-between;align-items:center">${esc(x.pos.name)} <span style="font-size:11px;color:var(--accent);font-weight:700">Open ›</span></div>
         <div class="qr-card-cr">🟢 ${esc(info.cr||'')}</div>
         <div class="qr-card-note">📁 ${esc(x.chapter)}</div>
       </div>`;
@@ -3835,6 +3850,24 @@ function buildQuickReview(){
   </div>`;
 
   container.innerHTML=html;
+  // Attach delegated click handler for QR cards (avoids inline onclick XSS)
+  // Only add once — flag stored on the element itself
+  if(!container._qrClickBound){
+    container._qrClickBound=true;
+    container.addEventListener('click', function(e){
+      const card=e.target.closest('[data-qr-posname]');
+      if(!card) return;
+      _qrOpenPos(card.dataset.qrChid, card.dataset.qrScid, card.dataset.qrPosname);
+    });
+  }
+}
+
+// ── Helper: open a position from Quick Review cards ──
+function _qrOpenPos(chId, scId, posName){
+  scId=scId||null;
+  const allFlat=_getAllPosFlat();
+  const item=allFlat.find(x=>x.chId===chId && x.scId===scId && x.pos.name===posName);
+  if(item) openPos(item.pos, item.chId, item.scId, item.posIdx);
 }
 
 // ── Get flat list of all positions for navigation ──
@@ -3973,20 +4006,24 @@ function openPos(pos, chId, scId, posIdx){
   const hasEvaluationCriteria = Array.isArray(evalCriteria) && evalCriteria.length > 0;
 
   // ── Sticky Quick Tech bar ──
+  const respLabel=resp?resp:'—';
   const scan3Html=`
     <div class="scan3-bar" role="status" aria-label="Quick technical parameters">
       <div class="scan3-head">
         <span class="scan3-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
         <div class="scan3-head-copy">
           <div class="scan3-title">Quick Tech</div>
-          <div class="scan3-sub">Read these core parameters first before exposure.</div>
+          <div class="scan3-sub">Core parameters — read before exposure.</div>
         </div>
       </div>
-      <div class="scan3-items">
-        <span class="scan3-chip scan3-chip-cr"><span class="scan3-chip-key">CR</span><span class="scan3-chip-val">${esc(cr||'—')}</span></span>
+      <div class="scan3-items scan3-items-3">
+        <span class="scan3-chip scan3-chip-cr"><span class="scan3-chip-key">CR</span><span class="scan3-chip-val">${esc(cr||'Perpendicular')}</span></span>
         <span class="scan3-chip"><span class="scan3-chip-key">kVp</span><span class="scan3-chip-val">${esc(kv||'—')}</span></span>
-        <span class="scan3-chip"><span class="scan3-chip-key">IR</span><span class="scan3-chip-val">${esc(ir||'—')}</span></span>
+        <span class="scan3-chip"><span class="scan3-chip-key">Cassette / IR</span><span class="scan3-chip-val">${esc(ir||'—')}</span></span>
+      </div>
+      <div class="scan3-items scan3-items-2">
         <span class="scan3-chip"><span class="scan3-chip-key">SID</span><span class="scan3-chip-val">${esc(sid||'—')}</span></span>
+        <span class="scan3-chip" style="background:${resp?'linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.06))':'rgba(255,255,255,.08)'};border-color:${resp?'rgba(74,222,128,.45)':'rgba(166,192,245,.32)'}"><span class="scan3-chip-key" style="color:${resp?'#86efac':'#a6c1ef'}">🌬 Breathing</span><span class="scan3-chip-val" style="color:${resp?'#d1fae5':'#f3f7ff'}">${esc(respLabel)}</span></span>
       </div>
     </div>`;
 
@@ -4108,6 +4145,26 @@ function openPos(pos, chId, scId, posIdx){
       </button>
     </div>`;
 
+  // ── Cross-section quick actions ──
+  const chapterNameForLink = BOOK[chId]?.name||'';
+  const quizKeyForLink = scId ? `${chId}_${scId}` : chId;
+  const quizQCount = (QUIZ[quizKeyForLink]||[]).length;
+  const crossNavHtml=`
+    <div class="quick-action-bar">
+      <button class="quick-action-btn" onclick="openLearnChap('${chId}','${scId||''}')">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        All positions
+      </button>
+      <button class="quick-action-btn" onclick="askAIAboutPosition()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Ask AI
+      </button>
+      ${quizQCount?`<button class="quick-action-btn accent" onclick="startQuiz('${quizKeyForLink}')">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Quiz <span style="margin-left:4px;background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px">${quizQCount}</span>
+      </button>`:''}
+    </div>`;
+
   // ── Exam mode panel ──
   const examHtml=`
     ${scan3Html}
@@ -4127,7 +4184,8 @@ function openPos(pos, chId, scId, posIdx){
     ${altPosHtml}
     ${compareHtml}
     ${dtHtml}
-    ${flipHtml}`;
+    ${flipHtml}
+    ${crossNavHtml}`;
 
   // ── Clinical mode panel ──
   const clinicalHtml=`
@@ -4145,7 +4203,8 @@ function openPos(pos, chId, scId, posIdx){
     ${altPosHtml}
     ${compareHtml}
     ${dtHtml}
-    ${flipHtml}`;
+    ${flipHtml}
+    ${crossNavHtml}`;
 
   // ── Share Safe Export button (dev only) ──
   const shareSafeHtml=userRole==='developer'?`
@@ -4168,6 +4227,9 @@ function openPos(pos, chId, scId, posIdx){
   // Inject into the view
   document.getElementById('posViewDesc').innerHTML='';
   document.getElementById('posViewTech').innerHTML=newContent;
+
+  // Apply user's preferred default mode (exam or clinical)
+  switchPosMode(_defaultPosMode||'exam');
 
   document.getElementById('posBackBtn').onclick=()=>openLearnChap(chId, scId||null);
   updateDevUI();
@@ -5308,14 +5370,27 @@ function showScore(){
   const reviewDiv=document.getElementById('scoreReview');
   if(reviewDiv){
     if(wrongAnswers.length>0){
-      let html=`<div style="margin-top:20px;text-align:left">
+      // Chapter-linked study button — chapterForLink is a safe chapter key (no user input)
+      const chapterForLink = lastChId ? lastChId.split('_')[0] : null;
+      const chObj = chapterForLink ? BOOK[chapterForLink] : null;
+      const studyBtnHtml = chObj ? `
+        <button class="score-study-btn" data-score-chap="${chapterForLink}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          Study the ${esc(chObj.name)} chapter
+        </button>` : '';
+
+      let html=studyBtnHtml;
+      html+=`<div style="margin-top:16px;text-align:left">
         <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">❌ الإجابات الخاطئة (${wrongAnswers.length})</div>`;
       wrongAnswers.forEach((w,i)=>{
+        // Use data attributes instead of inline onclick to avoid XSS
+        const posLink = w.position ? `<button class="score-pos-link" data-score-pos="${esc(w.position)}" style="margin-top:6px;font-size:11px;padding:4px 10px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">📖 Open Position ›</button>` : '';
         html+=`<div style="background:var(--bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5">${i+1}. ${esc(w.q)}</div>
           <div style="font-size:11px;color:var(--red);margin-bottom:4px">✗ إجابتك: <strong>${esc(w.given)}</strong></div>
           <div style="font-size:11px;color:var(--green)">✓ الإجابة الصحيحة: <strong>${esc(w.correct)}</strong></div>
           ${w.position?`<div style="font-size:10.5px;color:var(--text3);margin-top:4px">Focus position: ${esc(w.position)}</div>`:''}
+          ${posLink}
         </div>`;
       });
 
@@ -5328,11 +5403,22 @@ function showScore(){
       if(focusItems.length){
         html+=`<div style="margin-top:10px;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--c-position-border);border-radius:var(--radius-sm)">
           <div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Recommended focus</div>
-          ${focusItems.map(([name,count])=>`<div style="font-size:12px;color:var(--text);line-height:1.55">• ${esc(name)} <span style="color:var(--text3)">(${count} mistake${count!==1?'s':''})</span></div>`).join('')}
+          ${focusItems.map(([name,count])=>`<div style="font-size:12px;color:var(--text);line-height:1.55;margin-bottom:4px">• ${esc(name)} <span style="color:var(--text3)">(${count} mistake${count!==1?'s':''})</span><button class="score-pos-link" data-score-pos="${esc(name)}" style="margin-left:8px;font-size:10px;padding:2px 8px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">Open ›</button></div>`).join('')}
         </div>`;
       }
       html+=`</div>`;
       reviewDiv.innerHTML=html;
+      // Attach delegated handlers (safe – no inline onclick with user data)
+      // Guard: only bind once; innerHTML reset doesn't remove listeners so we track binding
+      if(!reviewDiv._scoreBound){
+        reviewDiv._scoreBound=true;
+        reviewDiv.addEventListener('click', function(e){
+          const posBtn=e.target.closest('.score-pos-link');
+          if(posBtn) { _openPosFromScore(posBtn.dataset.scorePos); return; }
+          const chapBtn=e.target.closest('[data-score-chap]');
+          if(chapBtn) openLearnChap(chapBtn.dataset.scoreChap, null);
+        });
+      }
     } else {
       reviewDiv.innerHTML=`<div style="margin-top:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:13px">🏆 مبروك! إجاباتك كانت كلها صحيحة!</div>`;
     }
@@ -5346,6 +5432,16 @@ function showScore(){
     timestamp:Date.now()
   };
   navTo('score');
+}
+
+// ── Open position from score page ──
+function _openPosFromScore(posName){
+  if(!posName) return;
+  const flat=_getAllPosFlat();
+  const item=flat.find(x=>x.pos.name.toLowerCase()===posName.toLowerCase()) ||
+    flat.find(x=>x.pos.name.toLowerCase().includes(posName.toLowerCase()));
+  if(item) openPos(item.pos, item.chId, item.scId, item.posIdx);
+  else _showToast('Position not found: '+posName);
 }
 
 function restartQuiz(){ startQuiz(lastChId); }
@@ -6245,9 +6341,62 @@ function askAIAboutMistakes(){
   setTimeout(()=>sendAI('Analyze my latest quiz mistakes'),60);
 }
 
+// ── Ask AI about the current position ──
+function askAIAboutPosition(){
+  if(!curPos) return;
+  const ctx=document.getElementById('aiContextStrip');
+  const ctxText=document.getElementById('aiContextText');
+  if(ctx && ctxText){
+    ctxText.textContent='Context: '+curPos.name;
+    ctx.style.display='flex';
+  }
+  navTo('ai');
+  const chapterName=editChId?BOOK[editChId]?.name||'':'';
+  setTimeout(()=>sendAI(`Tell me about "${curPos.name}" positioning technique${chapterName?' in the '+chapterName+' chapter':''}`),80);
+}
+
 // ══════════════════════════════════════════════
 // SETTINGS
 // ══════════════════════════════════════════════
+
+// ── Default position mode (Exam vs Clinical) ──
+let _defaultPosMode = 'exam';
+function setDefaultPosMode(mode){
+  _defaultPosMode = mode;
+  try{ localStorage.setItem('bontrager_default_pos_mode_v1', mode); }catch(e){}
+  document.getElementById('defaultModeExam').classList.toggle('selected', mode==='exam');
+  document.getElementById('defaultModeClinical').classList.toggle('selected', mode==='clinical');
+}
+function _loadDefaultPosMode(){
+  try{
+    const s=localStorage.getItem('bontrager_default_pos_mode_v1');
+    if(s==='clinical'||s==='exam'){ _defaultPosMode=s; setDefaultPosMode(s); }
+  }catch(e){}
+}
+
+// ── Bottom navigation toggle ──
+function toggleBottomNav(btn){
+  btn.classList.toggle('on');
+  const show=btn.classList.contains('on');
+  const nav=document.getElementById('bottomNav');
+  if(nav) nav.classList.toggle('hidden', !show);
+  try{ localStorage.setItem('bontrager_bottom_nav_v1', show?'1':'0'); }catch(e){}
+}
+function _loadBottomNavPref(){
+  try{
+    const s=localStorage.getItem('bontrager_bottom_nav_v1');
+    const btn=document.getElementById('bottomNavToggle');
+    const nav=document.getElementById('bottomNav');
+    if(s==='0'){
+      if(btn) btn.classList.remove('on');
+      if(nav) nav.classList.add('hidden');
+    } else {
+      if(btn) btn.classList.add('on');
+      if(nav) nav.classList.remove('hidden');
+    }
+  }catch(e){}
+}
+
 function toggleDark(){
   const t=document.getElementById('darkToggle');
   t.classList.toggle('on');
@@ -9242,6 +9391,8 @@ buildChapters();
 updateStats();
 _warmupOfflineImages();
 _warmupAnatomyImages();
+_loadDefaultPosMode();
+_loadBottomNavPref();
 
 // Smart anatomy hit-testing + keyboard navigation.
 (function(){
