@@ -3796,7 +3796,7 @@ function buildQuickReview(){
     const p=item.pos;
     const info=p.info||{};
     const crShort=(info.cr||'Perpendicular').replace(/CR\s+directed\s+/i,'').replace(/CR\s+/i,'').slice(0,70);
-    return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" onclick="_qrOpenPos('${esc(item.chId)}','${esc(item.scId||'')}','${esc(p.name)}')" title="Open this position">
+    return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" data-qr-chid="${esc(item.chId)}" data-qr-scid="${esc(item.scId||'')}" data-qr-posname="${esc(p.name)}" title="Open this position">
       <div class="qr-card-name" style="display:flex;justify-content:space-between;align-items:center">${esc(p.name)} <span style="font-size:11px;color:var(--accent);font-weight:700">Open ›</span></div>
       <div class="qr-card-cr">🟢 ${esc(crShort)}</div>
       <div class="qr-card-note">📁 ${esc(item.chapter)}</div>
@@ -3831,7 +3831,7 @@ function buildQuickReview(){
     <div class="qr-section-title">🟢 Key CR Angles (non-perpendicular)</div>
     ${crAngles.map(x=>{
       const info=x.pos.info||{};
-      return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" onclick="_qrOpenPos('${esc(x.chId)}','${esc(x.scId||'')}','${esc(x.pos.name)}')" title="Open this position">
+      return `<div class="qr-card" style="cursor:pointer;transition:box-shadow .15s" data-qr-chid="${esc(x.chId)}" data-qr-scid="${esc(x.scId||'')}" data-qr-posname="${esc(x.pos.name)}" title="Open this position">
         <div class="qr-card-name" style="display:flex;justify-content:space-between;align-items:center">${esc(x.pos.name)} <span style="font-size:11px;color:var(--accent);font-weight:700">Open ›</span></div>
         <div class="qr-card-cr">🟢 ${esc(info.cr||'')}</div>
         <div class="qr-card-note">📁 ${esc(x.chapter)}</div>
@@ -3850,6 +3850,16 @@ function buildQuickReview(){
   </div>`;
 
   container.innerHTML=html;
+  // Attach delegated click handler for QR cards (avoids inline onclick XSS)
+  // Only add once — flag stored on the element itself
+  if(!container._qrClickBound){
+    container._qrClickBound=true;
+    container.addEventListener('click', function(e){
+      const card=e.target.closest('[data-qr-posname]');
+      if(!card) return;
+      _qrOpenPos(card.dataset.qrChid, card.dataset.qrScid, card.dataset.qrPosname);
+    });
+  }
 }
 
 // ── Helper: open a position from Quick Review cards ──
@@ -4007,7 +4017,7 @@ function openPos(pos, chId, scId, posIdx){
         </div>
       </div>
       <div class="scan3-items scan3-items-3">
-        <span class="scan3-chip scan3-chip-cr"><span class="scan3-chip-key">CR</span><span class="scan3-chip-val">${esc(cr||'⊥ Perp')}</span></span>
+        <span class="scan3-chip scan3-chip-cr"><span class="scan3-chip-key">CR</span><span class="scan3-chip-val">${esc(cr||'Perpendicular')}</span></span>
         <span class="scan3-chip"><span class="scan3-chip-key">kVp</span><span class="scan3-chip-val">${esc(kv||'—')}</span></span>
         <span class="scan3-chip"><span class="scan3-chip-key">Cassette / IR</span><span class="scan3-chip-val">${esc(ir||'—')}</span></span>
       </div>
@@ -5360,21 +5370,21 @@ function showScore(){
   const reviewDiv=document.getElementById('scoreReview');
   if(reviewDiv){
     if(wrongAnswers.length>0){
-      // Chapter-linked study button
+      // Chapter-linked study button — chapterForLink is a safe chapter key (no user input)
       const chapterForLink = lastChId ? lastChId.split('_')[0] : null;
       const chObj = chapterForLink ? BOOK[chapterForLink] : null;
       const studyBtnHtml = chObj ? `
-        <button class="score-study-btn" onclick="openLearnChap('${chapterForLink}',null)">
+        <button class="score-study-btn" data-score-chap="${chapterForLink}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-          Study the ${chObj.name} chapter
+          Study the ${esc(chObj.name)} chapter
         </button>` : '';
 
       let html=studyBtnHtml;
       html+=`<div style="margin-top:16px;text-align:left">
         <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">❌ الإجابات الخاطئة (${wrongAnswers.length})</div>`;
       wrongAnswers.forEach((w,i)=>{
-        // Try to link to the specific position
-        const posLink = w.position ? `<button onclick="_openPosFromScore('${esc(w.position||'')}')" style="margin-top:6px;font-size:11px;padding:4px 10px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">📖 Open Position ›</button>` : '';
+        // Use data attributes instead of inline onclick to avoid XSS
+        const posLink = w.position ? `<button class="score-pos-link" data-score-pos="${esc(w.position)}" style="margin-top:6px;font-size:11px;padding:4px 10px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">📖 Open Position ›</button>` : '';
         html+=`<div style="background:var(--bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5">${i+1}. ${esc(w.q)}</div>
           <div style="font-size:11px;color:var(--red);margin-bottom:4px">✗ إجابتك: <strong>${esc(w.given)}</strong></div>
@@ -5393,11 +5403,22 @@ function showScore(){
       if(focusItems.length){
         html+=`<div style="margin-top:10px;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--c-position-border);border-radius:var(--radius-sm)">
           <div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Recommended focus</div>
-          ${focusItems.map(([name,count])=>`<div style="font-size:12px;color:var(--text);line-height:1.55;margin-bottom:4px">• ${esc(name)} <span style="color:var(--text3)">(${count} mistake${count!==1?'s':''})</span><button onclick="_openPosFromScore('${esc(name)}')" style="margin-left:8px;font-size:10px;padding:2px 8px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">Open ›</button></div>`).join('')}
+          ${focusItems.map(([name,count])=>`<div style="font-size:12px;color:var(--text);line-height:1.55;margin-bottom:4px">• ${esc(name)} <span style="color:var(--text3)">(${count} mistake${count!==1?'s':''})</span><button class="score-pos-link" data-score-pos="${esc(name)}" style="margin-left:8px;font-size:10px;padding:2px 8px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">Open ›</button></div>`).join('')}
         </div>`;
       }
       html+=`</div>`;
       reviewDiv.innerHTML=html;
+      // Attach delegated handlers (safe – no inline onclick with user data)
+      // Guard: only bind once; innerHTML reset doesn't remove listeners so we track binding
+      if(!reviewDiv._scoreBound){
+        reviewDiv._scoreBound=true;
+        reviewDiv.addEventListener('click', function(e){
+          const posBtn=e.target.closest('.score-pos-link');
+          if(posBtn) { _openPosFromScore(posBtn.dataset.scorePos); return; }
+          const chapBtn=e.target.closest('[data-score-chap]');
+          if(chapBtn) openLearnChap(chapBtn.dataset.scoreChap, null);
+        });
+      }
     } else {
       reviewDiv.innerHTML=`<div style="margin-top:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:13px">🏆 مبروك! إجاباتك كانت كلها صحيحة!</div>`;
     }
