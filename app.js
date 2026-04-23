@@ -4218,6 +4218,9 @@ function openPos(pos, chId, scId, posIdx){
   document.getElementById('posViewDesc').innerHTML='';
   document.getElementById('posViewTech').innerHTML=newContent;
 
+  // Apply user's preferred default mode (exam or clinical)
+  switchPosMode(_defaultPosMode||'exam');
+
   document.getElementById('posBackBtn').onclick=()=>openLearnChap(chId, scId||null);
   updateDevUI();
   // Update breadcrumbs and progress
@@ -9367,6 +9370,8 @@ buildChapters();
 updateStats();
 _warmupOfflineImages();
 _warmupAnatomyImages();
+_loadDefaultPosMode();
+_loadBottomNavPref();
 
 // Smart anatomy hit-testing + keyboard navigation.
 (function(){

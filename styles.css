@@ -828,7 +828,7 @@ max-height:90vh;
 }
 .ai-open-btn:active{transform:scale(.97)}
 
-.ai-input-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:1px solid var(--border);padding:10px 14px calc(10px + var(--safe-bottom));z-index:400;display:none;box-shadow:0 -4px 18px rgba(0,0,0,.08)}
+.ai-input-bar{position:fixed;bottom:calc(60px + var(--safe-bottom));left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:1px solid var(--border);padding:10px 14px 10px;z-index:400;display:none;box-shadow:0 -4px 18px rgba(0,0,0,.08)}
 .ai-input-bar.show{display:flex;gap:8px}
 .ai-input{flex:1;padding:11px 16px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-size:calc(13px * var(--font-scale));font-family:var(--font);outline:none;transition:border-color .15s,box-shadow .15s}
 .ai-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,87,184,.12)}
@@ -1463,7 +1463,7 @@ html, body {
 .quiz-count-actions{display:flex;gap:8px}
 
 /* ── PWA Install Banner ── */
-.pwa-banner{display:none;position:fixed;bottom:calc(72px + var(--safe-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:var(--accent);color:#fff;border-radius:var(--radius);padding:12px 16px;z-index:600;box-shadow:0 8px 32px rgba(30,77,183,.4);align-items:center;gap:12px;animation:slideUp .3s ease}
+.pwa-banner{display:none;position:fixed;bottom:calc(68px + var(--safe-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:var(--accent);color:#fff;border-radius:var(--radius);padding:12px 16px;z-index:600;box-shadow:0 8px 32px rgba(30,77,183,.4);align-items:center;gap:12px;animation:slideUp .3s ease}
 .pwa-banner.show{display:flex}
 .pwa-banner-text{flex:1;font-size:calc(13px * var(--font-scale));font-weight:600;line-height:1.4}
 .pwa-banner-text small{display:block;font-size:calc(11px * var(--font-scale));font-weight:400;opacity:.85;margin-top:2px}
@@ -1587,6 +1587,8 @@ html, body {
 .scroll{padding-bottom:calc(76px + var(--safe-bottom))!important}
 .pos-body{padding-bottom:calc(76px + var(--safe-bottom))}
 .quiz-body{padding-bottom:calc(76px + var(--safe-bottom))}
+/* AI page needs extra room for the input bar above the bottom nav */
+#page-ai .scroll{padding-bottom:calc(136px + var(--safe-bottom))!important}
 
 /* ── Quick Action Link (cross-section navigation) ── */
 .quick-action-bar{
