@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cairo:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap');
+/* Google Fonts are loaded asynchronously in index.html to avoid render-blocking */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   /* ── LIGHT: Soft Paper ── */
@@ -480,7 +480,7 @@ max-height:90vh;
 /* ── SIDEBAR ── */
 .soverlay{position:fixed;inset:0;background:rgba(26,26,46,.5);z-index:600;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
 .soverlay.open{opacity:1;pointer-events:all}
-.sidebar{position:fixed;top:0;left:0;width:264px;height:var(--app-height, 100vh);padding-top:var(--safe-top);background:var(--bg);border-right:1px solid var(--border);z-index:700;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.sidebar{position:fixed;top:0;left:0;width:264px;height:var(--app-height, 100vh);padding-top:var(--safe-top);background:var(--bg);border-right:1px solid var(--border);z-index:700;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;will-change:transform}
 .sidebar.open{transform:translateX(0)}
 .sb-header{height:var(--hh);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;background:var(--bg)}
 .sb-header .avatar{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:calc(14px * var(--font-scale));font-weight:800;flex-shrink:0}
@@ -504,7 +504,7 @@ max-height:90vh;
 /* ── PAGES ── */
 .page{display:none;padding-top:calc(var(--hh) + var(--safe-top));min-height:100vh;min-height:var(--app-height, 100vh)}
 .page.active{display:block}
-.scroll{padding:16px;padding-bottom:calc(88px + var(--safe-bottom))}
+.scroll{padding:16px;padding-bottom:calc(88px + var(--safe-bottom));overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
 
 /* ── HOME ── */
 .hero{text-align:center;padding:32px 16px 20px}
@@ -1191,7 +1191,7 @@ max-height:90vh;
 .pos-body{border-top:3px solid var(--accent);border-top-left-radius:0;border-top-right-radius:0}
 
 /* Improved scrollable area feel */
-.scroll{padding:18px 16px;padding-bottom:calc(96px + var(--safe-bottom))}
+.scroll{padding:18px 16px;padding-bottom:calc(96px + var(--safe-bottom));overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
 
 /* Tighter, warmer page transitions */
 .page{display:none;padding-top:calc(var(--hh) + var(--safe-top));min-height:100vh;min-height:var(--app-height, 100vh);animation:fadeIn .18s ease}
