@@ -15,7 +15,7 @@
   --safe-bottom:env(safe-area-inset-bottom, 0px);
   --app-height:100vh;
   --sidebar-w:264px;
-  --font:'Inter','Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   --font-weight:400;
   --base-fs:15px;
   --font-scale:1;
@@ -1289,7 +1289,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 .study-toggle-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── Progress Tracking ── */
-.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;padding:0;cursor:pointer;appearance:none;-webkit-appearance:none}
 .pos-viewed-mark svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
 .pos-btn.viewed .pos-viewed-mark svg{opacity:1}
 .pos-btn.viewed .pos-viewed-mark{background:var(--green);border-color:var(--green)}
@@ -1302,7 +1302,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 .ch-progress-label{font-size:calc(10px * var(--font-scale));color:var(--text3);font-weight:600;white-space:nowrap}
 
 /* Viewed indicator on pos-view header */
-.viewed-pill{display:inline-flex;align-items:center;gap:5px;font-size:calc(11px * var(--font-scale));font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);margin-bottom:10px;opacity:0;transition:opacity .3s}
+.viewed-pill{display:inline-flex;align-items:center;gap:5px;font-size:calc(11px * var(--font-scale));font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);margin-bottom:10px;opacity:0;transition:opacity .3s;cursor:pointer;font-family:var(--font)}
 .viewed-pill.show{opacity:1}
 
 /* ── Section icons in pos view ── */
@@ -1318,13 +1318,22 @@ body.study-mode .scan3-bar{top:calc(var(--hh) + var(--safe-top) + 35px)}
 /* ── Spacing improvements ── */
 .pos-sec-block+.pos-sec-hdr{margin-top:4px}
 .fast-row{padding:5px 0;border-bottom:1px solid var(--border)}
+.fast-summary.scan3-bar{
+  position:sticky;
+  top:calc(var(--hh) + var(--safe-top) + 8px);
+  z-index:120;
+  margin-bottom:12px;
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  border:1.5px solid var(--border2);
+  box-shadow:var(--shadow-sm);
+}
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE & ACCESSIBILITY FIXES
 ═══════════════════════════════════════════════ */
 
 /* Ensure all buttons are touch-friendly */
-button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+button:not(.pos-viewed-mark), .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
   min-height: 44px;
   min-width: 44px;
   touch-action: manipulation;
@@ -1380,7 +1389,7 @@ html, body {
     font-size: 16px;
   }
 
-  button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+  button:not(.pos-viewed-mark), .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
     min-height: 48px;
     padding: 12px 14px !important;
   }
@@ -1667,5 +1676,3 @@ body.study-mode .bottom-nav{display:none}
 #_swipeBackIndicator.active #_swipeBackArrow{
   opacity:1;transform:scale(1) translateX(0);
 }
-
-

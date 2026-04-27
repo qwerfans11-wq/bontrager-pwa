@@ -763,11 +763,11 @@ function _showExitDialog() {
     <div class="_exit-card">
       <div class="_exit-header">
         <span class="_exit-emoji">🚪</span>
-        <div class="_exit-title">هل تريد إغلاق التطبيق؟</div>
-        <div class="_exit-subtitle">لحظة واحدة قبل أن تغادر…</div>
+        <div class="_exit-title">Do you want to close the app?</div>
+        <div class="_exit-subtitle">One moment before you leave…</div>
       </div>
       <div class="_exit-body">
-        <div class="_exit-dua-label">دعوة صادقة</div>
+        <div class="_exit-dua-label">A heartfelt prayer</div>
         <div class="_exit-dua-box">
           <p class="_exit-dua-text">
             اللهم <span>وفّق</span> صاحب هذا التطبيق في دراسته وعمله،<br>
@@ -780,10 +780,10 @@ function _showExitDialog() {
       </div>
       <div class="_exit-actions">
         <button class="_exit-btn _exit-btn-stay" onclick="_closeExitDialog()">
-          📖 ابقَ هنا
+          📖 Stay here
         </button>
         <button class="_exit-btn _exit-btn-close" onclick="_confirmAppExit()">
-          إغلاق ✕
+          Close ✕
         </button>
       </div>
     </div>
@@ -2470,7 +2470,7 @@ function confirmNo(){
 }
 
 function confirmExitQuiz(){
-  showConfirm('الخروج من الاختبار','هل أنت متأكد من الخروج؟ ستضيع تقدمك في هذا الاختبار.',()=>{
+  showConfirm('Exit quiz','Are you sure you want to exit? Your current quiz progress will be lost.',()=>{
     _quizActive=false;
     navTo('quiz-chapters');
   });
@@ -2500,7 +2500,7 @@ function setRole(role){
   }
   updateDevUI();
   closeSidebar();
-  if(role==='developer') _showToast('وضع المطور — التعديلات تُحفظ تلقائياً');
+  if(role==='developer') _showToast('Developer mode — edits are saved automatically');
 }
 
 function toggleSidebar(){
@@ -3532,12 +3532,12 @@ function toggleDesc(){
     desc.classList.remove('expanded');
     desc.style.maxHeight = '100px';
     desc.style.overflow = 'hidden';
-    toggle.querySelector('button').textContent = 'اقرأ المزيد';
+    toggle.querySelector('button').textContent = 'Read more';
   } else {
     desc.classList.add('expanded');
     desc.style.maxHeight = 'none';
     desc.style.overflow = 'visible';
-    toggle.querySelector('button').textContent = 'اقرأ أقل';
+    toggle.querySelector('button').textContent = 'Read less';
   }
 }
 
@@ -3768,7 +3768,7 @@ function addPosition(chId, scId){
   document.getElementById('newPosName').value='';
   openLearnChap(chId, scId||null);
   buildChapters();
-  if(userRole==='developer'){devSaveData();_showToast('💾 تم حفظ الوضعية الجديدة');}
+  if(userRole==='developer'){devSaveData();_showToast('💾 New position saved');}
 }
 
 // ══════════════════════════════════════════════
@@ -4017,26 +4017,19 @@ function openPos(pos, chId, scId, posIdx){
   const evalCriteria = inferEvaluationCriteria(posName, desc, correctChecks, chId);
   const hasEvaluationCriteria = Array.isArray(evalCriteria) && evalCriteria.length > 0;
 
-  // ── Sticky Quick Tech bar ──
+  // ── Quick Tech card (aligned with Fast Clinical Summary style) ──
   const respLabel=resp?resp:'—';
-  const scan3Html=`
-    <div class="scan3-bar" role="status" aria-label="Quick technical parameters">
-      <div class="scan3-head">
-        <span class="scan3-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-        <div class="scan3-head-copy">
-          <div class="scan3-title">Quick Tech</div>
-          <div class="scan3-sub">Core parameters — read before exposure.</div>
-        </div>
+  const quickTechHtml=`
+    <div class="fast-summary scan3-bar" role="region" aria-labelledby="quickTechTitle">
+      <div class="fast-summary-title" id="quickTechTitle" style="display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Quick Tech
       </div>
-      <div class="scan3-items scan3-items-3">
-        <span class="scan3-chip scan3-chip-cr"><span class="scan3-chip-key">CR</span><span class="scan3-chip-val">${esc(cr||'Perpendicular')}</span></span>
-        <span class="scan3-chip"><span class="scan3-chip-key">kVp</span><span class="scan3-chip-val">${esc(kv||'—')}</span></span>
-        <span class="scan3-chip"><span class="scan3-chip-key">Cassette / IR</span><span class="scan3-chip-val">${esc(ir||'—')}</span></span>
-      </div>
-      <div class="scan3-items scan3-items-2">
-        <span class="scan3-chip"><span class="scan3-chip-key">SID</span><span class="scan3-chip-val">${esc(sid||'—')}</span></span>
-        <span class="scan3-chip" style="background:${resp?'linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.06))':'rgba(255,255,255,.08)'};border-color:${resp?'rgba(74,222,128,.45)':'rgba(166,192,245,.32)'}"><span class="scan3-chip-key" style="color:${resp?'#86efac':'#a6c1ef'}">🌬 Breathing</span><span class="scan3-chip-val" style="color:${resp?'#d1fae5':'#f3f7ff'}">${esc(respLabel)}</span></span>
-      </div>
+      <div class="fast-row"><span class="fast-key">CR</span><span class="fast-val">${esc(cr||'Perpendicular')}</span></div>
+      <div class="fast-row"><span class="fast-key">kVp</span><span class="fast-val">${esc(kv||'—')}</span></div>
+      <div class="fast-row"><span class="fast-key">IR</span><span class="fast-val">${esc(ir||'—')}</span></div>
+      <div class="fast-row"><span class="fast-key">SID</span><span class="fast-val">${esc(sid||'—')}</span></div>
+      <div class="fast-row"><span class="fast-key">Breathing</span><span class="fast-val">${esc(respLabel)}</span></div>
     </div>`;
 
   // ── Fatal Error callout ──
@@ -4179,7 +4172,8 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Exam mode panel ──
   const examHtml=`
-    ${scan3Html}
+    ${quickTechHtml}
+    ${fastSummaryHtml}
     ${layerBarHtml}
     <div id="layer-cr">
       <div class="pos-sec-hdr cr-hdr"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR &amp; Angle</div>
@@ -4201,7 +4195,7 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Clinical mode panel ──
   const clinicalHtml=`
-    ${scan3Html}
+    ${quickTechHtml}
     ${layerBarHtml}
     ${fastSummaryHtml}
     <div id="layer-position">
@@ -4850,20 +4844,13 @@ let _selectedQCount=null;
 
 const _QUIZ_STOP_WORDS=new Set([
   'the','a','an','is','are','what','which','for','of','in','on','to','and','or','with','from','this','that','these','those',
-  'what','when','where','why','how','during','using','used','into','your','you','does','must','should','could','would','can',
-  'من','في','على','الى','إلى','عن','ما','ماذا','كيف','متى','اين','أي','اي','هذا','هذه','ذلك','تلك','الذي','التي','كل','جميع'
+  'what','when','where','why','how','during','using','used','into','your','you','does','must','should','could','would','can'
 ]);
 
 function _quizNorm(value){
   return String(value||'')
     .toLowerCase()
-    .replace(/[\u064B-\u065F]/g,'')
-    .replace(/[أإآ]/g,'ا')
-    .replace(/ة/g,'ه')
-    .replace(/ى/g,'ي')
-    .replace(/ؤ/g,'و')
-    .replace(/ئ/g,'ي')
-    .replace(/[^a-z0-9\u0600-\u06ff\s]/g,' ')
+    .replace(/[^a-z0-9\s]/g,' ')
     .replace(/\s+/g,' ')
     .trim();
 }
@@ -5053,13 +5040,13 @@ function _quizBuildLearningTip(q, pos){
   const info=(pos && pos.info) ? pos.info : {};
   let tip='';
 
-  if(/\bcr\b|central ray|زاويه|زاوية|angle/.test(intent) && info.cr){
+  if(/\bcr\b|central ray|angle/.test(intent) && info.cr){
     tip=`CR: ${info.cr}`;
-  } else if(/kvp|k v p|kilovolt|كيلو/.test(intent) && info.kv){
+  } else if(/kvp|k v p|kilovolt/.test(intent) && info.kv){
     tip=`kVp: ${info.kv}`;
-  } else if(/resp|breath|inspir|expir|تنفس/.test(intent) && info.resp){
+  } else if(/resp|breath|inspir|expir/.test(intent) && info.resp){
     tip=`Respiration: ${info.resp}`;
-  } else if(/sid|source image|مسافه|مسافة/.test(intent) && info.sid){
+  } else if(/sid|source image/.test(intent) && info.sid){
     tip=`SID: ${info.sid}`;
   } else if(pos && pos.name){
     const mini=[];
@@ -5393,14 +5380,14 @@ function showScore(){
 
       let html=studyBtnHtml;
       html+=`<div style="margin-top:16px;text-align:left">
-        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">❌ الإجابات الخاطئة (${wrongAnswers.length})</div>`;
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">❌ Wrong answers (${wrongAnswers.length})</div>`;
       wrongAnswers.forEach((w,i)=>{
         // Use data attributes instead of inline onclick to avoid XSS
         const posLink = w.position ? `<button class="score-pos-link" data-score-pos="${esc(w.position)}" style="margin-top:6px;font-size:11px;padding:4px 10px;border:1px solid var(--accent);border-radius:20px;background:var(--accent-bg);color:var(--accent);cursor:pointer;font-family:var(--font);font-weight:600">📖 Open Position ›</button>` : '';
         html+=`<div style="background:var(--bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5">${i+1}. ${esc(w.q)}</div>
-          <div style="font-size:11px;color:var(--red);margin-bottom:4px">✗ إجابتك: <strong>${esc(w.given)}</strong></div>
-          <div style="font-size:11px;color:var(--green)">✓ الإجابة الصحيحة: <strong>${esc(w.correct)}</strong></div>
+          <div style="font-size:11px;color:var(--red);margin-bottom:4px">✗ Your answer: <strong>${esc(w.given)}</strong></div>
+          <div style="font-size:11px;color:var(--green)">✓ Correct answer: <strong>${esc(w.correct)}</strong></div>
           ${w.position?`<div style="font-size:10.5px;color:var(--text3);margin-top:4px">Focus position: ${esc(w.position)}</div>`:''}
           ${posLink}
         </div>`;
@@ -5432,7 +5419,7 @@ function showScore(){
         });
       }
     } else {
-      reviewDiv.innerHTML=`<div style="margin-top:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:13px">🏆 مبروك! إجاباتك كانت كلها صحيحة!</div>`;
+      reviewDiv.innerHTML=`<div style="margin-top:16px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--green);font-weight:700;font-size:13px">🏆 Great job! All your answers were correct.</div>`;
     }
   }
   lastQuizSession={
@@ -5631,14 +5618,14 @@ function saveEdit(){
     buildChapters();
   }
   closeEditModal();
-  if(userRole==='developer'){devSaveData();_showToast('💾 تم حفظ التعديل');}
+  if(userRole==='developer'){devSaveData();_showToast('💾 Changes saved');}
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 // ══════════════════════════════════════════════
 // AI — COMPREHENSIVE DYNAMIC ENGINE v2
-// يقرأ كل الوضعيات تلقائياً من BOOK ويتحدث عند إضافة بيانات جديدة
+// Reads all positions dynamically from BOOK and updates when data changes
 // ══════════════════════════════════════════════
 
 function _refreshTokenUI(){
@@ -5661,13 +5648,7 @@ function testAIConnection(){
 function _aiNormalizeText(value){
   return String(value||'')
     .toLowerCase()
-    .replace(/[\u064B-\u065F]/g,'')
-    .replace(/[أإآ]/g,'ا')
-    .replace(/ة/g,'ه')
-    .replace(/ى/g,'ي')
-    .replace(/ؤ/g,'و')
-    .replace(/ئ/g,'ي')
-    .replace(/[^a-z0-9\u0600-\u06ff\s]/g,' ')
+    .replace(/[^a-z0-9\s]/g,' ')
     .replace(/\s+/g,' ')
     .trim();
 }
@@ -5675,7 +5656,7 @@ function _aiNormalizeText(value){
 function _aiExtractOpenTarget(query){
   const q=String(query||'').trim();
   if(!q) return '';
-  const m=q.match(/^(?:open|show|navigate to|go to|افتح|اعرض|اذهب الى|انتقل الى)\s+(.+)$/i);
+  const m=q.match(/^(?:open|show|navigate to|go to)\s+(.+)$/i);
   if(!m) return '';
   return m[1].replace(/^["'“”]+|["'“”]+$/g,'').trim();
 }
@@ -5749,10 +5730,10 @@ function _aiBuildFollowupQuery(msg){
   const raw=String(msg||'').trim();
   if(!raw) return '';
   const normalized=_aiNormalizeText(raw);
-  const explicit=/\b(open|show|compare|list|chapter|position|kvp|sid|cr|resp|ma|mas|quiz|mistake|plan)\b|افتح|اعرض|قارن|قائمه|فصل|وضعيه|تنفس|اختبار|اخطاء|خطا|خطأ|خطه/.test(normalized);
+  const explicit=/\b(open|show|compare|list|chapter|position|kvp|sid|cr|resp|ma|mas|quiz|mistake|plan)\b/.test(normalized);
   if(explicit) return raw;
 
-  const shortFollowup=/^(and|also|what about|then|next|ok|طيب|وماذا|وكمان|ايضا|ثم|بعدها)/i.test(raw) || normalized.split(' ').length<=3;
+  const shortFollowup=/^(and|also|what about|then|next|ok)/i.test(raw) || normalized.split(' ').length<=3;
   if(!shortFollowup) return raw;
 
   const lastFocus=[...aiHistory].reverse().find(x=>x.role==='assistant' && x.focus);
@@ -5765,7 +5746,7 @@ function aiOpenFromReply(name){
   if(!result) _showToast('Position not found');
 }
 
-// ─── جمع كل الوضعيات ديناميكياً من BOOK (يتحدث تلقائياً عند إضافة بيانات) ───
+// ─── Collect all positions dynamically from BOOK ───
 function _aiGetAllPositions(){
   const all=[];
   Object.entries(BOOK).forEach(([chId,ch])=>{
@@ -5782,22 +5763,22 @@ function _aiGetAllPositions(){
 function _aiDetectIntent(q){
   const l=_aiNormalizeText(q);
   return {
-    isCR:       /\bcr\b|central ray|angle|angulation|زاويه|زاوية/.test(l),
-    isKV:       /\bkvp?\b|kilovolt|كيلو/.test(l),
-    isSID:      /\bsid\b|source image|مسافه|مسافة/.test(l),
-    isResp:     /resp|breath|inspir|expir|تنفس/.test(l),
+    isCR:       /\bcr\b|central ray|angle|angulation/.test(l),
+    isKV:       /\bkvp?\b|kilovolt/.test(l),
+    isSID:      /\bsid\b|source image/.test(l),
+    isResp:     /resp|breath|inspir|expir/.test(l),
     isIR:       /\bir\b|image receptor|cassette|film size/.test(l),
     isMa:       /\bma\b|\bmas\b|milliamp|exposure factor/.test(l),
-    isRoutine:  /routine|روتين/.test(l),
-    isSpecial:  /special|خاص/.test(l),
-    isList:     /list|all|جميع|كل|enumerate|show all|اعرض الكل/.test(l),
-    isCompare:  /\bvs\b|versus|differ|مقارنه|مقارنة|الفرق|compare/.test(l),
-    isChapter:  /chapter|فصل|قسم/.test(l),
-    isError:    /error|mistake|wrong|common|artifact|خطا|خطأ|غلط|اخطاء/.test(l),
-    isOpen:     /\bopen\b|navigate|go to|show|افتح|انتقل|اذهب|اعرض/.test(l),
-    isStudyPlan:/study plan|roadmap|revision plan|خطه|خطة|جدول|مذاكره|مراجعه/.test(l),
-    isQuiz:     /quiz|اختبار|اسئله|اسئلة/.test(l),
-    isMistake:  /mistake|wrong|incorrect|error|خطا|خطأ|غلط|اخطاء/.test(l),
+    isRoutine:  /routine/.test(l),
+    isSpecial:  /special/.test(l),
+    isList:     /list|all|enumerate|show all/.test(l),
+    isCompare:  /\bvs\b|versus|differ|compare/.test(l),
+    isChapter:  /chapter/.test(l),
+    isError:    /error|mistake|wrong|common|artifact/.test(l),
+    isOpen:     /\bopen\b|navigate|go to|show/.test(l),
+    isStudyPlan:/study plan|roadmap|revision plan/.test(l),
+    isQuiz:     /quiz/.test(l),
+    isMistake:  /mistake|wrong|incorrect|error/.test(l),
   };
 }
 
@@ -5806,15 +5787,14 @@ function _aiSearch(query){
   const qRaw=String(query||'').trim();
   if(!qRaw) return [];
   let q=_aiNormalizeText(qRaw);
-  q=q.replace(/^(open|show|navigate to|go to|افتح|اعرض|اذهب الى|انتقل الى)\s+/i,'').trim();
+  q=q.replace(/^(open|show|navigate to|go to)\s+/i,'').trim();
   if(!q) return [];
 
   const all=_aiGetAllPositions();
   const results=[];
   const stopWords=new Set([
     'the','a','an','is','are','what','how','which','for','of','in','on','at','to','and','or','with','from','about','this','that','please','need',
-    'all','any','show','open','tell','me','my','your','their','latest',
-    'من','في','على','عن','الى','إلى','ما','ماذا','كيف','كل','جميع','اعطني','اريد','اريدك','افتح','اعرض','ممكن'
+    'all','any','show','open','tell','me','my','your','their','latest'
   ]);
   const keywords=q.split(/\s+/).filter(w=>w.length>1 && !stopWords.has(w));
 
@@ -6033,12 +6013,12 @@ function _aiDynamicKnowledge(query){
   const q=_aiNormalizeText(query);
   const all=_aiGetAllPositions();
 
-  if(/(quiz|اختبار).*(mistake|wrong|incorrect|error|خطا|خطأ|اخطاء|غلط)/.test(q)){
+  if(/quiz.*(mistake|wrong|incorrect|error)/.test(q)){
     return _aiSummarizeMistakes();
   }
 
-  if(/study plan|revision plan|roadmap|خطة|خطه|جدول|مذاكره|مراجعه/.test(q)){
-    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days|يوم|ايام|أيام)/i);
+  if(/study plan|revision plan|roadmap/.test(q)){
+    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days)/i);
     const days=dayMatch ? parseInt(dayMatch[1],10) : 7;
     return _aiBuildStudyPlan(days);
   }
@@ -6111,22 +6091,22 @@ function _aiGeneralAnswer(query){
   const dyn=_aiDynamicKnowledge(query);
   if(dyn) return dyn;
 
-  if(/help|what can you do|how can you help|ماذا يمكنك|مساعده|مساعدة/.test(q)){
+  if(/help|what can you do|how can you help/.test(q)){
     return `**How I can help right now:**\n\n• Explain any projection (CR, SID, kVp, respiration, IR)\n• Compare two positions\n• Analyze your latest quiz mistakes\n• Build study plans (3-14 days)\n• Open any position directly\n\nTry: **"open PA chest"**, **"analyze my latest quiz mistakes"**, or **"build a 7-day plan"**.`;
   }
 
-  if(/(quiz|اختبار).*(mistake|wrong|error|incorrect|خطا|خطأ|اخطاء|غلط)/.test(q)){
+  if(/quiz.*(mistake|wrong|error|incorrect)/.test(q)){
     return _aiSummarizeMistakes();
   }
 
-  if(/study plan|revision plan|roadmap|خطة|خطه|جدول|مذاكره|مراجعه/.test(q)){
-    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days|يوم|ايام|أيام)/i);
+  if(/study plan|revision plan|roadmap/.test(q)){
+    const dayMatch=String(query||'').match(/(\d{1,2})\s*(day|days)/i);
     return _aiBuildStudyPlan(dayMatch ? parseInt(dayMatch[1],10) : 7);
   }
 
   if(/(list|show|all|every).*(chapter|position|content)/i.test(q)) return _aiListChapters();
 
-  if(/how many|total count|statistics|كم|إجمالي/.test(q)){
+  if(/how many|total count|statistics/.test(q)){
     const all=_aiGetAllPositions();
     const routine=all.filter(x=>x.pos.type==='routine').length;
     const special=all.filter(x=>x.pos.type==='special').length;
@@ -6135,23 +6115,23 @@ function _aiGeneralAnswer(query){
   }
 
   const kb=[
-    {keys:['pleural effusion','hydrothorax','انصباب'],
+    {keys:['pleural effusion','hydrothorax'],
      ans:'**Pleural Effusion:**\nAbnormal fluid in pleural space.\n\n**Best position:** Lateral Decubitus (affected side down) with horizontal beam\n**Appearance:** Increased opacity, oblique angle at costophrenic angle\n**Minimum detectable:** ~200 mL on PA; ~50 mL on lateral decubitus'},
-    {keys:['pneumothorax','استرواح','استرواح صدري'],
+    {keys:['pneumothorax'],
      ans:'**Pneumothorax:**\nAir in pleural space → lung collapse.\n\n**Best position:** PA Erect on full expiration (enhances contrast)\n**Alternative:** Lateral decubitus (affected side up) with horizontal beam\n**Appearance:** Visible lung edge, absent lung markings peripherally'},
     {keys:['pneumoperitoneum','free air','peritoneal'],
      ans:'**Pneumoperitoneum — Free Intraperitoneal Air:**\nUsually from perforated hollow viscus.\n\n**Best position:** Left Lateral Decubitus (air rises to right, away from gastric bubble)\n**Appearance:** Radiolucent crescent under right hemidiaphragm\n**Wait time:** Patient in position 5–20 min before exposure'},
-    {keys:['bennett','بينيت'],
+    {keys:['bennett'],
      ans:'**Bennett Fracture:**\nIntra-articular fracture at base of 1st metacarpal with dislocation.\n\n**Projection:** AP Axial Thumb — Modified Robert Method\n**CR:** 15° proximally toward wrist, entering at 1st CMC joint'},
-    {keys:['colles','كولز'],
+    {keys:['colles'],
      ans:'**Colles Fracture:**\nFracture of distal radius with dorsal (posterior) displacement.\n\n**Projections:** PA Wrist + Lateral Wrist\n**Common in:** Postmenopausal women (osteoporosis) — FOOSH injury'},
-    {keys:['scaphoid','navicular','زورقي','زورقية'],
+    {keys:['scaphoid','navicular'],
      ans:'**Scaphoid Fracture:**\nMost common carpal fracture — may not show immediately.\n\n**Projections:** PA + Lateral + Ulnar Deviation + Semisupination oblique\n**If not visible:** Repeat at 10–14 days, or CT/MRI for confirmation\n**Risk:** Avascular necrosis if missed'},
-    {keys:['hip fracture','كسر الورك','hip trauma'],
+    {keys:['hip fracture','hip trauma'],
      ans:'**Hip Fracture Protocol:**\n**WARNING:** Do NOT internally rotate leg if fracture suspected!\n\n**Sequence:** AP Pelvis (bilateral) → AP Hip → Axiolateral Inferosuperior (Danelius-Miller)\n**CR (Danelius-Miller):** Horizontal beam, perpendicular to femoral neck'},
     {keys:['danelius','miller','danelius-miller','axiolateral inferosuperior'],
      ans:'**Axiolateral Inferosuperior — Danelius-Miller:**\nLateral hip projection for trauma when leg cannot be moved.\n\n**Setup:** Unaffected leg raised ~90°; grid/IR placed in groin\n**CR:** Horizontal, perpendicular to femoral neck\n**Key:** No rotation of affected limb'},
-    {keys:['judet','posterior oblique pelvis','جوديه'],
+    {keys:['judet','posterior oblique pelvis'],
      ans:'**Judet Method — Acetabulum:**\n45° Posterior Oblique, both sides.\n\n• **Affected side down (internal oblique):** Anterior rim + posterior column\n• **Affected side up (external oblique):** Posterior rim + anterior column\n**CR:** 2 inches below ASIS, directed to hip'},
     {keys:['kvp range','kilovoltage range','kv ranges'],
      ans:`**Standard kVp Ranges:**\n• Chest PA/Lateral: **110–125 kVp**\n• Ribs / Sternum: **70–85 kVp**\n• Abdomen / KUB: **70–85 kVp**\n• Fingers / Hand: **55–65 kVp**\n• Wrist / Forearm: **60–70 kVp**\n• Elbow / Humerus: **65–75 kVp**\n• Shoulder: **70–80 kVp**\n• Cervical Spine: **70–85 kVp**\n• Thoracic Spine: **75–85 kVp**\n• Lumbar Spine: **80–90 kVp**\n• Pelvis / Hip: **80–90 kVp**\n• Knee / Leg: **65–80 kVp**\n• Foot / Ankle: **60–75 kVp**`},
@@ -6341,7 +6321,7 @@ function sendAI(prompt){
 function aiClearChat(){
   const chat=document.getElementById('aiChat');
   if(!chat) return;
-  chat.innerHTML=`<div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية، بما في ذلك أسئلة المقارنة وتصحيح الأخطاء.<br><br>Try prompts like:<br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO Chest vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>`;
+  chat.innerHTML=`<div class="ai-bubble bot"><strong>Radiology AI Assistant</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>Try prompts like:<br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO Chest vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>`;
   const sug=document.getElementById('aiSuggestions');
   if(sug) sug.style.display='flex';
   aiHistory=[];
@@ -6509,7 +6489,7 @@ function addChapter(){
   document.getElementById('newChName').value='';
   document.getElementById('newChIcon').value='';
   buildChapters();
-  if(userRole==='developer'){devSaveData();_showToast('💾 تم حفظ الفصل الجديد');}
+  if(userRole==='developer'){devSaveData();_showToast('💾 New chapter saved');}
 }
 
 function deleteChapter(chId){
@@ -6628,7 +6608,7 @@ function saveAppearance(){
     large:document.getElementById('largeToggle')?.classList.contains('on')||false
   };
   try{ localStorage.setItem(_APPEARANCE_KEY, JSON.stringify(_savedAppearance)); }catch(e){}
-  _showToast('🎨 تم حفظ المظهر');
+  _showToast('🎨 Appearance saved');
   closeDevAppearance();
 }
 
@@ -6655,7 +6635,7 @@ function resetAppearance(){
   document.getElementById('dap-text').value=toHex(style.getPropertyValue('--text'));
   document.getElementById('dap-text2').value=toHex(style.getPropertyValue('--text2'));
   document.getElementById('dap-fontsize').value=String(resetSize);
-  _showToast('تم إعادة ضبط المظهر');
+  _showToast('Appearance reset');
   closeDevAppearance();
 }
 
@@ -7230,14 +7210,14 @@ function offerRestoreSession(){
   var saved=_loadSaved();
   var msg=document.getElementById('restoreSessionMsg');
   if(!saved){
-    if(msg) msg.textContent='لا توجد تعديلات محفوظة حالياً.';
+    if(msg) msg.textContent='No saved edits found.';
     var btn=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_doRestoreSession()"]');
     if(btn) btn.style.display='none';
     var dbtn=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_discardSavedSession()"]');
     if(dbtn) dbtn.style.display='none';
   } else {
     var d=new Date(saved.ts);
-    if(msg) msg.textContent='تم العثور على تعديلات محفوظة من '+d.toLocaleString()+'. هل تريد استعادتها؟';
+    if(msg) msg.textContent='Saved edits from '+d.toLocaleString()+' were found. Do you want to restore them?';
     var btn2=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_doRestoreSession()"]');
     if(btn2) btn2.style.display='';
     var dbtn2=document.getElementById('restoreSessionOverlay').querySelector('[onclick="_discardSavedSession()"]');
@@ -7255,7 +7235,7 @@ function _doRestoreSession(){
   Object.keys(QUIZ).forEach(k=>delete QUIZ[k]);Object.assign(QUIZ,saved.QUIZ);
   _refreshQuizBankQuality();
   buildChapters();updateStats();setTimeout(_applyExtraButtons,100);
-  _showToast('✅ تم استعادة التعديلات');
+  _showToast('✅ Edits restored');
   var badge=document.getElementById('sbRestoreBadge');
   if(badge) badge.style.display='none';
 }
@@ -7263,7 +7243,7 @@ function _doRestoreSession(){
 function _discardSavedSession(){
   document.getElementById('restoreSessionOverlay').classList.remove('open');
   try{localStorage.removeItem(_SAVE_KEY);}catch(e){}
-  _showToast('🗑️ تم حذف التعديلات المحفوظة','#ef4444');
+  _showToast('🗑️ Saved edits deleted','#ef4444');
   var badge=document.getElementById('sbRestoreBadge');
   if(badge) badge.style.display='none';
 }
@@ -7281,7 +7261,7 @@ function _showToast(msg,color){
 }
 
 // Auto-save every 60s in dev mode
-setInterval(()=>{if(userRole==='developer'&&devSaveData())_showToast('💾 حفظ تلقائي');},60000);
+setInterval(()=>{if(userRole==='developer'&&devSaveData())_showToast('💾 Auto-saved');},60000);
 
 // ══════════════════════════════════════════════
 // DEV — BUTTON MANAGER (add / edit / delete nav buttons)
@@ -7302,19 +7282,19 @@ function buildDevManager(){
     <!-- EMBED & EXPORT PANEL -->
     <div class="dev-panel" style="border-color:#a78bfa">
       <div class="dev-panel-header" style="background:linear-gradient(90deg,#3b0764,#1e1b4b)">
-        <div class="dev-panel-title" style="color:#c4b5fd">💾 Embed Images & Export — تصدير مع تضمين الصور</div>
+        <div class="dev-panel-title" style="color:#c4b5fd">💾 Embed Images & Export</div>
       </div>
       <div class="dev-panel-body">
         <p style="font-size:12.5px;color:var(--text2);margin-bottom:12px;line-height:1.7">
-          يقوم هذا الزر بتوليد نسخة <strong>HTML مستقلة كاملة</strong> تحتوي جميع الصور التي أضفتها
-          مضمّنة داخل الملف كـ Base64 — بحيث يرى أي شخص الصور بدون إنترنت وبدون أي إعداد.
+          This button generates a <strong>fully standalone HTML file</strong> with all added images
+          embedded as Base64 so it works offline without extra setup.
         </p>
         <div id="embedExportStatus" style="display:none;padding:10px 13px;border-radius:var(--radius-sm);margin-bottom:10px;font-size:12.5px;font-weight:600"></div>
         <button onclick="embedAndExport()" style="width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px">
           💾 Embed All Images & Export HTML
         </button>
         <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px;line-height:1.6">
-          يشمل: جميع الصور · جميع التعديلات · جميع البيانات المضافة · لا يتطلب إنترنت
+          Includes: all images · all edits · all added data · no internet required
         </div>
       </div>
     </div>
@@ -7322,10 +7302,10 @@ function buildDevManager(){
     <!-- BUTTON MANAGER -->
     <div class="dev-panel">
       <div class="dev-panel-header">
-        <div class="dev-panel-title">🔘 Button Manager — إدارة الأزرار</div>
+        <div class="dev-panel-title">🔘 Button Manager</div>
       </div>
       <div class="dev-panel-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">أضف أزراراً مخصصة تظهر في الصفحة الرئيسية أو الشريط الجانبي. يمكنك تحديد الاسم والأيقونة واللون والصفحة المستهدفة.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Add custom buttons for Home or Sidebar with label, icon, color, and target page.</p>
         <div id="btnMgrList"></div>
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
           <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">➕ Add New Button</div>
@@ -7360,7 +7340,7 @@ function buildDevManager(){
     <div class="dev-panel">
       <div class="dev-panel-header"><div class="dev-panel-title">✏️ Inline Text Editor</div></div>
       <div class="dev-panel-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">فعّل وضع التحرير المباشر للنقر على أي نص في التطبيق وتعديله في مكانه.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Enable direct inline editing to click and edit text in place.</p>
         <button id="inlineEditToggle" onclick="toggleInlineEdit(this)" style="width:100%;padding:10px;border-radius:var(--radius-sm);border:1.5px solid var(--amber);background:none;color:var(--amber);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">🖊 Enable Inline Editing</button>
         <div id="inlineEditHint" style="display:none;margin-top:8px;font-size:11px;color:var(--amber);padding:8px 10px;background:var(--amber-bg);border-radius:var(--radius-sm)">📌 Click any text element to edit it directly. Press Enter or click away to save. Press Escape to cancel.</div>
       </div>
@@ -7374,9 +7354,9 @@ function buildDevManager(){
 
     <!-- CHAPTER BUTTONS REORDER -->
     <div class="dev-panel">
-      <div class="dev-panel-header"><div class="dev-panel-title">📑 Chapter Order — ترتيب الفصول</div></div>
+      <div class="dev-panel-header"><div class="dev-panel-title">📑 Chapter Order</div></div>
       <div class="dev-panel-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">احذف الفصول أو عدّل ترتيبها من هنا.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Delete chapters or adjust their order here.</p>
         ${Object.entries(BOOK).map(([id,ch])=>`
           <div class="dev-item-row">
             <div class="dev-item-name">${ch.icon||''} ${ch.name}</div>
@@ -7388,7 +7368,7 @@ function buildDevManager(){
 
     <!-- QUIZ BANK OVERVIEW -->
     <div class="dev-panel">
-      <div class="dev-panel-header"><div class="dev-panel-title">❓ Quiz Bank — بنك الأسئلة</div></div>
+      <div class="dev-panel-header"><div class="dev-panel-title">❓ Quiz Bank</div></div>
       <div class="dev-panel-body">
         ${Object.entries(QUIZ).map(([key,qs])=>`
           <div class="dev-item-row">
@@ -7401,9 +7381,9 @@ function buildDevManager(){
 
     <!-- DATA MANAGEMENT -->
     <div class="dev-panel">
-      <div class="dev-panel-header"><div class="dev-panel-title">💾 Data — البيانات</div></div>
+      <div class="dev-panel-header"><div class="dev-panel-title">💾 Data</div></div>
       <div class="dev-panel-body" style="display:flex;flex-direction:column;gap:8px">
-        <button onclick="devSaveData();_showToast('✅ تم الحفظ')" style="padding:10px;border-radius:var(--radius-sm);border:none;background:var(--green);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">💾 Save All Data Now</button>
+        <button onclick="devSaveData();_showToast('✅ Saved')" style="padding:10px;border-radius:var(--radius-sm);border:none;background:var(--green);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">💾 Save All Data Now</button>
         <button onclick="devExportData()" style="padding:10px;border-radius:var(--radius-sm);border:1.5px solid var(--accent);background:none;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">📤 Export JSON</button>
         <button onclick="devImportData()" style="padding:10px;border-radius:var(--radius-sm);border:1.5px solid var(--text3);background:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)">📥 Import JSON</button>
         <button onclick="devExportHTMLWithImages()" style="padding:10px;border-radius:var(--radius-sm);border:1.5px solid var(--green);background:none;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">🌐 Export HTML+Images</button>
@@ -7445,7 +7425,7 @@ function devAddButton(){
   const color=document.getElementById('btnNewColor').value||'#2563eb';
   const target=document.getElementById('btnNewTarget').value||'home';
   const position=document.getElementById('btnNewPos').value||'home';
-  if(!label){_showToast('⚠ أدخل اسم الزر','var(--amber)');return;}
+  if(!label){_showToast('⚠ Enter a button label','var(--amber)');return;}
   const extra=_loadExtraButtons();
   extra.push({label,icon,color,target,position});
   _saveExtraButtons(extra);
@@ -7453,7 +7433,7 @@ function devAddButton(){
   document.getElementById('btnNewIcon').value='';
   _renderBtnMgrList();
   _applyExtraButtons();
-  _showToast('✅ تمت إضافة الزر');
+  _showToast('✅ Button added');
 }
 
 function devDeleteButton(i){
@@ -7510,7 +7490,7 @@ function devSaveButtonProps(i){
   _renderBtnMgrList();
   _applyExtraButtons();
   document.getElementById('btnPropsPanel').style.display='none';
-  _showToast('✅ تم تحديث الزر');
+  _showToast('✅ Button updated');
 }
 
 function _applyExtraButtons(){
@@ -7568,7 +7548,7 @@ function devEditChapterMeta(chId){
   ch.icon=newIcon.trim()||ch.icon;
   buildChapters();
   buildDevManager();
-  _showToast('✅ تم تحديث الفصل');
+  _showToast('✅ Chapter updated');
 }
 
 function devExportData(){
@@ -7580,7 +7560,7 @@ function devExportData(){
   a.download='bontrager_data_'+new Date().toISOString().split('T')[0]+'.json';
   a.click();
   URL.revokeObjectURL(url);
-  _showToast('📤 تم التصدير');
+  _showToast('📤 Exported');
 }
 
 function devImportData(){
@@ -7601,7 +7581,7 @@ function handleDevImport(e){
         if(d.extra) _saveExtraButtons(d.extra);
         buildChapters();
         buildDevManager();
-        _showToast('✅ تم الاستيراد بنجاح');
+        _showToast('✅ Import completed successfully');
       });
     }catch(err){alert('Invalid JSON file: '+err.message);}
   };
@@ -7735,6 +7715,12 @@ function _markViewed(chId,scId,posIdx){
     _saveViewed();
   }
 }
+function _setViewed(chId,scId,posIdx,isViewed){
+  const id=_posViewedId(chId,scId,posIdx);
+  if(isViewed) _viewed[id]=_viewed[id]||Date.now();
+  else delete _viewed[id];
+  _saveViewed();
+}
 function _isViewed(chId,scId,posIdx){
   return !!_viewed[_posViewedId(chId,scId,posIdx)];
 }
@@ -7754,17 +7740,27 @@ function _chapterProgress(chId){
 
 // Patch openPos to auto-mark viewed
 const _origOpenPos=openPos;
+let _lastOpenedPosRef=null;
 openPos=function(pos,chId,scId,posIdx){
   _origOpenPos.apply(this,arguments);
+  _lastOpenedPosRef={chId,scId,posIdx};
   _markViewed(chId,scId,posIdx);
   // Show/hide viewed pill
   const pill=document.getElementById('posViewedPill');
   if(pill){
     const already=_isViewed(chId,scId,posIdx);
     pill.classList.toggle('show',already);
+    pill.setAttribute('aria-pressed', already ? 'true' : 'false');
+    pill.setAttribute('aria-label', already ? 'Mark position as not reviewed' : 'Mark position as reviewed');
+    pill.title=already?'Click to mark as not reviewed':'Click to mark as reviewed';
+    pill.onclick=()=>toggleCurrentPositionReviewed();
   }
   // Update pos btn in list
-  setTimeout(()=>_refreshPosBtns(chId,scId),100);
+  setTimeout(()=>{
+    _refreshPosBtns(chId,scId);
+    updateProgress();
+    buildChapters();
+  },100);
 };
 
 function _refreshPosBtns(chId,scId){
@@ -7772,10 +7768,35 @@ function _refreshPosBtns(chId,scId){
   if(!list) return;
   list.querySelectorAll('.pos-btn[data-posidx]').forEach(btn=>{
     const idx=parseInt(btn.dataset.posidx);
-    if(_isViewed(chId,scId,idx)){
-      btn.classList.add('viewed');
+    const viewed=_isViewed(chId,scId,idx);
+    btn.classList.toggle('viewed',viewed);
+    const markBtn=btn.querySelector('.pos-viewed-mark');
+    if(markBtn){
+      markBtn.setAttribute('aria-pressed', viewed ? 'true' : 'false');
+      markBtn.setAttribute('aria-label', viewed ? 'Mark position as not reviewed' : 'Mark position as reviewed');
+      markBtn.title=viewed?'Mark as not reviewed':'Mark as reviewed';
     }
   });
+}
+
+function togglePositionReviewed(chId,scId,posIdx){
+  const next=!_isViewed(chId,scId,posIdx);
+  _setViewed(chId,scId,posIdx,next);
+  _refreshPosBtns(chId,scId);
+  updateProgress();
+  buildChapters();
+  const pill=document.getElementById('posViewedPill');
+  if(_lastOpenedPosRef && _lastOpenedPosRef.chId===chId && _lastOpenedPosRef.scId===scId && _lastOpenedPosRef.posIdx===posIdx && pill){
+    pill.classList.toggle('show',next);
+    pill.setAttribute('aria-pressed', next ? 'true' : 'false');
+    pill.setAttribute('aria-label', next ? 'Mark position as not reviewed' : 'Mark position as reviewed');
+    pill.title=next?'Click to mark as not reviewed':'Click to mark as reviewed';
+  }
+}
+
+function toggleCurrentPositionReviewed(){
+  if(!_lastOpenedPosRef) return;
+  togglePositionReviewed(_lastOpenedPosRef.chId,_lastOpenedPosRef.scId,_lastOpenedPosRef.posIdx);
 }
 
 _loadViewed();
@@ -7819,17 +7840,25 @@ openLearnChap=function(chId,scId){
   setTimeout(()=>{
     const list=document.getElementById('learnPosList');
     if(!list) return;
-    list.querySelectorAll('.pos-btn').forEach((btn,i)=>{
-      btn.dataset.posidx=i;
-      if(!btn.querySelector('.pos-viewed-mark')){
-        const mark=document.createElement('span');
-        mark.className='pos-viewed-mark';
-        mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
-        btn.appendChild(mark);
-      }
-      if(_isViewed(chId,scId,i)) btn.classList.add('viewed');
-    });
-  },80);
+      list.querySelectorAll('.pos-btn').forEach((btn,i)=>{
+        const viewed=_isViewed(chId,scId,i);
+        btn.dataset.posidx=i;
+        if(!btn.querySelector('.pos-viewed-mark')){
+          const mark=document.createElement('button');
+          mark.type='button';
+          mark.className='pos-viewed-mark';
+          mark.setAttribute('role','switch');
+          mark.setAttribute('aria-label', viewed ? 'Mark position as not reviewed' : 'Mark position as reviewed');
+          mark.setAttribute('aria-pressed', viewed ? 'true' : 'false');
+          mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
+          mark.onclick=(e)=>{ e.stopPropagation(); togglePositionReviewed(chId,scId,i); };
+          mark.onkeydown=(e)=>{ if(e.key===' '||e.key==='Enter'||e.key==='Spacebar'){ e.preventDefault(); mark.click(); } };
+          btn.appendChild(mark);
+        }
+        if(viewed) btn.classList.add('viewed');
+      });
+      updateProgress();
+    },80);
 };
 
 // ── 4. EXPORT → always opens on Home ───────────
@@ -7896,9 +7925,9 @@ function getPositionIcon(name){
 
 function updateProgress(){
   const progress = document.querySelector('#posProgress div');
-  if(progress && currentPositions){
-    const reviewed = currentPositions.filter(p => localStorage.getItem(`viewed_${p.id}`) === '1').length;
-    const pct = (reviewed / currentPositions.length) * 100;
+  if(progress && currentPositions && curChapter){
+    const reviewed = currentPositions.filter((p, idx) => _isViewed(curChapter, curSubchapter, idx)).length;
+    const pct = currentPositions.length ? (reviewed / currentPositions.length) * 100 : 0;
     progress.style.width = pct + '%';
   }
 }
@@ -8437,7 +8466,7 @@ function _zoomUnbindEvents(){
 // ══════════════════════════════════════════════
 const ANATOMY_DATA = {
   head_neck:{
-    name:'Head & Neck',arabicName:'الرأس والرقبة',icon:'🧠',
+    name:'Head & Neck',icon:'🧠',
     structures:[
       'Skull — calvarium (frontal, parietal, temporal, occipital)',
       'Base of skull (sphenoid, ethmoid)',
@@ -8460,7 +8489,7 @@ const ANATOMY_DATA = {
     ]
   },
   thorax:{
-    name:'Thorax & Chest',arabicName:'الصدر والثوركس',icon:'🫁',
+    name:'Thorax & Chest',icon:'🫁',
     structures:[
       'Lungs (right: 3 lobes; left: 2 lobes)',
       'Heart & pericardium',
@@ -8484,7 +8513,7 @@ const ANATOMY_DATA = {
     ]
   },
   abdomen:{
-    name:'Abdomen & Pelvis',arabicName:'البطن والحوض',icon:'🫃',
+    name:'Abdomen & Pelvis',icon:'🫃',
     structures:[
       'Liver (right lobe, left lobe, caudate, quadrate)',
       'Gallbladder & biliary ducts',
@@ -8507,7 +8536,7 @@ const ANATOMY_DATA = {
     ]
   },
   spine:{
-    name:'Vertebral Column (Spine)',arabicName:'العمود الفقري',icon:'🦴',
+    name:'Vertebral Column (Spine)',icon:'🦴',
     structures:[
       'Cervical spine: C1 (Atlas) – C7 (7 vertebrae)',
       'Thoracic spine: T1 – T12 (12 vertebrae)',
@@ -8530,7 +8559,7 @@ const ANATOMY_DATA = {
     ]
   },
   shoulder:{
-    name:'Shoulder & Clavicle',arabicName:'الكتف والترقوة',icon:'💪',
+    name:'Shoulder & Clavicle',icon:'💪',
     structures:[
       'Glenohumeral joint (ball-and-socket)',
       'Glenoid fossa of scapula',
@@ -8554,7 +8583,7 @@ const ANATOMY_DATA = {
     ]
   },
   upper_arm:{
-    name:'Humerus & Elbow',arabicName:'العضد والكوع',icon:'🦾',
+    name:'Humerus & Elbow',icon:'🦾',
     structures:[
       'Humerus (head, anatomical neck, surgical neck)',
       'Greater & lesser tubercles, bicipital groove',
@@ -8577,7 +8606,7 @@ const ANATOMY_DATA = {
     ]
   },
   forearm_hand:{
-    name:'Forearm, Wrist & Hand',arabicName:'الساعد والمعصم والكف',icon:'✋',
+    name:'Forearm, Wrist & Hand',icon:'✋',
     structures:[
       'Radius (head, neck, shaft, styloid process)',
       'Ulna (olecranon, coronoid process, shaft, styloid)',
@@ -8601,7 +8630,7 @@ const ANATOMY_DATA = {
     ]
   },
   hip_femur:{
-    name:'Pelvis, Hip & Femur',arabicName:'الحوض والورك والفخذ',icon:'🦴',
+    name:'Pelvis, Hip & Femur',icon:'🦴',
     structures:[
       'Ilium (iliac crest, ASIS, PSIS, iliac fossa)',
       'Ischium (ischial tuberosity, ischial spine)',
@@ -8624,7 +8653,7 @@ const ANATOMY_DATA = {
     ]
   },
   knee_leg:{
-    name:'Knee & Lower Leg',arabicName:'الركبة والساق السفلية',icon:'🦵',
+    name:'Knee & Lower Leg',icon:'🦵',
     structures:[
       'Distal femur (medial & lateral condyles, trochlear groove)',
       'Proximal tibia (medial & lateral plateaus, tibial tuberosity)',
@@ -8646,7 +8675,7 @@ const ANATOMY_DATA = {
     ]
   },
   foot_ankle:{
-    name:'Foot & Ankle',arabicName:'القدم والكاحل',icon:'🦶',
+    name:'Foot & Ankle',icon:'🦶',
     structures:[
       'Talus (trochlea, head, neck)',
       'Calcaneus (heel bone, sustentaculum tali, tuberosity)',
@@ -9422,4 +9451,3 @@ _loadBottomNavPref();
     }
   });
 }());
-
