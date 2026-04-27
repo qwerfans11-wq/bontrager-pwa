@@ -2596,14 +2596,22 @@ function openBookChapter(chNum, pageNum){
   navTo('book-reader');
 }
 
+let _activePageId = 'home';
 function navTo(id){
   // Close any open modals
   const flashcardModal = document.getElementById('flashcardModal');
   if(flashcardModal) flashcardModal.classList.remove('show');
-  
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+
+  // Only touch the two pages that change — avoid iterating all pages
+  if(_activePageId !== id){
+    const prevPage = document.getElementById('page-' + _activePageId);
+    if(prevPage) prevPage.classList.remove('active');
+    const prevNav = document.getElementById('nav-' + _activePageId);
+    if(prevNav) prevNav.classList.remove('active');
+    _activePageId = id;
+  }
+  const newPage = document.getElementById('page-'+id);
+  if(newPage) newPage.classList.add('active');
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
   const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail',book:'📖 Book','book-reader':'📖 Book'};
@@ -2637,7 +2645,11 @@ function _updateBottomNav(id){
     'ai':'bnav-ai',
     'quickreview':null,'anatomy':null,'anatomy-detail':null,'book':null,'book-reader':null,'settings':null,'about':null,'dev-manager':null
   };
-  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  // Use known IDs to avoid querySelectorAll
+  ['bnav-home','bnav-learn','bnav-quiz','bnav-ai'].forEach(bid=>{
+    const b=document.getElementById(bid);
+    if(b) b.classList.remove('active');
+  });
   const bnavId=bnavMap[id];
   if(bnavId){const el=document.getElementById(bnavId);if(el)el.classList.add('active');}
 }
@@ -6690,6 +6702,7 @@ function _refreshPosImgDisplay(){
       _setImageSrcWithFallback(img, fname, type);
       img.alt = type === 'position' ? 'Positioning photo' : 'Radiograph';
       img.loading = 'lazy';
+      img.decoding = 'async';
       img.title = 'Tap to zoom';
       img.onclick = () => openImgZoom(img.src);
       imgWrap.appendChild(img);
@@ -9133,7 +9146,7 @@ function buildAnatomyDetail(regionId){
     ${(()=>{
       const imgs=r.anatImages&&r.anatImages.length?r.anatImages:(r.anatImage?[r.anatImage]:[]);
       if(!imgs.length)return '';
-      return imgs.map(src=>`<div class="anat-diagram-wrap" style="position:relative;cursor:zoom-in" role="button" tabindex="0" aria-label="${r.name} anatomy diagram — tap to enlarge" title="Tap to enlarge" onclick="openImgZoom(this.querySelector('img').src)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openImgZoom(this.querySelector('img').src)}"><img src="${src}" alt="${r.name} anatomy" loading="lazy" style="pointer-events:none"/><div style="position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;pointer-events:none;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> Tap to zoom</div></div>`).join('');
+      return imgs.map(src=>`<div class="anat-diagram-wrap" style="position:relative;cursor:zoom-in" role="button" tabindex="0" aria-label="${r.name} anatomy diagram — tap to enlarge" title="Tap to enlarge" onclick="openImgZoom(this.querySelector('img').src)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openImgZoom(this.querySelector('img').src)}"><img src="${src}" alt="${r.name} anatomy" loading="lazy" decoding="async" style="pointer-events:none"/><div style="position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;pointer-events:none;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> Tap to zoom</div></div>`).join('');
     })()}
 
     <div class="anat-detail-section">
