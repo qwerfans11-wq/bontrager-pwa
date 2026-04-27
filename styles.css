@@ -15,7 +15,7 @@
   --safe-bottom:env(safe-area-inset-bottom, 0px);
   --app-height:100vh;
   --sidebar-w:264px;
-  --font:'Inter','Noto Sans Arabic',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   --font-weight:400;
   --base-fs:15px;
   --font-scale:1;
@@ -1291,6 +1291,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 /* ── Progress Tracking ── */
 .pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
 .pos-viewed-mark svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.pos-viewed-mark{padding:0;cursor:pointer;appearance:none;-webkit-appearance:none;min-height:22px!important;min-width:22px!important}
 .pos-btn.viewed .pos-viewed-mark svg{opacity:1}
 .pos-btn.viewed .pos-viewed-mark{background:var(--green);border-color:var(--green)}
 .pos-btn.viewed .pos-viewed-mark svg{stroke:#fff}
@@ -1318,6 +1319,15 @@ body.study-mode .scan3-bar{top:calc(var(--hh) + var(--safe-top) + 35px)}
 /* ── Spacing improvements ── */
 .pos-sec-block+.pos-sec-hdr{margin-top:4px}
 .fast-row{padding:5px 0;border-bottom:1px solid var(--border)}
+.fast-summary.scan3-bar{
+  position:sticky;
+  top:calc(var(--hh) + var(--safe-top) + 8px);
+  z-index:120;
+  margin-bottom:12px;
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  border:1.5px solid var(--border2);
+  box-shadow:var(--shadow-sm);
+}
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE & ACCESSIBILITY FIXES
@@ -1667,5 +1677,3 @@ body.study-mode .bottom-nav{display:none}
 #_swipeBackIndicator.active #_swipeBackArrow{
   opacity:1;transform:scale(1) translateX(0);
 }
-
-

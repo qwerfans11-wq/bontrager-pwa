@@ -21,8 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://objects.githubusercontent.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cairo:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cairo:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=DM+Sans:wght@400;500;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Public+Sans:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -122,12 +122,12 @@
 <!-- RESTORE SESSION DIALOG -->
 <div class="confirm-overlay" id="restoreSessionOverlay">
   <div class="confirm-box">
-    <h4>💾 استعادة الجلسة السابقة</h4>
-    <p id="restoreSessionMsg">تم العثور على تعديلات محفوظة. هل تريد استعادتها؟</p>
+    <h4>💾 Restore previous session</h4>
+    <p id="restoreSessionMsg">Saved edits were found. Do you want to restore them?</p>
     <div class="confirm-actions" style="gap:8px;flex-wrap:wrap">
-      <button class="modal-btn secondary" onclick="document.getElementById('restoreSessionOverlay').classList.remove('open')">إغلاق</button>
-      <button class="modal-btn danger" onclick="_discardSavedSession()">تجاهل وحذف</button>
-      <button class="modal-btn" onclick="_doRestoreSession()" style="background:var(--accent);color:#fff">استعادة</button>
+      <button class="modal-btn secondary" onclick="document.getElementById('restoreSessionOverlay').classList.remove('open')">Close</button>
+      <button class="modal-btn danger" onclick="_discardSavedSession()">Discard and delete</button>
+      <button class="modal-btn" onclick="_doRestoreSession()" style="background:var(--accent);color:#fff">Restore</button>
     </div>
   </div>
 </div>
@@ -181,9 +181,9 @@
     <span style="font-size:18px;">👨‍⚕️</span>
     User Profile
   </div>
-  <div class="nav-item" id="sbRestoreSession" onclick="offerRestoreSession()" style="display:none" title="بحث عن تعديلات محفوظة واستعادتها">
+  <div class="nav-item" id="sbRestoreSession" onclick="offerRestoreSession()" style="display:none" title="Find and restore saved edits">
     <span style="font-size:18px;">💾</span>
-    استعادة الجلسة السابقة
+    Restore previous session
     <span id="sbRestoreBadge" style="margin-left:auto;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;flex-shrink:0;display:none">!</span>
   </div>
   <div class="sb-footer">
@@ -456,7 +456,7 @@
     <div class="badge" id="posViewBadge"></div>
     <div class="desc-text" id="posViewDesc"></div>
     <div id="descToggle" style="display:none;margin-top:8px;text-align:center">
-      <button onclick="toggleDesc()" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;cursor:pointer">اقرأ المزيد</button>
+      <button onclick="toggleDesc()" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;cursor:pointer">Read more</button>
     </div>
     <div class="tech-card" id="posViewTech"></div>
     <!-- Personal Notes -->
@@ -780,7 +780,7 @@
 <div class="page" id="page-ai">
   <div class="scroll" id="aiScroll">
     <button class="home-back-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</button>
-    <div class="ptitle">Ask AI — مساعد الأشعة</div>
+    <div class="ptitle">Ask AI — Radiology Assistant</div>
     <!-- Context strip — shows when coming from a position/chapter -->
     <div class="ai-context-strip" id="aiContextStrip" style="display:none">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -817,10 +817,10 @@
         <button class="ai-sug-btn" onclick="sendAI('List all special positions')">Special positions</button>
         <button class="ai-sug-btn" onclick="sendAI('What positions require a grid?')">Grid positions</button>
       </div>
-      <div class="ai-hint">💡 Tip: Ask in Arabic or English. Type "open PA Chest" to jump to a position, or "compare X vs Y" for side-by-side comparison.</div>
+      <div class="ai-hint">💡 Tip: Ask in English. Type "open PA Chest" to jump to a position, or "compare X vs Y" for side-by-side comparison.</div>
     </div>
     <div class="ai-chat-area" id="aiChat">
-      <div class="ai-bubble bot"><strong>Radiology AI Assistant 🤖</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br>يمكنك سؤالي بالعربية أو الإنجليزية، بما في ذلك أسئلة المقارنة وتصحيح الأخطاء.<br><br><strong>Try:</strong><br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br>• <em>"What positions require a grid?"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>
+      <div class="ai-bubble bot"><strong>Radiology AI Assistant 🤖</strong><br><br>I can search every position in your current dataset and explain technique in focused steps.<br><br><strong>Try:</strong><br>• <em>"PA Chest technique"</em><br>• <em>"compare RAO vs LAO Chest"</em><br>• <em>"analyze my latest quiz mistakes"</em><br>• <em>"open Mortise Ankle"</em><br>• <em>"What positions require a grid?"</em><br><br>Type <strong>"list all chapters"</strong> to browse all content.</div>
     </div>
   </div>
 </div>
@@ -850,8 +850,7 @@
           <div class="settings-row-sub">Choose the app font for students and developers</div>
         </div>
         <select class="settings-select" id="fontSelect" onchange="onFontChange()">
-          <option value="IBM Plex Sans, Noto Sans Arabic, -apple-system, BlinkMacSystemFont, sans-serif">IBM Plex Sans</option>
-          <option value="'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif">Noto Sans Arabic</option>
+          <option value="'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif">IBM Plex Sans</option>
           <option value="Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif">Segoe UI</option>
           <option value="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">Inter</option>
           <option value="Roboto, Arial, sans-serif">Roboto</option>
@@ -866,16 +865,14 @@
           <option value="Calibri, Candara, Segoe, 'Segoe UI', sans-serif">Calibri</option>
           <option value="Georgia, 'Times New Roman', Times, serif">Georgia</option>
           <option value="Courier New, Courier, monospace">Courier New</option>
-          <option value="'Nunito Sans', 'Noto Sans Arabic', Arial, sans-serif">Nunito Sans</option>
-          <option value="'Work Sans', 'Noto Sans Arabic', Arial, sans-serif">Work Sans</option>
-          <option value="'DM Sans', 'Noto Sans Arabic', Arial, sans-serif">DM Sans</option>
-          <option value="Manrope, 'Noto Sans Arabic', Arial, sans-serif">Manrope</option>
-          <option value="'Public Sans', 'Noto Sans Arabic', Arial, sans-serif">Public Sans</option>
-          <option value="'Fira Sans', 'Noto Sans Arabic', Arial, sans-serif">Fira Sans</option>
-          <option value="'PT Sans', 'Noto Sans Arabic', Arial, sans-serif">PT Sans</option>
-          <option value="'Atkinson Hyperlegible', 'Noto Sans Arabic', Arial, sans-serif">Atkinson Hyperlegible</option>
-          <option value="Tajawal, 'Noto Sans Arabic', Arial, sans-serif">Tajawal</option>
-          <option value="Cairo, 'Noto Sans Arabic', Arial, sans-serif">Cairo</option>
+          <option value="'Nunito Sans', Arial, sans-serif">Nunito Sans</option>
+          <option value="'Work Sans', Arial, sans-serif">Work Sans</option>
+          <option value="'DM Sans', Arial, sans-serif">DM Sans</option>
+          <option value="Manrope, Arial, sans-serif">Manrope</option>
+          <option value="'Public Sans', Arial, sans-serif">Public Sans</option>
+          <option value="'Fira Sans', Arial, sans-serif">Fira Sans</option>
+          <option value="'PT Sans', Arial, sans-serif">PT Sans</option>
+          <option value="'Atkinson Hyperlegible', Arial, sans-serif">Atkinson Hyperlegible</option>
         </select>
       </div>
       <div class="settings-row">
@@ -1125,7 +1122,7 @@
 
 <!-- AI INPUT BAR -->
 <div class="ai-input-bar" id="aiBar">
-  <input class="ai-input" id="aiInput" placeholder="Ask in Arabic or English (e.g., open PA chest, compare PA vs AP)" aria-label="Ask radiology AI assistant" onkeydown="if(event.key==='Enter')sendAI()">
+  <input class="ai-input" id="aiInput" placeholder="Ask in English (e.g., open PA chest, compare PA vs AP)" aria-label="Ask radiology AI assistant" onkeydown="if(event.key==='Enter')sendAI()">
   <button class="ai-send" onclick="sendAI()" aria-label="Send AI message">
     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
   </button>
@@ -1383,7 +1380,7 @@
 // APP UPDATE NOTIFICATION
 // ═══════════════════════════════════════════════════════════════════
 window._notifyAppUpdate = function() {
-  if (confirm('📦 نسخة جديدة متاحة! إعادة التحميل الآن؟')) {
+  if (confirm('📦 A new version is available. Reload now?')) {
     location.reload();
   }
 };
@@ -1439,7 +1436,5 @@ window._notifyAppUpdate = function() {
 </div>
 </body>
 </html>
-
-
 
 
