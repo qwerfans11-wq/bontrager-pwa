@@ -7772,6 +7772,7 @@ function _refreshPosBtns(chId,scId){
     const markBtn=btn.querySelector('.pos-viewed-mark');
     if(markBtn){
       markBtn.setAttribute('aria-pressed', viewed ? 'true' : 'false');
+      markBtn.setAttribute('aria-label', viewed ? 'Mark position as not reviewed' : 'Mark position as reviewed');
       markBtn.title=viewed?'Mark as not reviewed':'Mark as reviewed';
     }
   });
@@ -7842,6 +7843,8 @@ openLearnChap=function(chId,scId){
           const mark=document.createElement('button');
           mark.type='button';
           mark.className='pos-viewed-mark';
+          mark.setAttribute('aria-label','Mark position as reviewed');
+          mark.setAttribute('aria-pressed','false');
           mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
           mark.onclick=(e)=>{ e.stopPropagation(); togglePositionReviewed(chId,scId,i); };
           btn.appendChild(mark);
