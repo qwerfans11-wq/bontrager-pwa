@@ -7750,6 +7750,8 @@ openPos=function(pos,chId,scId,posIdx){
   if(pill){
     const already=_isViewed(chId,scId,posIdx);
     pill.classList.toggle('show',already);
+    pill.setAttribute('aria-pressed', already ? 'true' : 'false');
+    pill.setAttribute('aria-label', already ? 'Mark position as not reviewed' : 'Mark position as reviewed');
     pill.title=already?'Click to mark as not reviewed':'Click to mark as reviewed';
     pill.onclick=()=>toggleCurrentPositionReviewed();
   }
@@ -7786,6 +7788,8 @@ function togglePositionReviewed(chId,scId,posIdx){
   const pill=document.getElementById('posViewedPill');
   if(_lastOpenedPosRef && _lastOpenedPosRef.chId===chId && _lastOpenedPosRef.scId===scId && _lastOpenedPosRef.posIdx===posIdx && pill){
     pill.classList.toggle('show',next);
+    pill.setAttribute('aria-pressed', next ? 'true' : 'false');
+    pill.setAttribute('aria-label', next ? 'Mark position as not reviewed' : 'Mark position as reviewed');
     pill.title=next?'Click to mark as not reviewed':'Click to mark as reviewed';
   }
 }
@@ -7837,10 +7841,10 @@ openLearnChap=function(chId,scId){
     const list=document.getElementById('learnPosList');
     if(!list) return;
       list.querySelectorAll('.pos-btn').forEach((btn,i)=>{
+        const viewed=_isViewed(chId,scId,i);
         btn.dataset.posidx=i;
         if(!btn.querySelector('.pos-viewed-mark')){
           const mark=document.createElement('button');
-          const viewed=_isViewed(chId,scId,i);
           mark.type='button';
           mark.className='pos-viewed-mark';
           mark.setAttribute('role','switch');
@@ -7851,7 +7855,7 @@ openLearnChap=function(chId,scId){
           mark.onkeydown=(e)=>{ if(e.key===' '||e.key==='Enter'||e.key==='Spacebar'){ e.preventDefault(); mark.click(); } };
           btn.appendChild(mark);
         }
-        if(_isViewed(chId,scId,i)) btn.classList.add('viewed');
+        if(viewed) btn.classList.add('viewed');
       });
       updateProgress();
     },80);

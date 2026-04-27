@@ -1302,8 +1302,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 .ch-progress-label{font-size:calc(10px * var(--font-scale));color:var(--text3);font-weight:600;white-space:nowrap}
 
 /* Viewed indicator on pos-view header */
-.viewed-pill{display:inline-flex;align-items:center;gap:5px;font-size:calc(11px * var(--font-scale));font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);margin-bottom:10px;opacity:0;transition:opacity .3s}
-.viewed-pill{cursor:pointer}
+.viewed-pill{display:inline-flex;align-items:center;gap:5px;font-size:calc(11px * var(--font-scale));font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);margin-bottom:10px;opacity:0;transition:opacity .3s;cursor:pointer;font-family:var(--font)}
 .viewed-pill.show{opacity:1}
 
 /* ── Section icons in pos view ── */
