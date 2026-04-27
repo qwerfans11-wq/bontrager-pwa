@@ -4020,8 +4020,8 @@ function openPos(pos, chId, scId, posIdx){
   // ── Quick Tech card (aligned with Fast Clinical Summary style) ──
   const respLabel=resp?resp:'—';
   const scan3Html=`
-    <div class="fast-summary scan3-bar" role="status" aria-label="Quick technical parameters">
-      <div class="fast-summary-title" style="display:flex;align-items:center;gap:6px">
+    <div class="fast-summary scan3-bar" role="region" aria-labelledby="quickTechTitle">
+      <div class="fast-summary-title" id="quickTechTitle" style="display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Quick Tech
       </div>
@@ -7841,13 +7841,15 @@ openLearnChap=function(chId,scId){
         btn.dataset.posidx=i;
         if(!btn.querySelector('.pos-viewed-mark')){
           const mark=document.createElement('button');
+          const viewed=_isViewed(chId,scId,i);
           mark.type='button';
           mark.className='pos-viewed-mark';
           mark.setAttribute('role','switch');
-          mark.setAttribute('aria-label','Mark position as reviewed');
-          mark.setAttribute('aria-pressed','false');
+          mark.setAttribute('aria-label', viewed ? 'Mark position as not reviewed' : 'Mark position as reviewed');
+          mark.setAttribute('aria-pressed', viewed ? 'true' : 'false');
           mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
           mark.onclick=(e)=>{ e.stopPropagation(); togglePositionReviewed(chId,scId,i); };
+          mark.onkeydown=(e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); mark.click(); } };
           btn.appendChild(mark);
         }
         if(_isViewed(chId,scId,i)) btn.classList.add('viewed');
