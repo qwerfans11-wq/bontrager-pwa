@@ -3114,6 +3114,25 @@ function getPositionsForChap(chId, scId){
   }
 }
 
+function _setPosButtonContent(btn,type,icon,posName){
+  btn.textContent='';
+
+  const dot=document.createElement('span');
+  dot.className=`dot dot-${type==='routine'?'r':'s'}`;
+  btn.appendChild(dot);
+
+  const iconSpan=document.createElement('span');
+  iconSpan.className='pos-btn-icon';
+  iconSpan.setAttribute('aria-hidden','true');
+  iconSpan.textContent=icon;
+  btn.appendChild(iconSpan);
+
+  const nameSpan=document.createElement('span');
+  nameSpan.className='pos-btn-name';
+  nameSpan.textContent=posName;
+  btn.appendChild(nameSpan);
+}
+
 function buildLearnPositions(chId, scId){
   const list = document.getElementById('learnPosList');
   list.innerHTML = '';
@@ -3129,7 +3148,7 @@ function buildLearnPositions(chId, scId){
       const btn = document.createElement('button');
       btn.className = 'pos-btn';
       const icon = getPositionIcon(pos.name);
-      btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span class="pos-btn-icon" aria-hidden="true">${icon}</span><span class="pos-btn-name">${esc(pos.name)}</span>`;
+      _setPosButtonContent(btn,type,icon,pos.name);
       btn.onclick = () => openPos(pos, chId, scId, realIdx);
       sec.appendChild(btn);
     });
@@ -3707,7 +3726,7 @@ function openLearnChap(chId, scId){
       btn.className='pos-btn';
 
       const icon = getPositionIcon(pos.name);
-      btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span class="pos-btn-icon" aria-hidden="true">${icon}</span><span class="pos-btn-name">${esc(pos.name)}</span>`;
+      _setPosButtonContent(btn,type,icon,pos.name);
       btn.onclick=()=>openPos(pos, chId, scId, realIdx);
       sec.appendChild(btn);
     });
