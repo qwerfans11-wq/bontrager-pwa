@@ -2610,7 +2610,8 @@ function navTo(id){
     if(prevNav) prevNav.classList.remove('active');
     _activePageId = id;
   }
-  document.getElementById('page-'+id).classList.add('active');
+  const newPage = document.getElementById('page-'+id);
+  if(newPage) newPage.classList.add('active');
   const ni=document.getElementById('nav-'+id);
   if(ni)ni.classList.add('active');
   const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail',book:'📖 Book','book-reader':'📖 Book'};
