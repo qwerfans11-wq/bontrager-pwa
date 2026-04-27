@@ -7843,6 +7843,7 @@ openLearnChap=function(chId,scId){
           const mark=document.createElement('button');
           mark.type='button';
           mark.className='pos-viewed-mark';
+          mark.setAttribute('role','switch');
           mark.setAttribute('aria-label','Mark position as reviewed');
           mark.setAttribute('aria-pressed','false');
           mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
