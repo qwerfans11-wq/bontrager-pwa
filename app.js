@@ -572,7 +572,7 @@ function _warmupAnatomyImages(){
   }
   if(!allUrls.length) return;
 
-  const warmOne = (url) => caches.open('bontrager-v7-20260419-offline-anat').then(cache =>
+  const warmOne = (url) => caches.open('bontrager-v0.0.1-offline-anat').then(cache =>
     cache.match(url).then(hit => {
       if(hit) return;
       return fetch(url, {mode:'cors', credentials:'omit'})
@@ -2362,6 +2362,7 @@ const QUIZ = {
 let userRole='student', userName='Student';
 let curChapter=null, curPos=null, editChId=null, editPosIdx=null;
 let curSubchapter=null;
+const APP_VERSION='0.0.1';
 const FLASHCARD_STORE_KEY='bontrager_flashcards_progress_v1';
 const FLASHCARD_SWIPE_THRESHOLD = 56;
 const FLASHCARD_SWIPE_MAX_MS = 650;
@@ -3128,11 +3129,7 @@ function buildLearnPositions(chId, scId){
       const btn = document.createElement('button');
       btn.className = 'pos-btn';
       const icon = getPositionIcon(pos.name);
-      if(userRole === 'developer'){
-        btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span><span style="flex:1">${esc(pos.name)}</span>`;
-      } else {
-        btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span>${esc(pos.name)}`;
-      }
+      btn.innerHTML = `<span class="dot dot-${type === 'routine' ? 'r' : 's'}"></span><span class="pos-btn-icon" aria-hidden="true">${icon}</span><span class="pos-btn-name">${esc(pos.name)}</span>`;
       btn.onclick = () => openPos(pos, chId, scId, realIdx);
       sec.appendChild(btn);
     });
@@ -3710,11 +3707,7 @@ function openLearnChap(chId, scId){
       btn.className='pos-btn';
 
       const icon = getPositionIcon(pos.name);
-      if(userRole==='developer'){
-        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span><span style="flex:1">${esc(pos.name)}</span>`;
-      } else {
-        btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span style="font-size:16px;margin-right:8px">${icon}</span>${esc(pos.name)}`;
-      }
+      btn.innerHTML=`<span class="dot dot-${type==='routine'?'r':'s'}"></span><span class="pos-btn-icon" aria-hidden="true">${icon}</span><span class="pos-btn-name">${esc(pos.name)}</span>`;
       btn.onclick=()=>openPos(pos, chId, scId, realIdx);
       sec.appendChild(btn);
     });
@@ -7594,6 +7587,14 @@ _refreshQuizBankQuality();
 buildChapters();
 _loadBestScores();
 updateStats();
+(function syncAppVersionLabels(){
+  const txt=`v${APP_VERSION}`;
+  const ids=['settingsAppVersion','aboutAppVersion'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=txt;
+  });
+})();
 // ── Restore appearance settings on startup ──
 _loadSavedAppearance();
 // Restore dark mode from its own key (always applied, even for students)
