@@ -1289,7 +1289,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 .study-toggle-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── Progress Tracking ── */
-.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;padding:0;cursor:pointer;appearance:none;-webkit-appearance:none;min-height:22px!important;min-width:22px!important}
+.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;padding:0;cursor:pointer;appearance:none;-webkit-appearance:none;min-height:22px;min-width:22px}
 .pos-viewed-mark svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
 .pos-btn.viewed .pos-viewed-mark svg{opacity:1}
 .pos-btn.viewed .pos-viewed-mark{background:var(--green);border-color:var(--green)}
@@ -1333,7 +1333,7 @@ body.study-mode .scan3-bar{top:calc(var(--hh) + var(--safe-top) + 35px)}
 ═══════════════════════════════════════════════ */
 
 /* Ensure all buttons are touch-friendly */
-button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+button:not(.pos-viewed-mark), .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
   min-height: 44px;
   min-width: 44px;
   touch-action: manipulation;
@@ -1389,7 +1389,7 @@ html, body {
     font-size: 16px;
   }
 
-  button, .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
+  button:not(.pos-viewed-mark), .nav-btn, .ltog-btn, .study-toggle-btn, .ai-sug-btn {
     min-height: 48px;
     padding: 12px 14px !important;
   }

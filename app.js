@@ -7849,7 +7849,7 @@ openLearnChap=function(chId,scId){
           mark.setAttribute('aria-pressed', viewed ? 'true' : 'false');
           mark.innerHTML=`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
           mark.onclick=(e)=>{ e.stopPropagation(); togglePositionReviewed(chId,scId,i); };
-          mark.onkeydown=(e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); mark.click(); } };
+          mark.onkeydown=(e)=>{ if(e.key===' '||e.key==='Enter'||e.key==='Spacebar'){ e.preventDefault(); mark.click(); } };
           btn.appendChild(mark);
         }
         if(_isViewed(chId,scId,i)) btn.classList.add('viewed');
