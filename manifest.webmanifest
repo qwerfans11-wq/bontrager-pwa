@@ -2,6 +2,7 @@
   "name": "Bontrager Positioning Guide",
   "short_name": "Bontrager",
   "description": "دليل المواضع الإشعاعية الكامل - Complete radiographic positioning guide with offline support and interactive learning tools",
+  "version": "0.0.1",
   "id": "/",
   "start_url": "./",
   "scope": "./",

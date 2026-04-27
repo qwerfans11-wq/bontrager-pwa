@@ -1,11 +1,11 @@
-const CACHE_NAME = 'bontrager-v7-20260419-offline-anat';
+const CACHE_NAME = 'bontrager-v0.0.1-offline-anat';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.webmanifest',
-  './icons/favicon-32.png',
+  './icons/icon-96.png',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-256.png',
