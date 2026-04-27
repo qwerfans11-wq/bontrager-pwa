@@ -1289,7 +1289,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 .study-toggle-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── Progress Tracking ── */
-.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;padding:0;cursor:pointer;appearance:none;-webkit-appearance:none;min-height:22px;min-width:22px}
+.pos-viewed-mark{width:22px;height:22px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;padding:0;cursor:pointer;appearance:none;-webkit-appearance:none}
 .pos-viewed-mark svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
 .pos-btn.viewed .pos-viewed-mark svg{opacity:1}
 .pos-btn.viewed .pos-viewed-mark{background:var(--green);border-color:var(--green)}
@@ -1303,6 +1303,7 @@ body.study-mode .opt{font-size:0.93em;padding:15px 14px}
 
 /* Viewed indicator on pos-view header */
 .viewed-pill{display:inline-flex;align-items:center;gap:5px;font-size:calc(11px * var(--font-scale));font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);margin-bottom:10px;opacity:0;transition:opacity .3s}
+.viewed-pill{cursor:pointer}
 .viewed-pill.show{opacity:1}
 
 /* ── Section icons in pos view ── */

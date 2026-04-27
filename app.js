@@ -4019,7 +4019,7 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Quick Tech card (aligned with Fast Clinical Summary style) ──
   const respLabel=resp?resp:'—';
-  const scan3Html=`
+  const quickTechHtml=`
     <div class="fast-summary scan3-bar" role="region" aria-labelledby="quickTechTitle">
       <div class="fast-summary-title" id="quickTechTitle" style="display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -4172,7 +4172,7 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Exam mode panel ──
   const examHtml=`
-    ${scan3Html}
+    ${quickTechHtml}
     ${fastSummaryHtml}
     ${layerBarHtml}
     <div id="layer-cr">
@@ -4195,7 +4195,7 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Clinical mode panel ──
   const clinicalHtml=`
-    ${scan3Html}
+    ${quickTechHtml}
     ${layerBarHtml}
     ${fastSummaryHtml}
     <div id="layer-position">
@@ -7750,7 +7750,6 @@ openPos=function(pos,chId,scId,posIdx){
   if(pill){
     const already=_isViewed(chId,scId,posIdx);
     pill.classList.toggle('show',already);
-    pill.style.cursor='pointer';
     pill.title=already?'Click to mark as not reviewed':'Click to mark as reviewed';
     pill.onclick=()=>toggleCurrentPositionReviewed();
   }
