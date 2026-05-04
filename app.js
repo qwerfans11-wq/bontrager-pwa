@@ -2583,6 +2583,7 @@ function buildBookChapterList(){
 function openBookChapter(chNum, pageNum){
   const ch = BONBOOK_CHAPTERS.find(c => c.num === chNum);
   if(!ch) return;
+  _bookCurrentChNum = ch.num;
   const pdfUrl = pageNum ? ch.file + '#page=' + pageNum : ch.file;
   const titleEl = document.getElementById('bookReaderTitle');
   const link = document.getElementById('bookReaderOpenLink');
@@ -2594,7 +2595,26 @@ function openBookChapter(chNum, pageNum){
     iframe.style.height = (window.innerHeight - 54) + 'px';
     iframe.src = pdfUrl;
   }
+  _updateBookNavBtns();
   navTo('book-reader');
+}
+
+let _bookCurrentChNum = null;
+
+function navigateBookChapter(dir){
+  if(!_bookCurrentChNum) return;
+  const newNum = _bookCurrentChNum + dir;
+  const ch = BONBOOK_CHAPTERS.find(c => c.num === newNum);
+  if(ch) openBookChapter(ch.num);
+}
+
+function _updateBookNavBtns(){
+  const prevBtn = document.getElementById('bookReaderPrevBtn');
+  const nextBtn = document.getElementById('bookReaderNextBtn');
+  const label   = document.getElementById('bookReaderChLabel');
+  if(prevBtn) prevBtn.disabled = !_bookCurrentChNum || _bookCurrentChNum <= 1;
+  if(nextBtn) nextBtn.disabled = !_bookCurrentChNum || _bookCurrentChNum >= BONBOOK_CHAPTERS.length;
+  if(label && _bookCurrentChNum) label.textContent = _bookCurrentChNum + ' / ' + BONBOOK_CHAPTERS.length;
 }
 
 let _activePageId = 'home';
@@ -3488,7 +3508,7 @@ function navigatePosition(dir){
     // Find the posIdx for the new position
     const flat = _getAllPosFlat();
     const found = flat.find(p => `${p.chId}_${p.scId || 'null'}_${p.posIdx}` === newPos.id);
-    if(found) openPos(newPos, found.chId, found.scId, found.posIdx);
+    if(found) openPos(found.pos, found.chId, found.scId, found.posIdx);
     
     // Update button states after navigation
     setTimeout(() => {
@@ -3913,9 +3933,12 @@ function openPos(pos, chId, scId, posIdx){
   scId = scId || null;
   curPos=pos; editChId=chId; editPosIdx=posIdx; curSubchapter=scId;
   currentPosId = `${chId}_${scId || 'null'}_${posIdx}`;
-  currentPositions = _getAllPosFlat().filter(p => p.chId === chId && (p.scId === scId || (p.scId === null && scId === null))).map(p => ({id: `${p.chId}_${p.scId || 'null'}_${p.posIdx}`, ...p.pos}));
+  // Sort to match the visual display order used in openLearnChap: routine first, then special
+  const _allForChap = _getAllPosFlat().filter(p => p.chId === chId && (p.scId === scId || (p.scId === null && scId === null)));
+  const _sorted = [..._allForChap.filter(p => p.pos.type === 'routine'), ..._allForChap.filter(p => p.pos.type !== 'routine')];
+  currentPositions = _sorted.map(p => ({id: `${p.chId}_${p.scId || 'null'}_${p.posIdx}`, ...p.pos}));
   if(currentPositions.length === 0) {
-    currentPositions = [pos]; // fallback
+    currentPositions = [{id: `${chId}_${scId || 'null'}_${posIdx}`, ...pos}]; // fallback
   }
   _refreshPosImgDisplay();
   document.getElementById('posViewTitle').textContent=pos.name;
@@ -4145,9 +4168,10 @@ function openPos(pos, chId, scId, posIdx){
       <button class="ltog-btn active" data-layer="errors" onclick="toggleLayer('errors')" aria-pressed="true">⚠️ Errors</button>
     </div>`;
 
-  // ── Quick Flip navigation ──
+  // ── Quick Flip navigation (global prev/next across all chapters) ──
   const allPosFlat=_getAllPosFlat();
-  const curIdx=allPosFlat.findIndex(x=>x.pos===pos);
+  // Use posIdx-based lookup to avoid reference comparison failures when pos is a copy
+  const curIdx=allPosFlat.findIndex(x=>x.chId===chId && (x.scId||null)===(scId||null) && x.posIdx===posIdx);
   const prevItem=curIdx>0?allPosFlat[curIdx-1]:null;
   const nextItem=curIdx<allPosFlat.length-1?allPosFlat[curIdx+1]:null;
   const flipHtml=`
@@ -4202,7 +4226,6 @@ function openPos(pos, chId, scId, posIdx){
     ${altPosHtml}
     ${compareHtml}
     ${dtHtml}
-    ${flipHtml}
     ${crossNavHtml}`;
 
   // ── Clinical mode panel ──
@@ -4221,7 +4244,6 @@ function openPos(pos, chId, scId, posIdx){
     ${altPosHtml}
     ${compareHtml}
     ${dtHtml}
-    ${flipHtml}
     ${crossNavHtml}`;
 
   // ── Share Safe Export button (dev only) ──
@@ -6398,6 +6420,52 @@ function _loadBottomNavPref(){
       if(btn) btn.classList.add('on');
       if(nav) nav.classList.remove('hidden');
     }
+  }catch(e){}
+}
+
+// ── Quiz settings persistence ──
+function _saveQuizSettings(){
+  try{
+    const shuffle = document.getElementById('shuffleToggle');
+    const hint    = document.getElementById('hintToggle');
+    const qCount  = document.getElementById('qCount');
+    if(shuffle) localStorage.setItem('bontrager_quiz_shuffle_v1', shuffle.classList.contains('on') ? '1' : '0');
+    if(hint)    localStorage.setItem('bontrager_quiz_hint_v1',    hint.classList.contains('on')    ? '1' : '0');
+    if(qCount)  localStorage.setItem('bontrager_quiz_qcount_v1',  qCount.value);
+  }catch(e){}
+}
+function _loadQuizSettings(){
+  try{
+    const shuffle = document.getElementById('shuffleToggle');
+    const hint    = document.getElementById('hintToggle');
+    const qCount  = document.getElementById('qCount');
+    const sv = localStorage.getItem('bontrager_quiz_shuffle_v1');
+    const hv = localStorage.getItem('bontrager_quiz_hint_v1');
+    const qv = localStorage.getItem('bontrager_quiz_qcount_v1');
+    if(sv !== null && shuffle){ if(sv==='1') shuffle.classList.add('on'); else shuffle.classList.remove('on'); }
+    if(hv !== null && hint)   { if(hv==='1') hint.classList.add('on');    else hint.classList.remove('on');    }
+    if(qv && qCount){
+      const opt = Array.from(qCount.options).find(o => o.value === qv);
+      if(opt) qCount.value = qv;
+    }
+  }catch(e){}
+}
+
+// ── Reset progress ──
+function resetViewedPositions(){
+  if(!confirm('Reset all viewed/completed positions? This cannot be undone.')) return;
+  try{
+    Object.keys(localStorage).filter(k => k.startsWith('viewed_')).forEach(k => localStorage.removeItem(k));
+    updateProgress();
+    _showToast('✅ Progress reset');
+  }catch(e){}
+}
+function resetQuizScores(){
+  if(!confirm('Reset all quiz best scores? This cannot be undone.')) return;
+  try{
+    localStorage.removeItem('bontrager_best_scores_v1');
+    updateStats();
+    _showToast('✅ Quiz scores reset');
   }catch(e){}
 }
 
@@ -9273,14 +9341,9 @@ function _setupLearnPosChapNav(chId){
   const ch = BOOK[chId];
   if(!ch || ch.subchapters){ row.style.display='none'; return; }
 
-  // find adjacent flat chapters
-  let prevId=null, nextId=null;
-  for(let i=idx-1;i>=0;i--){
-    if(!BOOK[order[i]].subchapters){ prevId=order[i]; break; }
-  }
-  for(let i=idx+1;i<order.length;i++){
-    if(!BOOK[order[i]].subchapters){ nextId=order[i]; break; }
-  }
+  // Find adjacent chapters (any type) — allow navigating to subchaptered chapters too
+  const prevId = idx > 0 ? order[idx-1] : null;
+  const nextId = idx < order.length-1 ? order[idx+1] : null;
 
   row.style.display='flex';
   if(prevBtn){ prevBtn.disabled=!prevId; prevBtn.title=prevId?BOOK[prevId].name:''; }
@@ -9303,14 +9366,9 @@ function _setupSubChapNav(chId){
   const ch = BOOK[chId];
   if(!ch || !ch.subchapters){ row.style.display='none'; return; }
 
-  // find adjacent chapters with subchapters
-  let prevId=null, nextId=null;
-  for(let i=idx-1;i>=0;i--){
-    if(BOOK[order[i]].subchapters){ prevId=order[i]; break; }
-  }
-  for(let i=idx+1;i<order.length;i++){
-    if(BOOK[order[i]].subchapters){ nextId=order[i]; break; }
-  }
+  // Find adjacent chapters (any type)
+  const prevId = idx > 0 ? order[idx-1] : null;
+  const nextId = idx < order.length-1 ? order[idx+1] : null;
 
   row.style.display='flex';
   if(prevBtn){ prevBtn.disabled=!prevId; prevBtn.title=prevId?BOOK[prevId].name:''; }
@@ -9328,7 +9386,8 @@ function navigateChapter(dir, mode){
   const btn = document.getElementById(btnId);
   if(!btn || !btn._chapId) return;
   const chId = btn._chapId;
-  if(mode==='subchapters'){
+  if(BOOK[chId] && BOOK[chId].subchapters){
+    // Chapter has subchapters — open the subchapters listing
     openSubChapters(chId);
   } else {
     openLearnChap(chId, null);
@@ -9455,6 +9514,7 @@ _warmupOfflineImages();
 _warmupAnatomyImages();
 _loadDefaultPosMode();
 _loadBottomNavPref();
+_loadQuizSettings();
 
 // Smart anatomy hit-testing + keyboard navigation.
 (function(){
