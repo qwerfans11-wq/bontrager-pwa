@@ -4168,24 +4168,6 @@ function openPos(pos, chId, scId, posIdx){
       <button class="ltog-btn active" data-layer="errors" onclick="toggleLayer('errors')" aria-pressed="true">⚠️ Errors</button>
     </div>`;
 
-  // ── Quick Flip navigation (global prev/next across all chapters) ──
-  const allPosFlat=_getAllPosFlat();
-  // Use posIdx-based lookup to avoid reference comparison failures when pos is a copy
-  const curIdx=allPosFlat.findIndex(x=>x.chId===chId && (x.scId||null)===(scId||null) && x.posIdx===posIdx);
-  const prevItem=curIdx>0?allPosFlat[curIdx-1]:null;
-  const nextItem=curIdx<allPosFlat.length-1?allPosFlat[curIdx+1]:null;
-  const flipHtml=`
-    <div class="pos-flip-bar">
-      <button class="flip-btn prev" ${!prevItem?'disabled style="opacity:.35"':''}
-        onclick="${prevItem?`openPos(_getAllPosFlat()[${curIdx-1}].pos,_getAllPosFlat()[${curIdx-1}].chId,_getAllPosFlat()[${curIdx-1}].scId,_getAllPosFlat()[${curIdx-1}].posIdx)`:'void(0)'}">
-        ← <span>${prevItem?esc(prevItem.pos.name.slice(0,30)):'First position'}</span>
-      </button>
-      <button class="flip-btn next" ${!nextItem?'disabled style="opacity:.35"':''}
-        onclick="${nextItem?`openPos(_getAllPosFlat()[${curIdx+1}].pos,_getAllPosFlat()[${curIdx+1}].chId,_getAllPosFlat()[${curIdx+1}].scId,_getAllPosFlat()[${curIdx+1}].posIdx)`:'void(0)'}">
-        <span>${nextItem?esc(nextItem.pos.name.slice(0,30)):'Last position'}</span> →
-      </button>
-    </div>`;
-
   // ── Cross-section quick actions ──
   const chapterNameForLink = BOOK[chId]?.name||'';
   const quizKeyForLink = scId ? `${chId}_${scId}` : chId;
@@ -6455,8 +6437,11 @@ function _loadQuizSettings(){
 function resetViewedPositions(){
   if(!confirm('Reset all viewed/completed positions? This cannot be undone.')) return;
   try{
-    Object.keys(localStorage).filter(k => k.startsWith('viewed_')).forEach(k => localStorage.removeItem(k));
+    // _VIEWED_KEY is 'bontrager_viewed_v2'
+    localStorage.removeItem(_VIEWED_KEY);
+    _viewed = {};
     updateProgress();
+    buildChapters();
     _showToast('✅ Progress reset');
   }catch(e){}
 }
@@ -8014,7 +7999,12 @@ function getPositionIcon(name){
 function updateProgress(){
   const progress = document.querySelector('#posProgress div');
   if(progress && currentPositions && curChapter){
-    const reviewed = currentPositions.filter((p, idx) => _isViewed(curChapter, curSubchapter, idx)).length;
+    const reviewed = currentPositions.filter(p => {
+      // p.id format: "${chId}_${scId||'null'}_${posIdx}"
+      const parts = p.id.split('_');
+      const posIdx = parseInt(parts[parts.length - 1], 10);
+      return _isViewed(curChapter, curSubchapter, posIdx);
+    }).length;
     const pct = currentPositions.length ? (reviewed / currentPositions.length) * 100 : 0;
     progress.style.width = pct + '%';
   }
