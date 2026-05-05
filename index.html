@@ -946,15 +946,15 @@
       <div class="settings-group-title">Quiz settings</div>
       <div class="settings-row">
         <div><div class="settings-row-label">Questions per session</div></div>
-        <select class="settings-select" id="qCount"><option>5</option><option>10</option><option>15</option><option>20</option><option selected>All</option></select>
+        <select class="settings-select" id="qCount" onchange="_saveQuizSettings()"><option>5</option><option>10</option><option>15</option><option>20</option><option selected>All</option></select>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">Randomize question order</div><div class="settings-row-sub">Shuffle questions each session</div></div>
-        <button class="toggle on" id="shuffleToggle" onclick="this.classList.toggle('on')"></button>
+        <button class="toggle on" id="shuffleToggle" onclick="this.classList.toggle('on');_saveQuizSettings()"></button>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">Show hint after 2 wrong</div><div class="settings-row-sub">Reveal answer on 2nd mistake</div></div>
-        <button class="toggle on" id="hintToggle" onclick="this.classList.toggle('on')"></button>
+        <button class="toggle on" id="hintToggle" onclick="this.classList.toggle('on');_saveQuizSettings()"></button>
       </div>
     </div>
     <div class="settings-group">
@@ -1015,19 +1015,26 @@
       </div>
       <div class="settings-row">
         <div>
+          <div class="settings-row-label">Reset viewed positions</div>
+          <div class="settings-row-sub">Clear all position completion marks</div>
+        </div>
+        <button class="modal-btn secondary" onclick="resetViewedPositions()" style="padding:10px 14px;">Reset</button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Reset quiz scores</div>
+          <div class="settings-row-sub">Clear all saved best scores</div>
+        </div>
+        <button class="modal-btn secondary" onclick="resetQuizScores()" style="padding:10px 14px;">Reset</button>
+      </div>
+      <div class="settings-row">
+        <div>
           <div class="settings-row-label">App version</div>
           <div class="settings-row-sub" id="settingsAppVersion">—</div>
         </div>
       </div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-row-label">Source</div>
-          <div class="settings-row-sub">Bontrager 10th Edition book</div>
-        </div>
-      </div>
     </div>
     <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;line-height:1.7">
-      Bontrager 10th Edition book<br>
       <span id="statsFooter">— positions · — chapters</span>
     </div>
   </div>
@@ -1049,6 +1056,9 @@
     <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2)">
       <button class="back-btn" onclick="navTo('book')" style="flex-shrink:0"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
       <div id="bookReaderTitle" style="flex:1;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      <button id="bookReaderPrevBtn" onclick="navigateBookChapter(-1)" disabled title="Previous chapter" style="flex-shrink:0;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text2);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span id="bookReaderChLabel" style="flex-shrink:0;font-size:12px;color:var(--text3);min-width:36px;text-align:center">—</span>
+      <button id="bookReaderNextBtn" onclick="navigateBookChapter(1)" disabled title="Next chapter" style="flex-shrink:0;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text2);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <a id="bookReaderOpenLink" href="#" target="_blank" rel="noopener" style="flex-shrink:0;padding:6px 12px;border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap">Open ↗</a>
     </div>
     <iframe id="bookReaderIframe" src="" style="width:100%;border:none;display:block" title="Book chapter PDF"></iframe>
