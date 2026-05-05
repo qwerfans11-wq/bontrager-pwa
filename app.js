@@ -3936,9 +3936,10 @@ function openPos(pos, chId, scId, posIdx){
   // Sort to match the visual display order used in openLearnChap: routine first, then special
   const _allForChap = _getAllPosFlat().filter(p => p.chId === chId && (p.scId === scId || (p.scId === null && scId === null)));
   const _sorted = [..._allForChap.filter(p => p.pos.type === 'routine'), ..._allForChap.filter(p => p.pos.type !== 'routine')];
-  currentPositions = _sorted.map(p => ({id: `${p.chId}_${p.scId || 'null'}_${p.posIdx}`, ...p.pos}));
+  // Store posIdx directly on each item so navigation and progress can use it without string-parsing
+  currentPositions = _sorted.map(p => ({id: `${p.chId}_${p.scId || 'null'}_${p.posIdx}`, posIdx: p.posIdx, ...p.pos}));
   if(currentPositions.length === 0) {
-    currentPositions = [{id: `${chId}_${scId || 'null'}_${posIdx}`, ...pos}]; // fallback
+    currentPositions = [{id: `${chId}_${scId || 'null'}_${posIdx}`, posIdx, ...pos}]; // fallback
   }
   _refreshPosImgDisplay();
   document.getElementById('posViewTitle').textContent=pos.name;
@@ -6424,8 +6425,8 @@ function _loadQuizSettings(){
     const sv = localStorage.getItem('bontrager_quiz_shuffle_v1');
     const hv = localStorage.getItem('bontrager_quiz_hint_v1');
     const qv = localStorage.getItem('bontrager_quiz_qcount_v1');
-    if(sv !== null && shuffle){ if(sv==='1') shuffle.classList.add('on'); else shuffle.classList.remove('on'); }
-    if(hv !== null && hint)   { if(hv==='1') hint.classList.add('on');    else hint.classList.remove('on');    }
+    if(sv !== null && shuffle) shuffle.classList.toggle('on', sv === '1');
+    if(hv !== null && hint)   hint.classList.toggle('on',   hv === '1');
     if(qv && qCount){
       const opt = Array.from(qCount.options).find(o => o.value === qv);
       if(opt) qCount.value = qv;
@@ -7999,12 +8000,7 @@ function getPositionIcon(name){
 function updateProgress(){
   const progress = document.querySelector('#posProgress div');
   if(progress && currentPositions && curChapter){
-    const reviewed = currentPositions.filter(p => {
-      // p.id format: "${chId}_${scId||'null'}_${posIdx}"
-      const parts = p.id.split('_');
-      const posIdx = parseInt(parts[parts.length - 1], 10);
-      return _isViewed(curChapter, curSubchapter, posIdx);
-    }).length;
+    const reviewed = currentPositions.filter(p => _isViewed(curChapter, curSubchapter, p.posIdx)).length;
     const pct = currentPositions.length ? (reviewed / currentPositions.length) * 100 : 0;
     progress.style.width = pct + '%';
   }
