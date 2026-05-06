@@ -5736,7 +5736,7 @@ function _aiBuildFollowupQuery(msg){
   const explicit=/\b(open|show|compare|list|chapter|position|kvp|sid|cr|resp|ma|mas|quiz|mistake|plan)\b/.test(normalized);
   if(explicit) return raw;
 
-  const shortFollowup=/^(and|also|what about|then|next|ok)/i.test(raw) || normalized.split(' ').length<=3;
+  const shortFollowup=/^(and|also|what about|then|next|ok)/i.test(raw);
   if(!shortFollowup) return raw;
 
   const lastFocus=[...aiHistory].reverse().find(x=>x.role==='assistant' && x.focus);
