@@ -9661,10 +9661,11 @@ _loadQuizSettings();
     if(!legend) return;
     legend.innerHTML = '';
     Object.keys(_ZONE_COLORS).forEach(function(regionId){
+      var color = _ZONE_COLORS[regionId];
       var chip = document.createElement('span');
-      chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:'+_ZONE_COLORS[regionId]+';white-space:nowrap;';
+      chip.style.cssText = `display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:${color};white-space:nowrap;`;
       var dot = document.createElement('span');
-      dot.style.cssText = 'display:inline-block;width:10px;height:10px;border-radius:50%;background:'+_ZONE_COLORS[regionId]+';flex-shrink:0;';
+      dot.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;`;
       chip.appendChild(dot);
       chip.appendChild(document.createTextNode(_ZONE_LABELS[regionId]));
       legend.appendChild(chip);
