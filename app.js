@@ -9591,7 +9591,7 @@ _loadQuizSettings();
     var mainSVG = document.getElementById('anatomyBodySVG');
     if(!editorSVG || !mainSVG) return;
 
-    // Clear old handles
+    // Clear old handles and remove previously registered SVG-level listeners
     while(editorSVG.firstChild) editorSVG.removeChild(editorSVG.firstChild);
     _handles = [];
 
@@ -9600,6 +9600,37 @@ _loadQuizSettings();
       upper_arm:'#1e88e5', forearm_hand:'#8e24aa', abdomen:'#00897b',
       hip_femur:'#d81b60', knee_leg:'#6d4c41', foot_ankle:'#546e7a', spine:'#7b1fa2'
     };
+
+    // Track which handle is currently being dragged
+    var _activeHandle = null;
+
+    // SVG-level move/end listeners registered once
+    function _onMouseMove(e){
+      if(!_activeHandle) return;
+      _activeHandle.onMove(e.clientX, e.clientY);
+    }
+    function _onMouseEnd(){
+      if(!_activeHandle) return;
+      _activeHandle.onEnd();
+      _activeHandle = null;
+    }
+    function _onTouchMove(e){
+      if(!_activeHandle) return;
+      e.preventDefault();
+      var t = e.touches[0];
+      if(t) _activeHandle.onMove(t.clientX, t.clientY);
+    }
+    function _onTouchEnd(){
+      if(!_activeHandle) return;
+      _activeHandle.onEnd();
+      _activeHandle = null;
+    }
+
+    editorSVG.addEventListener('mousemove', _onMouseMove);
+    editorSVG.addEventListener('mouseup', _onMouseEnd);
+    editorSVG.addEventListener('mouseleave', _onMouseEnd);
+    editorSVG.addEventListener('touchmove', _onTouchMove, {passive:false});
+    editorSVG.addEventListener('touchend', _onTouchEnd);
 
     mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
       var regionId = g.dataset.region;
@@ -9618,61 +9649,37 @@ _loadQuizSettings();
           circle.style.cursor = 'grab';
           circle.style.touchAction = 'none';
 
-          var handle = {el: circle, polyEl: poly, ptIdx: idx, pts: pts};
+          var handle = {
+            el: circle,
+            onMove: function(cx, cy){
+              var sv = _clientToSVG(editorSVG, cx, cy);
+              sv.x = Math.max(0, Math.min(1000, sv.x));
+              sv.y = Math.max(0, Math.min(1500, sv.y));
+              pts[idx] = [sv.x, sv.y];
+              poly.setAttribute('points', _serialize(pts));
+              circle.setAttribute('cx', sv.x);
+              circle.setAttribute('cy', sv.y);
+            },
+            onEnd: function(){
+              circle.style.cursor = 'grab';
+              circle.setAttribute('r','22');
+            }
+          };
           _handles.push(handle);
 
-          // Drag logic
-          var _dragging = false;
-          var _lastX = 0, _lastY = 0;
-
-          function onStart(cx, cy){
-            _dragging = true;
-            _lastX = cx; _lastY = cy;
-            circle.style.cursor = 'grabbing';
-            circle.setAttribute('r','28');
-          }
-          function onMove(cx, cy){
-            if(!_dragging) return;
-            var sv = _clientToSVG(editorSVG, cx, cy);
-            // Clamp to viewBox
-            sv.x = Math.max(0, Math.min(1000, sv.x));
-            sv.y = Math.max(0, Math.min(1500, sv.y));
-            handle.pts[idx] = [sv.x, sv.y];
-            poly.setAttribute('points', _serialize(handle.pts));
-            circle.setAttribute('cx', sv.x);
-            circle.setAttribute('cy', sv.y);
-          }
-          function onEnd(){
-            _dragging = false;
-            circle.style.cursor = 'grab';
-            circle.setAttribute('r','22');
-          }
-
-          // Mouse events
           circle.addEventListener('mousedown', function(e){
             e.preventDefault(); e.stopPropagation();
-            onStart(e.clientX, e.clientY);
+            _activeHandle = handle;
+            circle.style.cursor = 'grabbing';
+            circle.setAttribute('r','28');
           });
-          editorSVG.addEventListener('mousemove', function(e){
-            if(!_dragging) return;
-            onMove(e.clientX, e.clientY);
-          });
-          editorSVG.addEventListener('mouseup', function(){ onEnd(); });
-          editorSVG.addEventListener('mouseleave', function(){ onEnd(); });
 
-          // Touch events
           circle.addEventListener('touchstart', function(e){
             e.preventDefault(); e.stopPropagation();
-            var t = e.touches[0];
-            onStart(t.clientX, t.clientY);
+            _activeHandle = handle;
+            circle.style.cursor = 'grabbing';
+            circle.setAttribute('r','28');
           }, {passive:false});
-          editorSVG.addEventListener('touchmove', function(e){
-            if(!_dragging) return;
-            e.preventDefault();
-            var t = e.touches[0];
-            onMove(t.clientX, t.clientY);
-          }, {passive:false});
-          editorSVG.addEventListener('touchend', function(){ onEnd(); });
 
           editorSVG.appendChild(circle);
         });
@@ -9708,19 +9715,21 @@ _loadQuizSettings();
     });
   }
 
-  // Default polygon points (the original hardcoded values)
-  var _DEFAULTS = (function(){
+  // Default polygon points — captured lazily the first time the editor is opened
+  var _DEFAULTS = null;
+
+  function _ensureDefaults(){
+    if(_DEFAULTS) return;
     var mainSVG = document.getElementById('anatomyBodySVG');
-    if(!mainSVG) return null;
-    var d = {};
+    if(!mainSVG) return;
+    _DEFAULTS = {};
     mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
       var regionId = g.dataset.region;
-      d[regionId] = Array.from(g.querySelectorAll('polygon.ab-overlay')).map(function(poly){
+      _DEFAULTS[regionId] = Array.from(g.querySelectorAll('polygon.ab-overlay')).map(function(poly){
         return poly.getAttribute('points') || '';
       });
     });
-    return d;
-  }());
+  }
 
   // Public API
   window._toggleHotspotEditor = function(){
@@ -9729,6 +9738,7 @@ _loadQuizSettings();
 
   function _enterEditor(){
     _editorActive = true;
+    _ensureDefaults();
     _snapshotPoints();
     _buildHandles();
     var editorSVG = document.getElementById('hotspotEditorSVG');
@@ -9772,6 +9782,7 @@ _loadQuizSettings();
   };
 
   window._resetHotspotEdits = function(){
+    _ensureDefaults();
     if(!_DEFAULTS) return;
     var mainSVG = document.getElementById('anatomyBodySVG');
     if(!mainSVG) return;
