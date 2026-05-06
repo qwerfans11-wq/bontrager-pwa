@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://github.com https://user-images.githubusercontent.com https://objects.githubusercontent.com https://camo.githubusercontent.com; connect-src 'self' https:;">
 <title>Bontrager Positioning</title>
  
 <meta name="theme-color" content="#1e4db7">
@@ -133,7 +134,7 @@
 </div>
 
 <!-- SIDEBAR OVERLAY -->
-<div class="soverlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="soverlay" id="overlay"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -143,7 +144,7 @@
       <div class="sb-user-name" id="sbName">Student</div>
       <div class="sb-user-role" id="sbRole">Student mode</div>
     </div>
-    <button class="sb-close" onclick="closeSidebar()">
+    <button class="sb-close" aria-label="Close navigation menu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
     </button>
   </div>
@@ -197,11 +198,11 @@
 
 <!-- HEADER -->
 <div class="header">
-  <button class="hbtn" id="menuBtn" onclick="toggleSidebar()">
+  <button class="hbtn" id="menuBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
     <span style="font-size:18px;">☰</span>
   </button>
   <div class="htitle" id="headerTitle">Bontrager Positioning</div>
-  <button class="hbtn" id="studyModeBtn" onclick="toggleStudyMode()" title="Study Mode" style="color:var(--text2)">
+  <button class="hbtn" id="studyModeBtn" onclick="toggleStudyMode()" title="Study Mode" aria-label="Toggle study mode" style="color:var(--text2)">
     <span style="font-size:18px;">👁️</span>
   </button>
   <button class="hbtn" id="colorModeBtn" onclick="toggleDark()" title="Toggle day/night mode" aria-label="Toggle day/night mode">
@@ -210,7 +211,7 @@
   <button class="hbtn" id="aboutHeaderBtn" onclick="navTo('about')" title="About" aria-label="About">
     <span style="font-size:18px;">ℹ️</span>
   </button>
-  <button class="hbtn" id="devAppearanceBtn" onclick="openDevAppearance()" title="Appearance" style="display:none">
+  <button class="hbtn" id="devAppearanceBtn" onclick="openDevAppearance()" title="Appearance" aria-label="Developer appearance controls" style="display:none">
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   </button>
 </div>
@@ -320,9 +321,9 @@
     <div class="ptitle" id="subChTitle"></div>
     <!-- Chapter navigation row -->
     <div id="subChChapNav" style="display:none;justify-content:space-between;align-items:center;margin:0 0 10px 0;gap:8px">
-      <button id="subChPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'subchapters')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
+      <button id="subChPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'subchapters')" aria-label="Previous chapter"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
       <span id="subChNavLabel" style="font-size:11px;color:var(--text3);flex:1;text-align:center"></span>
-      <button id="subChNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'subchapters')">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button id="subChNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'subchapters')" aria-label="Next chapter">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
     <div id="subChList"></div>
     <!-- DEV: manage subchapters -->
@@ -348,9 +349,9 @@
     <div class="ptitle" id="learnPosTitle"></div>
     <!-- Chapter navigation row -->
     <div id="learnPosChapNav" style="display:none;justify-content:space-between;align-items:center;margin:0 0 10px 0;gap:8px">
-      <button id="learnPosPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'positions')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
+      <button id="learnPosPrevBtn" class="ch-nav-btn" onclick="navigateChapter(-1,'positions')" aria-label="Previous position"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Prev</button>
       <span id="learnPosNavLabel" style="font-size:11px;color:var(--text3);flex:1;text-align:center"></span>
-      <button id="learnPosNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'positions')">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button id="learnPosNextBtn" class="ch-nav-btn" onclick="navigateChapter(1,'positions')" aria-label="Next position">Next <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
     <!-- Flashcard Mode Toggle -->
     <div style="margin:8px 16px">
@@ -399,8 +400,8 @@
     <!-- Scroll hint for many images -->
     <div id="posImgScrollHint" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:12px;pointer-events:none;backdrop-filter:blur(4px);gap:4px;align-items:center;z-index:10"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg> Scroll</div>
     <!-- Legacy single/dual images (kept for dev-uploaded images) -->
-    <img id="posImg" src="" alt="" style="display:none;width:100%;max-height:300px;object-fit:contain" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom">
-    <img id="posImg2" src="" alt="" style="display:none;width:50%;max-height:300px;object-fit:contain;border-left:1px solid #333" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom">
+    <img id="posImg" src="" alt="Positioning photo" style="display:none;width:100%;max-height:300px;object-fit:contain" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom" decoding="async" loading="lazy">
+    <img id="posImg2" src="" alt="Positioning photo 2" style="display:none;width:50%;max-height:300px;object-fit:contain;border-left:1px solid #333" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom" decoding="async" loading="lazy">
     <div id="posImgZoomHint" style="position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;pointer-events:none;display:none;align-items:center;gap:4px;backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> Tap to zoom</div>
     <div class="pos-img-ph" id="posImgPh" style="display:none">
       <div class="ph-icon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><p>No positioning photo</p>
@@ -491,7 +492,7 @@
   <div class="quiz-progress"><div class="quiz-progress-fill" id="qProgress" style="width:0%"></div></div>
   <div class="xray-wrap" style="position:relative">
     <div class="xray-label" id="qImageLabel" style="display:none"></div>
-    <img id="xrayImg" src="" alt="X-ray" style="display:none" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom">
+    <img id="xrayImg" src="" alt="X-ray radiograph" style="display:none" onclick="if(this.src)openImgZoom(this.src)" title="Tap to zoom" decoding="async" loading="lazy">
     <div class="xray-ph" id="xrayPh" style="display:none">
       <div class="xph-icon"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.4"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h3"/><circle cx="17" cy="14" r="2.5"/></svg></div>
       <p style="font-size:12px;color:#666">X-ray image</p>
@@ -622,7 +623,7 @@
         <img id="anatSkeletonImg"
              src="https://github.com/user-attachments/assets/923d2151-4c18-4377-a084-1c8d0a7a6a19"
              alt="Human Skeleton — Full Body Anatomy"
-             draggable="false" loading="eager"
+             draggable="false" loading="eager" decoding="async"
              onerror="this.style.display='none';document.getElementById('anatSkelFallback').style.display='block'">
         <div id="anatSkelFallback" style="display:none;width:100%;height:200px;background:var(--bg3);border-radius:var(--radius);align-items:center;justify-content:center;color:var(--text3);font-size:13px">🦴 Skeleton image unavailable offline</div>
 
@@ -788,8 +789,8 @@
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
       <button class="home-back-btn" onclick="navTo('anatomy')" style="margin-bottom:0"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Anatomy</button>
       <div style="display:flex;gap:6px">
-        <button id="anatPrevBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(-1)" title="Previous region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button id="anatNextBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(1)" title="Next region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button id="anatPrevBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(-1)" title="Previous region" aria-label="Previous anatomy region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button id="anatNextBtn" class="ch-nav-btn" onclick="navigateAnatomyRegion(1)" title="Next region" aria-label="Next anatomy region"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       </div>
     </div>
     <div id="anatDetailContent"></div>
@@ -1298,7 +1299,11 @@
 <script src="./data/ch3/ch3-images-part1.js"></script>
 <script src="./data/ch3/ch3-images-part2.js"></script>
 <script src="./data/ch3/ch3-reference-pdf.js"></script>
-<script src="./app.js?v=20260419-smart-hit-v2"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/quiz.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/core.js"></script>
 
 <!-- ═══ PWA Service Worker Registration & Install Handler ═══ -->
 <script>

@@ -66,12 +66,18 @@ function setRole(role){
 }
 
 function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  sidebar.classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
+  const isOpen = sidebar.classList.contains('open');
+  if(menuBtn) menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 }
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
+  const menuBtn = document.getElementById('menuBtn');
+  if(menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
 }
 
 function updateDevUI(){
@@ -233,3 +239,22 @@ function resetAppearance(){
   _showToast('Appearance reset');
   closeDevAppearance();
 }
+
+// ── Replace inline event handlers for sidebar and menu button ──
+(function _bindSidebarHandlers() {
+  var menuBtn = document.getElementById('menuBtn');
+  if (menuBtn) {
+    menuBtn.removeAttribute('onclick');
+    menuBtn.addEventListener('click', toggleSidebar);
+  }
+  var overlay = document.getElementById('overlay');
+  if (overlay) {
+    overlay.removeAttribute('onclick');
+    overlay.addEventListener('click', closeSidebar);
+  }
+  var sbClose = document.querySelector('.sb-close');
+  if (sbClose) {
+    sbClose.removeAttribute('onclick');
+    sbClose.addEventListener('click', closeSidebar);
+  }
+}());
