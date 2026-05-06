@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bontrager-v0.0.1-offline-anat';
+const CACHE_NAME = 'bontrager-v0.0.2-offline-anat';
 const APP_SHELL = [
   './',
   './index.html',
