@@ -4053,20 +4053,7 @@ function openPos(pos, chId, scId, posIdx){
   const evalCriteria = inferEvaluationCriteria(posName, desc, correctChecks, chId);
   const hasEvaluationCriteria = Array.isArray(evalCriteria) && evalCriteria.length > 0;
 
-  // ── Quick Tech card (aligned with Fast Clinical Summary style) ──
-  const respLabel=resp?resp:'—';
-  const quickTechHtml=`
-    <div class="fast-summary scan3-bar" role="region" aria-labelledby="quickTechTitle">
-      <div class="fast-summary-title" id="quickTechTitle" style="display:flex;align-items:center;gap:6px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Quick Tech
-      </div>
-      <div class="fast-row"><span class="fast-key">CR</span><span class="fast-val">${esc(cr||'Perpendicular')}</span></div>
-      <div class="fast-row"><span class="fast-key">kVp</span><span class="fast-val">${esc(kv||'—')}</span></div>
-      <div class="fast-row"><span class="fast-key">IR</span><span class="fast-val">${esc(ir||'—')}</span></div>
-      <div class="fast-row"><span class="fast-key">SID</span><span class="fast-val">${esc(sid||'—')}</span></div>
-      <div class="fast-row"><span class="fast-key">Breathing</span><span class="fast-val">${esc(respLabel)}</span></div>
-    </div>`;
+  // ── Quick Tech card removed (content is in Fast Clinical Summary) ──
 
   // ── Fatal Error callout ──
   const fatalHtml=fatalError?`
@@ -4083,6 +4070,7 @@ function openPos(pos, chId, scId, posIdx){
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-position)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Position</span><span class="fast-val">${extractPatientPos(desc)}</span></div>
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-cr)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR</span><span class="fast-val">${crShort||'Perpendicular to IR'}</span></div>
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> IR</span><span class="fast-val">${ir||'—'}</span></div>
+      <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="9 5 12 2 15 5"/><polyline points="9 19 12 22 15 19"/></svg> SID</span><span class="fast-val">${sid||'—'}</span></div>
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-eval)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> kVp</span><span class="fast-val">${kv||'—'}</span></div>
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-clinical)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Resp</span><span class="fast-val">${resp||'N/A'}</span></div>
     </div>`;
@@ -4120,16 +4108,16 @@ function openPos(pos, chId, scId, posIdx){
         </div>`).join('')}
     </div>`;
 
-  // ── Tech ref box ──
+  // ── Tech ref box (styled as Fast Clinical Summary) ──
   const techRefHtml=`
-    <div class="tech-ref-box">
-      <div class="tech-ref-title">Technical Parameters</div>
-      ${cr?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR</span><span class="tech-ref-val">${cr}</span></div>`:''}
-      ${ir?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> IR Size</span><span class="tech-ref-val">${ir}</span></div>`:''}
-      ${sid?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> SID</span><span class="tech-ref-val">${sid}</span></div>`:''}
-      ${kv?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> kVp</span><span class="tech-ref-val">${kv}</span></div>`:''}
-      ${resp?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Respiration</span><span class="tech-ref-val">${resp}</span></div>`:''}
-      ${pageStart?`<div class="tech-ref-row"><span class="tech-ref-label"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> PDF Page Start</span><span class="tech-ref-val">Page ${pageStart}</span></div>`:''}
+    <div class="fast-summary">
+      <div class="fast-summary-title" style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Technical Parameters</div>
+      ${cr?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-cr)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR</span><span class="fast-val">${cr}</span></div>`:''}
+      ${ir?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> IR</span><span class="fast-val">${ir}</span></div>`:''}
+      ${sid?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="9 5 12 2 15 5"/><polyline points="9 19 12 22 15 19"/></svg> SID</span><span class="fast-val">${sid}</span></div>`:''}
+      ${kv?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-eval)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> kVp</span><span class="fast-val">${kv}</span></div>`:''}
+      ${resp?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-clinical)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Resp</span><span class="fast-val">${resp}</span></div>`:''}
+      ${pageStart?`<div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Page</span><span class="fast-val">Page ${pageStart}</span></div>`:''}
       ${pageStart && _getBonbookPdfForPos(chId,scId)?`<div style="margin-top:8px"><button onclick="viewInBook()" style="width:100%;padding:9px 12px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> View in Book — Page ${pageStart}</button></div>`:''}
     </div>
     ${_buildMaRefCard(kv,info)}`;
@@ -4191,7 +4179,6 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Exam mode panel ──
   const examHtml=`
-    ${quickTechHtml}
     ${fastSummaryHtml}
     ${layerBarHtml}
     <div id="layer-cr">
@@ -4213,7 +4200,6 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Clinical mode panel ──
   const clinicalHtml=`
-    ${quickTechHtml}
     ${layerBarHtml}
     ${fastSummaryHtml}
     <div id="layer-position">
@@ -5925,7 +5911,10 @@ function _aiBuildAnswer(query, matches){
 
   response+=`\n\n[[OPEN::${pos.name}]]`;
   if(!intent.isCompare){
-    response+=`\n\nTry next:\n• "${pos.name} CR"\n• "${pos.name} kVp"\n• "compare ${pos.name} vs ..."`;
+    const comparePosName = matches.length > 1 ? matches[1].pos.name : null;
+    const tryNext = [`"${pos.name} CR"`, `"${pos.name} kVp"`];
+    if(comparePosName) tryNext.push(`"compare ${pos.name} vs ${comparePosName}"`);
+    response+=`\n\nTry next:\n${tryNext.map(s=>`• ${s}`).join('\n')}`;
   }
 
   return response;
@@ -6170,6 +6159,8 @@ function _aiGeneralAnswer(query){
      ans:'**Weight-Bearing Projections:**\nImportant for functional assessment of joints under load.\n\n**Common WB projections:**\n• AP Ankle (erect) — joint space narrowing assessment\n• PA Foot (erect) — flatfoot, arch evaluation\n• AP Knee (erect bilateral) — Rosenberg view for cartilage loss\n• PA Chest (erect) — standard for chest radiography'},
     {keys:['trauma series','trauma protocol','emergency'],
      ans:'**Common Trauma Series:**\n• **Cervical spine:** Lateral (immediate) → AP → Open Mouth → Swimmers if needed\n• **Chest trauma:** AP (supine if needed) → Lateral if possible\n• **Hip trauma:** AP Pelvis bilateral → AP Hip → Danelius-Miller (no rotation!)\n• **Wrist trauma:** PA + Lateral + Oblique\n• **Ankle trauma:** AP + Lateral + Mortise'},
+    {keys:['cr angle error','common cr error','central ray error','angulation error'],
+     ans:'**Common CR Angle Errors in Radiography:**\n\n• **Foreshortening:** CR angled along the long axis of the part — structure appears shorter than actual length\n• **Elongation:** CR angled too steeply across the part\'s long axis — structure appears elongated or distorted\n• **Off-centering:** CR not directed to the correct anatomical landmark — anatomy appears cut off or asymmetric\n• **Wrong angle direction (cephalad vs caudal):** Anatomy shifts unexpectedly off center\n• **Failure to compensate for patient curvature:** Common in spine — vertebral bodies appear wedged or asymmetric\n\n**Prevention tips:**\n• Confirm your landmark before angling the tube\n• Use the tube angle indicator for precise degrees\n• Check symmetry of paired structures (e.g., epicondyles, iliac crests, rami) on the image'},
   ];
 
   for(const item of kb){
