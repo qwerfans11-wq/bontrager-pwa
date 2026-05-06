@@ -9525,6 +9525,27 @@ _loadQuizSettings();
   var _originalPoints = {}; // regionId -> array of {polyEl, origPoints}
   var _handles = []; // {el, polyEl, ptIdx, allPts} refs for cleanup
 
+  // One unique color per anatomical zone — shared by handles, label text, and overlay fill
+  var _ZONE_COLORS = {
+    head_neck:    '#e53935',
+    shoulder:     '#fb8c00',
+    thorax:       '#43a047',
+    upper_arm:    '#1e88e5',
+    forearm_hand: '#8e24aa',
+    abdomen:      '#00897b',
+    hip_femur:    '#d81b60',
+    knee_leg:     '#6d4c41',
+    foot_ankle:   '#546e7a',
+    spine:        '#7b1fa2'
+  };
+
+  var _ZONE_LABELS = {
+    head_neck: 'Head & Neck', shoulder: 'Shoulder', thorax: 'Thorax',
+    upper_arm: 'Upper Arm', forearm_hand: 'Forearm & Hand', abdomen: 'Abdomen',
+    hip_femur: 'Hip & Femur', knee_leg: 'Knee & Leg', foot_ankle: 'Foot & Ankle',
+    spine: 'Spine'
+  };
+
   // Parse "x1,y1 x2,y2 ..." into [[x1,y1],[x2,y2],...]
   function _parse(str){
     return str.trim().split(/\s+/).map(function(p){
@@ -9585,6 +9606,72 @@ _loadQuizSettings();
     };
   }
 
+  // Color zone labels and overlays to match handle colors when editor is active
+  function _applyEditorColors(){
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var color = _ZONE_COLORS[regionId] || '#f57c00';
+      g.querySelectorAll('.ab-lbl').forEach(function(txt){
+        txt.setAttribute('fill', color);
+      });
+      g.querySelectorAll('.ab-overlay').forEach(function(poly){
+        poly.setAttribute('fill', color);
+        poly.setAttribute('fill-opacity', '0.18');
+        poly.setAttribute('stroke', color);
+        poly.setAttribute('stroke-width', '2.5');
+        if(!poly.classList.contains('ab-spine-overlay')){
+          poly.removeAttribute('stroke-dasharray');
+        }
+      });
+    });
+  }
+
+  // Restore original zone label and overlay colors after editor closes
+  function _removeEditorColors(){
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      g.querySelectorAll('.ab-lbl').forEach(function(txt){
+        txt.setAttribute('fill', regionId === 'spine' ? 'rgba(220,160,255,1)' : 'white');
+      });
+      g.querySelectorAll('.ab-overlay').forEach(function(poly){
+        if(poly.classList.contains('ab-spine-overlay')){
+          poly.setAttribute('fill', 'rgba(160,100,210,0)');
+          poly.setAttribute('stroke', 'rgba(160,100,210,0)');
+          poly.setAttribute('stroke-width', '2.5');
+          poly.setAttribute('stroke-dasharray', '10,6');
+          poly.removeAttribute('fill-opacity');
+        } else {
+          poly.removeAttribute('fill');
+          poly.removeAttribute('fill-opacity');
+          poly.removeAttribute('stroke');
+          poly.removeAttribute('stroke-width');
+          poly.removeAttribute('stroke-dasharray');
+        }
+      });
+    });
+  }
+
+  // Build color legend chips inside the editor toolbar
+  function _buildLegend(){
+    var legend = document.getElementById('hotspotEditorLegend');
+    if(!legend) return;
+    legend.innerHTML = '';
+    Object.keys(_ZONE_COLORS).forEach(function(regionId){
+      var color = _ZONE_COLORS[regionId];
+      var chip = document.createElement('span');
+      chip.style.cssText = `display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:${color};white-space:nowrap;`;
+      var dot = document.createElement('span');
+      dot.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;`;
+      chip.appendChild(dot);
+      chip.appendChild(document.createTextNode(_ZONE_LABELS[regionId]));
+      legend.appendChild(chip);
+    });
+  }
+
   // Build draggable handles for all polygon vertices
   function _buildHandles(){
     var editorSVG = document.getElementById('hotspotEditorSVG');
@@ -9594,12 +9681,6 @@ _loadQuizSettings();
     // Clear old handles and remove previously registered SVG-level listeners
     while(editorSVG.firstChild) editorSVG.removeChild(editorSVG.firstChild);
     _handles = [];
-
-    var colors = {
-      head_neck:'#e53935', shoulder:'#fb8c00', thorax:'#43a047',
-      upper_arm:'#1e88e5', forearm_hand:'#8e24aa', abdomen:'#00897b',
-      hip_femur:'#d81b60', knee_leg:'#6d4c41', foot_ankle:'#546e7a', spine:'#7b1fa2'
-    };
 
     // Track which handle is currently being dragged
     var _activeHandle = null;
@@ -9634,7 +9715,7 @@ _loadQuizSettings();
 
     mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
       var regionId = g.dataset.region;
-      var color = colors[regionId] || '#f57c00';
+      var color = _ZONE_COLORS[regionId] || '#f57c00';
       g.querySelectorAll('polygon.ab-overlay').forEach(function(poly){
         var pts = _parse(poly.getAttribute('points') || '');
         pts.forEach(function(pt, idx){
@@ -9741,6 +9822,8 @@ _loadQuizSettings();
     _ensureDefaults();
     _snapshotPoints();
     _buildHandles();
+    _applyEditorColors();
+    _buildLegend();
     var editorSVG = document.getElementById('hotspotEditorSVG');
     var bar = document.getElementById('hotspotEditorBar');
     var hint = document.getElementById('anatTapHint');
@@ -9756,6 +9839,7 @@ _loadQuizSettings();
 
   function _exitEditor(){
     _editorActive = false;
+    _removeEditorColors();
     var editorSVG = document.getElementById('hotspotEditorSVG');
     var bar = document.getElementById('hotspotEditorBar');
     var hint = document.getElementById('anatTapHint');
