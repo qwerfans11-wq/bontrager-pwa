@@ -1679,3 +1679,6 @@ body.study-mode .bottom-nav{display:none}
 #_swipeBackIndicator.active #_swipeBackArrow{
   opacity:1;transform:scale(1) translateX(0);
 }
+
+/* ── Hotspot zone editor ── */
+#hotspotEditorSVG circle{filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}

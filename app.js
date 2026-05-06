@@ -9517,3 +9517,289 @@ _loadQuizSettings();
     }
   });
 }());
+
+// ── Hotspot Zone Editor ──────────────────────────────────────────────────────
+(function(){
+  var STORAGE_KEY = 'anatomy_custom_polygon_points';
+  var _editorActive = false;
+  var _originalPoints = {}; // regionId -> array of {polyEl, origPoints}
+  var _handles = []; // {el, polyEl, ptIdx, allPts} refs for cleanup
+
+  // Parse "x1,y1 x2,y2 ..." into [[x1,y1],[x2,y2],...]
+  function _parse(str){
+    return str.trim().split(/\s+/).map(function(p){
+      var c = p.split(',');
+      return [parseFloat(c[0]), parseFloat(c[1])];
+    });
+  }
+
+  // Serialize [[x,y],...] back to "x,y x,y ..."
+  function _serialize(pts){
+    return pts.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' ');
+  }
+
+  // Load saved custom points and apply to SVG polygons
+  function _applyCustomPoints(){
+    var raw;
+    try { raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e){ raw = null; }
+    if(!raw) return;
+    var svg = document.getElementById('anatomyBodySVG');
+    if(!svg) return;
+    svg.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var saved = raw[regionId];
+      if(!saved) return;
+      var polygons = Array.from(g.querySelectorAll('polygon.ab-overlay'));
+      saved.forEach(function(pts, idx){
+        var poly = polygons[idx];
+        if(poly && pts) poly.setAttribute('points', _serialize(pts));
+      });
+    });
+  }
+
+  // Save current SVG polygon points to localStorage
+  function _saveCurrentPoints(){
+    var svg = document.getElementById('anatomyBodySVG');
+    if(!svg) return;
+    var data = {};
+    svg.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var polys = Array.from(g.querySelectorAll('polygon.ab-overlay'));
+      if(!polys.length) return;
+      data[regionId] = polys.map(function(poly){
+        return _parse(poly.getAttribute('points') || '');
+      });
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e){}
+  }
+
+  // Convert SVG coordinate from a client-space event
+  function _clientToSVG(svgEl, clientX, clientY){
+    var rect = svgEl.getBoundingClientRect();
+    var vb = svgEl.viewBox.baseVal;
+    var scaleX = vb.width / rect.width;
+    var scaleY = vb.height / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  }
+
+  // Build draggable handles for all polygon vertices
+  function _buildHandles(){
+    var editorSVG = document.getElementById('hotspotEditorSVG');
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!editorSVG || !mainSVG) return;
+
+    // Clear old handles and remove previously registered SVG-level listeners
+    while(editorSVG.firstChild) editorSVG.removeChild(editorSVG.firstChild);
+    _handles = [];
+
+    var colors = {
+      head_neck:'#e53935', shoulder:'#fb8c00', thorax:'#43a047',
+      upper_arm:'#1e88e5', forearm_hand:'#8e24aa', abdomen:'#00897b',
+      hip_femur:'#d81b60', knee_leg:'#6d4c41', foot_ankle:'#546e7a', spine:'#7b1fa2'
+    };
+
+    // Track which handle is currently being dragged
+    var _activeHandle = null;
+
+    // SVG-level move/end listeners registered once
+    function _onMouseMove(e){
+      if(!_activeHandle) return;
+      _activeHandle.onMove(e.clientX, e.clientY);
+    }
+    function _onMouseEnd(){
+      if(!_activeHandle) return;
+      _activeHandle.onEnd();
+      _activeHandle = null;
+    }
+    function _onTouchMove(e){
+      if(!_activeHandle) return;
+      e.preventDefault();
+      var t = e.touches[0];
+      if(t) _activeHandle.onMove(t.clientX, t.clientY);
+    }
+    function _onTouchEnd(){
+      if(!_activeHandle) return;
+      _activeHandle.onEnd();
+      _activeHandle = null;
+    }
+
+    editorSVG.addEventListener('mousemove', _onMouseMove);
+    editorSVG.addEventListener('mouseup', _onMouseEnd);
+    editorSVG.addEventListener('mouseleave', _onMouseEnd);
+    editorSVG.addEventListener('touchmove', _onTouchMove, {passive:false});
+    editorSVG.addEventListener('touchend', _onTouchEnd);
+
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var color = colors[regionId] || '#f57c00';
+      g.querySelectorAll('polygon.ab-overlay').forEach(function(poly){
+        var pts = _parse(poly.getAttribute('points') || '');
+        pts.forEach(function(pt, idx){
+          var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          circle.setAttribute('cx', pt[0]);
+          circle.setAttribute('cy', pt[1]);
+          circle.setAttribute('r', '22');
+          circle.setAttribute('fill', color);
+          circle.setAttribute('fill-opacity', '0.75');
+          circle.setAttribute('stroke', '#fff');
+          circle.setAttribute('stroke-width', '3');
+          circle.style.cursor = 'grab';
+          circle.style.touchAction = 'none';
+
+          var handle = {
+            el: circle,
+            onMove: function(cx, cy){
+              var sv = _clientToSVG(editorSVG, cx, cy);
+              sv.x = Math.max(0, Math.min(1000, sv.x));
+              sv.y = Math.max(0, Math.min(1500, sv.y));
+              pts[idx] = [sv.x, sv.y];
+              poly.setAttribute('points', _serialize(pts));
+              circle.setAttribute('cx', sv.x);
+              circle.setAttribute('cy', sv.y);
+            },
+            onEnd: function(){
+              circle.style.cursor = 'grab';
+              circle.setAttribute('r','22');
+            }
+          };
+          _handles.push(handle);
+
+          circle.addEventListener('mousedown', function(e){
+            e.preventDefault(); e.stopPropagation();
+            _activeHandle = handle;
+            circle.style.cursor = 'grabbing';
+            circle.setAttribute('r','28');
+          });
+
+          circle.addEventListener('touchstart', function(e){
+            e.preventDefault(); e.stopPropagation();
+            _activeHandle = handle;
+            circle.style.cursor = 'grabbing';
+            circle.setAttribute('r','28');
+          }, {passive:false});
+
+          editorSVG.appendChild(circle);
+        });
+      });
+    });
+  }
+
+  // Snapshot current polygon points for cancel/reset
+  function _snapshotPoints(){
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    _originalPoints = {};
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      _originalPoints[regionId] = Array.from(g.querySelectorAll('polygon.ab-overlay')).map(function(poly){
+        return poly.getAttribute('points') || '';
+      });
+    });
+  }
+
+  // Restore polygon points from snapshot
+  function _restoreSnapshot(){
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var saved = _originalPoints[regionId];
+      if(!saved) return;
+      var polys = Array.from(g.querySelectorAll('polygon.ab-overlay'));
+      saved.forEach(function(pts, idx){
+        if(polys[idx]) polys[idx].setAttribute('points', pts);
+      });
+    });
+  }
+
+  // Default polygon points — captured lazily the first time the editor is opened
+  var _DEFAULTS = null;
+
+  function _ensureDefaults(){
+    if(_DEFAULTS) return;
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    _DEFAULTS = {};
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      _DEFAULTS[regionId] = Array.from(g.querySelectorAll('polygon.ab-overlay')).map(function(poly){
+        return poly.getAttribute('points') || '';
+      });
+    });
+  }
+
+  // Public API
+  window._toggleHotspotEditor = function(){
+    if(_editorActive){ _cancelHotspotEdits(); } else { _enterEditor(); }
+  };
+
+  function _enterEditor(){
+    _editorActive = true;
+    _ensureDefaults();
+    _snapshotPoints();
+    _buildHandles();
+    var editorSVG = document.getElementById('hotspotEditorSVG');
+    var bar = document.getElementById('hotspotEditorBar');
+    var hint = document.getElementById('anatTapHint');
+    var btn = document.getElementById('hotspotEditBtn');
+    if(editorSVG) editorSVG.style.display = 'block';
+    if(bar){ bar.style.display = 'flex'; }
+    if(hint) hint.textContent = '✏️ Drag the colored handles to adjust zone boundaries';
+    if(btn){ btn.style.background = 'var(--accent)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--accent)'; }
+    // Disable region clicks on main SVG
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(mainSVG){ mainSVG.style.pointerEvents = 'none'; }
+  }
+
+  function _exitEditor(){
+    _editorActive = false;
+    var editorSVG = document.getElementById('hotspotEditorSVG');
+    var bar = document.getElementById('hotspotEditorBar');
+    var hint = document.getElementById('anatTapHint');
+    var btn = document.getElementById('hotspotEditBtn');
+    if(editorSVG) editorSVG.style.display = 'none';
+    if(bar) bar.style.display = 'none';
+    if(hint) hint.textContent = '🖐 Tap any region to view its anatomy';
+    if(btn){ btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(mainSVG){ mainSVG.style.pointerEvents = ''; }
+    _handles = [];
+  }
+
+  window._saveHotspotEdits = function(){
+    _saveCurrentPoints();
+    _exitEditor();
+    // Rebuild geometry after save
+    _initSmartAnatomyHitTest();
+  };
+
+  window._cancelHotspotEdits = function(){
+    _restoreSnapshot();
+    _exitEditor();
+  };
+
+  window._resetHotspotEdits = function(){
+    _ensureDefaults();
+    if(!_DEFAULTS) return;
+    var mainSVG = document.getElementById('anatomyBodySVG');
+    if(!mainSVG) return;
+    mainSVG.querySelectorAll('.skel-region[data-region]').forEach(function(g){
+      var regionId = g.dataset.region;
+      var defaults = _DEFAULTS[regionId];
+      if(!defaults) return;
+      var polys = Array.from(g.querySelectorAll('polygon.ab-overlay'));
+      defaults.forEach(function(pts, idx){
+        if(polys[idx]) polys[idx].setAttribute('points', pts);
+      });
+    });
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    // Rebuild handles for the reset positions
+    _buildHandles();
+  };
+
+  // Apply saved custom points on load
+  _applyCustomPoints();
+}());
