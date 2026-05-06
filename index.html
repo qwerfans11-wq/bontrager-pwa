@@ -601,8 +601,21 @@
     <div class="anat-intro">
       🫀 Interactive human body model — tap any region to view its anatomy &amp; radiographic details.
     </div>
+
+    <!-- Hotspot editor toolbar -->
+    <div id="hotspotEditorBar" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;margin-bottom:12px;background:var(--bg3);border:1.5px solid var(--accent);border-radius:var(--radius);">
+      <span style="font-size:13px;font-weight:700;color:var(--accent);flex:1;min-width:120px">✏️ Zone Editor — drag the handles</span>
+      <button onclick="_saveHotspotEdits()" style="padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer">💾 Save</button>
+      <button onclick="_resetHotspotEdits()" style="padding:7px 14px;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer">↺ Reset</button>
+      <button onclick="_cancelHotspotEdits()" style="padding:7px 14px;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer">✕ Cancel</button>
+    </div>
+
     <div class="anat-body-container">
-      <div class="anat-tap-hint">🖐 Tap any region to view its anatomy</div>
+      <div id="anatTapHint" class="anat-tap-hint">🖐 Tap any region to view its anatomy</div>
+      <button id="hotspotEditBtn" onclick="_toggleHotspotEditor()" style="margin:0 auto 8px;display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border2);border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+        Edit Zones
+      </button>
       <div class="anat-body-svg-wrap">
         <!-- 3D skeleton photo background -->
         <img id="anatSkeletonImg"
@@ -692,6 +705,12 @@
                   fill="rgba(160,100,210,0)" stroke="rgba(160,100,210,0)" stroke-width="2.5" stroke-dasharray="10,6"/>
             <text class="ab-lbl" x="500" y="498" text-anchor="middle" font-size="22" fill="rgba(220,160,255,1)" stroke="rgba(0,0,0,.85)" stroke-width="5" paint-order="stroke">Spine</text>
           </g>
+        </svg>
+        <!-- Hotspot editor handles overlay -->
+        <svg id="hotspotEditorSVG" viewBox="0 0 1000 1500"
+             xmlns="http://www.w3.org/2000/svg"
+             preserveAspectRatio="none"
+             style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;touch-action:none">
         </svg>
       </div>
     </div>
@@ -983,26 +1002,6 @@
             Install as App
           </div>
           <div class="settings-row-sub">Add to home screen — works fully offline</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-      <div class="settings-row" style="cursor:pointer" onclick="navTo('quickreview')">
-        <div>
-          <div class="settings-row-label" style="display:flex;align-items:center;gap:8px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            Quick Review
-          </div>
-          <div class="settings-row-sub">Access the quick reference review sheet</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-      <div class="settings-row" style="cursor:pointer" onclick="navTo('anatomy')">
-        <div>
-          <div class="settings-row-label" style="display:flex;align-items:center;gap:8px">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            Anatomy
-          </div>
-          <div class="settings-row-sub">Interactive body map and anatomy viewer</div>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
