@@ -615,6 +615,18 @@ function _openPosFromScore(posName){
 
 function restartQuiz(){ startQuiz(lastChId); }
 
+(function _bindScorePageButtons(){
+  const tryAnotherBtn=document.getElementById('scoreTryAnotherBtn');
+  const retryBtn=document.getElementById('scoreRetryBtn');
+  const askAIBtn=document.getElementById('scoreAskAIBtn');
+  const homeBtn=document.getElementById('scoreHomeBtn');
+
+  if(tryAnotherBtn) tryAnotherBtn.addEventListener('click', ()=>navTo('quiz-chapters'));
+  if(retryBtn) retryBtn.addEventListener('click', restartQuiz);
+  if(askAIBtn) askAIBtn.addEventListener('click', askAIAboutMistakes);
+  if(homeBtn) homeBtn.addEventListener('click', ()=>navTo('home'));
+}());
+
 function deleteCurrentQ(){
   if(userRole!=='developer'||!lastChId||!QUIZ[lastChId]) return;
   showConfirm('Delete Question',`Delete Question ${quizIdx+1}?`,()=>{

@@ -539,10 +539,10 @@
       <div class="score-ring"><div style="width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center"><span class="score-num" id="scoreNum">—</span></div></div>
       <div class="score-title" id="scoreTitle">Quiz complete</div>
       <div class="score-sub" id="scoreSub"></div>
-      <button class="score-btn primary" onclick="navTo('quiz-chapters')">Try another chapter</button>
-      <button class="score-btn outline" onclick="restartQuiz()">Retry this chapter</button>
-      <button class="score-btn outline" onclick="askAIAboutMistakes()" style="margin-top:4px;border-color:var(--accent);color:var(--accent)">Ask AI about mistakes</button>
-      <button class="score-btn outline" onclick="navTo('home')" style="margin-top:4px">Back to home</button>
+      <button class="score-btn primary" id="scoreTryAnotherBtn">Try another chapter</button>
+      <button class="score-btn outline" id="scoreRetryBtn">Retry this chapter</button>
+      <button class="score-btn outline" id="scoreAskAIBtn" style="margin-top:4px;border-color:var(--accent);color:var(--accent)">Ask AI about mistakes</button>
+      <button class="score-btn outline" id="scoreHomeBtn" style="margin-top:4px">Back to home</button>
       <div id="scoreReview"></div>
     </div>
   </div>
