@@ -23,6 +23,19 @@
     if(typeof closeSidebar === 'function') closeSidebar();
   }
 
+  function sendAiFromInput(){
+    var input = document.getElementById('aiInput');
+    call('sendAI', input ? input.value : '');
+  }
+
+  function adjustNumberInput(inputId, defaultValue, delta, callbackName){
+    var input = document.getElementById(inputId);
+    if(!input) return;
+    var parsed = parseInt(input.value || String(defaultValue),10);
+    input.value = String((parsed || defaultValue) + delta);
+    call(callbackName);
+  }
+
   // Home cards
   on('homeLearnCard','click',function(){ nav('learn-chapters'); });
   on('homeQuizCard','click',function(){ nav('quiz-chapters'); });
@@ -79,18 +92,14 @@
   on('editModalCancelBtn','click',function(){ call('closeEditModal'); });
 
   // AI helpers
-  on('aiSendBtn','click',function(){
-    var input = document.getElementById('aiInput');
-    call('sendAI', input ? input.value : '');
-  });
+  on('aiSendBtn','click',sendAiFromInput);
   on('aiPlanBtn','click',function(){ call('sendAI','Build me a 7-day study plan based on Bontrager chapters.'); });
   on('aiMistakesBtn','click',function(){ call('askAIAboutMistakes'); });
   on('aiClearBtn','click',function(){ call('aiClearChat'); });
   on('aiInput','keydown',function(e){
     if(e.key === 'Enter' && !e.shiftKey){
       e.preventDefault();
-      var input = document.getElementById('aiInput');
-      call('sendAI', input ? input.value : '');
+      sendAiFromInput();
     }
   });
 
@@ -124,28 +133,16 @@
   });
 
   on('fontSizeDecBtn','click',function(){
-    var input = document.getElementById('fontSizeInput');
-    if(!input) return;
-    input.value = String((parseInt(input.value || String(DEFAULT_FONT_SIZE),10) || DEFAULT_FONT_SIZE) - 1);
-    call('onFontSizeChange');
+    adjustNumberInput('fontSizeInput', DEFAULT_FONT_SIZE, -1, 'onFontSizeChange');
   });
   on('fontSizeIncBtn','click',function(){
-    var input = document.getElementById('fontSizeInput');
-    if(!input) return;
-    input.value = String((parseInt(input.value || String(DEFAULT_FONT_SIZE),10) || DEFAULT_FONT_SIZE) + 1);
-    call('onFontSizeChange');
+    adjustNumberInput('fontSizeInput', DEFAULT_FONT_SIZE, 1, 'onFontSizeChange');
   });
   on('flashFontSizeDecBtn','click',function(){
-    var input = document.getElementById('flashcardFontSizeInput');
-    if(!input) return;
-    input.value = String((parseInt(input.value || String(DEFAULT_FLASHCARD_FONT_SIZE),10) || DEFAULT_FLASHCARD_FONT_SIZE) - 1);
-    call('onFlashcardFontSizeChange');
+    adjustNumberInput('flashcardFontSizeInput', DEFAULT_FLASHCARD_FONT_SIZE, -1, 'onFlashcardFontSizeChange');
   });
   on('flashFontSizeIncBtn','click',function(){
-    var input = document.getElementById('flashcardFontSizeInput');
-    if(!input) return;
-    input.value = String((parseInt(input.value || String(DEFAULT_FLASHCARD_FONT_SIZE),10) || DEFAULT_FLASHCARD_FONT_SIZE) + 1);
-    call('onFlashcardFontSizeChange');
+    adjustNumberInput('flashcardFontSizeInput', DEFAULT_FLASHCARD_FONT_SIZE, 1, 'onFlashcardFontSizeChange');
   });
 
   // Restore session buttons
