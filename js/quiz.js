@@ -615,7 +615,7 @@ function _openPosFromScore(posName){
 
 function restartQuiz(){ startQuiz(lastChId); }
 
-(function _bindScorePageButtons(){
+function _bindScorePageButtons(){
   const tryAnotherBtn=document.getElementById('scoreTryAnotherBtn');
   const retryBtn=document.getElementById('scoreRetryBtn');
   const askAIBtn=document.getElementById('scoreAskAIBtn');
@@ -625,7 +625,12 @@ function restartQuiz(){ startQuiz(lastChId); }
   if(retryBtn) retryBtn.addEventListener('click', restartQuiz);
   if(askAIBtn) askAIBtn.addEventListener('click', askAIAboutMistakes);
   if(homeBtn) homeBtn.addEventListener('click', ()=>navTo('home'));
-}());
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', _bindScorePageButtons, { once:true });
+} else {
+  _bindScorePageButtons();
+}
 
 function deleteCurrentQ(){
   if(userRole!=='developer'||!lastChId||!QUIZ[lastChId]) return;
