@@ -1682,3 +1682,15 @@ body.study-mode .bottom-nav{display:none}
 
 /* ── Hotspot zone editor ── */
 #hotspotEditorSVG circle{filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+
+/* ── Accessibility: respect reduced motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

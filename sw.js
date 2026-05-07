@@ -1,9 +1,14 @@
-const CACHE_NAME = 'bontrager-v0.0.2-offline-anat';
+// Cache version — bump this string whenever app shell files change to force cache refresh
+const CACHE_NAME = 'bontrager-v1.0.0-modular';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
-  './app.js',
+  './js/utils.js',
+  './js/auth.js',
+  './js/quiz.js',
+  './js/ui.js',
+  './js/core.js',
   './manifest.webmanifest',
   './icons/icon-96.png',
   './icons/icon-180.png',
