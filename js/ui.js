@@ -174,16 +174,20 @@ function _showExitDialog() {
         </div>
       </div>
       <div class="_exit-actions">
-        <button class="_exit-btn _exit-btn-stay" onclick="_closeExitDialog()">
+        <button class="_exit-btn _exit-btn-stay" id="_exitStayBtn">
           📖 Stay here
         </button>
-        <button class="_exit-btn _exit-btn-close" onclick="_confirmAppExit()">
+        <button class="_exit-btn _exit-btn-close" id="_exitCloseBtn">
           Close ✕
         </button>
       </div>
     </div>
   `;
   document.body.appendChild(overlay);
+  const stayBtn = document.getElementById('_exitStayBtn');
+  const closeBtn = document.getElementById('_exitCloseBtn');
+  if(stayBtn) stayBtn.addEventListener('click', _closeExitDialog);
+  if(closeBtn) closeBtn.addEventListener('click', _confirmAppExit);
   overlay.addEventListener('click',e=>{ if(e.target===overlay) _closeExitDialog(); });
 }
 
