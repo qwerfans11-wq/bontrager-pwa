@@ -351,7 +351,13 @@ function startQuiz(chId){
   if(chips){
     const presets=[5,10,15,20,'All'].filter(n=>n==='All'||n<total);
     if(!presets.includes('All')) presets.push('All');
-    chips.innerHTML=presets.map(n=>`<button class="qc-chip${n==='All'?'':''}" data-val="${n}" onclick="_qcSelect(this,'${n}')">${n}</button>`).join('');
+    chips.innerHTML=presets.map(n=>`<button class="qc-chip${n==='All'?'':''}" data-val="${n}">${n}</button>`).join('');
+    chips.querySelectorAll('.qc-chip').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const raw=btn.dataset.val;
+        _qcSelect(btn, raw==='All' ? 'All' : parseInt(raw,10));
+      });
+    });
     // auto-select All
     const allBtn=chips.querySelector('[data-val="All"]');
     if(allBtn) allBtn.classList.add('active');
@@ -673,7 +679,7 @@ function openEditModal(type){
       <div class="edit-field">
         <label>Answer Options <span style="font-weight:400;color:var(--text3)">(● = correct)</span></label>
         <div class="edit-opts" id="ef-opts">${optsHtml}</div>
-        <button style="margin-top:8px;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--accent);cursor:pointer;font-family:var(--font);font-size:12px" onclick="addOptRow()">+ Add option</button>
+        <button class="ef-add-opt-btn" style="margin-top:8px;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--accent);cursor:pointer;font-family:var(--font);font-size:12px">+ Add option</button>
       </div>`;
     document.querySelectorAll('.opt-input').forEach(inp=>{
       inp.addEventListener('input',()=>{
@@ -681,6 +687,8 @@ function openEditModal(type){
         document.querySelectorAll('.correct-radio')[idx].value=inp.value;
       });
     });
+    const addOptBtn=body.querySelector('.ef-add-opt-btn');
+    if(addOptBtn) addOptBtn.addEventListener('click', addOptRow);
   }
   overlay.classList.add('open');
 }
@@ -709,7 +717,7 @@ function openAddQuizQModal(){
       <div class="edit-opts" id="ef-opts">
         ${[0,1,2,3].map(i=>`<div class="edit-opt-row"><input class="opt-input" data-idx="${i}" value="Option ${i+1}"><input type="radio" class="correct-radio" name="correctOpt" value="Option ${i+1}" ${i===0?'checked':''}></div>`).join('')}
       </div>
-      <button style="margin-top:8px;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--accent);cursor:pointer;font-family:var(--font);font-size:12px" onclick="addOptRow()">+ Add option</button>
+      <button class="ef-add-opt-btn" style="margin-top:8px;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--accent);cursor:pointer;font-family:var(--font);font-size:12px">+ Add option</button>
     </div>`;
   document.querySelectorAll('.opt-input').forEach(inp=>{
     inp.addEventListener('input',()=>{
@@ -717,6 +725,8 @@ function openAddQuizQModal(){
       document.querySelectorAll('.correct-radio')[idx].value=inp.value;
     });
   });
+  const addOptBtn=document.querySelector('#editModalBody .ef-add-opt-btn');
+  if(addOptBtn) addOptBtn.addEventListener('click', addOptRow);
   document.getElementById('editModalOverlay').classList.add('open');
 }
 
@@ -784,4 +794,3 @@ function saveEdit(){
   closeEditModal();
   if(userRole==='developer'){devSaveData();_showToast('💾 Changes saved');}
 }
-
