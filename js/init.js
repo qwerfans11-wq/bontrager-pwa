@@ -32,7 +32,8 @@
     var input = document.getElementById(inputId);
     if(!input) return;
     var parsed = parseInt(input.value || String(defaultValue),10);
-    input.value = String((parsed || defaultValue) + delta);
+    var base = Number.isNaN(parsed) ? defaultValue : parsed;
+    input.value = String(base + delta);
     call(callbackName);
   }
 
