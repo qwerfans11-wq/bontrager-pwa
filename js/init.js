@@ -1,12 +1,21 @@
 // js/init.js — Startup event wiring for static global scripts
 (function(){
+  var DEFAULT_FONT_SIZE = 15;
+  var DEFAULT_FLASHCARD_FONT_SIZE = 16;
+  var HOME_BUTTON_IDS = [
+    'learnChaptersHomeBtn','learnSubChHomeBtn','learnPosHomeBtn','quizChaptersHomeBtn',
+    'anatHomeBtn','settingsHomeBtn','bookHomeBtn','aboutHomeBtn','devManagerHomeBtn',
+    'aiHomeBtn','qrHomeBtn','posHomeBtn'
+  ];
+
   function on(id, event, handler){
     var el = document.getElementById(id);
     if(el) el.addEventListener(event, handler);
   }
 
   function call(fnName){
-    if(typeof window[fnName] === 'function') return window[fnName].apply(null, Array.prototype.slice.call(arguments,1));
+    var args = Array.prototype.slice.call(arguments, 1);
+    if(typeof window[fnName] === 'function') return window[fnName].apply(null, args);
   }
 
   function nav(id){
@@ -45,8 +54,9 @@
   on('devAppearanceBtn','click',function(){ call('openDevAppearance'); });
 
   // Home/back buttons
-  ['learnChaptersHomeBtn','learnSubChHomeBtn','learnPosHomeBtn','quizChaptersHomeBtn','anatHomeBtn','settingsHomeBtn','bookHomeBtn','aboutHomeBtn','devManagerHomeBtn','aiHomeBtn','qrHomeBtn','posHomeBtn']
-    .forEach(function(id){ on(id,'click',function(){ nav('home'); }); });
+  HOME_BUTTON_IDS.forEach(function(id){
+    on(id,'click',function(){ nav('home'); });
+  });
   on('bookReaderBackBtn','click',function(){ nav('book'); });
 
   // Auth / profile / confirm / appearance
@@ -90,12 +100,12 @@
   on('highContrastToggle','click',function(){ call('toggleHighContrast'); });
   on('bottomNavToggle','click',function(){ call('toggleBottomNav'); });
 
-  on('shuffleToggle','click',function(){
-    this.classList.toggle('on');
+  on('shuffleToggle','click',function(e){
+    e.currentTarget.classList.toggle('on');
     call('_saveQuizSettings');
   });
-  on('hintToggle','click',function(){
-    this.classList.toggle('on');
+  on('hintToggle','click',function(e){
+    e.currentTarget.classList.toggle('on');
     call('_saveQuizSettings');
   });
   on('qCount','change',function(){ call('_saveQuizSettings'); });
@@ -116,25 +126,25 @@
   on('fontSizeDecBtn','click',function(){
     var input = document.getElementById('fontSizeInput');
     if(!input) return;
-    input.value = String((parseInt(input.value || '15',10) || 15) - 1);
+    input.value = String((parseInt(input.value || String(DEFAULT_FONT_SIZE),10) || DEFAULT_FONT_SIZE) - 1);
     call('onFontSizeChange');
   });
   on('fontSizeIncBtn','click',function(){
     var input = document.getElementById('fontSizeInput');
     if(!input) return;
-    input.value = String((parseInt(input.value || '15',10) || 15) + 1);
+    input.value = String((parseInt(input.value || String(DEFAULT_FONT_SIZE),10) || DEFAULT_FONT_SIZE) + 1);
     call('onFontSizeChange');
   });
   on('flashFontSizeDecBtn','click',function(){
     var input = document.getElementById('flashcardFontSizeInput');
     if(!input) return;
-    input.value = String((parseInt(input.value || '16',10) || 16) - 1);
+    input.value = String((parseInt(input.value || String(DEFAULT_FLASHCARD_FONT_SIZE),10) || DEFAULT_FLASHCARD_FONT_SIZE) - 1);
     call('onFlashcardFontSizeChange');
   });
   on('flashFontSizeIncBtn','click',function(){
     var input = document.getElementById('flashcardFontSizeInput');
     if(!input) return;
-    input.value = String((parseInt(input.value || '16',10) || 16) + 1);
+    input.value = String((parseInt(input.value || String(DEFAULT_FLASHCARD_FONT_SIZE),10) || DEFAULT_FLASHCARD_FONT_SIZE) + 1);
     call('onFlashcardFontSizeChange');
   });
 
