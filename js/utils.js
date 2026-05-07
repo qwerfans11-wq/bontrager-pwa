@@ -293,7 +293,14 @@ function _highlightChapterText(item, query){
   }
 }
 
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function esc(s){
+  return String(s || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 function _showToast(msg,color){
   color=color||'var(--green)';
   var t=document.getElementById('_devToast');
