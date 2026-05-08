@@ -8537,7 +8537,7 @@ const ANATOMY_BASE64_IMAGES = {
 };
 
 
-function _applyAnatomyBase64ImageSources(){
+function _setAnatomySkeletonImageSource(){
   const skeletonImg = document.getElementById('anatSkeletonImg');
   if(!skeletonImg) return;
   const currentSrc = skeletonImg.getAttribute('src') || '';
@@ -8660,7 +8660,6 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred; patient rotated to specific angles for each projection. Supine for post-trauma axial views. DO NOT force internal rotation in suspected posterior dislocation.',
     chapterKey:'upper_limb',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.fullSkeleton,
       ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
@@ -8707,7 +8706,6 @@ const ANATOMY_DATA = {
     positioning:'Patient seated at end of table, hand/forearm resting on IR. PA for hand (minimizes OID). Elbow at 90° for forearm lateral view.',
     chapterKey:'upper_limb',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.fullSkeleton,
       ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
@@ -8730,7 +8728,6 @@ const ANATOMY_DATA = {
     positioning:'AP supine standard. Injured leg in neutral (anatomic) position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval.',
     chapterKey:'lower_limb',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.fullSkeleton,
       ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
@@ -9505,7 +9502,7 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
-_applyAnatomyBase64ImageSources();
+_setAnatomySkeletonImageSource();
 _warmupAnatomyImages();
 _loadDefaultPosMode();
 _loadBottomNavPref();
