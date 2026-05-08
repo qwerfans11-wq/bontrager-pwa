@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1400">
+  <rect width="1200" height="1400" fill="#f7fafc"/>
+  <text x="600" y="88" text-anchor="middle" font-size="46" font-family="Arial, sans-serif" font-weight="700" fill="#14324a">Bony Thorax</text>
+  <text x="600" y="130" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#466277">Clavicles, ribs, sternum, and thoracic spine</text>
+
+  <path d="M390 240 Q500 180 600 228 Q700 180 810 240" fill="none" stroke="#7a92a4" stroke-width="26" stroke-linecap="round"/>
+  <rect x="578" y="248" width="44" height="480" rx="18" fill="#e8d3c4" stroke="#415a6b" stroke-width="6"/>
+  <rect x="568" y="726" width="64" height="160" rx="20" fill="#e8d3c4" stroke="#415a6b" stroke-width="6"/>
+  <rect x="556" y="886" width="88" height="120" rx="22" fill="#e8d3c4" stroke="#415a6b" stroke-width="6"/>
+  <rect x="575" y="220" width="50" height="44" rx="14" fill="#e8d3c4" stroke="#415a6b" stroke-width="6"/>
+
+  <g fill="none" stroke="#7a92a4" stroke-width="14" stroke-linecap="round">
+    <path d="M600 250 C500 270 430 320 382 392"/>
+    <path d="M600 250 C700 270 770 320 818 392"/>
+    <path d="M600 310 C492 330 412 390 350 476"/>
+    <path d="M600 310 C708 330 788 390 850 476"/>
+    <path d="M600 380 C500 400 410 470 334 566"/>
+    <path d="M600 380 C700 400 790 470 866 566"/>
+    <path d="M600 460 C512 480 430 548 360 648"/>
+    <path d="M600 460 C688 480 770 548 840 648"/>
+    <path d="M600 550 C526 566 458 622 398 710"/>
+    <path d="M600 550 C674 566 742 622 802 710"/>
+    <path d="M600 640 C538 652 484 696 438 770"/>
+    <path d="M600 640 C662 652 716 696 762 770"/>
+  </g>
+
+  <g fill="none" stroke="#a7c1d3" stroke-width="8">
+    <line x1="600" y1="240" x2="600" y2="1020"/>
+    <line x1="540" y1="280" x2="660" y2="280"/>
+    <line x1="540" y1="342" x2="660" y2="342"/>
+    <line x1="540" y1="404" x2="660" y2="404"/>
+    <line x1="540" y1="466" x2="660" y2="466"/>
+    <line x1="540" y1="528" x2="660" y2="528"/>
+    <line x1="540" y1="590" x2="660" y2="590"/>
+    <line x1="540" y1="652" x2="660" y2="652"/>
+    <line x1="540" y1="714" x2="660" y2="714"/>
+    <line x1="540" y1="776" x2="660" y2="776"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#14324a">
+    <text x="130" y="246" font-size="28" font-weight="700">Clavicles</text>
+    <line x1="312" y1="248" x2="448" y2="238" stroke="#14324a" stroke-width="4"/>
+
+    <text x="850" y="346" font-size="28" font-weight="700">Ribs 1-12</text>
+    <text x="850" y="378" font-size="22">posterior, axillary, anterior arcs</text>
+    <line x1="824" y1="384" x2="760" y2="430" stroke="#14324a" stroke-width="4"/>
+
+    <text x="140" y="620" font-size="28" font-weight="700">Thoracic spine</text>
+    <line x1="344" y1="624" x2="552" y2="620" stroke="#14324a" stroke-width="4"/>
+
+    <text x="834" y="720" font-size="28" font-weight="700">Sternum</text>
+    <text x="834" y="752" font-size="22">manubrium, body, xiphoid</text>
+    <line x1="808" y1="758" x2="632" y2="720" stroke="#14324a" stroke-width="4"/>
+
+    <text x="170" y="962" font-size="28" font-weight="700">Costophrenic angles</text>
+    <line x1="430" y1="966" x2="438" y2="770" stroke="#14324a" stroke-width="4"/>
+  </g>
+</svg>
