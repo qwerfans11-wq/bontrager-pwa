@@ -8557,7 +8557,7 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred for cervical. Horizontal beam lateral for trauma — DO NOT move patient before all 7 cervical vertebrae are demonstrated.',
     chapterKey:'spine',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.headNeckSkull
+      'https://github.com/user-attachments/assets/a29241d0-35aa-40c4-9f10-7fbee68a8a90'
     ]
   },
   thorax:{
@@ -8580,8 +8580,8 @@ const ANATOMY_DATA = {
     positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
     chapterKey:'chest',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.thoraxLungsHeart,
-      ANATOMY_BASE64_IMAGES.thoraxBonyCage
+      'https://github.com/user-attachments/assets/cca89d97-e931-4239-96d1-27d19d7ae5a4',
+      'https://github.com/user-attachments/assets/f409b0ea-b52f-410e-85c4-0c171f1f8e02'
     ]
   },
   abdomen:{
@@ -8627,7 +8627,7 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred for functional studies. Supine for detailed vertebral views. Flex knees (support under knees) for lumbar AP to reduce lordosis and open disc spaces.',
     chapterKey:'spine',
     anatImages:[
-      ANATOMY_BASE64_IMAGES.fullSkeleton
+      'https://github.com/user-attachments/assets/efc22033-8e60-49f0-aeb6-91b5ef3f62fc'
     ]
   },
   shoulder:{
