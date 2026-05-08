@@ -567,7 +567,7 @@ function _warmupAnatomyImages(){
   for(const region of Object.values(ANATOMY_DATA)){
     const imgs = Array.isArray(region.anatImages) ? region.anatImages : [];
     for(const url of imgs){
-      if(url && !seen.has(url)){ seen.add(url); allUrls.push(url); }
+      if(url && !url.startsWith('data:') && !seen.has(url)){ seen.add(url); allUrls.push(url); }
     }
   }
   if(!allUrls.length) return;
@@ -8541,7 +8541,7 @@ function _applyAnatomyBase64ImageSources(){
   const skeletonImg = document.getElementById('anatSkeletonImg');
   if(!skeletonImg) return;
   const currentSrc = skeletonImg.getAttribute('src') || '';
-  if(!currentSrc || /^https?:\/\//i.test(currentSrc)){
+  if(!currentSrc || !currentSrc.startsWith('data:')){
     skeletonImg.src = ANATOMY_BASE64_IMAGES.fullSkeleton;
   }
 }
