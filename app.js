@@ -8537,7 +8537,7 @@ const ANATOMY_BASE64_IMAGES = {
 };
 
 
-function _setAnatomySkeletonImageSource(){
+function _setSkeletonImageSource(){
   const skeletonImg = document.getElementById('anatSkeletonImg');
   if(!skeletonImg) return;
   const currentSrc = skeletonImg.getAttribute('src') || '';
@@ -9502,7 +9502,7 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
-_setAnatomySkeletonImageSource();
+_setSkeletonImageSource();
 _warmupAnatomyImages();
 _loadDefaultPosMode();
 _loadBottomNavPref();
