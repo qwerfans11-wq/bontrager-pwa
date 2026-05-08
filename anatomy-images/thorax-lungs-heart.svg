@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1400">
+  <rect width="1200" height="1400" fill="#f8fbfd"/>
+  <text x="600" y="88" text-anchor="middle" font-size="46" font-family="Arial, sans-serif" font-weight="700" fill="#14324a">Thorax &amp; Chest Anatomy</text>
+  <text x="600" y="130" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#466277">Lungs, heart, trachea, diaphragm, and pleura</text>
+
+  <rect x="565" y="180" width="70" height="190" rx="28" fill="#b9d4e6" stroke="#36576f" stroke-width="6"/>
+  <path d="M600 370 C520 400 450 480 430 640 C408 820 444 1020 530 1100 C575 1144 625 1144 670 1100 C756 1020 792 820 770 640 C750 480 680 400 600 370 Z" fill="#dff1f7" stroke="#36576f" stroke-width="8"/>
+  <path d="M600 370 C512 402 442 486 422 656 C404 808 444 1012 510 1094 C548 1141 588 1140 600 1124 Z" fill="#f0a2b6" fill-opacity=".5"/>
+  <path d="M600 370 C688 402 758 486 778 656 C796 808 756 1012 690 1094 C652 1141 612 1140 600 1124 Z" fill="#f0a2b6" fill-opacity=".5"/>
+  <path d="M600 610 C654 592 720 628 742 694 C770 776 742 874 670 932 C622 970 594 988 560 982 C486 968 444 892 448 810 C452 730 514 640 600 610 Z" fill="#d66a7d" stroke="#36576f" stroke-width="7"/>
+  <path d="M420 1108 Q600 1186 780 1108" fill="none" stroke="#36576f" stroke-width="8" stroke-linecap="round"/>
+
+  <g fill="none" stroke="#93b7c8" stroke-width="4" opacity=".8">
+    <path d="M506 470 Q560 640 520 980"/>
+    <path d="M694 470 Q640 640 680 980"/>
+    <path d="M600 210 L600 1110"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#14324a">
+    <text x="170" y="242" font-size="28" font-weight="700">Trachea</text>
+    <line x1="320" y1="246" x2="560" y2="250" stroke="#14324a" stroke-width="4"/>
+
+    <text x="790" y="300" font-size="28" font-weight="700">Carina</text>
+    <text x="790" y="332" font-size="22">bifurcation at T4-T5</text>
+    <line x1="764" y1="338" x2="632" y2="368" stroke="#14324a" stroke-width="4"/>
+
+    <text x="142" y="510" font-size="28" font-weight="700">Right lung</text>
+    <text x="142" y="542" font-size="22">upper, middle, lower lobes</text>
+    <line x1="386" y1="520" x2="466" y2="560" stroke="#14324a" stroke-width="4"/>
+
+    <text x="824" y="510" font-size="28" font-weight="700">Left lung</text>
+    <text x="824" y="542" font-size="22">upper and lower lobes</text>
+    <line x1="798" y1="520" x2="728" y2="560" stroke="#14324a" stroke-width="4"/>
+
+    <text x="160" y="760" font-size="28" font-weight="700">Heart</text>
+    <text x="160" y="792" font-size="22">cardiac silhouette</text>
+    <line x1="326" y1="772" x2="512" y2="790" stroke="#14324a" stroke-width="4"/>
+
+    <text x="818" y="930" font-size="28" font-weight="700">Pleural cavity</text>
+    <text x="818" y="962" font-size="22">surrounds each lung</text>
+    <line x1="794" y1="968" x2="726" y2="916" stroke="#14324a" stroke-width="4"/>
+
+    <text x="160" y="1160" font-size="28" font-weight="700">Diaphragm</text>
+    <text x="160" y="1192" font-size="22">right dome higher than left</text>
+    <line x1="404" y1="1174" x2="512" y2="1112" stroke="#14324a" stroke-width="4"/>
+  </g>
+</svg>
