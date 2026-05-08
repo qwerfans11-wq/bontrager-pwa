@@ -8536,6 +8536,16 @@ const ANATOMY_BASE64_IMAGES = {
   fullSkeleton:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDE4MDAiPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjE4MDAiIGZpbGw9IiNmN2ZhZmMiLz4KICA8dGV4dCB4PSI2MDAiIHk9Ijg4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjQ2IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDMyNGEiPlZlcnRlYnJhbCBDb2x1bW4gJmFtcDsgRnVsbCBTa2VsZXRvbjwvdGV4dD4KICA8dGV4dCB4PSI2MDAiIHk9IjEzMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmaWxsPSIjNDY2Mjc3Ij5Gcm9udCB2aWV3IHdpdGggbWFqb3IgYXhpYWwgYW5kIGFwcGVuZGljdWxhciBsYW5kbWFya3M8L3RleHQ+CgogIDxjaXJjbGUgY3g9IjYwMCIgY3k9IjI1MCIgcj0iMTIwIiBmaWxsPSIjZmZmOGVmIiBzdHJva2U9IiM0MTVhNmIiIHN0cm9rZS13aWR0aD0iOCIvPgogIDxwYXRoIGQ9Ik01MjAgMzQwIFE2MDAgNDIwIDY4MCAzNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzQxNWE2YiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSI1NjAiIHk9IjM3MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMjgiIGZpbGw9IiNmNGQ4YzEiIHN0cm9rZT0iIzQxNWE2YiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CgogIDxwYXRoIGQ9Ik00MjAgNDcwIFE1MDUgNDE4IDYwMCA0NDggUTY5NSA0MTggNzgwIDQ3MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2E5MmE0IiBzdHJva2Utd2lkdGg9IjI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNNjAwIDQ1MCBMNjAwIDExMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzdhOTJhNCIgc3Ryb2tlLXdpZHRoPSIxNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWJiN2M4IiBzdHJva2Utd2lkdGg9IjgiPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjUwMCIgeDI9IjY1MCIgeTI9IjUwMCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjU2MCIgeDI9IjY1MCIgeTI9IjU2MCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjYyMCIgeDI9IjY1MCIgeTI9IjYyMCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjY4MCIgeDI9IjY1MCIgeTI9IjY4MCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9Ijc0MCIgeDI9IjY1MCIgeTI9Ijc0MCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjgwMCIgeDI9IjY1MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9Ijg2MCIgeDI9IjY1MCIgeTI9Ijg2MCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjkyMCIgeDI9IjY1MCIgeTI9IjkyMCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9Ijk4MCIgeDI9IjY1MCIgeTI9Ijk4MCIvPgogICAgPGxpbmUgeDE9IjU1MCIgeTE9IjEwNDAiIHgyPSI2NTAiIHkyPSIxMDQwIi8+CiAgPC9nPgoKICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiM3YTkyYTQiIHN0cm9rZS13aWR0aD0iMTQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8bGluZSB4MT0iNDcwIiB5MT0iNTEwIiB4Mj0iMzkwIiB5Mj0iNzYwIi8+CiAgICA8bGluZSB4MT0iNzMwIiB5MT0iNTEwIiB4Mj0iODEwIiB5Mj0iNzYwIi8+CiAgICA8bGluZSB4MT0iMzkwIiB5MT0iNzYwIiB4Mj0iMzQ1IiB5Mj0iMTA2MCIvPgogICAgPGxpbmUgeDE9IjgxMCIgeTE9Ijc2MCIgeDI9Ijg1NSIgeTI9IjEwNjAiLz4KICAgIDxsaW5lIHgxPSIzNDUiIHkxPSIxMDYwIiB4Mj0iMzMwIiB5Mj0iMTI2MCIvPgogICAgPGxpbmUgeDE9Ijg1NSIgeTE9IjEwNjAiIHgyPSI4NzAiIHkyPSIxMjYwIi8+CiAgPC9nPgogIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2E3YzFkMyIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiPgogICAgPGxpbmUgeDE9IjMzMiIgeTE9IjEyMjAiIHgyPSIyOTIiIHkyPSIxMjU1Ii8+CiAgICA8bGluZSB4MT0iODcwIiB5MT0iMTIyMCIgeDI9IjkxMCIgeTI9IjEyNTUiLz4KICAgIDxsaW5lIHgxPSIzMzIiIHkxPSIxMTcwIiB4Mj0iMjgyIiB5Mj0iMTE5NSIvPgogICAgPGxpbmUgeDE9Ijg3MCIgeTE9IjExNzAiIHgyPSI5MjAiIHkyPSIxMTk1Ii8+CiAgPC9nPgoKICA8cGF0aCBkPSJNNTEwIDEwODAgUTYwMCAxMDM1IDY5MCAxMDgwIEw3MzAgMTE5MCBRNjAwIDEyNzAgNDcwIDExOTAgWiIgZmlsbD0iI2U4ZDNjNCIgc3Ryb2tlPSIjNDE1YTZiIiBzdHJva2Utd2lkdGg9IjgiLz4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiM3YTkyYTQiIHN0cm9rZS13aWR0aD0iMTYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8bGluZSB4MT0iNTMwIiB5MT0iMTIwMCIgeDI9IjQ1MCIgeTI9IjE1MjAiLz4KICAgIDxsaW5lIHgxPSI2NzAiIHkxPSIxMjAwIiB4Mj0iNzUwIiB5Mj0iMTUyMCIvPgogICAgPGxpbmUgeDE9IjQ1MCIgeTE9IjE1MjAiIHgyPSI0MjAiIHkyPSIxNzEwIi8+CiAgICA8bGluZSB4MT0iNzUwIiB5MT0iMTUyMCIgeDI9Ijc4MCIgeTI9IjE3MTAiLz4KICA8L2c+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTdjMWQzIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8bGluZSB4MT0iNDIwIiB5MT0iMTcxMCIgeDI9IjM3NSIgeTI9IjE3NTAiLz4KICAgIDxsaW5lIHgxPSI0MjAiIHkxPSIxNzEwIiB4Mj0iNDU1IiB5Mj0iMTc2MCIvPgogICAgPGxpbmUgeDE9Ijc4MCIgeTE9IjE3MTAiIHgyPSI4MjUiIHkyPSIxNzUwIi8+CiAgICA8bGluZSB4MT0iNzgwIiB5MT0iMTcxMCIgeDI9Ijc0NSIgeTI9IjE3NjAiLz4KICA8L2c+CgogIDxnIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZmlsbD0iIzE0MzI0YSI+CiAgICA8dGV4dCB4PSIxMjAiIHk9IjIyMCIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCI+U2t1bGw8L3RleHQ+CiAgICA8bGluZSB4MT0iMjIwIiB5MT0iMjI0IiB4Mj0iNDc4IiB5Mj0iMjQ4IiBzdHJva2U9IiMxNDMyNGEiIHN0cm9rZS13aWR0aD0iNCIvPgoKICAgIDx0ZXh0IHg9IjgyMCIgeT0iNDIwIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIj5DZXJ2aWNhbCBzcGluZTwvdGV4dD4KICAgIDxsaW5lIHgxPSI3OTYiIHkxPSI0MjYiIHgyPSI2MzgiIHkyPSI0MzAiIHN0cm9rZT0iIzE0MzI0YSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CgogICAgPHRleHQgeD0iMTMwIiB5PSI2NDAiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiPlRob3JhY2ljIHNwaW5lPC90ZXh0PgogICAgPHRleHQgeD0iMTMwIiB5PSI2NzIiIGZvbnQtc2l6ZT0iMjIiPnZlcnRlYnJhZSBUMS1UMTI8L3RleHQ+CiAgICA8bGluZSB4MT0iMzUwIiB5MT0iNjUyIiB4Mj0iNTUyIiB5Mj0iNjUyIiBzdHJva2U9IiMxNDMyNGEiIHN0cm9rZS13aWR0aD0iNCIvPgoKICAgIDx0ZXh0IHg9IjgyNiIgeT0iOTMwIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIj5MdW1iYXIgc3BpbmU8L3RleHQ+CiAgICA8dGV4dCB4PSI4MjYiIHk9Ijk2MiIgZm9udC1zaXplPSIyMiI+dmVydGVicmFlIEwxLUw1PC90ZXh0PgogICAgPGxpbmUgeDE9IjgwMiIgeTE9Ijk2OCIgeDI9IjY1MCIgeTI9Ijk0NiIgc3Ryb2tlPSIjMTQzMjRhIiBzdHJva2Utd2lkdGg9IjQiLz4KCiAgICA8dGV4dCB4PSIxMjAiIHk9IjExMDAiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiPlBlbHZpcyAmYW1wOyBzYWNydW08L3RleHQ+CiAgICA8bGluZSB4MT0iMzQyIiB5MT0iMTEwNCIgeDI9IjUxMCIgeTI9IjExMTgiIHN0cm9rZT0iIzE0MzI0YSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CgogICAgPHRleHQgeD0iODI2IiB5PSIxMzYwIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIj5GZW11cjwvdGV4dD4KICAgIDxsaW5lIHgxPSI4MDIiIHkxPSIxMzY2IiB4Mj0iNzIwIiB5Mj0iMTM2NiIgc3Ryb2tlPSIjMTQzMjRhIiBzdHJva2Utd2lkdGg9IjQiLz4KCiAgICA8dGV4dCB4PSIxNDAiIHk9IjE1OTAiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiPlRpYmlhICZhbXA7IGZpYnVsYTwvdGV4dD4KICAgIDxsaW5lIHgxPSIzNDgiIHkxPSIxNTk0IiB4Mj0iNDUwIiB5Mj0iMTU5NCIgc3Ryb2tlPSIjMTQzMjRhIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8L2c+Cjwvc3ZnPgo='
 };
 
+
+function _applyAnatomyBase64ImageSources(){
+  const skeletonImg = document.getElementById('anatSkeletonImg');
+  if(!skeletonImg) return;
+  const currentSrc = skeletonImg.getAttribute('src') || '';
+  if(!currentSrc || /^https?:\/\//i.test(currentSrc)){
+    skeletonImg.src = ANATOMY_BASE64_IMAGES.fullSkeleton;
+  }
+}
+
 const ANATOMY_DATA = {
   head_neck:{
     name:'Head & Neck',icon:'🧠',
@@ -8557,7 +8567,7 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred for cervical. Horizontal beam lateral for trauma — DO NOT move patient before all 7 cervical vertebrae are demonstrated.',
     chapterKey:'spine',
     anatImages:[
-      'https://github.com/user-attachments/assets/b6eb36ee-6be1-455d-a79e-76e8671661ca'
+      ANATOMY_BASE64_IMAGES.headNeckSkull
     ]
   },
   thorax:{
@@ -8580,8 +8590,8 @@ const ANATOMY_DATA = {
     positioning:'PA erect preferred; 180 cm SID to minimize magnification. AP supine for non-ambulatory. Decubitus requires 5–20 min in position before exposure.',
     chapterKey:'chest',
     anatImages:[
-      'https://github.com/user-attachments/assets/2033f498-6ee3-4aad-aeed-d20f24fe8f7a',
-      'https://github.com/user-attachments/assets/c98f84a0-a821-4e98-9df1-ed460cfd185b'
+      ANATOMY_BASE64_IMAGES.thoraxLungsHeart,
+      ANATOMY_BASE64_IMAGES.thoraxBonyCage
     ]
   },
   abdomen:{
@@ -8604,7 +8614,7 @@ const ANATOMY_DATA = {
     positioning:'Supine preferred. Erect or lateral decubitus for free air/fluid. Minimum 5–20 min in decubitus position before exposure.',
     chapterKey:'abdomen',
     anatImages:[
-      'https://github.com/user-attachments/assets/7061ada0-45ed-4db2-b01d-41785ac55a27'
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   spine:{
@@ -8627,7 +8637,7 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred for functional studies. Supine for detailed vertebral views. Flex knees (support under knees) for lumbar AP to reduce lordosis and open disc spaces.',
     chapterKey:'spine',
     anatImages:[
-      'https://github.com/user-attachments/assets/988bb31c-a0dd-4c0e-811c-15c84707bd65'
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   shoulder:{
@@ -8650,8 +8660,8 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred; patient rotated to specific angles for each projection. Supine for post-trauma axial views. DO NOT force internal rotation in suspected posterior dislocation.',
     chapterKey:'upper_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/e089ff67-05e5-4870-8f3e-7a9724cbdec5',
-      'https://github.com/user-attachments/assets/eb54dce0-51b6-4afc-a537-c26d4561d594'
+      ANATOMY_BASE64_IMAGES.fullSkeleton,
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   upper_arm:{
@@ -8674,7 +8684,7 @@ const ANATOMY_DATA = {
     positioning:'Erect preferred. IR includes both joints for shaft views. Elbow at exactly 90° flexion for true lateral. Horizontal beam alternatives for trauma.',
     chapterKey:'upper_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/1f699ad7-03f0-484c-8624-508b09fa3c97'
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   forearm_hand:{
@@ -8697,8 +8707,8 @@ const ANATOMY_DATA = {
     positioning:'Patient seated at end of table, hand/forearm resting on IR. PA for hand (minimizes OID). Elbow at 90° for forearm lateral view.',
     chapterKey:'upper_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/d8a6109f-786d-4fdb-8214-2bc7effe1d28',
-      'https://github.com/user-attachments/assets/c2a42a2b-20fb-486f-8dcd-bb199f714819'
+      ANATOMY_BASE64_IMAGES.fullSkeleton,
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   hip_femur:{
@@ -8720,8 +8730,8 @@ const ANATOMY_DATA = {
     positioning:'AP supine standard. Injured leg in neutral (anatomic) position for trauma. Horizontal beam lateral for trauma hip. DO NOT rotate or abduct injured leg without physician approval.',
     chapterKey:'lower_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/3c4af9c9-295b-48e8-a37d-1afd4717470c',
-      'https://github.com/user-attachments/assets/2a609706-3fcf-41b6-ae71-f18446439122'
+      ANATOMY_BASE64_IMAGES.fullSkeleton,
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   knee_leg:{
@@ -8743,7 +8753,7 @@ const ANATOMY_DATA = {
     positioning:'Supine AP. 90° knee flexion for true lateral. Specific CR angles for tunnel view. Horizontal beam for trauma non-ambulatory patients.',
     chapterKey:'lower_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/ba1795ad-c8bd-4169-9a61-a0b9d5b24c0b'
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   },
   foot_ankle:{
@@ -8766,7 +8776,7 @@ const ANATOMY_DATA = {
     positioning:'Patient supine or seated for non-weight-bearing. Standing for weight-bearing projections (arch and functional assessment).',
     chapterKey:'lower_limb',
     anatImages:[
-      'https://github.com/user-attachments/assets/90759fa9-df11-4f2b-85e6-8b6fbff09763'
+      ANATOMY_BASE64_IMAGES.fullSkeleton
     ]
   }
 };
@@ -9495,6 +9505,7 @@ _refreshQuizBankQuality();
 buildChapters();
 updateStats();
 _warmupOfflineImages();
+_applyAnatomyBase64ImageSources();
 _warmupAnatomyImages();
 _loadDefaultPosMode();
 _loadBottomNavPref();
