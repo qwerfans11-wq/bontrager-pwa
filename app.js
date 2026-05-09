@@ -1510,6 +1510,7 @@ const UPPER_LIMB_REFERENCE_PAGE_START = {
   'PA Stress Thumb — Folio Method': 23,
   'PA Projection — Hand': 24,
   'PA Oblique Projection — Hand': 25,
+  'Bilateral AP Oblique Hand — Norgaard Method': 25,
   '"Fan" Lateral Hand — Lateromedial': 26,
   'Lateral Hand in Extension — Lateromedial': 27,
   'Lateral Hand in Flexion — Lateromedial': 27,
