@@ -338,6 +338,10 @@ const POSITION_IMAGE_MAP = {
   'PA Projection \u2014 Hand': 'Hand_PA_Projection',
   'PA Oblique Projection \u2014 Hand': 'Hand_PA_Oblique_Projection',
   'Bilateral AP Oblique Hand \u2014 Norgaard Method': 'Hand_PA_Oblique_Projection',
+  'Bilateral AP Oblique \u2014 Norgaard Method': 'Hand_PA_Oblique_Projection',
+  'Bilateral AP Oblique (Norgaard Method)': 'Hand_PA_Oblique_Projection',
+  'Bilateral AP Oblique Hand - Norgaard Method': 'Hand_PA_Oblique_Projection',
+  'Bilateral AP Oblique - Norgaard Method': 'Hand_PA_Oblique_Projection',
   '"Fan" Lateral Hand \u2014 Lateromedial': 'Hand_Fan_Lateral_Lateromedial_Projection',
   'Lateral Hand in Extension \u2014 Lateromedial': 'Hand_Lateral_in_Extension',
   'Lateral Hand in Flexion \u2014 Lateromedial': 'Hand_Lateral_in_Flexion',
@@ -1777,6 +1781,80 @@ const CH10_POSITION_PAGE_START = {
       pos.info.pageStart = pg;
     });
   });
+})();
+
+function _alignPositionsToReferenceMap(positions, refMap, pageImageMap){
+  if(!Array.isArray(positions) || !refMap) return positions;
+  const refNames = Object.keys(refMap);
+  const refNameSet = new Set(refNames);
+  const byNormalized = new Map();
+  positions.forEach((pos)=>{
+    if(!pos || !pos.name) return;
+    byNormalized.set(_normalizeImageKey(pos.name), pos);
+  });
+  const out = [];
+  refNames.forEach((refName)=>{
+    let pos = byNormalized.get(_normalizeImageKey(refName)) || positions.find(p=>p && p.name === refName);
+    if(!pos) return;
+    const pg = _lookupPageStart(refMap, refName);
+    if(pageImageMap && pg && (!pageImageMap[pg] || !pageImageMap[pg].length)) return;
+    pos.name = refName;
+    pos.info = pos.info || {};
+    if(pg) pos.info.pageStart = pg;
+    out.push(pos);
+  });
+  if(out.length) return out;
+  return positions.filter(pos=>pos && refNameSet.has(pos.name));
+}
+
+(function alignAllPositionsToReference(){
+  const chest = BOOK.chest && BOOK.chest.positions;
+  if(Array.isArray(chest)){
+    BOOK.chest.positions = _alignPositionsToReferenceMap(chest, CH2_POSITION_PAGE_START, CH2_PAGE_IMAGE_MAP);
+  }
+  const abdomen = BOOK.abdomen && BOOK.abdomen.positions;
+  if(Array.isArray(abdomen)){
+    BOOK.abdomen.positions = _alignPositionsToReferenceMap(abdomen, CH3_POSITION_PAGE_START, CH3_PAGE_IMAGE_MAP);
+  }
+  const upper = BOOK.upper_limb && BOOK.upper_limb.subchapters;
+  if(upper){
+    ['fingers_thumb','hand','forearm'].forEach((scId)=>{
+      const p = upper[scId] && upper[scId].positions;
+      if(Array.isArray(p)) upper[scId].positions = _alignPositionsToReferenceMap(p, UPPER_LIMB_REFERENCE_PAGE_START, CH4_PAGE_IMAGE_MAP);
+    });
+    if(upper.humerus_shoulder && Array.isArray(upper.humerus_shoulder.positions)){
+      upper.humerus_shoulder.positions = _alignPositionsToReferenceMap(upper.humerus_shoulder.positions, CH5_POSITION_PAGE_START, CH5_PAGE_IMAGE_MAP);
+    }
+  }
+  const lower = BOOK.lower_limb && BOOK.lower_limb.subchapters;
+  if(lower){
+    ['toes','foot','leg'].forEach((scId)=>{
+      const p = lower[scId] && lower[scId].positions;
+      if(Array.isArray(p)) lower[scId].positions = _alignPositionsToReferenceMap(p, CH6_POSITION_PAGE_START, CH6_PAGE_IMAGE_MAP);
+    });
+    ['leg','hip'].forEach((scId)=>{
+      const p = lower[scId] && lower[scId].positions;
+      if(Array.isArray(p)) lower[scId].positions = _alignPositionsToReferenceMap(p, CH7_POSITION_PAGE_START, CH7_PAGE_IMAGE_MAP);
+    });
+  }
+  const spine = BOOK.spine && BOOK.spine.subchapters;
+  if(spine){
+    ['cervical','thoracic'].forEach((scId)=>{
+      const p = spine[scId] && spine[scId].positions;
+      if(Array.isArray(p)) spine[scId].positions = _alignPositionsToReferenceMap(p, CH8_POSITION_PAGE_START, CH8_PAGE_IMAGE_MAP);
+    });
+    ['lumbar','scoliosis','sacrum_coccyx','sacroiliac'].forEach((scId)=>{
+      const p = spine[scId] && spine[scId].positions;
+      if(Array.isArray(p)) spine[scId].positions = _alignPositionsToReferenceMap(p, CH9_POSITION_PAGE_START, CH9_PAGE_IMAGE_MAP);
+    });
+  }
+  const thorax = BOOK.bony_thorax && BOOK.bony_thorax.subchapters;
+  if(thorax){
+    ['sternum','sc_joints','ribs'].forEach((scId)=>{
+      const p = thorax[scId] && thorax[scId].positions;
+      if(Array.isArray(p)) thorax[scId].positions = _alignPositionsToReferenceMap(p, CH10_POSITION_PAGE_START, CH10_PAGE_IMAGE_MAP);
+    });
+  }
 })();
 
 // ── QUIZ DATA ──
