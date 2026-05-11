@@ -10195,7 +10195,7 @@ _loadQuizSettings();
     var rect  = range.getBoundingClientRect();
     if(_isEmptyRect(rect)){
       var rects = range.getClientRects();
-      if(rects && rects.length) rect = rects[rects.length - 1];
+      if(rects && rects.length) rect = rects[0];
     }
     if(_isEmptyRect(rect)){ _hidePopup(); return; }
 
