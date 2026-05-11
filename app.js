@@ -3976,6 +3976,14 @@ function openPos(pos, chId, scId, posIdx){
   const scan3=info.scan3||'';        // 3-Second Scan line
   const customErrors=info.customErrors||[]; // Dev-defined errors with severity
   const decisionTree=info.decisionTree||''; // Decision tree text
+  const ERROR_PATTERNS = {
+    rotation:/rotat|oblique|lateral|ap|pa/,
+    superimposition:/superimpos|mortise|joint/,
+    angulation:/angle|angl|axial|cephalad|caudad|perpendicular/,
+    weightBearing:/weight.?bearing|stress|standing|erect/,
+    longBone:/humerus|forearm|femur|tibia|fibula|long\s*bone/
+  };
+  const VALID_SHORT_CRITERIA_WORDS = new Set(['ap','pa','ir','cr','ip','mcp','sid','kv','kvp','no']);
 
   // ── Infer position setup from desc ──
   function extractPatientPos(d){
@@ -4033,11 +4041,11 @@ function openPos(pos, chId, scId, posIdx){
     };
     const text=[pName,d].filter(Boolean).join(' ').toLowerCase();
 
-    if(/rotat|oblique|lateral|ap|pa/.test(text)) addErr('high','Patient/part rotation error','Asymmetric cortices, unequal joint spaces, or unexpected overlap of paired structures.','Realign to true AP/PA/lateral/required oblique using bony landmarks before exposure.');
-    if(/superimpos|mortise|joint/.test(text)) addErr('high','Unwanted superimposition / closed joint space','Target joint space is narrowed or closed and key anatomy is obscured.','Correct part rotation and CR angle to reopen the target joint space.');
-    if(/angle|angl|axial|cephalad|caudad|perpendicular/.test(text)) addErr('high','Incorrect CR angulation','Foreshortening/elongation or poor joint-space demonstration.','Reconfirm ordered CR angulation and direct CR to the exact landmark.');
-    if(/weight.?bearing|stress|standing|erect/.test(text)) addErr('medium','Non-diagnostic weight-bearing/stress setup','Joint spacing does not reflect true physiologic loading.','Ensure true weight-bearing/stress condition at the moment of exposure.');
-    if(/humerus|forearm|femur|tibia|fibula|long\s*bone/.test(text)) addErr('medium','Required anatomy cutoff','One or both adjacent joints or key long-bone segments are not included.','Recenter and collimate to include all protocol-required anatomy.');
+    if(ERROR_PATTERNS.rotation.test(text)) addErr('high','Patient/part rotation error','Asymmetric cortices, unequal joint spaces, or unexpected overlap of paired structures.','Realign to true AP/PA/lateral/required oblique using bony landmarks before exposure.');
+    if(ERROR_PATTERNS.superimposition.test(text)) addErr('high','Unwanted superimposition / closed joint space','Target joint space is narrowed or closed and key anatomy is obscured.','Correct part rotation and CR angle to reopen the target joint space.');
+    if(ERROR_PATTERNS.angulation.test(text)) addErr('high','Incorrect CR angulation','Foreshortening/elongation or poor joint-space demonstration.','Reconfirm ordered CR angulation and direct CR to the exact landmark.');
+    if(ERROR_PATTERNS.weightBearing.test(text)) addErr('medium','Non-diagnostic weight-bearing/stress setup','Joint spacing does not reflect true physiologic loading.','Ensure true weight-bearing/stress condition at the moment of exposure.');
+    if(ERROR_PATTERNS.longBone.test(text)) addErr('medium','Required anatomy cutoff','One or both adjacent joints or key long-bone segments are not included.','Recenter and collimate to include all protocol-required anatomy.');
     addErr('medium','Motion blur','Trabecular detail and cortical margins appear unsharp.','Immobilize, shorten exposure time when possible, and repeat with clear breathing instructions.');
     addErr('tip','Insufficient collimation/centering','Excessive field size lowers contrast or clips key anatomy at edges.','Tight-collimate to the area of interest and center to the protocol CR point.');
 
@@ -4047,6 +4055,7 @@ function openPos(pos, chId, scId, posIdx){
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
+    // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
     const MIN_CRITERIA_LENGTH = 18;
     const MIN_WORD_COUNT = 4;
     const MAX_SHORT_NOISE_RATIO = 0.35;
@@ -4055,12 +4064,16 @@ function openPos(pos, chId, scId, posIdx){
       if(!Array.isArray(raw) || !raw.length) return [];
       const seen = new Set();
       const out = [];
-      const normalize = (line) => String(line||'').replace(/\s+/g,' ').replace(/\s*[:;,-]\s*$/,'').trim();
+      const normalize = (line) => {
+        const compact = String(line||'').replace(/\s+/g,' ');
+        const withoutTrailingPunct = compact.replace(/\s*[:;,-]\s*$/,'');
+        return withoutTrailingPunct.trim();
+      };
       const isNoisy = (line) => {
         if(!line || line.length < MIN_CRITERIA_LENGTH) return true;
         const words=line.split(/\s+/).filter(Boolean);
         if(words.length < MIN_WORD_COUNT) return true;
-        const shortNoiseCount=words.filter(w=>w.length<=2 && !/^(ap|pa|ir|cr|ip|mcp|sid|kv|kvp|no)$/i.test(w)).length;
+        const shortNoiseCount=words.filter(w=>w.length<=2 && !VALID_SHORT_CRITERIA_WORDS.has(w.toLowerCase())).length;
         if(shortNoiseCount >= MIN_WORD_COUNT && shortNoiseCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
         const letters=(line.match(/[a-z]/gi)||[]).length;
         const digits=(line.match(/\d/g)||[]).length;
