@@ -6013,10 +6013,134 @@ function _aiListByType(type){
   return r;
 }
 
+const _AI_CR_DEGREE_PATTERN=/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i;
+const _AI_CR_ANGLE_RANGE_PATTERN=/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?\s*(?:to|-|–)\s*(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?/i;
+const _AI_CR_ANGLED_WORD_PATTERN=/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|axial|angled?)\b/i;
+const _AI_CR_ANGULATION_QUERY_PATTERN=/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i;
+const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i;
+const _AI_CR_NOT_STATED='Not stated';
+
+function _aiExtractCRAngleText(crText){
+  const raw=String(crText||'').replace(/\s+/g,' ').trim();
+  if(!raw) return _AI_CR_NOT_STATED;
+  if(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw)) return '0° (perpendicular)';
+
+  let angleMatch=raw.match(_AI_CR_ANGLE_RANGE_PATTERN);
+  const dirMatch=raw.match(/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|toward(?:s)?\s+(?:head|feet|wrist|ankle))\b/i);
+  const dir=dirMatch?` ${dirMatch[1]}`:'';
+  if(angleMatch) return `${angleMatch[1]}°–${angleMatch[2]}°${dir}`;
+
+  angleMatch=raw.match(_AI_CR_DEGREE_PATTERN);
+  if(angleMatch) return `${angleMatch[1]}°${dir}`;
+  if(_AI_CR_ANGLED_WORD_PATTERN.test(raw)) return 'Angled (degree not stated)';
+  return _AI_CR_NOT_STATED;
+}
+
+function _aiExtractCRPointText(crText){
+  const raw=String(crText||'').replace(/\s+/g,' ').trim();
+  if(!raw) return _AI_CR_NOT_STATED;
+  const patterns=[
+    // e.g., "midway between right and left ASIS"
+    /midway between\s+([^.;]+)/i,
+    // e.g., "directed to L3", "centered at MCP joint"
+    /(?:directed|center(?:ed|ing)?|centred)\s+(?:to|at|on|toward(?:s)?)\s+([^.;]+)/i,
+    // e.g., "entering at T7"
+    /(?:enter(?:ing)?|enters)\s+(?:at|to|through)?\s*([^.;]+)/i,
+    // fallback: trailing "to <landmark>"
+    /\bto\s+([^.;]+)$/i
+  ];
+  for(const pattern of patterns){
+    const match=raw.match(pattern);
+    if(match && match[1]) return match[1].replace(/\s+/g,' ').trim();
+  }
+  return _AI_CR_NOT_STATED;
+}
+
+function _aiHasCRAngulation(crText){
+  const raw=String(crText||'');
+  if(!raw) return false;
+  return (_AI_CR_DEGREE_PATTERN.test(raw) || _AI_CR_ANGLED_WORD_PATTERN.test(raw))
+    && !(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw));
+}
+
+function _aiBuildCRAngulationStudyTable(){
+  const all=_aiGetAllPositions().filter(({pos})=>_aiHasCRAngulation(pos.info?.cr));
+  const byType={
+    routine:all.filter(x=>x.pos.type==='routine').sort((a,b)=>a.pos.name.localeCompare(b.pos.name)),
+    special:all.filter(x=>x.pos.type==='special').sort((a,b)=>a.pos.name.localeCompare(b.pos.name)),
+  };
+  const mkTable=(title,rows)=>{
+    if(!rows.length) return '';
+    const body=rows.map(({pos,chapter,sub})=>{
+      const section=sub?`${chapter} › ${sub}`:chapter;
+      const cr=pos.info?.cr||'—';
+      const ang=_aiExtractCRAngleText(cr);
+      return `<tr>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);font-weight:700">${esc(pos.name)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(cr)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);white-space:nowrap">${esc(ang)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(section)}</td>
+      </tr>`;
+    }).join('');
+    return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
+      <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:6px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:680px;background:var(--bg)">
+          <thead><tr style="background:var(--accent-bg)">
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Required/Approx angle</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
+          </tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>`;
+  };
+
+  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR-Angulated Positions Study Table</strong><br>Grouped into routine and special positions from current dataset.</div>${mkTable('Routine positions',byType.routine)}${mkTable('Special positions',byType.special)}`;
+}
+
+function _aiBuildCRPointStudyTable(){
+  const all=_aiGetAllPositions().filter(({pos})=>String(pos.info?.cr||'').trim());
+  const body=all
+    .sort((a,b)=>a.pos.name.localeCompare(b.pos.name))
+    .map(({pos,chapter,sub})=>{
+      const cr=pos.info?.cr||'—';
+      const point=_aiExtractCRPointText(cr);
+      const section=sub?`${chapter} › ${sub}`:chapter;
+      return `<tr>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);font-weight:700">${esc(pos.name)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(pos.type==='routine'?'Routine':'Special')}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(point)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(cr)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(section)}</td>
+      </tr>`;
+    }).join('');
+  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR Point Reference (All Positions)</strong><br>Extracted central ray centering/entry point from each position CR text.</div>
+    <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:8px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;background:var(--bg)">
+        <thead><tr style="background:var(--accent-bg)">
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Type</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR point</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
+        </tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>`;
+}
+
 // ─── Dynamic knowledge from live BOOK data ───
 function _aiDynamicKnowledge(query){
   const q=_aiNormalizeText(query);
   const all=_aiGetAllPositions();
+
+  if(_AI_CR_ANGULATION_QUERY_PATTERN.test(q)){
+    return _aiBuildCRAngulationStudyTable();
+  }
+  if(_AI_CR_POINT_QUERY_PATTERN.test(q)){
+    return _aiBuildCRPointStudyTable();
+  }
 
   if(/quiz.*(mistake|wrong|incorrect|error)/.test(q)){
     return _aiSummarizeMistakes();
@@ -6185,6 +6309,12 @@ function _aiSuggestedAnswer(query){
   }
   if(q==='open mortise ankle'){
     return _aiGeneralAnswer('open mortise ankle');
+  }
+  if(q==='positions with cr angulation table' || q==='cr angulation table'){
+    return _aiBuildCRAngulationStudyTable();
+  }
+  if(q==='cr point for all positions' || q==='all cr points'){
+    return _aiBuildCRPointStudyTable();
   }
   if(q==='pa chest cr and technique' || q==='pa chest cr & technique'){
     const matches=_aiSearch('pa chest');

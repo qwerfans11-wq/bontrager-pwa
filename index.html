@@ -562,6 +562,10 @@
       <button class="ltog-btn active" data-qr-section="cr" onclick="toggleQRSection('cr')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> CR Angles</button>
       <button class="ltog-btn active" data-qr-section="errors" onclick="toggleQRSection('errors')" aria-pressed="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Errors</button>
     </div>
+    <div class="ai-tool-row" style="margin:10px 0 12px">
+      <button class="ai-tool-btn" onclick="navTo('ai');setTimeout(()=>sendAI('Positions with CR angulation table'),80)">CR angulation table</button>
+      <button class="ai-tool-btn" onclick="navTo('ai');setTimeout(()=>sendAI('CR point for all positions'),80)">All CR points</button>
+    </div>
 
     <!-- GLOBAL REFERENCE BOX -->
     <div id="qrs-ref">
@@ -836,6 +840,8 @@
         <button class="ai-sug-btn" onclick="sendAI('explain breathing instructions for each body region')">Breathing instructions</button>
         <button class="ai-sug-btn" onclick="sendAI('List all special positions')">Special positions</button>
         <button class="ai-sug-btn" onclick="sendAI('What positions require a grid?')">Grid positions</button>
+        <button class="ai-sug-btn" onclick="sendAI('Positions with CR angulation table')">CR angulation table</button>
+        <button class="ai-sug-btn" onclick="sendAI('CR point for all positions')">All CR points</button>
       </div>
       <div class="ai-hint">💡 Tip: Ask in English. Type "open PA Chest" to jump to a position, or "compare X vs Y" for side-by-side comparison.</div>
     </div>
