@@ -10127,3 +10127,195 @@ _loadQuizSettings();
   // Apply saved custom points on load
   _applyCustomPoints();
 }());
+
+// ═══════════════════════════════════════════════════════════════════
+// TRANSLATION FEATURE — Text Selection → Arabic Translation Side Panel
+// ═══════════════════════════════════════════════════════════════════
+(function(){
+  var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
+
+  var _selText = '';
+  var _popupEl = null;
+  var _panelEl = null;
+  var _overlayEl = null;
+  var _copyBtnOriginalHTML = null;
+
+  function _init(){
+    _popupEl  = document.getElementById('selPopup');
+    _panelEl  = document.getElementById('trPanel');
+    _overlayEl = document.getElementById('trPanelOverlay');
+    if(!_popupEl || !_panelEl) return;
+
+    // Cache the copy button's original HTML for reset after copy feedback
+    var copyBtn = document.getElementById('trCopyBtn');
+    if(copyBtn) _copyBtnOriginalHTML = copyBtn.innerHTML;
+
+    document.addEventListener('mouseup',  _onSelectionChange);
+    document.addEventListener('touchend', _onSelectionChange);
+    document.addEventListener('selectionchange', _onSelectionChangeLazy);
+  }
+
+  // Debounce for selectionchange (fires many times on mobile)
+  var _selChangeTimer = null;
+  function _onSelectionChangeLazy(){
+    clearTimeout(_selChangeTimer);
+    _selChangeTimer = setTimeout(function(){
+      var sel = window.getSelection();
+      if(!sel || sel.isCollapsed){ _hidePopup(); }
+    }, 300);
+  }
+
+  function _onSelectionChange(){
+    // Small delay to let the selection finalise
+    setTimeout(function(){
+      var sel = window.getSelection();
+      if(!sel || sel.isCollapsed || !sel.toString().trim()){
+        _hidePopup();
+        return;
+      }
+      var text = sel.toString().trim();
+      if(text.length < 2){ _hidePopup(); return; }
+      _selText = text;
+      _positionPopup(sel);
+    }, 50);
+  }
+
+  function _positionPopup(sel){
+    if(!_popupEl) return;
+    var range = sel.getRangeAt(0);
+    var rect  = range.getBoundingClientRect();
+    if(!rect || rect.width === 0){ _hidePopup(); return; }
+
+    _popupEl.style.display = 'flex';
+
+    var popW = _popupEl.offsetWidth || 120;
+    var popH = _popupEl.offsetHeight || 40;
+    var margin = 6;
+
+    // Prefer above the selection; fall back to below
+    var top = rect.top - popH - margin;
+    if(top < 4) top = rect.bottom + margin;
+
+    var left = rect.left + rect.width / 2 - popW / 2;
+    left = Math.max(6, Math.min(left, window.innerWidth - popW - 6));
+
+    _popupEl.style.top  = top  + 'px';
+    _popupEl.style.left = left + 'px';
+  }
+
+  function _hidePopup(){
+    if(_popupEl) _popupEl.style.display = 'none';
+  }
+
+  // Public: called by the Translate button in the popup
+  window.openTranslationPanel = function(){
+    if(!_selText) return;
+    _hidePopup();
+
+    var origEl   = document.getElementById('trOriginalText');
+    var resultEl = document.getElementById('trResultText');
+    var loadEl   = document.getElementById('trLoading');
+    var errEl    = document.getElementById('trError');
+    var copyBtn  = document.getElementById('trCopyBtn');
+
+    if(origEl)   origEl.textContent = _selText;
+    if(resultEl){ resultEl.textContent = ''; resultEl.style.display = 'none'; }
+    if(loadEl)   loadEl.style.display  = 'flex';
+    if(errEl)    errEl.style.display   = 'none';
+    if(copyBtn)  copyBtn.style.display = 'none';
+
+    _panelEl.classList.add('open');
+    _overlayEl.classList.add('open');
+
+    _fetchTranslation(_selText, function(err, translated){
+      if(loadEl) loadEl.style.display = 'none';
+      if(err){
+        if(errEl){
+          var msgEl = document.getElementById('trErrorMsg');
+          if(msgEl) msgEl.textContent = err;
+          errEl.style.display = 'flex';
+        }
+      } else {
+        if(resultEl){
+          resultEl.textContent = translated;
+          resultEl.style.display = 'block';
+        }
+        if(copyBtn) copyBtn.style.display = 'inline-flex';
+      }
+    });
+  };
+
+  window.closeTranslationPanel = function(){
+    if(_panelEl)  _panelEl.classList.remove('open');
+    if(_overlayEl) _overlayEl.classList.remove('open');
+  };
+
+  window.copyTranslation = function(){
+    var resultEl = document.getElementById('trResultText');
+    if(!resultEl || !resultEl.textContent) return;
+    var btn = document.getElementById('trCopyBtn');
+    try {
+      navigator.clipboard.writeText(resultEl.textContent).then(function(){
+        if(btn){ btn.classList.add('copied'); btn.textContent = '✓ تم النسخ'; }
+        setTimeout(function(){
+          if(btn){
+            btn.classList.remove('copied');
+            if(_copyBtnOriginalHTML) btn.innerHTML = _copyBtnOriginalHTML;
+          }
+        }, 2000);
+      });
+    } catch(e){}
+  };
+
+  function _fetchTranslation(text, cb){
+    // Use MyMemory free translation API (no key needed, 1000 words/day free)
+    var url = 'https://api.mymemory.translated.net/get?q=' +
+              encodeURIComponent(text.substring(0, MAX_TRANSLATION_CHARS)) +
+              '&langpair=en%7Car';
+    var canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
+    var hasAbortController = (typeof AbortController !== 'undefined');
+    var timeoutMs = 10000;
+    var timer = null;
+    var controller = null;
+    var signal = undefined;
+
+    if(canTimeoutSignal){
+      signal = AbortSignal.timeout(timeoutMs);
+    } else if(hasAbortController){
+      controller = new AbortController();
+      signal = controller.signal;
+      timer = setTimeout(function(){
+        controller.abort();
+      }, timeoutMs);
+    }
+
+    fetch(url, { signal: signal })
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        if(timer) clearTimeout(timer);
+        if(data && data.responseData && data.responseData.translatedText){
+          cb(null, data.responseData.translatedText);
+        } else {
+          cb('لم يتم استلام الترجمة');
+        }
+      })
+      .catch(function(err){
+        if(timer) clearTimeout(timer);
+        if(err && err.name === 'AbortError'){
+          cb('انتهت مهلة الاتصال، حاول مرة أخرى');
+        } else {
+          cb('تعذّر الاتصال بخدمة الترجمة');
+        }
+      });
+  }
+
+  // Initialise after DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _init);
+  } else {
+    _init();
+  }
+}());
