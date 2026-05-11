@@ -7744,8 +7744,8 @@ _loadSavedAppearance();
 // Restore theme mode (light / dark / auto)
 (function(){
   try{
-    _listenToSystemThemeChanges();
     _applyThemeMode(_getStoredThemeMode(), {skipPersist:true});
+    _listenToSystemThemeChanges();
     const large=localStorage.getItem('bontrager_large_v1');
     if(large==='1'){
       const t=document.getElementById('largeToggle');
