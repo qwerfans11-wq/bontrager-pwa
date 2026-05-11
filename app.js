@@ -10187,15 +10187,16 @@ _loadQuizSettings();
   function _positionPopup(sel){
     if(!_popupEl) return;
     if(!sel || sel.rangeCount < 1){ _hidePopup(); return; }
+    function _isEmptyRect(r){
+      return !r || (r.width === 0 && r.height === 0);
+    }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
-    var rectMissing = !rect || (rect.width === 0 && rect.height === 0);
-    if(rectMissing && typeof range.getClientRects === 'function'){
+    if(_isEmptyRect(rect) && typeof range.getClientRects === 'function'){
       var rects = range.getClientRects();
       if(rects && rects.length) rect = rects[rects.length - 1];
     }
-    rectMissing = !rect || (rect.width === 0 && rect.height === 0);
-    if(rectMissing){ _hidePopup(); return; }
+    if(_isEmptyRect(rect)){ _hidePopup(); return; }
 
     _popupEl.style.display = 'flex';
 
