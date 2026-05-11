@@ -10193,7 +10193,7 @@ _loadQuizSettings();
     if(!sel || sel.rangeCount < 1){ _hidePopup(); return; }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
-    if(_isEmptyRect(rect) && typeof range.getClientRects === 'function'){
+    if(_isEmptyRect(rect)){
       var rects = range.getClientRects();
       if(rects && rects.length) rect = rects[rects.length - 1];
     }
