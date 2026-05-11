@@ -3983,6 +3983,8 @@ function openPos(pos, chId, scId, posIdx){
     weightBearing:/weight.?bearing|stress|standing|erect/,
     longBone:/humerus|forearm|femur|tibia|fibula|long\s*bone/
   };
+  // Allowed short radiography abbreviations in criteria lines:
+  // AP/PA projections, IR image receptor, CR central ray, IP/MCP joints, SID source-image distance, kV/kVp, and "no".
   const VALID_SHORT_CRITERIA_WORDS = new Set(['ap','pa','ir','cr','ip','mcp','sid','kv','kvp','no']);
 
   // ── Infer position setup from desc ──
@@ -4056,6 +4058,8 @@ function openPos(pos, chId, scId, posIdx){
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
     // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
+    // MIN_WORD_COUNT + MAX_SHORT_NOISE_RATIO filters short-token garbage from OCR table headers.
+    // MAX_DIGIT_LETTER_RATIO filters lines dominated by mixed numeric labels rather than full sentences.
     const MIN_CRITERIA_LENGTH = 18;
     const MIN_WORD_COUNT = 4;
     const MAX_SHORT_NOISE_RATIO = 0.35;
@@ -4073,12 +4077,13 @@ function openPos(pos, chId, scId, posIdx){
         if(!line || line.length < MIN_CRITERIA_LENGTH) return true;
         const words=line.split(/\s+/).filter(Boolean);
         if(words.length < MIN_WORD_COUNT) return true;
-        const shortNoiseCount=words.filter(w=>w.length<=2 && !VALID_SHORT_CRITERIA_WORDS.has(w.toLowerCase())).length;
-        if(shortNoiseCount >= MIN_WORD_COUNT && shortNoiseCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
+        const invalidShortWordCount=words.filter(w=>w.length<=2 && !VALID_SHORT_CRITERIA_WORDS.has(w.toLowerCase())).length;
+        if(invalidShortWordCount >= MIN_WORD_COUNT && invalidShortWordCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
         const letters=(line.match(/[a-z]/gi)||[]).length;
         const digits=(line.match(/\d/g)||[]).length;
         if(letters > 0 && digits > 0 && digits / letters > MAX_DIGIT_LETTER_RATIO) return true;
         if(/(^|\s)(r|l)\s+(r|l)(\s|$)/i.test(line)) return true;
+        // Repeated "Anatomy Demonstrated" phrase in one line usually comes from OCR-merged table rows/headers.
         if(/\b(anatomy demonstrated)\b.*\b\1\b/i.test(line.toLowerCase())) return true;
         return false;
       };
