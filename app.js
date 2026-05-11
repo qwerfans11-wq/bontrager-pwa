@@ -6536,7 +6536,7 @@ function setThemeMode(mode){
 }
 
 function toggleDark(){
-  const order=['auto','dark','light'];
+  const order=['light','dark','auto'];
   const current=_getStoredThemeMode();
   const idx=order.indexOf(current);
   const next=order[(idx+1)%order.length];
@@ -6668,7 +6668,7 @@ function _loadSavedAppearance(){
       localStorage.setItem('appFontSize', String(savedBaseSize));
     }
     const hasThemeMode = localStorage.getItem(_THEME_MODE_KEY);
-    if((hasThemeMode===null || hasThemeMode==='') && typeof a.dark === 'boolean'){
+    if(hasThemeMode===null && typeof a.dark === 'boolean'){
       _saveThemeMode(a.dark ? 'dark' : 'light');
     }
     if(a.large){
