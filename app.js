@@ -10132,7 +10132,7 @@ _loadQuizSettings();
 // TRANSLATION FEATURE — Text Selection → Arabic Translation Side Panel
 // ═══════════════════════════════════════════════════════════════════
 (function(){
-  var MAX_TRANSLATION_CHARS = 500; // MyMemory free tier limit per request
+  var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
 
   var _selText = '';
   var _popupEl = null;
@@ -10272,12 +10272,30 @@ _loadQuizSettings();
     var url = 'https://api.mymemory.translated.net/get?q=' +
               encodeURIComponent(text.substring(0, MAX_TRANSLATION_CHARS)) +
               '&langpair=en%7Car';
-    fetch(url, { signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined })
+    var canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
+    var hasAbortController = (typeof AbortController !== 'undefined');
+    var timeoutMs = 10000;
+    var timer = null;
+    var controller = null;
+    var signal = undefined;
+
+    if(canTimeoutSignal){
+      signal = AbortSignal.timeout(timeoutMs);
+    } else if(hasAbortController){
+      controller = new AbortController();
+      signal = controller.signal;
+      timer = setTimeout(function(){
+        controller.abort();
+      }, timeoutMs);
+    }
+
+    fetch(url, { signal: signal })
       .then(function(res){
         if(!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
       .then(function(data){
+        if(timer) clearTimeout(timer);
         if(data && data.responseData && data.responseData.translatedText){
           cb(null, data.responseData.translatedText);
         } else {
@@ -10285,6 +10303,7 @@ _loadQuizSettings();
         }
       })
       .catch(function(err){
+        if(timer) clearTimeout(timer);
         if(err && err.name === 'AbortError'){
           cb('انتهت مهلة الاتصال، حاول مرة أخرى');
         } else {
