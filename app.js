@@ -10161,7 +10161,7 @@ _loadQuizSettings();
     clearTimeout(_selChangeTimer);
     _selChangeTimer = setTimeout(function(){
       var sel = window.getSelection();
-      if(!sel || sel.isCollapsed){ _hidePopup(); }
+      _updateSelection(sel);
     }, 300);
   }
 
@@ -10169,22 +10169,31 @@ _loadQuizSettings();
     // Small delay to let the selection finalise
     setTimeout(function(){
       var sel = window.getSelection();
-      if(!sel || sel.isCollapsed || !sel.toString().trim()){
-        _hidePopup();
-        return;
-      }
-      var text = sel.toString().trim();
-      if(text.length < 2){ _hidePopup(); return; }
-      _selText = text;
-      _positionPopup(sel);
+      _updateSelection(sel);
     }, 50);
+  }
+
+  function _updateSelection(sel){
+    if(!sel || sel.isCollapsed || !sel.toString().trim()){
+      _hidePopup();
+      return;
+    }
+    var text = sel.toString().trim();
+    if(text.length < 2){ _hidePopup(); return; }
+    _selText = text;
+    _positionPopup(sel);
   }
 
   function _positionPopup(sel){
     if(!_popupEl) return;
+    if(!sel || !sel.rangeCount){ _hidePopup(); return; }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
-    if(!rect || rect.width === 0){ _hidePopup(); return; }
+    if((!rect || (rect.width === 0 && rect.height === 0)) && range.getClientRects){
+      var rects = range.getClientRects();
+      if(rects && rects.length) rect = rects[rects.length - 1];
+    }
+    if(!rect || (rect.width === 0 && rect.height === 0)){ _hidePopup(); return; }
 
     _popupEl.style.display = 'flex';
 
