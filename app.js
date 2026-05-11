@@ -1119,6 +1119,7 @@ function resetFontAppearanceDefaults(){
   localStorage.setItem('appFlashcardBack1', FLASHCARD_DEFAULT_COLORS.back1);
   localStorage.setItem('appFlashcardBack2', FLASHCARD_DEFAULT_COLORS.back2);
   localStorage.removeItem('bontrager_dark_v1');
+  localStorage.removeItem('bontrager_theme_mode_v1');
   localStorage.removeItem('bontrager_large_v1');
   localStorage.removeItem('bontrager_highcontrast_v1');
 
@@ -1128,18 +1129,15 @@ function resetFontAppearanceDefaults(){
   const fontSizeInput = document.getElementById('fontSizeInput');
   const flashcardFontInput = document.getElementById('flashcardFontSizeInput');
   const highContrastToggle = document.getElementById('highContrastToggle');
-  const darkToggle = document.getElementById('darkToggle');
+  const themeModeSelect = document.getElementById('themeModeSelect');
   const largeToggle = document.getElementById('largeToggle');
   if(fontSelect) fontSelect.value = defaultFont;
   if(weightSelect) weightSelect.value = defaultWeight;
   if(textColorPicker) textColorPicker.value = defaultColor;
   if(fontSizeInput) fontSizeInput.value = String(defaultFontSize);
   if(flashcardFontInput) flashcardFontInput.value = String(FLASHCARD_FONT_SIZE_DEFAULT);
-  document.body.classList.remove('dark');
-  if(darkToggle) {
-    darkToggle.classList.remove('on');
-    darkToggle.setAttribute('aria-pressed','false');
-  }
+  _applyThemeMode('auto');
+  if(themeModeSelect) themeModeSelect.value = 'auto';
   if(largeToggle) {
     largeToggle.classList.remove('on');
     largeToggle.setAttribute('aria-pressed','false');
@@ -6447,17 +6445,102 @@ function resetQuizScores(){
   }catch(e){}
 }
 
-function toggleDark(){
-  const t=document.getElementById('darkToggle');
-  t.classList.toggle('on');
-  const isDark=t.classList.contains('on');
+const _THEME_MODE_KEY='bontrager_theme_mode_v1';
+let _themeDarkMediaQuery=null;
+
+function _normalizeThemeMode(mode){
+  return (mode==='light' || mode==='dark' || mode==='auto') ? mode : 'auto';
+}
+
+function _systemPrefersDark(){
+  try{
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }catch(e){
+    return false;
+  }
+}
+
+function _isDarkForMode(mode){
+  const m=_normalizeThemeMode(mode);
+  if(m==='dark') return true;
+  if(m==='light') return false;
+  return _systemPrefersDark();
+}
+
+function _getStoredThemeMode(){
+  try{
+    const mode=localStorage.getItem(_THEME_MODE_KEY);
+    if(mode==='light' || mode==='dark' || mode==='auto') return mode;
+    const legacyDark=localStorage.getItem('bontrager_dark_v1');
+    if(legacyDark==='1') return 'dark';
+    if(legacyDark==='0') return 'light';
+  }catch(e){}
+  return 'auto';
+}
+
+function _saveThemeMode(mode){
+  const m=_normalizeThemeMode(mode);
+  try{
+    localStorage.setItem(_THEME_MODE_KEY, m);
+    if(m==='auto'){
+      localStorage.removeItem('bontrager_dark_v1');
+    }else{
+      localStorage.setItem('bontrager_dark_v1', m==='dark' ? '1' : '0');
+    }
+  }catch(e){}
+}
+
+function _updateThemeButtonUI(mode, isDark){
+  const colorBtn=document.getElementById('colorModeBtn');
+  if(!colorBtn) return;
+  const icon=(mode==='auto') ? '🌓' : (isDark ? '🌙' : '☀️');
+  const modeLabel=(mode==='auto') ? `Auto (${isDark ? 'Dark' : 'Light'})` : (isDark ? 'Dark' : 'Light');
+  colorBtn.innerHTML = `<span style="font-size:18px;">${icon}</span>`;
+  colorBtn.title = `Theme mode: ${modeLabel}`;
+  colorBtn.setAttribute('aria-label', `Theme mode: ${modeLabel}`);
+}
+
+function _applyThemeMode(mode, opts={}){
+  const m=_normalizeThemeMode(mode);
+  const isDark=_isDarkForMode(m);
   document.body.classList.toggle('dark',isDark);
-  t.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-  // Update header icon
-  const colorBtn = document.getElementById('colorModeBtn');
-  if(colorBtn) colorBtn.innerHTML = isDark ? '<span style="font-size:18px;">🌙</span>' : '<span style="font-size:18px;">☀️</span>';
-  // persist dark mode separately so it loads even without full appearance save
-  try{ localStorage.setItem('bontrager_dark_v1', isDark?'1':'0'); }catch(e){}
+  const themeModeSelect=document.getElementById('themeModeSelect');
+  if(themeModeSelect && themeModeSelect.value!==m){
+    themeModeSelect.value=m;
+  }
+  _updateThemeButtonUI(m, isDark);
+  if(!opts.skipPersist){
+    _saveThemeMode(m);
+  }
+}
+
+function _listenToSystemThemeChanges(){
+  try{
+    if(!window.matchMedia || _themeDarkMediaQuery) return;
+    _themeDarkMediaQuery=window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange=()=>{
+      if(_getStoredThemeMode()==='auto'){
+        _applyThemeMode('auto',{skipPersist:true});
+      }
+    };
+    if(typeof _themeDarkMediaQuery.addEventListener === 'function'){
+      _themeDarkMediaQuery.addEventListener('change', onChange);
+    }else if(typeof _themeDarkMediaQuery.addListener === 'function'){
+      _themeDarkMediaQuery.addListener(onChange);
+    }
+  }catch(e){}
+}
+
+function setThemeMode(mode){
+  _applyThemeMode(mode);
+}
+
+function toggleDark(){
+  const themeModeOrder=['light','dark','auto'];
+  const current=_getStoredThemeMode();
+  const currentIndex=themeModeOrder.indexOf(current);
+  const nextMode=themeModeOrder[(currentIndex+1)%themeModeOrder.length];
+  _applyThemeMode(nextMode);
 }
 function toggleLarge(){
   const t=document.getElementById('largeToggle');
@@ -6584,13 +6667,9 @@ function _loadSavedAppearance(){
       savedBaseSize = _normalizeFontSize(a.fs);
       localStorage.setItem('appFontSize', String(savedBaseSize));
     }
-    if(a.dark){
-      document.body.classList.add('dark');
-      const t=document.getElementById('darkToggle');
-      if(t){
-        t.classList.add('on');
-        t.setAttribute('aria-pressed','true');
-      }
+    const hasThemeMode = localStorage.getItem(_THEME_MODE_KEY);
+    if(hasThemeMode===null && typeof a.dark === 'boolean'){
+      _saveThemeMode(a.dark ? 'dark' : 'light');
     }
     if(a.large){
       const t=document.getElementById('largeToggle');
@@ -7662,21 +7741,11 @@ updateStats();
 })();
 // ── Restore appearance settings on startup ──
 _loadSavedAppearance();
-// Restore dark mode from its own key (always applied, even for students)
+// Restore theme mode (light / dark / auto)
 (function(){
   try{
-    const dark=localStorage.getItem('bontrager_dark_v1');
-    const isDark = dark==='1' || dark===null;
-    if(isDark){
-      document.body.classList.add('dark');
-      const t=document.getElementById('darkToggle');
-      if(t){ t.classList.add('on'); t.setAttribute('aria-pressed','true'); }
-      const colorBtn=document.getElementById('colorModeBtn');
-      if(colorBtn) colorBtn.innerHTML = '<span style="font-size:18px;">🌙</span>';
-    } else {
-      const colorBtn=document.getElementById('colorModeBtn');
-      if(colorBtn) colorBtn.innerHTML = '<span style="font-size:18px;">☀️</span>';
-    }
+    _applyThemeMode(_getStoredThemeMode(), {skipPersist:true});
+    _listenToSystemThemeChanges();
     const large=localStorage.getItem('bontrager_large_v1');
     if(large==='1'){
       const t=document.getElementById('largeToggle');
