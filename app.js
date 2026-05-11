@@ -6536,11 +6536,11 @@ function setThemeMode(mode){
 }
 
 function toggleDark(){
-  const order=['light','dark','auto'];
+  const themeModeOrder=['light','dark','auto'];
   const current=_getStoredThemeMode();
-  const idx=order.indexOf(current);
-  const next=order[(idx+1)%order.length];
-  _applyThemeMode(next);
+  const currentIndex=themeModeOrder.indexOf(current);
+  const nextMode=themeModeOrder[(currentIndex+1)%themeModeOrder.length];
+  _applyThemeMode(nextMode);
 }
 function toggleLarge(){
   const t=document.getElementById('largeToggle');
