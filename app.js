@@ -6018,10 +6018,11 @@ const _AI_CR_ANGLE_RANGE_PATTERN=/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?\s*(?:t
 const _AI_CR_ANGLED_WORD_PATTERN=/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|axial|angled?)\b/i;
 const _AI_CR_ANGULATION_QUERY_PATTERN=/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i;
 const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i;
+const _AI_CR_NOT_STATED='Not stated';
 
 function _aiExtractCRAngleText(crText){
   const raw=String(crText||'').replace(/\s+/g,' ').trim();
-  if(!raw) return 'Not stated';
+  if(!raw) return _AI_CR_NOT_STATED;
   if(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw)) return '0° (perpendicular)';
 
   let angleMatch=raw.match(_AI_CR_ANGLE_RANGE_PATTERN);
@@ -6032,12 +6033,12 @@ function _aiExtractCRAngleText(crText){
   angleMatch=raw.match(_AI_CR_DEGREE_PATTERN);
   if(angleMatch) return `${angleMatch[1]}°${dir}`;
   if(_AI_CR_ANGLED_WORD_PATTERN.test(raw)) return 'Angled (degree not stated)';
-  return 'Not stated';
+  return _AI_CR_NOT_STATED;
 }
 
 function _aiExtractCRPointText(crText){
   const raw=String(crText||'').replace(/\s+/g,' ').trim();
-  if(!raw) return 'Not stated';
+  if(!raw) return _AI_CR_NOT_STATED;
   const patterns=[
     // e.g., "midway between right and left ASIS"
     /midway between\s+([^.;]+)/i,
@@ -6052,7 +6053,7 @@ function _aiExtractCRPointText(crText){
     const match=raw.match(pattern);
     if(match && match[1]) return match[1].replace(/\s+/g,' ').trim();
   }
-  return 'Not explicitly stated';
+  return _AI_CR_NOT_STATED;
 }
 
 function _aiHasCRAngulation(crText){
