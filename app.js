@@ -4031,7 +4031,7 @@ function openPos(pos, chId, scId, posIdx){
       seen.add(key);
       errs.push({severity,err,visual,fix});
     };
-    const text=(pName+' '+d).toLowerCase();
+    const text=[pName,d].filter(Boolean).join(' ').toLowerCase();
 
     if(/rotat|oblique|lateral|ap|pa/.test(text)) addErr('high','Patient/part rotation error','Asymmetric cortices, unequal joint spaces, or unexpected overlap of paired structures.','Realign to true AP/PA/lateral/required oblique using bony landmarks before exposure.');
     if(/superimpos|mortise|joint/.test(text)) addErr('high','Unwanted superimposition / closed joint space','Target joint space is narrowed or closed and key anatomy is obscured.','Correct part rotation and CR angle to reopen the target joint space.');
@@ -4047,20 +4047,24 @@ function openPos(pos, chId, scId, posIdx){
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
+    const MIN_CRITERIA_LENGTH = 18;
+    const MIN_WORD_COUNT = 4;
+    const MAX_SHORT_NOISE_RATIO = 0.35;
+    const MAX_DIGIT_LETTER_RATIO = 0.4;
     const sanitizeStoredEvaluationCriteria=(raw)=>{
       if(!Array.isArray(raw) || !raw.length) return [];
       const seen = new Set();
       const out = [];
       const normalize = (line) => String(line||'').replace(/\s+/g,' ').replace(/\s*[:;,-]\s*$/,'').trim();
       const isNoisy = (line) => {
-        if(!line || line.length < 18) return true;
+        if(!line || line.length < MIN_CRITERIA_LENGTH) return true;
         const words=line.split(/\s+/).filter(Boolean);
-        if(words.length < 4) return true;
-        const shortNoise=words.filter(w=>w.length<=2 && !/^(ap|pa|ir|cr|ip|mcp|sid|kv|kvp|no)$/i.test(w)).length;
-        if(shortNoise >= 4 && shortNoise / words.length > 0.35) return true;
+        if(words.length < MIN_WORD_COUNT) return true;
+        const shortNoiseCount=words.filter(w=>w.length<=2 && !/^(ap|pa|ir|cr|ip|mcp|sid|kv|kvp|no)$/i.test(w)).length;
+        if(shortNoiseCount >= MIN_WORD_COUNT && shortNoiseCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
         const letters=(line.match(/[a-z]/gi)||[]).length;
         const digits=(line.match(/\d/g)||[]).length;
-        if(letters > 0 && digits > 0 && digits / letters > 0.4) return true;
+        if(letters > 0 && digits > 0 && digits / letters > MAX_DIGIT_LETTER_RATIO) return true;
         if(/(^|\s)(r|l)\s+(r|l)(\s|$)/i.test(line)) return true;
         if(/\b(anatomy demonstrated)\b.*\b\1\b/i.test(line.toLowerCase())) return true;
         return false;
