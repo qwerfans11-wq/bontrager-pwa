@@ -10222,6 +10222,7 @@ _loadQuizSettings();
   var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
+  // Split text into tokens by whitespace and common punctuation marks.
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
   // Arabic text meaning: "(Offline translation - approximate)"
   var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت - تقريبية)';
@@ -10465,7 +10466,6 @@ _loadQuizSettings();
       return part;
     }).join('');
     if(!translatedAny) return '';
-    if(out.indexOf(OFFLINE_TRANSLATION_SUFFIX) !== -1) return out;
     return out + OFFLINE_TRANSLATION_SUFFIX;
   }
 
