@@ -6019,14 +6019,15 @@ const _AI_CR_ANGLED_WORD_PATTERN=/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly
 const _AI_CR_ANGULATION_QUERY_PATTERN=/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i;
 const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i;
 const _AI_CR_NOT_STATED='Not stated';
-const _AI_UNKNOWN_CHAPTER_OFFSET=999;
+const _AI_UNKNOWN_CHAPTER_OFFSET=1;
 const _AI_STUDY_CHAPTER_ORDER=['upper_limb','lower_limb','chest','bony_thorax','abdomen','spine'];
 
 function _aiGetStudyChapterRank(chId){
   const idx=_AI_STUDY_CHAPTER_ORDER.indexOf(chId);
   if(idx!==-1) return idx;
   const fallbackIdx=Object.keys(BOOK).indexOf(chId);
-  return fallbackIdx===-1 ? _AI_STUDY_CHAPTER_ORDER.length+_AI_UNKNOWN_CHAPTER_OFFSET : _AI_STUDY_CHAPTER_ORDER.length+fallbackIdx;
+  const fallbackBase=_AI_STUDY_CHAPTER_ORDER.length+Object.keys(BOOK).length;
+  return fallbackIdx===-1 ? fallbackBase+_AI_UNKNOWN_CHAPTER_OFFSET : _AI_STUDY_CHAPTER_ORDER.length+fallbackIdx;
 }
 
 function _aiSortStudyRows(a,b){
