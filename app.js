@@ -10223,7 +10223,7 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"“”'’\/\\+\-]+)/;
-  var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت — تقريبية)';
+  var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت - تقريبية)';
   var OFFLINE_PHRASE_MAP = {
     'patient seated': 'المريض في وضع الجلوس',
     'patient standing': 'المريض في وضع الوقوف',
@@ -10424,9 +10424,11 @@ _loadQuizSettings();
         order.push(sourceKey);
       }
       translations[sourceKey] = translatedText;
-      while(order.length > TRANSLATION_CACHE_LIMIT){
-        var evicted = order.shift();
-        if(evicted) delete translations[evicted];
+      if(order.length > TRANSLATION_CACHE_LIMIT){
+        while(order.length > TRANSLATION_CACHE_LIMIT){
+          var evicted = order.shift();
+          if(evicted) delete translations[evicted];
+        }
       }
       localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify({
         translations: translations,
