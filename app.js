@@ -4004,22 +4004,81 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Common errors — use stored or infer ──
   function inferErrors(d,pName){
-    if(customErrors.length) return customErrors;
+    const normalizeSev = (sev) => ({high:'high',medium:'medium',tip:'tip'})[(sev||'').toLowerCase()] || 'high';
+    const normalizedCustomErrors = Array.isArray(customErrors)
+      ? customErrors.map((e)=>{
+          if(!e) return null;
+          if(typeof e === 'string'){
+            return {severity:'medium',err:e.trim(),visual:'Image quality or positioning finding is inconsistent with protocol.',fix:'Reposition and repeat according to the standard protocol.'};
+          }
+          const errText = String(e.err||'').trim();
+          if(!errText) return null;
+          return {
+            severity: normalizeSev(e.severity),
+            err: errText,
+            visual: String(e.visual||'Image quality or positioning finding is inconsistent with protocol.').trim(),
+            fix: String(e.fix||'Reposition and repeat according to the standard protocol.').trim()
+          };
+        }).filter(Boolean)
+      : [];
+    if(normalizedCustomErrors.length) return normalizedCustomErrors.slice(0,5);
+
     const errs=[];
-    if(/rotat/i.test(d)) errs.push({severity:'high',err:'Patient/Part rotation',visual:'Asymmetric joint spaces or bone shapes',fix:'Re-check patient alignment; use palpation landmarks'});
-    if(/superimpos/i.test(d)) errs.push({severity:'high',err:'Structures superimposed',visual:'Key anatomy obscured or overlapping',fix:'Adjust rotation or CR angle per protocol'});
-    if(/weight.?bearing/i.test(pName+' '+d)) errs.push({severity:'medium',err:'Patient not full weight-bearing',visual:'Joint spaces appear wider than true',fix:'Ensure patient fully standing on part'});
-    if(/perpendicular/i.test(d)) errs.push({severity:'medium',err:'Wrong CR angle',visual:'Joint space closed or anatomy foreshortened',fix:'Verify CR is perpendicular (or use specified angle)'});
-    errs.push({severity:'tip',err:'Insufficient collimation',visual:'Excessive scatter, low contrast',fix:'Collimate to part of interest only'});
-    if(errs.length>4) errs.splice(4);
-    return errs;
+    const seen=new Set();
+    const addErr=(severity,err,visual,fix)=>{
+      const key=(err||'').toLowerCase();
+      if(!key || seen.has(key)) return;
+      seen.add(key);
+      errs.push({severity,err,visual,fix});
+    };
+    const text=(pName+' '+d).toLowerCase();
+
+    if(/rotat|oblique|lateral|ap|pa/.test(text)) addErr('high','Patient/part rotation error','Asymmetric cortices, unequal joint spaces, or unexpected overlap of paired structures.','Realign to true AP/PA/lateral/required oblique using bony landmarks before exposure.');
+    if(/superimpos|mortise|joint/.test(text)) addErr('high','Unwanted superimposition / closed joint space','Target joint space is narrowed or closed and key anatomy is obscured.','Correct part rotation and CR angle to reopen the target joint space.');
+    if(/angle|angl|axial|cephalad|caudad|perpendicular/.test(text)) addErr('high','Incorrect CR angulation','Foreshortening/elongation or poor joint-space demonstration.','Reconfirm ordered CR angulation and direct CR to the exact landmark.');
+    if(/weight.?bearing|stress|standing|erect/.test(text)) addErr('medium','Non-diagnostic weight-bearing/stress setup','Joint spacing does not reflect true physiologic loading.','Ensure true weight-bearing/stress condition at the moment of exposure.');
+    if(/humerus|forearm|femur|tibia|fibula|long\s*bone/.test(text)) addErr('medium','Required anatomy cutoff','One or both adjacent joints or key long-bone segments are not included.','Recenter and collimate to include all protocol-required anatomy.');
+    addErr('medium','Motion blur','Trabecular detail and cortical margins appear unsharp.','Immobilize, shorten exposure time when possible, and repeat with clear breathing instructions.');
+    addErr('tip','Insufficient collimation/centering','Excessive field size lowers contrast or clips key anatomy at edges.','Tight-collimate to the area of interest and center to the protocol CR point.');
+
+    return errs.slice(0,5);
   }
 
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
-    if(Array.isArray(pos.evaluationCriteria) && pos.evaluationCriteria.length){
-      return pos.evaluationCriteria.filter(Boolean).map(x=>String(x).trim()).filter(Boolean);
+    const sanitizeStoredEvaluationCriteria=(raw)=>{
+      if(!Array.isArray(raw) || !raw.length) return [];
+      const seen = new Set();
+      const out = [];
+      const normalize = (line) => String(line||'').replace(/\s+/g,' ').replace(/\s*[:;,-]\s*$/,'').trim();
+      const isNoisy = (line) => {
+        if(!line || line.length < 18) return true;
+        const words=line.split(/\s+/).filter(Boolean);
+        if(words.length < 4) return true;
+        const shortNoise=words.filter(w=>w.length<=2 && !/^(ap|pa|ir|cr|ip|mcp|sid|kv|kvp|no)$/i.test(w)).length;
+        if(shortNoise >= 4 && shortNoise / words.length > 0.35) return true;
+        const letters=(line.match(/[a-z]/gi)||[]).length;
+        const digits=(line.match(/\d/g)||[]).length;
+        if(letters > 0 && digits > 0 && digits / letters > 0.4) return true;
+        if(/(^|\s)(r|l)\s+(r|l)(\s|$)/i.test(line)) return true;
+        if(/\b(anatomy demonstrated)\b.*\b\1\b/i.test(line.toLowerCase())) return true;
+        return false;
+      };
+
+      raw.forEach((line)=>{
+        const normalized = normalize(line);
+        const key = normalized.toLowerCase();
+        if(!normalized || seen.has(key) || isNoisy(normalized)) return;
+        seen.add(key);
+        out.push(normalized);
+      });
+      return out.slice(0,6);
+    };
+
+    const storedCriteria = sanitizeStoredEvaluationCriteria(pos.evaluationCriteria);
+    if(storedCriteria.length >= 3){
+      return storedCriteria;
     }
     const criteria=[];
     const push=(line)=>{ if(line && !criteria.includes(line)) criteria.push(line); };
