@@ -6013,20 +6013,25 @@ function _aiListByType(type){
   return r;
 }
 
+const _AI_CR_DEGREE_PATTERN=/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i;
+const _AI_CR_ANGLE_RANGE_PATTERN=/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?\s*(?:to|-|–)\s*(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?/i;
+const _AI_CR_ANGLED_WORD_PATTERN=/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|axial|angled?)\b/i;
+const _AI_CR_ANGULATION_QUERY_PATTERN=/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i;
+const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i;
+
 function _aiExtractCRAngleText(crText){
   const raw=String(crText||'').replace(/\s+/g,' ').trim();
   if(!raw) return 'Not stated';
-  if(/perpendicular/i.test(raw) && !/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i.test(raw)) return '0° (perpendicular)';
+  if(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw)) return '0° (perpendicular)';
 
-  let m=raw.match(/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)\s*(?:to|-|–)\s*(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)?/i)
-    || raw.match(/(\d+(?:\.\d+)?)\s*(?:to|-|–)\s*(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i);
+  let angleMatch=raw.match(_AI_CR_ANGLE_RANGE_PATTERN);
   const dirMatch=raw.match(/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|toward(?:s)?\s+(?:head|feet|wrist|ankle))\b/i);
   const dir=dirMatch?` ${dirMatch[1]}`:'';
-  if(m) return `${m[1]}°–${m[2]}°${dir}`;
+  if(angleMatch) return `${angleMatch[1]}°–${angleMatch[2]}°${dir}`;
 
-  m=raw.match(/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i);
-  if(m) return `${m[1]}°${dir}`;
-  if(/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|axial|angled?)\b/i.test(raw)) return 'Angled (degree not stated)';
+  angleMatch=raw.match(_AI_CR_DEGREE_PATTERN);
+  if(angleMatch) return `${angleMatch[1]}°${dir}`;
+  if(_AI_CR_ANGLED_WORD_PATTERN.test(raw)) return 'Angled (degree not stated)';
   return 'Not stated';
 }
 
@@ -6034,14 +6039,18 @@ function _aiExtractCRPointText(crText){
   const raw=String(crText||'').replace(/\s+/g,' ').trim();
   if(!raw) return 'Not stated';
   const patterns=[
+    // e.g., "midway between right and left ASIS"
     /midway between\s+([^.;]+)/i,
+    // e.g., "directed to L3", "centered at MCP joint"
     /(?:directed|center(?:ed|ing)?|centred)\s+(?:to|at|on|toward(?:s)?)\s+([^.;]+)/i,
+    // e.g., "entering at T7"
     /(?:enter(?:ing)?|enters)\s+(?:at|to|through)?\s*([^.;]+)/i,
+    // fallback: trailing "to <landmark>"
     /\bto\s+([^.;]+)$/i
   ];
-  for(const p of patterns){
-    const m=raw.match(p);
-    if(m && m[1]) return m[1].replace(/\s+/g,' ').trim();
+  for(const pattern of patterns){
+    const match=raw.match(pattern);
+    if(match && match[1]) return match[1].replace(/\s+/g,' ').trim();
   }
   return 'Not explicitly stated';
 }
@@ -6049,8 +6058,8 @@ function _aiExtractCRPointText(crText){
 function _aiHasCRAngulation(crText){
   const raw=String(crText||'');
   if(!raw) return false;
-  return /(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)|\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly)?|axial|angled?)\b/i.test(raw)
-    && !(/perpendicular/i.test(raw) && !/(\d+(?:\.\d+)?)\s*(?:°|deg(?:ree)?s?)/i.test(raw));
+  return (_AI_CR_DEGREE_PATTERN.test(raw) || _AI_CR_ANGLED_WORD_PATTERN.test(raw))
+    && !(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw));
 }
 
 function _aiBuildCRAngulationStudyTable(){
@@ -6125,10 +6134,10 @@ function _aiDynamicKnowledge(query){
   const q=_aiNormalizeText(query);
   const all=_aiGetAllPositions();
 
-  if(/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i.test(q)){
+  if(_AI_CR_ANGULATION_QUERY_PATTERN.test(q)){
     return _aiBuildCRAngulationStudyTable();
   }
-  if(/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i.test(q)){
+  if(_AI_CR_POINT_QUERY_PATTERN.test(q)){
     return _aiBuildCRPointStudyTable();
   }
 
