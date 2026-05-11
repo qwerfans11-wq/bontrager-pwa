@@ -10426,10 +10426,11 @@ _loadQuizSettings();
       }
       translations[sourceKey] = translatedText;
       if(order.length > TRANSLATION_CACHE_LIMIT){
-        while(order.length > TRANSLATION_CACHE_LIMIT){
-          var evicted = order.shift();
+        var removeCount = order.length - TRANSLATION_CACHE_LIMIT;
+        var evictedKeys = order.splice(0, removeCount);
+        evictedKeys.forEach(function(evicted){
           if(evicted) delete translations[evicted];
-        }
+        });
       }
       localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify({
         translations: translations,
@@ -10464,6 +10465,7 @@ _loadQuizSettings();
       return part;
     }).join('');
     if(!translatedAny) return '';
+    if(out.indexOf(OFFLINE_TRANSLATION_SUFFIX) !== -1) return out;
     return out + OFFLINE_TRANSLATION_SUFFIX;
   }
 
