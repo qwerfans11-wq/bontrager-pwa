@@ -1437,6 +1437,56 @@ window._notifyAppUpdate = function() {
   <button class="pwa-dismiss-btn" onclick="pwaDismiss()" aria-label="Dismiss">×</button>
 </div>
 
+<!-- ═══ TRANSLATION SELECTION POPUP ═══ -->
+<div class="sel-popup" id="selPopup" style="display:none">
+  <button class="sel-popup-btn" id="selTranslateBtn" onclick="openTranslationPanel()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+    ترجمة
+  </button>
+</div>
+
+<!-- ═══ TRANSLATION SIDE PANEL ═══ -->
+<div class="tr-panel-overlay" id="trPanelOverlay" onclick="closeTranslationPanel()"></div>
+<div class="tr-panel" id="trPanel">
+  <div class="tr-panel-header">
+    <div class="tr-panel-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+      الترجمة إلى العربية
+    </div>
+    <button class="tr-panel-close" onclick="closeTranslationPanel()" aria-label="إغلاق لوحة الترجمة">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="tr-panel-body">
+    <div class="tr-section">
+      <div class="tr-section-label">النص الأصلي (English)</div>
+      <div class="tr-original" id="trOriginalText"></div>
+    </div>
+    <div class="tr-divider"></div>
+    <div class="tr-section">
+      <div class="tr-section-label">الترجمة (Arabic)</div>
+      <div class="tr-result" id="trResultText" dir="rtl" lang="ar"></div>
+      <div class="tr-loading" id="trLoading" style="display:none">
+        <div class="tr-spinner"></div>
+        <span>جاري الترجمة…</span>
+      </div>
+      <div class="tr-error" id="trError" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span id="trErrorMsg">تعذّر الاتصال بخدمة الترجمة</span>
+      </div>
+    </div>
+    <div class="tr-actions">
+      <button class="tr-copy-btn" id="trCopyBtn" onclick="copyTranslation()" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        نسخ الترجمة
+      </button>
+    </div>
+  </div>
+  <div class="tr-panel-footer">
+    <span>مدعوم بواسطة MyMemory Translation</span>
+  </div>
+</div>
+
 <!-- IMAGE ZOOM OVERLAY -->
 <div class="img-zoom-overlay" id="imgZoomOverlay" onclick="_zoomOverlayClick(event)">
   <div class="img-zoom-container" id="imgZoomContainer">

@@ -10127,3 +10127,171 @@ _loadQuizSettings();
   // Apply saved custom points on load
   _applyCustomPoints();
 }());
+
+// ═══════════════════════════════════════════════════════════════════
+// TRANSLATION FEATURE — Text Selection → Arabic Translation Side Panel
+// ═══════════════════════════════════════════════════════════════════
+(function(){
+  var _selText = '';
+  var _popupEl = null;
+  var _panelEl = null;
+  var _overlayEl = null;
+  var _hidePopupTimer = null;
+
+  function _init(){
+    _popupEl  = document.getElementById('selPopup');
+    _panelEl  = document.getElementById('trPanel');
+    _overlayEl = document.getElementById('trPanelOverlay');
+    if(!_popupEl || !_panelEl) return;
+
+    document.addEventListener('mouseup',  _onSelectionChange);
+    document.addEventListener('touchend', _onSelectionChange);
+    document.addEventListener('selectionchange', _onSelectionChangeLazy);
+  }
+
+  // Debounce for selectionchange (fires many times on mobile)
+  var _selChangeTimer = null;
+  function _onSelectionChangeLazy(){
+    clearTimeout(_selChangeTimer);
+    _selChangeTimer = setTimeout(function(){
+      var sel = window.getSelection();
+      if(!sel || sel.isCollapsed){ _hidePopup(); }
+    }, 300);
+  }
+
+  function _onSelectionChange(e){
+    // Small delay to let the selection finalise
+    setTimeout(function(){
+      var sel = window.getSelection();
+      if(!sel || sel.isCollapsed || !sel.toString().trim()){
+        _hidePopup();
+        return;
+      }
+      var text = sel.toString().trim();
+      if(text.length < 2){ _hidePopup(); return; }
+      _selText = text;
+      _positionPopup(sel);
+    }, 50);
+  }
+
+  function _positionPopup(sel){
+    if(!_popupEl) return;
+    var range = sel.getRangeAt(0);
+    var rect  = range.getBoundingClientRect();
+    if(!rect || rect.width === 0){ _hidePopup(); return; }
+
+    _popupEl.style.display = 'flex';
+
+    var popW = _popupEl.offsetWidth || 120;
+    var popH = _popupEl.offsetHeight || 40;
+    var margin = 6;
+
+    // Prefer above the selection; fall back to below
+    var top = rect.top - popH - margin;
+    if(top < 4) top = rect.bottom + margin;
+
+    var left = rect.left + rect.width / 2 - popW / 2;
+    left = Math.max(6, Math.min(left, window.innerWidth - popW - 6));
+
+    _popupEl.style.top  = top  + 'px';
+    _popupEl.style.left = left + 'px';
+  }
+
+  function _hidePopup(){
+    if(_popupEl) _popupEl.style.display = 'none';
+  }
+
+  // Public: called by the Translate button in the popup
+  window.openTranslationPanel = function(){
+    if(!_selText) return;
+    _hidePopup();
+
+    var origEl   = document.getElementById('trOriginalText');
+    var resultEl = document.getElementById('trResultText');
+    var loadEl   = document.getElementById('trLoading');
+    var errEl    = document.getElementById('trError');
+    var copyBtn  = document.getElementById('trCopyBtn');
+
+    if(origEl)   origEl.textContent = _selText;
+    if(resultEl){ resultEl.textContent = ''; resultEl.style.display = 'none'; }
+    if(loadEl)   loadEl.style.display  = 'flex';
+    if(errEl)    errEl.style.display   = 'none';
+    if(copyBtn)  copyBtn.style.display = 'none';
+
+    _panelEl.classList.add('open');
+    _overlayEl.classList.add('open');
+
+    _fetchTranslation(_selText, function(err, translated){
+      if(loadEl) loadEl.style.display = 'none';
+      if(err){
+        if(errEl){
+          var msgEl = document.getElementById('trErrorMsg');
+          if(msgEl) msgEl.textContent = err;
+          errEl.style.display = 'flex';
+        }
+      } else {
+        if(resultEl){
+          resultEl.textContent = translated;
+          resultEl.style.display = 'block';
+        }
+        if(copyBtn) copyBtn.style.display = 'inline-flex';
+      }
+    });
+  };
+
+  window.closeTranslationPanel = function(){
+    if(_panelEl)  _panelEl.classList.remove('open');
+    if(_overlayEl) _overlayEl.classList.remove('open');
+  };
+
+  window.copyTranslation = function(){
+    var resultEl = document.getElementById('trResultText');
+    if(!resultEl || !resultEl.textContent) return;
+    var btn = document.getElementById('trCopyBtn');
+    try {
+      navigator.clipboard.writeText(resultEl.textContent).then(function(){
+        if(btn){ btn.classList.add('copied'); btn.textContent = '✓ تم النسخ'; }
+        setTimeout(function(){
+          if(btn){
+            btn.classList.remove('copied');
+            btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> نسخ الترجمة';
+          }
+        }, 2000);
+      });
+    } catch(e){}
+  };
+
+  function _fetchTranslation(text, cb){
+    // Use MyMemory free translation API (no key needed, 1000 words/day free)
+    var url = 'https://api.mymemory.translated.net/get?q=' +
+              encodeURIComponent(text.substring(0, 500)) +
+              '&langpair=en%7Car';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.timeout = 10000;
+    xhr.onload = function(){
+      if(xhr.status === 200){
+        try {
+          var data = JSON.parse(xhr.responseText);
+          if(data && data.responseData && data.responseData.translatedText){
+            cb(null, data.responseData.translatedText);
+          } else {
+            cb('لم يتم استلام الترجمة');
+          }
+        } catch(e){ cb('خطأ في تحليل الاستجابة'); }
+      } else {
+        cb('خطأ في الاتصال بالخادم (' + xhr.status + ')');
+      }
+    };
+    xhr.onerror   = function(){ cb('تعذّر الاتصال بخدمة الترجمة'); };
+    xhr.ontimeout = function(){ cb('انتهت مهلة الاتصال، حاول مرة أخرى'); };
+    xhr.send();
+  }
+
+  // Initialise after DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _init);
+  } else {
+    _init();
+  }
+}());
