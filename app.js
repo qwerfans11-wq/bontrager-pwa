@@ -10186,14 +10186,16 @@ _loadQuizSettings();
 
   function _positionPopup(sel){
     if(!_popupEl) return;
-    if(!sel || !sel.rangeCount){ _hidePopup(); return; }
+    if(!sel || typeof sel.rangeCount !== 'number' || sel.rangeCount < 1){ _hidePopup(); return; }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
-    if((!rect || (rect.width === 0 && rect.height === 0)) && typeof range.getClientRects === 'function'){
+    var rectMissing = !rect || (rect.width === 0 && rect.height === 0);
+    if(rectMissing && typeof range.getClientRects === 'function'){
       var rects = range.getClientRects();
       if(rects && rects.length) rect = rects[rects.length - 1];
     }
-    if(!rect || (rect.width === 0 && rect.height === 0)){ _hidePopup(); return; }
+    rectMissing = !rect || (rect.width === 0 && rect.height === 0);
+    if(rectMissing){ _hidePopup(); return; }
 
     _popupEl.style.display = 'flex';
 
