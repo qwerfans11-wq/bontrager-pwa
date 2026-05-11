@@ -10189,7 +10189,7 @@ _loadQuizSettings();
     if(!sel || !sel.rangeCount){ _hidePopup(); return; }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
-    if((!rect || (rect.width === 0 && rect.height === 0)) && range.getClientRects){
+    if((!rect || (rect.width === 0 && rect.height === 0)) && typeof range.getClientRects === 'function'){
       var rects = range.getClientRects();
       if(rects && rects.length) rect = rects[rects.length - 1];
     }
