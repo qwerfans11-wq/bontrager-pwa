@@ -10221,6 +10221,9 @@ _loadQuizSettings();
 (function(){
   var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
+  var TRANSLATION_CACHE_LIMIT = 300;
+  var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"“”'’\/\\+\-]+)/;
+  var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت — تقريبية)';
   var OFFLINE_PHRASE_MAP = {
     'patient seated': 'المريض في وضع الجلوس',
     'patient standing': 'المريض في وضع الوقوف',
@@ -10390,11 +10393,23 @@ _loadQuizSettings();
   function _readTranslationCache(){
     try {
       var raw = localStorage.getItem(TRANSLATION_CACHE_KEY);
-      if(!raw) return {};
+      if(!raw) return { translations: {}, order: [] };
       var parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object' ? parsed : {};
+      if(parsed && typeof parsed === 'object' && parsed.translations && typeof parsed.translations === 'object'){
+        return {
+          translations: parsed.translations,
+          order: Array.isArray(parsed.order) ? parsed.order : Object.keys(parsed.translations)
+        };
+      }
+      if(parsed && typeof parsed === 'object'){
+        return {
+          translations: parsed,
+          order: Object.keys(parsed)
+        };
+      }
+      return { translations: {}, order: [] };
     } catch(e){
-      return {};
+      return { translations: {}, order: [] };
     }
   }
 
@@ -10402,21 +10417,29 @@ _loadQuizSettings();
     var sourceKey = _normalizeText(sourceText);
     if(!sourceKey || !translatedText) return;
     try {
-      var cache = _readTranslationCache();
-      cache[sourceKey] = translatedText;
-      var keys = Object.keys(cache);
-      if(keys.length > 500){
-        keys.slice(0, keys.length - 300).forEach(function(k){ delete cache[k]; });
+      var cacheData = _readTranslationCache();
+      var translations = cacheData.translations || {};
+      var order = Array.isArray(cacheData.order) ? cacheData.order : [];
+      if(!translations[sourceKey]){
+        order.push(sourceKey);
       }
-      localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify(cache));
+      translations[sourceKey] = translatedText;
+      while(order.length > TRANSLATION_CACHE_LIMIT){
+        var evicted = order.shift();
+        if(evicted) delete translations[evicted];
+      }
+      localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify({
+        translations: translations,
+        order: order
+      }));
     } catch(e){}
   }
 
   function _getCachedTranslation(sourceText){
     var key = _normalizeText(sourceText);
     if(!key) return '';
-    var cache = _readTranslationCache();
-    return cache[key] || '';
+    var cacheData = _readTranslationCache();
+    return (cacheData.translations && cacheData.translations[key]) || '';
   }
 
   function _translateOffline(sourceText){
@@ -10427,7 +10450,7 @@ _loadQuizSettings();
       return OFFLINE_PHRASE_MAP[normalized];
     }
     var translatedAny = false;
-    var parts = text.split(/(\s+|[.,!?;:()[\]{}"“”'’\/\\+\-]+)/);
+    var parts = text.split(WORD_SPLIT_PATTERN);
     var out = parts.map(function(part){
       var n = _normalizeText(part);
       if(!n) return part;
@@ -10438,7 +10461,7 @@ _loadQuizSettings();
       return part;
     }).join('');
     if(!translatedAny) return '';
-    return out + '\n\n(ترجمة بدون إنترنت — تقريبية)';
+    return out + OFFLINE_TRANSLATION_SUFFIX;
   }
 
   // Public: called by the Translate button in the popup
