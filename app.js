@@ -10186,7 +10186,7 @@ _loadQuizSettings();
 
   function _positionPopup(sel){
     if(!_popupEl) return;
-    if(!sel || typeof sel.rangeCount !== 'number' || sel.rangeCount < 1){ _hidePopup(); return; }
+    if(!sel || sel.rangeCount < 1){ _hidePopup(); return; }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
     var rectMissing = !rect || (rect.width === 0 && rect.height === 0);
