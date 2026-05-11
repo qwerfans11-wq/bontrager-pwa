@@ -6019,6 +6019,40 @@ const _AI_CR_ANGLED_WORD_PATTERN=/\b(cephalad|caudad|proximal(?:ly)?|distal(?:ly
 const _AI_CR_ANGULATION_QUERY_PATTERN=/(cr|central ray).*(angulation|angled|angle).*(table|routine|special|all)|positions?.*with.*cr.*angulation/i;
 const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|central ray point|central ray center).*(all|positions|table)|all positions.*(cr point|central ray)/i;
 const _AI_CR_NOT_STATED='Not stated';
+const _AI_UNKNOWN_CHAPTER_RANK_INCREMENT=1;
+const _AI_STUDY_CHAPTER_ORDER=['upper_limb','lower_limb','chest','bony_thorax','abdomen','spine'];
+
+function _aiBuildStudyChapterRankMap(){
+  const rankMap=new Map();
+  _AI_STUDY_CHAPTER_ORDER.forEach((chId,idx)=>rankMap.set(chId,idx));
+  let nextRank=_AI_STUDY_CHAPTER_ORDER.length;
+  Object.keys(BOOK).forEach(chId=>{
+    if(!rankMap.has(chId)){
+      rankMap.set(chId,nextRank);
+      nextRank++;
+    }
+  });
+  return rankMap;
+}
+
+function _aiGetStudyRowSorter(){
+  const chapterRankMap=_aiBuildStudyChapterRankMap();
+  const unknownChapterRank=chapterRankMap.size+_AI_UNKNOWN_CHAPTER_RANK_INCREMENT;
+  return (a,b)=>{
+    const typeRankA=a.pos.type==='routine'?0:1;
+    const typeRankB=b.pos.type==='routine'?0:1;
+    if(typeRankA!==typeRankB) return typeRankA-typeRankB;
+    const chapterRankA=chapterRankMap.get(a.chId) ?? unknownChapterRank;
+    const chapterRankB=chapterRankMap.get(b.chId) ?? unknownChapterRank;
+    const chapterRankDiff=chapterRankA-chapterRankB;
+    if(chapterRankDiff!==0) return chapterRankDiff;
+    const chapterNameDiff=String(a.chapter||'').localeCompare(String(b.chapter||''));
+    if(chapterNameDiff!==0) return chapterNameDiff;
+    const subNameDiff=String(a.sub||'').localeCompare(String(b.sub||''));
+    if(subNameDiff!==0) return subNameDiff;
+    return String(a.pos?.name||'').localeCompare(String(b.pos?.name||''));
+  };
+}
 
 function _aiExtractCRAngleText(crText){
   const raw=String(crText||'').replace(/\s+/g,' ').trim();
@@ -6065,9 +6099,10 @@ function _aiHasCRAngulation(crText){
 
 function _aiBuildCRAngulationStudyTable(){
   const all=_aiGetAllPositions().filter(({pos})=>_aiHasCRAngulation(pos.info?.cr));
+  const sorter=_aiGetStudyRowSorter();
   const byType={
-    routine:all.filter(x=>x.pos.type==='routine').sort((a,b)=>a.pos.name.localeCompare(b.pos.name)),
-    special:all.filter(x=>x.pos.type==='special').sort((a,b)=>a.pos.name.localeCompare(b.pos.name)),
+    routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
+    special:all.filter(x=>x.pos.type==='special').sort(sorter),
   };
   const mkTable=(title,rows)=>{
     if(!rows.length) return '';
@@ -6101,33 +6136,40 @@ function _aiBuildCRAngulationStudyTable(){
 
 function _aiBuildCRPointStudyTable(){
   const all=_aiGetAllPositions().filter(({pos})=>String(pos.info?.cr||'').trim());
-  const body=all
-    .sort((a,b)=>a.pos.name.localeCompare(b.pos.name))
-    .map(({pos,chapter,sub})=>{
+  const sorter=_aiGetStudyRowSorter();
+  const byType={
+    routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
+    special:all.filter(x=>x.pos.type==='special').sort(sorter),
+  };
+  const mkTable=(title,rows)=>{
+    if(!rows.length) return '';
+    const body=rows.map(({pos,chapter,sub})=>{
       const cr=pos.info?.cr||'—';
       const point=_aiExtractCRPointText(cr);
       const section=sub?`${chapter} › ${sub}`:chapter;
       return `<tr>
         <td style="padding:7px 8px;border-top:1px solid var(--border);font-weight:700">${esc(pos.name)}</td>
-        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(pos.type==='routine'?'Routine':'Special')}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(point)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(cr)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(section)}</td>
       </tr>`;
     }).join('');
+    return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
+      <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:6px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;background:var(--bg)">
+          <thead><tr style="background:var(--accent-bg)">
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR point</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
+          </tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>`;
+  };
   return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR Point Reference (All Positions)</strong><br>Extracted central ray centering/entry point from each position CR text.</div>
-    <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:8px">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;background:var(--bg)">
-        <thead><tr style="background:var(--accent-bg)">
-          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
-          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Type</th>
-          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR point</th>
-          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
-          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
-        </tr></thead>
-        <tbody>${body}</tbody>
-      </table>
-    </div>`;
+    ${mkTable('Routine positions',byType.routine)}
+    ${mkTable('Special positions',byType.special)}`;
 }
 
 // ─── Dynamic knowledge from live BOOK data ───
