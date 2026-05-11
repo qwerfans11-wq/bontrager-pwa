@@ -10220,6 +10220,87 @@ _loadQuizSettings();
 // ═══════════════════════════════════════════════════════════════════
 (function(){
   var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
+  var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
+  var TRANSLATION_CACHE_LIMIT = 300;
+  // Split text into tokens by whitespace and common punctuation marks.
+  var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
+  // Arabic text meaning: "(Offline translation - approximate)"
+  var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت - تقريبية)';
+  var OFFLINE_PHRASE_MAP = {
+    'patient seated': 'المريض في وضع الجلوس',
+    'patient standing': 'المريض في وضع الوقوف',
+    'patient supine': 'المريض في وضع الاستلقاء',
+    'center to': 'قم بتوسيط الشعاع على',
+    'directed to': 'يتم توجيهه إلى',
+    'perpendicular to ir': 'عمودي على المستقبل الصوري',
+    'parallel to ir': 'موازٍ للمستقبل الصوري',
+    'without rotation': 'بدون دوران',
+    'demonstrates': 'يُظهر',
+    'this view demonstrates': 'هذه الوضعية تُظهر'
+  };
+  var OFFLINE_WORD_MAP = {
+    patient:'المريض',
+    seated:'جالس',
+    standing:'واقف',
+    supine:'مستلقي',
+    prone:'منبطح',
+    erect:'عمودي',
+    hand:'اليد',
+    wrist:'الرسغ',
+    elbow:'المرفق',
+    shoulder:'الكتف',
+    humerus:'العضد',
+    clavicle:'الترقوة',
+    chest:'الصدر',
+    abdomen:'البطن',
+    pelvis:'الحوض',
+    hip:'الورك',
+    femur:'عظم الفخذ',
+    knee:'الركبة',
+    tibia:'الظنبوب',
+    fibula:'الشظية',
+    ankle:'الكاحل',
+    foot:'القدم',
+    skull:'الجمجمة',
+    cervical:'عنقي',
+    thoracic:'صدري',
+    lumbar:'قطني',
+    spine:'العمود الفقري',
+    projection:'وضعية',
+    ap:'أمامي-خلفي',
+    pa:'خلفي-أمامي',
+    lateral:'جانبي',
+    oblique:'مائل',
+    bilateral:'ثنائي الجانب',
+    unilateral:'أحادي الجانب',
+    angle:'زاوية',
+    degree:'درجة',
+    tube:'الأنبوب',
+    cr:'الشعاع المركزي',
+    sid:'مسافة المصدر إلى المستقبل',
+    ir:'المستقبل الصوري',
+    cassette:'الكاسيت',
+    image:'صورة',
+    xray:'أشعة سينية',
+    'x-ray':'أشعة سينية',
+    center:'توسيط',
+    centered:'متمركز',
+    directed:'موجه',
+    rotate:'أدر',
+    rotated:'مدار',
+    flex:'اثنِ',
+    extension:'تمديد',
+    demonstrates:'يُظهر',
+    shows:'يُظهر',
+    without:'بدون',
+    with:'مع',
+    and:'و',
+    or:'أو',
+    to:'إلى',
+    from:'من',
+    right:'يمين',
+    left:'يسار'
+  };
 
   var _selText = '';
   var _popupEl = null;
@@ -10307,6 +10388,87 @@ _loadQuizSettings();
     if(_popupEl) _popupEl.style.display = 'none';
   }
 
+  function _normalizeText(text){
+    return String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  function _readTranslationCache(){
+    try {
+      var raw = localStorage.getItem(TRANSLATION_CACHE_KEY);
+      if(!raw) return { translations: {}, order: [] };
+      var parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object' && parsed.translations && typeof parsed.translations === 'object'){
+        return {
+          translations: parsed.translations,
+          order: Array.isArray(parsed.order) ? parsed.order : Object.keys(parsed.translations)
+        };
+      }
+      if(parsed && typeof parsed === 'object'){
+        return {
+          translations: parsed,
+          order: Object.keys(parsed)
+        };
+      }
+      return { translations: {}, order: [] };
+    } catch(e){
+      return { translations: {}, order: [] };
+    }
+  }
+
+  function _saveTranslationCache(sourceText, translatedText){
+    var sourceKey = _normalizeText(sourceText);
+    if(!sourceKey || !translatedText) return;
+    try {
+      var cacheData = _readTranslationCache();
+      var translations = cacheData.translations || {};
+      var order = Array.isArray(cacheData.order) ? cacheData.order : [];
+      if(!translations[sourceKey]){
+        order.push(sourceKey);
+      }
+      translations[sourceKey] = translatedText;
+      if(order.length > TRANSLATION_CACHE_LIMIT){
+        var removeCount = order.length - TRANSLATION_CACHE_LIMIT;
+        var evictedKeys = order.splice(0, removeCount);
+        evictedKeys.forEach(function(evicted){
+          if(evicted) delete translations[evicted];
+        });
+      }
+      localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify({
+        translations: translations,
+        order: order
+      }));
+    } catch(e){}
+  }
+
+  function _getCachedTranslation(sourceText){
+    var key = _normalizeText(sourceText);
+    if(!key) return '';
+    var cacheData = _readTranslationCache();
+    return (cacheData.translations && cacheData.translations[key]) || '';
+  }
+
+  function _translateOffline(sourceText){
+    var text = String(sourceText || '').trim();
+    if(!text) return '';
+    var normalized = _normalizeText(text);
+    if(OFFLINE_PHRASE_MAP[normalized]){
+      return OFFLINE_PHRASE_MAP[normalized];
+    }
+    var translatedAny = false;
+    var parts = text.split(WORD_SPLIT_PATTERN);
+    var out = parts.map(function(part){
+      var n = _normalizeText(part);
+      if(!n) return part;
+      if(OFFLINE_WORD_MAP[n]){
+        translatedAny = true;
+        return OFFLINE_WORD_MAP[n];
+      }
+      return part;
+    }).join('');
+    if(!translatedAny) return '';
+    return out + OFFLINE_TRANSLATION_SUFFIX;
+  }
+
   // Public: called by the Translate button in the popup
   window.openTranslationPanel = function(){
     if(!_selText) return;
@@ -10369,8 +10531,26 @@ _loadQuizSettings();
 
   function _fetchTranslation(text, cb){
     // Use MyMemory free translation API (no key needed, 1000 words/day free)
+    var sourceText = String(text || '').substring(0, MAX_TRANSLATION_CHARS);
+    var cached = _getCachedTranslation(sourceText);
+    if(cached){
+      cb(null, cached);
+      return;
+    }
+
+    // Best-effort offline hint; fetch catch path below is the final fallback.
+    if(typeof navigator !== 'undefined' && navigator.onLine === false){
+      var offlineOnlyResult = _translateOffline(sourceText);
+      if(offlineOnlyResult){
+        cb(null, offlineOnlyResult);
+      } else {
+        cb('أنت غير متصل بالإنترنت ولا توجد ترجمة محفوظة لهذا النص');
+      }
+      return;
+    }
+
     var url = 'https://api.mymemory.translated.net/get?q=' +
-              encodeURIComponent(text.substring(0, MAX_TRANSLATION_CHARS)) +
+              encodeURIComponent(sourceText) +
               '&langpair=en%7Car';
     var canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
     var hasAbortController = (typeof AbortController !== 'undefined');
@@ -10397,17 +10577,28 @@ _loadQuizSettings();
       .then(function(data){
         if(timer) clearTimeout(timer);
         if(data && data.responseData && data.responseData.translatedText){
+          _saveTranslationCache(sourceText, data.responseData.translatedText);
           cb(null, data.responseData.translatedText);
         } else {
-          cb('لم يتم استلام الترجمة');
+          var offlineFallback = _translateOffline(sourceText);
+          if(offlineFallback){
+            cb(null, offlineFallback);
+          } else {
+            cb('لم يتم استلام الترجمة');
+          }
         }
       })
       .catch(function(err){
         if(timer) clearTimeout(timer);
+        var fallback = _translateOffline(sourceText);
+        if(fallback){
+          cb(null, fallback);
+          return;
+        }
         if(err && err.name === 'AbortError'){
-          cb('انتهت مهلة الاتصال، حاول مرة أخرى');
+          cb('انتهت مهلة الاتصال، حاول مرة أخرى أو استخدم الترجمة بدون إنترنت لنصوص أقصر');
         } else {
-          cb('تعذّر الاتصال بخدمة الترجمة');
+          cb('تعذّر الاتصال بخدمة الترجمة ولا توجد ترجمة محلية مطابقة');
         }
       });
   }
