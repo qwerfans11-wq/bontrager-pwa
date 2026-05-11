@@ -10222,7 +10222,8 @@ _loadQuizSettings();
   var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
-  var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"“”'’\/\\+\-]+)/;
+  var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
+  // Arabic text meaning: "(Offline translation - approximate)"
   var OFFLINE_TRANSLATION_SUFFIX = '\n\n(ترجمة بدون إنترنت - تقريبية)';
   var OFFLINE_PHRASE_MAP = {
     'patient seated': 'المريض في وضع الجلوس',
@@ -10535,6 +10536,7 @@ _loadQuizSettings();
       return;
     }
 
+    // Best-effort offline hint; fetch catch path below is the final fallback.
     if(typeof navigator !== 'undefined' && navigator.onLine === false){
       var offlineOnlyResult = _translateOffline(sourceText);
       if(offlineOnlyResult){
