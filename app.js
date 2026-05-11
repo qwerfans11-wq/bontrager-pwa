@@ -3976,6 +3976,16 @@ function openPos(pos, chId, scId, posIdx){
   const scan3=info.scan3||'';        // 3-Second Scan line
   const customErrors=info.customErrors||[]; // Dev-defined errors with severity
   const decisionTree=info.decisionTree||''; // Decision tree text
+  const ERROR_PATTERNS = {
+    rotation:/rotat|oblique|true\s+lateral/,
+    superimposition:/superimpos|mortise|joint/,
+    angulation:/angle|angl|axial|cephalad|caudad|perpendicular/,
+    weightBearing:/weight.?bearing|stress|standing|erect/,
+    longBone:/humerus|forearm|femur|tibia|fibula|long\s*bone/
+  };
+  // Allowed short radiography abbreviations in criteria lines:
+  // AP/PA projections, IR image receptor, CR central ray, IP/MCP joints, SID source-image distance, kV/kVp, and "no".
+  const VALID_SHORT_CRITERIA_WORDS = new Set(['ap','pa','ir','cr','ip','mcp','sid','kv','kvp','no']);
 
   // ── Infer position setup from desc ──
   function extractPatientPos(d){
@@ -4004,22 +4014,99 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Common errors — use stored or infer ──
   function inferErrors(d,pName){
-    if(customErrors.length) return customErrors;
+    const MAX_ERRORS = 5;
+    const DEFAULT_CUSTOM_ERROR_VISUAL = 'Image quality or positioning finding is inconsistent with protocol.';
+    const DEFAULT_CUSTOM_ERROR_FIX = 'Reposition and repeat according to the standard protocol.';
+    const SEVERITY_MAP = {high:'high',medium:'medium',tip:'tip'};
+    const normalizeSev = (sev) => SEVERITY_MAP[(sev||'').toLowerCase()] || 'high';
+    const normalizedCustomErrors = Array.isArray(customErrors)
+      ? customErrors.map((e)=>{
+          if(!e) return null;
+          if(typeof e === 'string'){
+            return {severity:'medium',err:e.trim(),visual:DEFAULT_CUSTOM_ERROR_VISUAL,fix:DEFAULT_CUSTOM_ERROR_FIX};
+          }
+          const errText = String(e.err||'').trim();
+          if(!errText) return null;
+          return {
+            severity: normalizeSev(e.severity),
+            err: errText,
+            visual: String(e.visual||DEFAULT_CUSTOM_ERROR_VISUAL).trim(),
+            fix: String(e.fix||DEFAULT_CUSTOM_ERROR_FIX).trim()
+          };
+        }).filter(Boolean)
+      : [];
+    if(normalizedCustomErrors.length) return normalizedCustomErrors.slice(0,MAX_ERRORS);
+
     const errs=[];
-    if(/rotat/i.test(d)) errs.push({severity:'high',err:'Patient/Part rotation',visual:'Asymmetric joint spaces or bone shapes',fix:'Re-check patient alignment; use palpation landmarks'});
-    if(/superimpos/i.test(d)) errs.push({severity:'high',err:'Structures superimposed',visual:'Key anatomy obscured or overlapping',fix:'Adjust rotation or CR angle per protocol'});
-    if(/weight.?bearing/i.test(pName+' '+d)) errs.push({severity:'medium',err:'Patient not full weight-bearing',visual:'Joint spaces appear wider than true',fix:'Ensure patient fully standing on part'});
-    if(/perpendicular/i.test(d)) errs.push({severity:'medium',err:'Wrong CR angle',visual:'Joint space closed or anatomy foreshortened',fix:'Verify CR is perpendicular (or use specified angle)'});
-    errs.push({severity:'tip',err:'Insufficient collimation',visual:'Excessive scatter, low contrast',fix:'Collimate to part of interest only'});
-    if(errs.length>4) errs.splice(4);
-    return errs;
+    const seen=new Set();
+    const addErr=(severity,err,visual,fix)=>{
+      const key=(err||'').toLowerCase();
+      if(!key || seen.has(key)) return;
+      seen.add(key);
+      errs.push({severity,err,visual,fix});
+    };
+    const text=[pName,d].filter(Boolean).join(' ').toLowerCase();
+
+    if(ERROR_PATTERNS.rotation.test(text)) addErr('high','Patient/part rotation error','Asymmetric cortices, unequal joint spaces, or unexpected overlap of paired structures.','Realign to true AP/PA/lateral/required oblique using bony landmarks before exposure.');
+    if(ERROR_PATTERNS.superimposition.test(text)) addErr('high','Unwanted superimposition / closed joint space','Target joint space is narrowed or closed and key anatomy is obscured.','Correct part rotation and CR angle to reopen the target joint space.');
+    if(ERROR_PATTERNS.angulation.test(text)) addErr('high','Incorrect CR angulation','Foreshortening/elongation or poor joint-space demonstration.','Reconfirm ordered CR angulation and direct CR to the exact landmark.');
+    if(ERROR_PATTERNS.weightBearing.test(text)) addErr('medium','Non-diagnostic weight-bearing/stress setup','Joint spacing does not reflect true physiologic loading.','Ensure true weight-bearing/stress condition at the moment of exposure.');
+    if(ERROR_PATTERNS.longBone.test(text)) addErr('medium','Required anatomy cutoff','One or both adjacent joints or key long-bone segments are not included.','Recenter and collimate to include all protocol-required anatomy.');
+    addErr('medium','Motion blur','Trabecular detail and cortical margins appear unsharp.','Immobilize, shorten exposure time when possible, and repeat with clear breathing instructions.');
+    addErr('tip','Insufficient collimation/centering','Excessive field size lowers contrast or clips key anatomy at edges.','Tight-collimate to the area of interest and center to the protocol CR point.');
+
+    return errs.slice(0,MAX_ERRORS);
   }
 
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
-    if(Array.isArray(pos.evaluationCriteria) && pos.evaluationCriteria.length){
-      return pos.evaluationCriteria.filter(Boolean).map(x=>String(x).trim()).filter(Boolean);
+    const MIN_VALID_STORED_CRITERIA = 3; // Fewer than 3 lines is usually incomplete and less useful than generated fallback.
+    // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
+    // MIN_WORD_COUNT + MAX_SHORT_NOISE_RATIO filters short-token garbage from OCR table headers.
+    // MAX_DIGIT_LETTER_RATIO filters lines dominated by mixed numeric labels rather than full sentences.
+    const MIN_CRITERIA_LENGTH = 18; // Filters ultra-short fragments/header leftovers from OCR.
+    const MIN_WORD_COUNT = 4; // Keeps sentence-like criteria only.
+    const MAX_SHORT_NOISE_RATIO = 0.35; // Tuned from current data: OCR-table rows often exceed ~35% short invalid tokens.
+    const MAX_DIGIT_LETTER_RATIO = 0.4; // Tuned from current data: OCR-table artifacts often contain dense numeric labels.
+    const sanitizeStoredEvaluationCriteria=(raw)=>{
+      if(!Array.isArray(raw) || !raw.length) return [];
+      const seen = new Set();
+      const out = [];
+      const normalize = (line) => {
+        const compact = String(line||'').replace(/\s+/g,' ');
+        const withoutTrailingPunct = compact.replace(/\s*[:;,-]\s*$/,'');
+        return withoutTrailingPunct.trim();
+      };
+      const isNoisy = (line) => {
+        if(!line || line.length < MIN_CRITERIA_LENGTH) return true;
+        const words=line.split(/\s+/).filter(Boolean);
+        if(words.length < MIN_WORD_COUNT) return true;
+        const invalidShortWordCount=words.filter(w=>w.length<=2 && !VALID_SHORT_CRITERIA_WORDS.has(w.toLowerCase())).length;
+        if(invalidShortWordCount > 0 && invalidShortWordCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
+        const letters=(line.match(/[a-z]/gi)||[]).length;
+        const digits=(line.match(/\d/g)||[]).length;
+        if(letters > 0 && digits > 0 && digits / letters > MAX_DIGIT_LETTER_RATIO) return true;
+        // OCR often leaks isolated side labels (e.g., "R L" / "L R") from table columns into sentence lines.
+        if(/(^|\s)(r|l)\s+(r|l)(\s|$)/i.test(line)) return true;
+        // Repeated "Anatomy Demonstrated" phrase in one line usually comes from OCR-merged table rows/headers.
+        if(/\b(anatomy demonstrated)\b.*\b\1\b/i.test(line.toLowerCase())) return true;
+        return false;
+      };
+
+      raw.forEach((line)=>{
+        const normalized = normalize(line);
+        const key = normalized.toLowerCase();
+        if(!normalized || seen.has(key) || isNoisy(normalized)) return;
+        seen.add(key);
+        out.push(normalized);
+      });
+      return out.slice(0,6);
+    };
+
+    const storedCriteria = sanitizeStoredEvaluationCriteria(pos.evaluationCriteria);
+    if(storedCriteria.length >= MIN_VALID_STORED_CRITERIA){
+      return storedCriteria;
     }
     const criteria=[];
     const push=(line)=>{ if(line && !criteria.includes(line)) criteria.push(line); };
