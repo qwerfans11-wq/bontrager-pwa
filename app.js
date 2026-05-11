@@ -10277,7 +10277,7 @@ _loadQuizSettings();
     cassette:'الكاسيت',
     image:'صورة',
     xray:'أشعة سينية',
-    x-ray:'أشعة سينية',
+    'x-ray':'أشعة سينية',
     center:'توسيط',
     centered:'متمركز',
     directed:'موجه',
