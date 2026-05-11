@@ -3977,7 +3977,7 @@ function openPos(pos, chId, scId, posIdx){
   const customErrors=info.customErrors||[]; // Dev-defined errors with severity
   const decisionTree=info.decisionTree||''; // Decision tree text
   const ERROR_PATTERNS = {
-    rotation:/rotat|oblique|lateral|ap|pa/,
+    rotation:/rotat|oblique|lateral|internal|external/,
     superimposition:/superimpos|mortise|joint/,
     angulation:/angle|angl|axial|cephalad|caudad|perpendicular/,
     weightBearing:/weight.?bearing|stress|standing|erect/,
@@ -4014,6 +4014,7 @@ function openPos(pos, chId, scId, posIdx){
 
   // ── Common errors — use stored or infer ──
   function inferErrors(d,pName){
+    const MAX_ERRORS = 5;
     const normalizeSev = (sev) => ({high:'high',medium:'medium',tip:'tip'})[(sev||'').toLowerCase()] || 'high';
     const normalizedCustomErrors = Array.isArray(customErrors)
       ? customErrors.map((e)=>{
@@ -4031,7 +4032,7 @@ function openPos(pos, chId, scId, posIdx){
           };
         }).filter(Boolean)
       : [];
-    if(normalizedCustomErrors.length) return normalizedCustomErrors.slice(0,5);
+    if(normalizedCustomErrors.length) return normalizedCustomErrors.slice(0,MAX_ERRORS);
 
     const errs=[];
     const seen=new Set();
@@ -4051,19 +4052,20 @@ function openPos(pos, chId, scId, posIdx){
     addErr('medium','Motion blur','Trabecular detail and cortical margins appear unsharp.','Immobilize, shorten exposure time when possible, and repeat with clear breathing instructions.');
     addErr('tip','Insufficient collimation/centering','Excessive field size lowers contrast or clips key anatomy at edges.','Tight-collimate to the area of interest and center to the protocol CR point.');
 
-    return errs.slice(0,5);
+    return errs.slice(0,MAX_ERRORS);
   }
 
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
   function inferEvaluationCriteria(pName, d, checks, chapterId){
+    const MIN_VALID_STORED_CRITERIA = 3; // Fewer than 3 lines is usually incomplete and less useful than generated fallback.
     // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
     // MIN_WORD_COUNT + MAX_SHORT_NOISE_RATIO filters short-token garbage from OCR table headers.
     // MAX_DIGIT_LETTER_RATIO filters lines dominated by mixed numeric labels rather than full sentences.
-    const MIN_CRITERIA_LENGTH = 18;
-    const MIN_WORD_COUNT = 4;
-    const MAX_SHORT_NOISE_RATIO = 0.35;
-    const MAX_DIGIT_LETTER_RATIO = 0.4;
+    const MIN_CRITERIA_LENGTH = 18; // Filters ultra-short fragments/header leftovers.
+    const MIN_WORD_COUNT = 4; // Keeps sentence-like criteria only.
+    const MAX_SHORT_NOISE_RATIO = 0.35; // Above this ratio, short-token OCR noise likely dominates.
+    const MAX_DIGIT_LETTER_RATIO = 0.4; // High digit density usually indicates non-sentence table artifacts.
     const sanitizeStoredEvaluationCriteria=(raw)=>{
       if(!Array.isArray(raw) || !raw.length) return [];
       const seen = new Set();
@@ -4099,7 +4101,7 @@ function openPos(pos, chId, scId, posIdx){
     };
 
     const storedCriteria = sanitizeStoredEvaluationCriteria(pos.evaluationCriteria);
-    if(storedCriteria.length >= 3){
+    if(storedCriteria.length >= MIN_VALID_STORED_CRITERIA){
       return storedCriteria;
     }
     const criteria=[];
