@@ -3977,7 +3977,7 @@ function openPos(pos, chId, scId, posIdx){
   const customErrors=info.customErrors||[]; // Dev-defined errors with severity
   const decisionTree=info.decisionTree||''; // Decision tree text
   const ERROR_PATTERNS = {
-    rotation:/rotat|oblique|lateral|internal|external/,
+    rotation:/rotat|oblique|true\s+lateral/,
     superimposition:/superimpos|mortise|joint/,
     angulation:/angle|angl|axial|cephalad|caudad|perpendicular/,
     weightBearing:/weight.?bearing|stress|standing|erect/,
@@ -4015,20 +4015,23 @@ function openPos(pos, chId, scId, posIdx){
   // ── Common errors — use stored or infer ──
   function inferErrors(d,pName){
     const MAX_ERRORS = 5;
-    const normalizeSev = (sev) => ({high:'high',medium:'medium',tip:'tip'})[(sev||'').toLowerCase()] || 'high';
+    const DEFAULT_CUSTOM_ERROR_VISUAL = 'Image quality or positioning finding is inconsistent with protocol.';
+    const DEFAULT_CUSTOM_ERROR_FIX = 'Reposition and repeat according to the standard protocol.';
+    const SEVERITY_MAP = {high:'high',medium:'medium',tip:'tip'};
+    const normalizeSev = (sev) => SEVERITY_MAP[(sev||'').toLowerCase()] || 'high';
     const normalizedCustomErrors = Array.isArray(customErrors)
       ? customErrors.map((e)=>{
           if(!e) return null;
           if(typeof e === 'string'){
-            return {severity:'medium',err:e.trim(),visual:'Image quality or positioning finding is inconsistent with protocol.',fix:'Reposition and repeat according to the standard protocol.'};
+            return {severity:'medium',err:e.trim(),visual:DEFAULT_CUSTOM_ERROR_VISUAL,fix:DEFAULT_CUSTOM_ERROR_FIX};
           }
           const errText = String(e.err||'').trim();
           if(!errText) return null;
           return {
             severity: normalizeSev(e.severity),
             err: errText,
-            visual: String(e.visual||'Image quality or positioning finding is inconsistent with protocol.').trim(),
-            fix: String(e.fix||'Reposition and repeat according to the standard protocol.').trim()
+            visual: String(e.visual||DEFAULT_CUSTOM_ERROR_VISUAL).trim(),
+            fix: String(e.fix||DEFAULT_CUSTOM_ERROR_FIX).trim()
           };
         }).filter(Boolean)
       : [];
@@ -4062,10 +4065,10 @@ function openPos(pos, chId, scId, posIdx){
     // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
     // MIN_WORD_COUNT + MAX_SHORT_NOISE_RATIO filters short-token garbage from OCR table headers.
     // MAX_DIGIT_LETTER_RATIO filters lines dominated by mixed numeric labels rather than full sentences.
-    const MIN_CRITERIA_LENGTH = 18; // Filters ultra-short fragments/header leftovers.
+    const MIN_CRITERIA_LENGTH = 18; // Filters ultra-short fragments/header leftovers from OCR.
     const MIN_WORD_COUNT = 4; // Keeps sentence-like criteria only.
-    const MAX_SHORT_NOISE_RATIO = 0.35; // Above this ratio, short-token OCR noise likely dominates.
-    const MAX_DIGIT_LETTER_RATIO = 0.4; // High digit density usually indicates non-sentence table artifacts.
+    const MAX_SHORT_NOISE_RATIO = 0.35; // Tuned from current data: OCR-table rows often exceed ~35% short invalid tokens.
+    const MAX_DIGIT_LETTER_RATIO = 0.4; // Tuned from current data: OCR-table artifacts often contain dense numeric labels.
     const sanitizeStoredEvaluationCriteria=(raw)=>{
       if(!Array.isArray(raw) || !raw.length) return [];
       const seen = new Set();
@@ -4080,10 +4083,11 @@ function openPos(pos, chId, scId, posIdx){
         const words=line.split(/\s+/).filter(Boolean);
         if(words.length < MIN_WORD_COUNT) return true;
         const invalidShortWordCount=words.filter(w=>w.length<=2 && !VALID_SHORT_CRITERIA_WORDS.has(w.toLowerCase())).length;
-        if(invalidShortWordCount >= MIN_WORD_COUNT && invalidShortWordCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
+        if(invalidShortWordCount > 0 && invalidShortWordCount / words.length > MAX_SHORT_NOISE_RATIO) return true;
         const letters=(line.match(/[a-z]/gi)||[]).length;
         const digits=(line.match(/\d/g)||[]).length;
         if(letters > 0 && digits > 0 && digits / letters > MAX_DIGIT_LETTER_RATIO) return true;
+        // OCR often leaks isolated side labels (e.g., "R L" / "L R") from table columns into sentence lines.
         if(/(^|\s)(r|l)\s+(r|l)(\s|$)/i.test(line)) return true;
         // Repeated "Anatomy Demonstrated" phrase in one line usually comes from OCR-merged table rows/headers.
         if(/\b(anatomy demonstrated)\b.*\b\1\b/i.test(line.toLowerCase())) return true;
