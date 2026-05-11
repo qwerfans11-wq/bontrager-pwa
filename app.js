@@ -6022,28 +6022,36 @@ const _AI_CR_NOT_STATED='Not stated';
 const _AI_UNKNOWN_CHAPTER_RANK_OFFSET=1;
 const _AI_STUDY_CHAPTER_ORDER=['upper_limb','lower_limb','chest','bony_thorax','abdomen','spine'];
 
-function _aiGetUnknownStudyChapterRank(){
-  return _AI_STUDY_CHAPTER_ORDER.length+Object.keys(BOOK).length+_AI_UNKNOWN_CHAPTER_RANK_OFFSET;
+function _aiBuildStudyChapterRankMap(){
+  const rankMap=new Map();
+  _AI_STUDY_CHAPTER_ORDER.forEach((chId,idx)=>rankMap.set(chId,idx));
+  let nextRank=_AI_STUDY_CHAPTER_ORDER.length;
+  Object.keys(BOOK).forEach(chId=>{
+    if(!rankMap.has(chId)){
+      rankMap.set(chId,nextRank);
+      nextRank++;
+    }
+  });
+  return rankMap;
 }
 
-function _aiGetStudyChapterRank(chId){
-  const idx=_AI_STUDY_CHAPTER_ORDER.indexOf(chId);
-  if(idx!==-1) return idx;
-  const fallbackIdx=Object.keys(BOOK).indexOf(chId);
-  return fallbackIdx===-1 ? _aiGetUnknownStudyChapterRank() : _AI_STUDY_CHAPTER_ORDER.length+fallbackIdx;
-}
-
-function _aiSortStudyRows(a,b){
-  const typeRankA=a.pos.type==='routine'?0:1;
-  const typeRankB=b.pos.type==='routine'?0:1;
-  if(typeRankA!==typeRankB) return typeRankA-typeRankB;
-  const chapterRankDiff=_aiGetStudyChapterRank(a.chId)-_aiGetStudyChapterRank(b.chId);
-  if(chapterRankDiff!==0) return chapterRankDiff;
-  const chapterNameDiff=String(a.chapter||'').localeCompare(String(b.chapter||''));
-  if(chapterNameDiff!==0) return chapterNameDiff;
-  const subNameDiff=String(a.sub||'').localeCompare(String(b.sub||''));
-  if(subNameDiff!==0) return subNameDiff;
-  return String(a.pos?.name||'').localeCompare(String(b.pos?.name||''));
+function _aiGetStudyRowSorter(){
+  const chapterRankMap=_aiBuildStudyChapterRankMap();
+  const unknownChapterRank=chapterRankMap.size+_AI_UNKNOWN_CHAPTER_RANK_OFFSET;
+  return (a,b)=>{
+    const typeRankA=a.pos.type==='routine'?0:1;
+    const typeRankB=b.pos.type==='routine'?0:1;
+    if(typeRankA!==typeRankB) return typeRankA-typeRankB;
+    const chapterRankA=chapterRankMap.has(a.chId)?chapterRankMap.get(a.chId):unknownChapterRank;
+    const chapterRankB=chapterRankMap.has(b.chId)?chapterRankMap.get(b.chId):unknownChapterRank;
+    const chapterRankDiff=chapterRankA-chapterRankB;
+    if(chapterRankDiff!==0) return chapterRankDiff;
+    const chapterNameDiff=String(a.chapter||'').localeCompare(String(b.chapter||''));
+    if(chapterNameDiff!==0) return chapterNameDiff;
+    const subNameDiff=String(a.sub||'').localeCompare(String(b.sub||''));
+    if(subNameDiff!==0) return subNameDiff;
+    return String(a.pos?.name||'').localeCompare(String(b.pos?.name||''));
+  };
 }
 
 function _aiExtractCRAngleText(crText){
@@ -6091,9 +6099,10 @@ function _aiHasCRAngulation(crText){
 
 function _aiBuildCRAngulationStudyTable(){
   const all=_aiGetAllPositions().filter(({pos})=>_aiHasCRAngulation(pos.info?.cr));
+  const sorter=_aiGetStudyRowSorter();
   const byType={
-    routine:all.filter(x=>x.pos.type==='routine').sort(_aiSortStudyRows),
-    special:all.filter(x=>x.pos.type==='special').sort(_aiSortStudyRows),
+    routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
+    special:all.filter(x=>x.pos.type==='special').sort(sorter),
   };
   const mkTable=(title,rows)=>{
     if(!rows.length) return '';
@@ -6127,9 +6136,10 @@ function _aiBuildCRAngulationStudyTable(){
 
 function _aiBuildCRPointStudyTable(){
   const all=_aiGetAllPositions().filter(({pos})=>String(pos.info?.cr||'').trim());
+  const sorter=_aiGetStudyRowSorter();
   const byType={
-    routine:all.filter(x=>x.pos.type==='routine').sort(_aiSortStudyRows),
-    special:all.filter(x=>x.pos.type==='special').sort(_aiSortStudyRows),
+    routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
+    special:all.filter(x=>x.pos.type==='special').sort(sorter),
   };
   const mkTable=(title,rows)=>{
     if(!rows.length) return '';
