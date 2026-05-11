@@ -10132,17 +10132,23 @@ _loadQuizSettings();
 // TRANSLATION FEATURE — Text Selection → Arabic Translation Side Panel
 // ═══════════════════════════════════════════════════════════════════
 (function(){
+  var MAX_TRANSLATION_CHARS = 500; // MyMemory free tier limit per request
+
   var _selText = '';
   var _popupEl = null;
   var _panelEl = null;
   var _overlayEl = null;
-  var _hidePopupTimer = null;
+  var _copyBtnOriginalHTML = null;
 
   function _init(){
     _popupEl  = document.getElementById('selPopup');
     _panelEl  = document.getElementById('trPanel');
     _overlayEl = document.getElementById('trPanelOverlay');
     if(!_popupEl || !_panelEl) return;
+
+    // Cache the copy button's original HTML for reset after copy feedback
+    var copyBtn = document.getElementById('trCopyBtn');
+    if(copyBtn) _copyBtnOriginalHTML = copyBtn.innerHTML;
 
     document.addEventListener('mouseup',  _onSelectionChange);
     document.addEventListener('touchend', _onSelectionChange);
@@ -10159,7 +10165,7 @@ _loadQuizSettings();
     }, 300);
   }
 
-  function _onSelectionChange(e){
+  function _onSelectionChange(){
     // Small delay to let the selection finalise
     setTimeout(function(){
       var sel = window.getSelection();
@@ -10254,7 +10260,7 @@ _loadQuizSettings();
         setTimeout(function(){
           if(btn){
             btn.classList.remove('copied');
-            btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> نسخ الترجمة';
+            if(_copyBtnOriginalHTML) btn.innerHTML = _copyBtnOriginalHTML;
           }
         }, 2000);
       });
@@ -10264,28 +10270,27 @@ _loadQuizSettings();
   function _fetchTranslation(text, cb){
     // Use MyMemory free translation API (no key needed, 1000 words/day free)
     var url = 'https://api.mymemory.translated.net/get?q=' +
-              encodeURIComponent(text.substring(0, 500)) +
+              encodeURIComponent(text.substring(0, MAX_TRANSLATION_CHARS)) +
               '&langpair=en%7Car';
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.timeout = 10000;
-    xhr.onload = function(){
-      if(xhr.status === 200){
-        try {
-          var data = JSON.parse(xhr.responseText);
-          if(data && data.responseData && data.responseData.translatedText){
-            cb(null, data.responseData.translatedText);
-          } else {
-            cb('لم يتم استلام الترجمة');
-          }
-        } catch(e){ cb('خطأ في تحليل الاستجابة'); }
-      } else {
-        cb('خطأ في الاتصال بالخادم (' + xhr.status + ')');
-      }
-    };
-    xhr.onerror   = function(){ cb('تعذّر الاتصال بخدمة الترجمة'); };
-    xhr.ontimeout = function(){ cb('انتهت مهلة الاتصال، حاول مرة أخرى'); };
-    xhr.send();
+    fetch(url, { signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined })
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        if(data && data.responseData && data.responseData.translatedText){
+          cb(null, data.responseData.translatedText);
+        } else {
+          cb('لم يتم استلام الترجمة');
+        }
+      })
+      .catch(function(err){
+        if(err && err.name === 'AbortError'){
+          cb('انتهت مهلة الاتصال، حاول مرة أخرى');
+        } else {
+          cb('تعذّر الاتصال بخدمة الترجمة');
+        }
+      });
   }
 
   // Initialise after DOM is ready
