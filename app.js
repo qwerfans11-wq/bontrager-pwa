@@ -10184,12 +10184,13 @@ _loadQuizSettings();
     _positionPopup(sel);
   }
 
+  function _isEmptyRect(r){
+    return !r || (r.width === 0 && r.height === 0);
+  }
+
   function _positionPopup(sel){
     if(!_popupEl) return;
     if(!sel || sel.rangeCount < 1){ _hidePopup(); return; }
-    function _isEmptyRect(r){
-      return !r || (r.width === 0 && r.height === 0);
-    }
     var range = sel.getRangeAt(0);
     var rect  = range.getBoundingClientRect();
     if(_isEmptyRect(rect) && typeof range.getClientRects === 'function'){
