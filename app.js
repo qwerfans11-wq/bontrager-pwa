@@ -3986,6 +3986,7 @@ function openPos(pos, chId, scId, posIdx){
   // Allowed short radiography abbreviations in criteria lines:
   // AP/PA projections, IR image receptor, CR central ray, IP/MCP joints, SID source-image distance, kV/kVp, and "no".
   const VALID_SHORT_CRITERIA_WORDS = new Set(['ap','pa','ir','cr','ip','mcp','sid','kv','kvp','no']);
+  const MAX_EVALUATION_CRITERIA = 10;
 
   // ── Infer position setup from desc ──
   function _splitDescSentences(d){
@@ -4003,12 +4004,12 @@ function openPos(pos, chId, scId, posIdx){
   }
   function extractPartPos(d){
     const s=_splitDescSentences(d);
-    const part=s.find(x=>/(rotate|flex|extend|abduct|adduct|pronat|supinat|align|oblique|lateral|axial|center)/i.test(x) && !/\bcr\b/i.test(x));
+    const part=s.find(x=>/(rotate|flex|extend|abduct|adduct|pronation|supination|supinate|pronat|supinat|align|oblique|lateral|axial|center)/i.test(x) && !/\bcr\b/i.test(x));
     return part||'Align the part to protocol and avoid unintended rotation.';
   }
   function extractAnatomyFocus(d,pName){
     const s=_splitDescSentences(d);
-    const anatomy=s.find(x=>/demonstrates?|shows?|visuali[sz]es?|include/i.test(x));
+    const anatomy=s.find(x=>/demonstrates?|shows?|visuali[sz]es?|includes?/i.test(x));
     return anatomy||`Target anatomy for ${pName} is demonstrated as required.`;
   }
 
@@ -4165,7 +4166,7 @@ function openPos(pos, chId, scId, posIdx){
       if(/weight\s*-?bearing|stress/i.test(pName+' '+d)) push('Weight-bearing/stress condition is true and consistent with protocol intent at exposure time.');
     }
 
-    return criteria.slice(0,10);
+    return criteria.slice(0,MAX_EVALUATION_CRITERIA);
   }
 
   const evalCriteria = inferEvaluationCriteria(posName, desc, correctChecks, chId, cr);
