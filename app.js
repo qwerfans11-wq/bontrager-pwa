@@ -3986,11 +3986,31 @@ function openPos(pos, chId, scId, posIdx){
   // Allowed short radiography abbreviations in criteria lines:
   // AP/PA projections, IR image receptor, CR central ray, IP/MCP joints, SID source-image distance, kV/kVp, and "no".
   const VALID_SHORT_CRITERIA_WORDS = new Set(['ap','pa','ir','cr','ip','mcp','sid','kv','kvp','no']);
+  const MAX_EVALUATION_CRITERIA = 10;
 
   // ── Infer position setup from desc ──
+  function _splitDescSentences(d){
+    return String(d||'')
+      .split('.')
+      .map(s=>s.replace(/\s+/g,' ').trim())
+      .filter(Boolean);
+  }
   function extractPatientPos(d){
-    const m=d.match(/patient\s+([^.]{5,80})\./i);
-    return m?m[1].trim():'See description below.';
+    const s=_splitDescSentences(d);
+    const explicit=s.find(x=>/patient\s+/i.test(x));
+    if(explicit) return explicit.replace(/^patient\s+/i,'').trim();
+    const fallback=s.find(x=>/seated|standing|supine|prone|erect|recumbent|decubitus/i.test(x));
+    return fallback||'See positioning description below.';
+  }
+  function extractPartPos(d){
+    const s=_splitDescSentences(d);
+    const part=s.find(x=>/(rotate|flex|extend|abduct|adduct|pronation|supination|supinate|pronat|supinat|align|oblique|lateral|axial|center)/i.test(x) && !/\bcr\b/i.test(x));
+    return part||'Align the part to protocol and avoid unintended rotation.';
+  }
+  function extractAnatomyFocus(d,pName){
+    const s=_splitDescSentences(d);
+    const anatomy=s.find(x=>/demonstrates?|shows?|visuali[sz]es?|includes?/i.test(x));
+    return anatomy||`Target anatomy for ${pName} is demonstrated as required.`;
   }
 
   // ── "Image is correct if" — infer or use stored ──
@@ -4060,8 +4080,7 @@ function openPos(pos, chId, scId, posIdx){
 
   const correctChecks=inferCorrectIf(desc,cr,posName);
   const commonErrors=inferErrors(desc,posName);
-  function inferEvaluationCriteria(pName, d, checks, chapterId){
-    const MIN_VALID_STORED_CRITERIA = 3; // Fewer than 3 lines is usually incomplete and less useful than generated fallback.
+  function inferEvaluationCriteria(pName, d, checks, chapterId, crVal){
     // Heuristics to reject OCR-fragmented criteria lines while preserving concise clinical statements.
     // MIN_WORD_COUNT + MAX_SHORT_NOISE_RATIO filters short-token garbage from OCR table headers.
     // MAX_DIGIT_LETTER_RATIO filters lines dominated by mixed numeric labels rather than full sentences.
@@ -4105,16 +4124,30 @@ function openPos(pos, chId, scId, posIdx){
     };
 
     const storedCriteria = sanitizeStoredEvaluationCriteria(pos.evaluationCriteria);
-    if(storedCriteria.length >= MIN_VALID_STORED_CRITERIA){
-      return storedCriteria;
-    }
     const criteria=[];
     const push=(line)=>{ if(line && !criteria.includes(line)) criteria.push(line); };
+    const sentence=(line)=>{
+      const t=String(line||'').replace(/\s+/g,' ').trim();
+      if(!t) return '';
+      return /[.!?]$/.test(t) ? t : `${t}.`;
+    };
 
-    checks.slice(0,3).forEach(push);
-    push('Relevant anatomy of interest is fully included with tight collimation.');
-    push('No patient motion; cortical margins and joint outlines are sharp.');
-    push('Correct side marker and projection orientation are present and readable.');
+    const patientPosLine = extractPatientPos(d);
+    const partPosLine = extractPartPos(d);
+    const anatomyLine = extractAnatomyFocus(d,pName);
+
+    push(`Anatomy: ${sentence(anatomyLine)}`);
+    push(`Patient Position: ${sentence(patientPosLine)}`);
+    push(`Part Position: ${sentence(partPosLine)}`);
+    if(crVal) push(`CR: ${sentence(crVal)}`);
+    if(info.ir) push(`IR: ${sentence(info.ir)}`);
+    if(info.sid) push(`SID: ${sentence(info.sid)}`);
+    if(info.resp) push(`Respiration: ${sentence(info.resp)}`);
+
+    checks.slice(0,3).forEach(c=>push(`Image Check: ${sentence(c)}`));
+    storedCriteria.slice(0,3).forEach(c=>push(`Reference Check: ${sentence(c)}`));
+    push('Exposure: Optimal density and contrast with no motion; cortical margins and trabecular detail are sharp.');
+    push('Safety/ID: Correct side marker and projection orientation are present and readable.');
 
     if(/oblique/i.test(pName+' '+d)) push('Required obliquity is achieved (usually about 45 degrees unless specified).');
     if(/lateral/i.test(pName+' '+d)) push('True lateral is verified by expected superimposition landmarks.');
@@ -4133,10 +4166,10 @@ function openPos(pos, chId, scId, posIdx){
       if(/weight\s*-?bearing|stress/i.test(pName+' '+d)) push('Weight-bearing/stress condition is true and consistent with protocol intent at exposure time.');
     }
 
-    return criteria.slice(0,6);
+    return criteria.slice(0,MAX_EVALUATION_CRITERIA);
   }
 
-  const evalCriteria = inferEvaluationCriteria(posName, desc, correctChecks, chId);
+  const evalCriteria = inferEvaluationCriteria(posName, desc, correctChecks, chId, cr);
   const hasEvaluationCriteria = Array.isArray(evalCriteria) && evalCriteria.length > 0;
 
   // ── Quick Tech card removed (content is in Fast Clinical Summary) ──
@@ -4160,6 +4193,18 @@ function openPos(pos, chId, scId, posIdx){
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-eval)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> kVp</span><span class="fast-val">${kv||'—'}</span></div>
       <div class="fast-row"><span class="fast-key" style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-clinical)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Resp</span><span class="fast-val">${resp||'N/A'}</span></div>
     </div>`;
+
+  const patientPosText=extractPatientPos(desc);
+  const partPosText=extractPartPos(desc);
+  const anatomyFocusText=extractAnatomyFocus(desc,posName);
+  const positionBreakdownHtml=`
+    <div class="fast-summary" style="margin-top:0">
+      <div class="fast-row"><span class="fast-key">Patient Position</span><span class="fast-val">${esc(patientPosText)}</span></div>
+      <div class="fast-row"><span class="fast-key">Part Position</span><span class="fast-val">${esc(partPosText)}</span></div>
+      <div class="fast-row"><span class="fast-key">CR</span><span class="fast-val">${esc(cr||'Perpendicular to IR')}</span></div>
+      <div class="fast-row"><span class="fast-key">Anatomy Focus</span><span class="fast-val">${esc(anatomyFocusText)}</span></div>
+    </div>
+    <div class="pos-sec-block position-blk">${desc||'No description available.'}</div>`;
 
   // ── Correct If box ──
   const correctIfHtml=`
@@ -4290,7 +4335,7 @@ function openPos(pos, chId, scId, posIdx){
     ${fastSummaryHtml}
     <div id="layer-position">
       <div class="pos-sec-hdr position-hdr"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Patient &amp; Part Position</div>
-      <div class="pos-sec-block position-blk">${desc||'No description available.'}</div>
+      ${positionBreakdownHtml}
     </div>
     <div id="layer-cr">${correctIfHtml}</div>
     <div id="layer-evaluation">${evalCriteriaHtml}</div>
