@@ -166,6 +166,16 @@ const CH10_PAGE_IMAGE_MAP = (typeof window !== 'undefined')
   ? (window.CH10_PAGE_IMAGE_MAP || Object.create(null))
   : Object.create(null);
 
+// CH11 images and page-image map are loaded from external JS data file.
+if(typeof window !== 'undefined'){
+  if(window.CH11_INLINE_IMAGE_DATA){
+    Object.assign(INLINE_IMAGE_DATA, window.CH11_INLINE_IMAGE_DATA);
+  }
+}
+const CH11_PAGE_IMAGE_MAP = (typeof window !== 'undefined')
+  ? (window.CH11_PAGE_IMAGE_MAP || Object.create(null))
+  : Object.create(null);
+
 // Keep viewport height in sync for mobile browser chrome changes.
 function _setAppViewportHeight(){
   if(typeof document === 'undefined') return;
@@ -430,6 +440,7 @@ function _getImagesForPos(posRef){
     const isCh8Pos = _lookupPageStart(CH8_POSITION_PAGE_START, lookupName) === pageStart;
     const isCh9Pos = _lookupPageStart(CH9_POSITION_PAGE_START, lookupName) === pageStart;
     const isCh10Pos = _lookupPageStart(CH10_POSITION_PAGE_START, lookupName) === pageStart;
+    const isCh11Pos = _lookupPageStart(CH11_POSITION_PAGE_START, lookupName) === pageStart;
     if(isCh2Pos && CH2_PAGE_IMAGE_MAP && CH2_PAGE_IMAGE_MAP[pageStart] && CH2_PAGE_IMAGE_MAP[pageStart].length){
       return {positions: CH2_PAGE_IMAGE_MAP[pageStart].slice(), xrays: []};
     }
@@ -456,6 +467,9 @@ function _getImagesForPos(posRef){
     }
     if(isCh10Pos && CH10_PAGE_IMAGE_MAP && CH10_PAGE_IMAGE_MAP[pageStart] && CH10_PAGE_IMAGE_MAP[pageStart].length){
       return {positions: CH10_PAGE_IMAGE_MAP[pageStart].slice(), xrays: []};
+    }
+    if(isCh11Pos && CH11_PAGE_IMAGE_MAP && CH11_PAGE_IMAGE_MAP[pageStart] && CH11_PAGE_IMAGE_MAP[pageStart].length){
+      return {positions: CH11_PAGE_IMAGE_MAP[pageStart].slice(), xrays: []};
     }
   }
 
