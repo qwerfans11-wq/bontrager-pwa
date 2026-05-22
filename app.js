@@ -1825,10 +1825,10 @@ const CH10_POSITION_PAGE_START = {
 
 // Reference PDF pagination for Chapter 11 (Cranium, Facial Bones and Paranasal Sinuses).
 const CH11_POSITION_PAGE_START = {
-  "PA Axial Projection — Caldwell Method (Cranium)": 38,
-  "AP Axial Projection — Towne Method (Cranium)": 39,
-  "PA Axial Projection — Haas Method (Cranium)": 40,
-  "Lateral Projection — Cranium": 41,
+  "PA Axial Projection — Caldwell Method (Cranium)": 40,
+  "AP Axial Projection — Towne Method (Cranium)": 38,
+  "PA Axial Projection — Haas Method (Cranium)": 43,
+  "Lateral Projection — Cranium": 39,
   "Parietoacanthial Projection — Waters Method (Facial Bones)": 43,
   "Parietoacanthial Projection — Modified Waters (Facial Bones)": 44,
   "Parieto-Orbital Oblique Projection — Rhese Method": 45,
