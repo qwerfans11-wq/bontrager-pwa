@@ -1825,17 +1825,17 @@ const CH10_POSITION_PAGE_START = {
 
 // Reference PDF pagination for Chapter 11 (Cranium, Facial Bones and Paranasal Sinuses).
 const CH11_POSITION_PAGE_START = {
-  "PA Axial Projection — Caldwell Method (Cranium)": 13,
-  "AP Axial Projection — Towne Method (Cranium)": 14,
-  "PA Axial Projection — Haas Method (Cranium)": 15,
-  "Lateral Projection — Cranium": 16,
-  "Parietoacanthial Projection — Waters Method (Facial Bones)": 18,
-  "Parietoacanthial Projection — Modified Waters (Facial Bones)": 19,
-  "Parieto-Orbital Oblique Projection — Rhese Method": 20,
-  "Lateral Projection — Facial Bones": 21,
-  "PA Axial Projection — Caldwell Method (Paranasal Sinuses)": 22,
-  "Parietoacanthial Projection — Waters Method (Open Mouth Sinuses)": 23,
-  "Lateral Projection — Paranasal Sinuses": 24,
+  "PA Axial Projection — Caldwell Method (Cranium)": 38,
+  "AP Axial Projection — Towne Method (Cranium)": 39,
+  "PA Axial Projection — Haas Method (Cranium)": 40,
+  "Lateral Projection — Cranium": 41,
+  "Parietoacanthial Projection — Waters Method (Facial Bones)": 43,
+  "Parietoacanthial Projection — Modified Waters (Facial Bones)": 44,
+  "Parieto-Orbital Oblique Projection — Rhese Method": 45,
+  "Lateral Projection — Facial Bones": 46,
+  "PA Axial Projection — Caldwell Method (Paranasal Sinuses)": 47,
+  "Parietoacanthial Projection — Waters Method (Open Mouth Sinuses)": 48,
+  "Lateral Projection — Paranasal Sinuses": 49,
 };
 
 (function applyCraniumChapter11ReferencePages(){

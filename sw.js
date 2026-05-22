@@ -5,6 +5,7 @@ const APP_SHELL = [
   './styles.css',
   './app.js',
   './manifest.webmanifest',
+  './data/ch11/ch11-data.js',
   './anatomy-images/head-neck-skull.svg',
   './anatomy-images/thorax-lungs-heart.svg',
   './anatomy-images/thorax-bony-cage.svg',
@@ -183,4 +184,3 @@ self.addEventListener('message', event => {
 });
 
 console.log('✅ Service Worker loaded and ready');
-
