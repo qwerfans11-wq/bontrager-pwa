@@ -1357,6 +1357,37 @@ const BOOK = {
       }
     }
   },
+  cranium:{
+    name:'Cranium, Facial Bones & Paranasal Sinuses',icon:'💀',
+    subchapters:{
+      cranium:{
+        name:'Cranium',icon:'💀',
+        positions:[
+          {name:'PA Axial Projection — Caldwell Method (Cranium)',type:'routine',info:{desc:'PA axial projection for frontal bone and anterior cranial fossa evaluation. Patient prone or erect facing IR with nose and forehead against IR. OML perpendicular to IR. CR 15° caudad exiting nasion.',cr:'15° caudad, exiting nasion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Frontal bone and anterior cranial fossa are demonstrated.','Petrous ridges should be in lower third of orbits for correct angulation.','No rotation: equal distance from lateral skull margins to orbit edges.','Exposure should show sharp cortical detail with no motion blur.']},
+          {name:'AP Axial Projection — Towne Method (Cranium)',type:'routine',info:{desc:'AP axial projection to demonstrate occipital region and foramen magnum. Patient supine or erect with chin tucked to align OML perpendicular when possible. CR angled 30° caudad to OML (or 37° to IOML), centered 2.5 inches above glabella to pass through foramen magnum.',cr:'30° caudad to OML (or 37° to IOML), 2.5 inches above glabella',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Occipital bone and foramen magnum are demonstrated.','Dorsum sellae and posterior clinoids should project within foramen magnum.','No tilt or rotation of skull should be present.','Bony margins should be sharp with adequate contrast.']},
+          {name:'PA Axial Projection — Haas Method (Cranium)',type:'special',info:{desc:'PA axial reverse Towne method for patients unable to perform AP Towne. Patient prone with forehead and nose on IR. OML perpendicular to IR. CR angled 25° cephalad to OML, entering 1.5 inches below inion and exiting about 1.5 inches above nasion.',cr:'25° cephalad to OML, entering 1.5 inches below inion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Occipital bone is demonstrated in PA axial projection.','Foramen magnum and dorsum sellae should be visualized.','Symmetric appearance indicates no rotation.','Exposure should clearly show trabecular and cortical detail.']},
+          {name:'Lateral Projection — Cranium',type:'routine',info:{desc:'True lateral skull projection for cranial vault and sella turcica evaluation. Patient in lateral position with IPL perpendicular and IOML parallel to IR. CR perpendicular, directed 2 inches superior to EAM.',cr:'Perpendicular to IR, 2 inches superior to EAM',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Entire cranium including frontal to occipital region is included.','Sella turcica should be seen in profile.','Superimposed orbital roofs and mandibular rami indicate true lateral.','No motion and clear bony margins are demonstrated.']},
+        ]
+      },
+      facial_bones:{
+        name:'Facial Bones',icon:'🦷',
+        positions:[
+          {name:'Parietoacanthial Projection — Waters Method (Facial Bones)',type:'routine',info:{desc:'Parietoacanthial projection for maxillary sinuses, orbits, and zygomatic bones. Patient erect or prone with chin extended so MML is perpendicular to IR. CR perpendicular to IR, exiting acanthion.',cr:'Perpendicular to IR, exiting acanthion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'70–80 kVp',resp:'Suspended respiration'},evaluationCriteria:['Maxillary sinuses and facial bones are well demonstrated.','Petrous ridges should project just below maxillary sinuses.','No rotation: equal distance from lateral orbital margins to skull.','Exposure should demonstrate facial bone detail without blur.']},
+          {name:'Parietoacanthial Projection — Modified Waters (Facial Bones)',type:'special',info:{desc:'Modified Waters projection for orbital floor assessment with less neck extension. Position similar to Waters with LML nearly perpendicular to IR. CR perpendicular, exiting acanthion.',cr:'Perpendicular to IR, exiting acanthion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'70–80 kVp',resp:'Suspended respiration'},evaluationCriteria:['Orbital floors and inferior orbital rims are demonstrated.','Petrous ridges should project in lower half of maxillary sinuses.','Symmetry of orbits indicates no rotation.','Bony margins should be sharp and diagnostic.']},
+          {name:'Parieto-Orbital Oblique Projection — Rhese Method',type:'special',info:{desc:'Parieto-orbital oblique projection for optic canal demonstration. Patient prone or erect facing IR with head rotated into true oblique. AML perpendicular to IR. CR perpendicular, directed to downside optic foramen.',cr:'Perpendicular to IR, directed to downside optic foramen',ir:'18×24 cm — portrait',sid:'100 cm (40 in)',kv:'70–80 kVp',resp:'Suspended respiration'},evaluationCriteria:['Optic canal should be visualized in lower outer quadrant of orbit.','Correct 53° obliquity is confirmed by optic foramen position.','No unwanted tilt of skull should be present.','Fine orbital bone detail should be visible.']},
+          {name:'Lateral Projection — Facial Bones',type:'routine',info:{desc:'True lateral projection of facial bones and nasal region. Patient in true lateral with IPL perpendicular and IOML parallel to IR. CR perpendicular to zygoma midway between outer canthus and EAM.',cr:'Perpendicular to zygoma midway between outer canthus and EAM',ir:'18×24 cm — portrait',sid:'100 cm (40 in)',kv:'70–80 kVp',resp:'Suspended respiration'},evaluationCriteria:['Facial bones, nasal bones, and zygomatic region are included.','Orbital roofs and mandibular rami should be superimposed.','No rotation or tilt should be evident.','Exposure should clearly show cortical outlines.']},
+        ]
+      },
+      paranasal_sinuses:{
+        name:'Paranasal Sinuses',icon:'🫧',
+        positions:[
+          {name:'PA Axial Projection — Caldwell Method (Paranasal Sinuses)',type:'routine',info:{desc:'PA axial sinus projection to evaluate frontal and anterior ethmoid sinuses. Patient erect to show fluid levels. OML perpendicular to IR. CR 15° caudad, exiting nasion.',cr:'15° caudad, exiting nasion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Frontal and anterior ethmoid sinuses are demonstrated.','Petrous ridges should project in lower third of orbits.','Erect positioning is required for fluid level evaluation.','No rotation with sharp bony sinus margins.']},
+          {name:'Parietoacanthial Projection — Waters Method (Open Mouth Sinuses)',type:'special',info:{desc:'Open-mouth Waters method to demonstrate sphenoid sinus in addition to maxillary sinuses. Position as Waters with patient opening mouth during exposure. CR perpendicular, exiting acanthion.',cr:'Perpendicular to IR, exiting acanthion',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration with mouth open'},evaluationCriteria:['Maxillary sinuses are clearly demonstrated.','Sphenoid sinus should be projected through open mouth.','Petrous ridges should lie below maxillary sinuses.','No rotation; sinus walls and fluid levels should be sharp.']},
+          {name:'Lateral Projection — Paranasal Sinuses',type:'routine',info:{desc:'Lateral sinus projection to evaluate all sinus groups and detect air-fluid levels. Patient erect in true lateral. IPL perpendicular and IOML parallel to IR. CR perpendicular to EAM region.',cr:'Perpendicular, directed to EAM region',ir:'24×30 cm — portrait',sid:'100 cm (40 in)',kv:'75–85 kVp',resp:'Suspended respiration'},evaluationCriteria:['Frontal, maxillary, sphenoid, and ethmoid sinus regions are included.','Erect projection allows air-fluid level assessment.','Superimposed orbital roofs confirm true lateral position.','Exposure should provide clear sinus wall and air-fluid detail.']},
+        ]
+      },
+    }
+  },
   abdomen:{
     name:'Abdomen',icon:'\ud83e\udec3',
     positions:[
@@ -1771,6 +1802,37 @@ const CH10_POSITION_PAGE_START = {
     if(!Array.isArray(positions)) return;
     positions.forEach(pos=>{
       const pg = _lookupPageStart(CH10_POSITION_PAGE_START, pos.name);
+      if(!pg) return;
+      pos.info = pos.info || {};
+      pos.info.pageStart = pg;
+    });
+  });
+})();
+
+// Reference PDF pagination for Chapter 11 (Cranium, Facial Bones and Paranasal Sinuses).
+const CH11_POSITION_PAGE_START = {
+  "PA Axial Projection — Caldwell Method (Cranium)": 13,
+  "AP Axial Projection — Towne Method (Cranium)": 14,
+  "PA Axial Projection — Haas Method (Cranium)": 15,
+  "Lateral Projection — Cranium": 16,
+  "Parietoacanthial Projection — Waters Method (Facial Bones)": 18,
+  "Parietoacanthial Projection — Modified Waters (Facial Bones)": 19,
+  "Parieto-Orbital Oblique Projection — Rhese Method": 20,
+  "Lateral Projection — Facial Bones": 21,
+  "PA Axial Projection — Caldwell Method (Paranasal Sinuses)": 22,
+  "Parietoacanthial Projection — Waters Method (Open Mouth Sinuses)": 23,
+  "Lateral Projection — Paranasal Sinuses": 24,
+};
+
+(function applyCraniumChapter11ReferencePages(){
+  const cranium = BOOK.cranium && BOOK.cranium.subchapters;
+  if(!cranium) return;
+  const includeSubchapters = ['cranium','facial_bones','paranasal_sinuses'];
+  includeSubchapters.forEach(scId=>{
+    const positions = cranium[scId] && cranium[scId].positions;
+    if(!Array.isArray(positions)) return;
+    positions.forEach(pos=>{
+      const pg = _lookupPageStart(CH11_POSITION_PAGE_START, pos.name);
       if(!pg) return;
       pos.info = pos.info || {};
       pos.info.pageStart = pg;
@@ -2552,6 +2614,7 @@ function _getBonbookPdfForPos(chId, scId){
     return 'bonbook/Chapter_08_Cervical_and_Thoracic_Spine.pdf';
   }
   if(chId === 'bony_thorax') return 'bonbook/Chapter_10_Bony_Thorax_Sternum_and_Ribs.pdf';
+  if(chId === 'cranium') return 'bonbook/Chapter_11_Cranium_Facial_Bones_and_Paranasal_Sinuses.pdf';
   return null;
 }
 
