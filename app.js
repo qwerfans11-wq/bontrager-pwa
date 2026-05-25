@@ -9992,7 +9992,7 @@ function navigateAnatomyRegion(dir){
     'works offline · no internet needed':'يعمل بدون اتصال · لا يحتاج إنترنت',
     'install bontrager positioning':'ثبّت تطبيق Bontrager Positioning'
   });
-  var MEDICAL_TERM_AR_MAP = Object.freeze({
+  var MEDICAL_ABBR_AR_MAP = Object.freeze({
     'cr':'الشعاع المركزي (CR)',
     'ir':'المستقبل الصوري (IR)',
     'sid':'مسافة المصدر إلى المستقبل (SID)',
@@ -10000,7 +10000,9 @@ function navigateAnatomyRegion(dir){
     'mas':'الملي أمبير-ثانية (mAs)',
     'ap':'إسقاط أمامي-خلفي (AP)',
     'pa':'إسقاط خلفي-أمامي (PA)',
-    'lat':'إسقاط جانبي (LAT)',
+    'lat':'إسقاط جانبي (LAT)'
+  });
+  var MEDICAL_TERM_AR_MAP = Object.freeze({
     'lateral':'جانبي',
     'oblique':'مائل',
     'central ray':'الشعاع المركزي',
@@ -10113,12 +10115,12 @@ function navigateAnatomyRegion(dir){
 
   function _getDirectMedicalTranslation(text){
     var normalized = _normalizeText(text);
-    return MEDICAL_TERM_AR_MAP[normalized] || '';
+    return MEDICAL_ABBR_AR_MAP[normalized] || MEDICAL_TERM_AR_MAP[normalized] || '';
   }
 
   function _lookupArabicTerm(key){
     var normKey = _normalizeText(key);
-    return STATIC_UI_AR_MAP[normKey] || MEDICAL_TERM_AR_MAP[normKey] || '';
+    return STATIC_UI_AR_MAP[normKey] || MEDICAL_ABBR_AR_MAP[normKey] || MEDICAL_TERM_AR_MAP[normKey] || '';
   }
 
   function _translateWordsFallback(text){
