@@ -10032,14 +10032,14 @@ function navigateAnatomyRegion(dir){
     var value = String(text || '');
     var trimmed = value.trim();
     if(trimmed.length < 2 || trimmed.length > MAX_TRANSLATE_CHARS) return false;
-    if(!_hasLatin(trimmed)) return false;
+    if(!_hasAsciiLetters(trimmed)) return false;
     if(/https?:\/\/|www\.|@[a-z0-9]/i.test(trimmed)) return false;
     if(/[{}[\]<>]/.test(trimmed)) return false;
     if(/\.(png|jpe?g|svg|gif|webp|js|css|json|pdf)\b/i.test(trimmed)) return false;
     return true;
   }
 
-  function _hasLatin(text){
+  function _hasAsciiLetters(text){
     return /[A-Za-z]/.test(String(text || ''));
   }
 
@@ -10153,7 +10153,7 @@ function navigateAnatomyRegion(dir){
     var base = (root && root.nodeType === 1) ? root : document.body;
     if(!base || !base.querySelectorAll) return;
     var nodes = base.querySelectorAll('input,button,a,label,[placeholder],[title],[aria-label]');
-    nodes.forEach(function(el){
+    Array.prototype.forEach.call(nodes, function(el){
       if(el.id === 'appLangFloatBtn') return;
       if(el.closest && el.closest('.lang-float-btn')) return;
 
