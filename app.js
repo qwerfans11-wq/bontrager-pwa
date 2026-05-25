@@ -10096,12 +10096,14 @@ function navigateAnatomyRegion(dir){
   function _expandMedicalAbbreviations(text){
     var out = String(text || '');
     if(!_medicalExpansionReplacers){
-      _medicalExpansionReplacers = Object.keys(MEDICAL_EXPANSION_MAP).map(function(abbr){
-        return {
-          re: new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'gi'),
-          value: MEDICAL_EXPANSION_MAP[abbr]
-        };
-      });
+      _medicalExpansionReplacers = Object.keys(MEDICAL_EXPANSION_MAP)
+        .sort(function(a, b){ return b.length - a.length; })
+        .map(function(abbr){
+          return {
+            re: new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'g'),
+            value: MEDICAL_EXPANSION_MAP[abbr]
+          };
+        });
     }
     _medicalExpansionReplacers.forEach(function(entry){
       out = out.replace(entry.re, entry.value);
