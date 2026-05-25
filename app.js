@@ -10125,7 +10125,7 @@ window.setTranslationProvider = function(providerId){
   var FLOAT_BTN_POS_KEY = 'bontrager_lang_float_pos_v1';
   // Keep draggable FAB safely inside viewport on all devices.
   var FLOAT_BUTTON_MARGIN_PX = 8;
-  // Matches .lang-float-btn CSS base size for pre-layout drag math fallback.
+  // Matches .lang-float-btn size in styles.css for drag math fallback before layout settles.
   var FLOAT_BUTTON_DEFAULT_WIDTH = 44;
   var FLOAT_BUTTON_DEFAULT_HEIGHT = 44;
   // Minimum pointer movement before a drag is treated as intentional.
@@ -10216,6 +10216,7 @@ window.setTranslationProvider = function(providerId){
   var _medicalTermReplacers = null;
   var _medicalExpansionReplacers = null;
   var _skipNextToggleClick = false;
+  var _hasCustomFloatPosition = false;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10581,6 +10582,7 @@ window.setTranslationProvider = function(providerId){
     _floatBtn.style.left = pos.left + 'px';
     _floatBtn.style.top = pos.top + 'px';
     _floatBtn.style.right = 'auto';
+    _hasCustomFloatPosition = true;
   }
 
   function _loadFloatButtonPosition(){
@@ -10664,8 +10666,8 @@ window.setTranslationProvider = function(providerId){
     }
 
     window.addEventListener('resize', function(){
+      if(!_hasCustomFloatPosition) return;
       var rect = _floatBtn.getBoundingClientRect();
-      if(!_floatBtn.style.left) return;
       var pos = _clampFloatPos(rect.left, rect.top);
       _applyFloatButtonPosition(pos.left, pos.top);
       _saveFloatButtonPosition(pos.left, pos.top);
@@ -11135,7 +11137,7 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_LIMIT = 300;
   // Hidden reset: 7 taps within 8s balances deliberate activation vs accidental taps.
   var SECRET_TAP_COUNT_THRESHOLD = 7;
-  var SECRET_TAP_TIMEOUT_MS = 8000;
+  var SECRET_TAP_TIMEOUT_MS = 8 * 1000;
   // Split text into tokens by whitespace and common punctuation marks.
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
   // Arabic text meaning: "(Offline translation - approximate)"
@@ -11363,7 +11365,7 @@ _loadQuizSettings();
       _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_TIMEOUT_MS);
       if(_secretTapCount < SECRET_TAP_COUNT_THRESHOLD) return;
       _resetSecretTapCounter();
-      var approved = confirm('Delete all cached translations from app storage?');
+      var approved = confirm('Clear all cached translations from app storage?');
       if(!approved) return;
       _clearTranslationArchiveCache();
       if(typeof _showToast === 'function'){
