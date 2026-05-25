@@ -10210,7 +10210,7 @@ window.setTranslationProvider = function(providerId){
   var _elementOriginalAttrs = new Map();
   var _medicalTermReplacers = null;
   var _medicalExpansionReplacers = null;
-  var _suppressNextToggleClick = false;
+  var _skipNextToggleClick = false;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10636,7 +10636,7 @@ window.setTranslationProvider = function(providerId){
       if(moved){
         var rect = _floatBtn.getBoundingClientRect();
         _saveFloatButtonPosition(rect.left, rect.top);
-        _suppressNextToggleClick = true;
+        _skipNextToggleClick = true;
         if(ev && ev.cancelable) ev.preventDefault();
       }
       moved = false;
@@ -10695,8 +10695,8 @@ window.setTranslationProvider = function(providerId){
     _loadFloatButtonPosition();
     _bindFloatButtonDrag();
     _floatBtn.addEventListener('click', function(){
-      if(_suppressNextToggleClick){
-        _suppressNextToggleClick = false;
+      if(_skipNextToggleClick){
+        _skipNextToggleClick = false;
         return;
       }
       _setArabicMode(!_arabicModeEnabled);
@@ -11128,6 +11128,7 @@ _loadQuizSettings();
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
   // Hidden reset requires 7 taps in quick succession to avoid accidental activation.
+  // 8 seconds gives enough time for deliberate taps while still resetting quickly.
   var SECRET_TAP_COUNT_THRESHOLD = 7;
   var SECRET_TAP_TIMEOUT_MS = 8000;
   // Split text into tokens by whitespace and common punctuation marks.
@@ -11357,7 +11358,7 @@ _loadQuizSettings();
       _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_TIMEOUT_MS);
       if(_secretTapCount < SECRET_TAP_COUNT_THRESHOLD) return;
       _resetSecretTapCounter();
-      var approved = confirm('Delete all saved translation cache entries? This will clear all cached translations from app storage.');
+      var approved = confirm('Delete all cached translations from app storage?');
       if(!approved) return;
       _clearTranslationArchiveCache();
       if(typeof _showToast === 'function'){
