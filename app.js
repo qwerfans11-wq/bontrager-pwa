@@ -10062,6 +10062,9 @@ function navigateAnatomyRegion(dir){
 
   function _translateTextToArabic(text){
     var sourceText = String(text || '');
+    if(sourceText.length > MAX_TRANSLATE_CHARS){
+      sourceText = sourceText.slice(0, MAX_TRANSLATE_CHARS);
+    }
     if(!_shouldTranslateText(sourceText) || _isArabicText(sourceText)) return Promise.resolve(sourceText);
 
     var norm = _normalizeText(sourceText);
@@ -10084,14 +10087,14 @@ function navigateAnatomyRegion(dir){
     }
 
     var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sourceText) + '&langpair=en%7Car';
-    var canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
+    var supportsAbortSignalTimeout = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
     var hasAbortController = (typeof AbortController !== 'undefined');
     var timeoutMs = 9000;
     var timer = null;
     var controller = null;
     var signal = undefined;
 
-    if(canTimeoutSignal){
+    if(supportsAbortSignalTimeout){
       signal = AbortSignal.timeout(timeoutMs);
     } else if(hasAbortController){
       controller = new AbortController();
@@ -10278,11 +10281,11 @@ function navigateAnatomyRegion(dir){
     if(_arabicModeEnabled){
       _floatBtn.textContent = 'EN';
       _floatBtn.setAttribute('aria-label', 'Current language: Arabic. Switch to English');
-      _floatBtn.title = 'English';
+      _floatBtn.title = 'Switch to English';
     } else {
       _floatBtn.textContent = 'AR';
       _floatBtn.setAttribute('aria-label', 'Current language: English. Switch to Arabic');
-      _floatBtn.title = 'Arabic';
+      _floatBtn.title = 'Switch to Arabic';
     }
   }
 

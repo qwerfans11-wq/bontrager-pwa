@@ -97,7 +97,7 @@
 .dark .nav-item.active svg{stroke:var(--accent)}
 body{font-family:var(--font);font-weight:var(--font-weight);background:var(--bg2);color:var(--text);font-size:var(--base-fs);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em}
 body.app-arabic-mode{
-  --font:'Cairo', 'Tajawal', 'Noto Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif;
+  --font: 'Cairo', 'Tajawal', 'Noto Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif;
   letter-spacing:0;
 }
 body.app-arabic-mode input,
