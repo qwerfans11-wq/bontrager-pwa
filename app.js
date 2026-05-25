@@ -9992,6 +9992,31 @@ function navigateAnatomyRegion(dir){
     'works offline · no internet needed':'يعمل بدون اتصال · لا يحتاج إنترنت',
     'install bontrager positioning':'ثبّت تطبيق Bontrager Positioning'
   });
+  var MEDICAL_TERM_AR_MAP = Object.freeze({
+    'cr':'الشعاع المركزي (CR)',
+    'ir':'المستقبل الصوري (IR)',
+    'sid':'مسافة المصدر إلى المستقبل (SID)',
+    'kvp':'الكيلو فولت الذروي (kVp)',
+    'mas':'الملي أمبير-ثانية (mAs)',
+    'ap':'إسقاط أمامي-خلفي (AP)',
+    'pa':'إسقاط خلفي-أمامي (PA)',
+    'lat':'إسقاط جانبي (LAT)',
+    'lateral':'جانبي',
+    'oblique':'مائل',
+    'central ray':'الشعاع المركزي',
+    'image receptor':'المستقبل الصوري',
+    'source to image distance':'مسافة المصدر إلى المستقبل'
+  });
+  var MEDICAL_EXPANSION_MAP = Object.freeze({
+    'CR':'CR (central ray)',
+    'IR':'IR (image receptor)',
+    'SID':'SID (source to image distance)',
+    'kVp':'kVp (kilovoltage peak)',
+    'mAs':'mAs (milliampere-second)',
+    'AP':'AP (anteroposterior projection)',
+    'PA':'PA (posteroanterior projection)',
+    'LAT':'LAT (lateral projection)'
+  });
 
   var _appArCache = Object.create(null);
   var _inFlight = Object.create(null);
@@ -10044,13 +10069,45 @@ function navigateAnatomyRegion(dir){
     return /[A-Za-z]/.test(String(text || ''));
   }
 
+  function _escapeRegExp(value){
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function _replaceMedicalTerms(text){
+    var out = String(text || '');
+    var keys = Object.keys(MEDICAL_TERM_AR_MAP).sort(function(a, b){ return b.length - a.length; });
+    keys.forEach(function(key){
+      var re = new RegExp('\\b' + _escapeRegExp(key) + '\\b', 'gi');
+      out = out.replace(re, MEDICAL_TERM_AR_MAP[key]);
+    });
+    return out;
+  }
+
+  function _expandMedicalAbbreviations(text){
+    var out = String(text || '');
+    Object.keys(MEDICAL_EXPANSION_MAP).forEach(function(abbr){
+      var re = new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'g');
+      out = out.replace(re, MEDICAL_EXPANSION_MAP[abbr]);
+    });
+    return out;
+  }
+
+  function _getDirectMedicalTranslation(text){
+    var normalized = _normalizeText(text);
+    return MEDICAL_TERM_AR_MAP[normalized] || '';
+  }
+
   function _translateWordsFallback(text){
     var src = String(text || '');
     if(!src) return src;
     var translatedAny = false;
-    var out = src.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
+    var out = _replaceMedicalTerms(src);
+    if(out !== src){
+      translatedAny = true;
+    }
+    out = out.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
       var key = _normalizeText(match);
-      var mapped = STATIC_UI_AR_MAP[key];
+      var mapped = STATIC_UI_AR_MAP[key] || MEDICAL_TERM_AR_MAP[key];
       if(mapped){
         translatedAny = true;
         return mapped;
@@ -10070,6 +10127,11 @@ function navigateAnatomyRegion(dir){
     var norm = _normalizeText(sourceText);
     if(!norm) return Promise.resolve(sourceText);
 
+    var directMedical = _getDirectMedicalTranslation(sourceText);
+    if(directMedical){
+      return Promise.resolve(directMedical);
+    }
+
     if(STATIC_UI_AR_MAP[norm]){
       return Promise.resolve(STATIC_UI_AR_MAP[norm]);
     }
@@ -10086,7 +10148,8 @@ function navigateAnatomyRegion(dir){
       return Promise.resolve(_translateWordsFallback(sourceText));
     }
 
-    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sourceText) + '&langpair=en%7Car';
+    var apiSourceText = _expandMedicalAbbreviations(sourceText);
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(apiSourceText) + '&langpair=en%7Car';
     var supportsAbortSignalTimeout = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
     var hasAbortController = (typeof AbortController !== 'undefined');
     var timeoutMs = 9000;
@@ -10112,6 +10175,8 @@ function navigateAnatomyRegion(dir){
         var translated = data && data.responseData && data.responseData.translatedText ? String(data.responseData.translatedText).trim() : '';
         if(!translated){
           translated = _translateWordsFallback(sourceText);
+        } else {
+          translated = _replaceMedicalTerms(translated);
         }
         if(translated && translated !== sourceText){
           _appArCache[norm] = translated;
