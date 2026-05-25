@@ -10025,7 +10025,7 @@ function navigateAnatomyRegion(dir){
   }
 
   function _isArabicText(text){
-    return /[\u0600-\u06FF]/.test(String(text || ''));
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(String(text || ''));
   }
 
   function _shouldTranslateText(text){
@@ -10139,7 +10139,7 @@ function navigateAnatomyRegion(dir){
     var base = (root && root.nodeType === 1) ? root : document.body;
     var list = [];
     if(!base) return list;
-    var walker = document.createTreeWalker(base, NodeFilter.SHOW_TEXT, null);
+    var walker = document.createTreeWalker(base, NodeFilter.SHOW_TEXT);
     var current;
     while((current = walker.nextNode())){
       if(_shouldSkipNode(current)) continue;
@@ -10152,7 +10152,7 @@ function navigateAnatomyRegion(dir){
   function _translateAttributes(root){
     var base = (root && root.nodeType === 1) ? root : document.body;
     if(!base || !base.querySelectorAll) return;
-    var nodes = base.querySelectorAll('*');
+    var nodes = base.querySelectorAll('input,button,a,label,[placeholder],[title],[aria-label]');
     nodes.forEach(function(el){
       if(el.id === 'appLangFloatBtn') return;
       if(el.closest && el.closest('.lang-float-btn')) return;
@@ -10194,6 +10194,12 @@ function navigateAnatomyRegion(dir){
     });
   }
 
+  function _shouldCaptureOriginalText(node){
+    if(!_nodeOriginalText.has(node)) return true;
+    var original = _nodeOriginalText.get(node);
+    return original !== node.textContent && !_isArabicText(node.textContent);
+  }
+
   function _translateRoot(root){
     var target = root || document.body;
     if(!target) return;
@@ -10201,7 +10207,7 @@ function navigateAnatomyRegion(dir){
 
     _translateAttributes(target);
     _collectTextNodes(target).forEach(function(node){
-      if(!_nodeOriginalText.has(node) || (_nodeOriginalText.get(node) !== node.textContent && !_isArabicText(node.textContent))){
+      if(_shouldCaptureOriginalText(node)){
         _nodeOriginalText.set(node, node.textContent);
       }
       var source = _nodeOriginalText.get(node);
