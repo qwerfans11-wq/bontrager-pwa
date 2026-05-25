@@ -9939,6 +9939,181 @@ function navigateAnatomyRegion(dir){
 
 }());
 
+// ═══════════════════════════════════════════════════════════════════
+// SHARED TRANSLATOR PROVIDER SETTINGS
+// ═══════════════════════════════════════════════════════════════════
+const BONTRAGER_TRANSLATION_PROVIDER_KEY = 'bontrager_translation_provider_v1';
+const BONTRAGER_TRANSLATION_PROVIDERS = Object.freeze([
+  { id:'mymemory', label:'MyMemory (Translation Memory)', shortLabel:'MyMemory' },
+  { id:'googlefree', label:'Google Free Endpoint', shortLabel:'Google Free' },
+  { id:'libretranslate_de', label:'LibreTranslate.de', shortLabel:'LibreTranslate.de' },
+  { id:'argos', label:'Argos OpenTech LibreTranslate', shortLabel:'Argos OpenTech' }
+]);
+
+function _bontragerResolveTranslationProvider(providerId){
+  const fallback = BONTRAGER_TRANSLATION_PROVIDERS[0];
+  if(!providerId) return fallback;
+  return BONTRAGER_TRANSLATION_PROVIDERS.find(function(item){ return item.id === providerId; }) || fallback;
+}
+
+function _bontragerGetTranslationProviderId(){
+  try{
+    return _bontragerResolveTranslationProvider(localStorage.getItem(BONTRAGER_TRANSLATION_PROVIDER_KEY)).id;
+  }catch(err){
+    return BONTRAGER_TRANSLATION_PROVIDERS[0].id;
+  }
+}
+
+function _bontragerSetTranslationProviderId(providerId){
+  const resolved = _bontragerResolveTranslationProvider(providerId);
+  try{
+    localStorage.setItem(BONTRAGER_TRANSLATION_PROVIDER_KEY, resolved.id);
+  }catch(err){}
+  if(typeof window !== 'undefined'){
+    window.dispatchEvent(new CustomEvent('bontrager:translation-provider-changed', {
+      detail: { providerId: resolved.id }
+    }));
+  }
+  return resolved.id;
+}
+
+function _bontragerProviderChain(preferredId){
+  const preferred = _bontragerResolveTranslationProvider(preferredId).id;
+  const chain = [preferred];
+  BONTRAGER_TRANSLATION_PROVIDERS.forEach(function(item){
+    if(item.id !== preferred) chain.push(item.id);
+  });
+  return chain;
+}
+
+function _bontragerFetchWithTimeout(url, options, timeoutMs){
+  const canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
+  const hasAbortController = (typeof AbortController !== 'undefined');
+  const timeout = Number(timeoutMs) > 0 ? Number(timeoutMs) : 10000;
+  let timer = null;
+  let controller = null;
+  let signal = options && options.signal;
+  if(!signal){
+    if(canTimeoutSignal){
+      signal = AbortSignal.timeout(timeout);
+    } else if(hasAbortController){
+      controller = new AbortController();
+      signal = controller.signal;
+      timer = setTimeout(function(){ controller.abort(); }, timeout);
+    }
+  }
+  const opts = Object.assign({}, options || {}, { signal: signal });
+  return fetch(url, opts).finally(function(){
+    if(timer) clearTimeout(timer);
+  });
+}
+
+function _bontragerTranslateViaProvider(providerId, sourceText, timeoutMs){
+  const text = String(sourceText || '').trim();
+  if(!text) return Promise.reject(new Error('EMPTY_TEXT'));
+  const provider = _bontragerResolveTranslationProvider(providerId).id;
+
+  if(provider === 'mymemory'){
+    const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=en%7Car';
+    return _bontragerFetchWithTimeout(url, {}, timeoutMs)
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        const translated = data && data.responseData && data.responseData.translatedText
+          ? String(data.responseData.translatedText).trim()
+          : '';
+        if(!translated) throw new Error('EMPTY_TRANSLATION');
+        return translated;
+      });
+  }
+
+  if(provider === 'googlefree'){
+    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=' + encodeURIComponent(text);
+    return _bontragerFetchWithTimeout(url, {}, timeoutMs)
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        if(!Array.isArray(data) || !Array.isArray(data[0])) throw new Error('INVALID_RESPONSE');
+        const translated = data[0]
+          .map(function(chunk){ return Array.isArray(chunk) ? chunk[0] : ''; })
+          .join('')
+          .trim();
+        if(!translated) throw new Error('EMPTY_TRANSLATION');
+        return translated;
+      });
+  }
+
+  const endpoint = provider === 'argos'
+    ? 'https://translate.argosopentech.com/translate'
+    : (provider === 'libretranslate_de'
+      ? 'https://libretranslate.de/translate'
+      : null);
+  if(!endpoint){
+    return Promise.reject(new Error('UNSUPPORTED_PROVIDER'));
+  }
+  return _bontragerFetchWithTimeout(endpoint, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      q: text,
+      source: 'en',
+      target: 'ar',
+      format: 'text'
+    })
+  }, timeoutMs)
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data){
+      const translated = data && data.translatedText ? String(data.translatedText).trim() : '';
+      if(!translated) throw new Error('EMPTY_TRANSLATION');
+      return translated;
+    });
+}
+
+function _bontragerTranslateWithFallback(sourceText, options){
+  const opts = options || {};
+  const preferredId = _bontragerResolveTranslationProvider(opts.preferredProviderId || _bontragerGetTranslationProviderId()).id;
+  const chain = opts.allowFallback === false ? [preferredId] : _bontragerProviderChain(preferredId);
+  let idx = 0;
+  let lastErr = null;
+  function run(){
+    if(idx >= chain.length){
+      return Promise.reject(lastErr || new Error('TRANSLATION_FAILED'));
+    }
+    const providerId = chain[idx++];
+    return _bontragerTranslateViaProvider(providerId, sourceText, opts.timeoutMs)
+      .then(function(translatedText){
+        return {
+          translatedText: translatedText,
+          providerId: providerId,
+          providerLabel: _bontragerResolveTranslationProvider(providerId).label
+        };
+      })
+      .catch(function(err){
+        lastErr = err;
+        return run();
+      });
+  }
+  return run();
+}
+
+window.setTranslationProvider = function(providerId){
+  const selectedId = _bontragerSetTranslationProviderId(providerId);
+  const select = document.getElementById('translationProviderSelect');
+  if(select && select.value !== selectedId) select.value = selectedId;
+  const provider = _bontragerResolveTranslationProvider(selectedId);
+  if(typeof _showToast === 'function'){
+    _showToast('Translation engine set to ' + provider.shortLabel, '#15803d');
+  }
+  return selectedId;
+};
+
 /* ══════════════════════════════════════════════
    APP-WIDE ARABIC MODE (FLOAT BUTTON)
 ══════════════════════════════════════════════ */
@@ -9947,6 +10122,14 @@ function navigateAnatomyRegion(dir){
 
   var APP_AR_MODE_KEY = 'bontrager_app_ar_mode_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
+  var FLOAT_BTN_POS_KEY = 'bontrager_lang_float_pos_v1';
+  // Keep draggable FAB safely inside viewport on all devices.
+  var FLOAT_BUTTON_MARGIN_PX = 8;
+  // Matches .lang-float-btn size in styles.css for drag math fallback before layout settles.
+  var FLOAT_BUTTON_DEFAULT_WIDTH = 44;
+  var FLOAT_BUTTON_DEFAULT_HEIGHT = 44;
+  // Minimum pointer movement before a drag is treated as intentional.
+  var FLOAT_BUTTON_DRAG_THRESHOLD_PX = 5;
   var MAX_TRANSLATE_CHARS = 1200;
   var TRANSLATE_DEBOUNCE_MS = 120;
   var ATTRS_TO_TRANSLATE = ['placeholder','title','aria-label'];
@@ -10032,6 +10215,8 @@ function navigateAnatomyRegion(dir){
   var _elementOriginalAttrs = new Map();
   var _medicalTermReplacers = null;
   var _medicalExpansionReplacers = null;
+  var _skipNextToggleClick = false;
+  var _hasCustomFloatPosition = false;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10161,12 +10346,15 @@ function navigateAnatomyRegion(dir){
       return Promise.resolve(STATIC_UI_AR_MAP[norm]);
     }
 
-    if(_appArCache[norm]){
-      return Promise.resolve(_appArCache[norm]);
+    var providerId = _bontragerGetTranslationProviderId();
+    var providerCacheKey = providerId + '::' + norm;
+
+    if(_appArCache[providerCacheKey]){
+      return Promise.resolve(_appArCache[providerCacheKey]);
     }
 
-    if(_inFlight[norm]){
-      return _inFlight[norm];
+    if(_inFlight[providerCacheKey]){
+      return _inFlight[providerCacheKey];
     }
 
     if(typeof navigator !== 'undefined' && navigator.onLine === false){
@@ -10174,50 +10362,31 @@ function navigateAnatomyRegion(dir){
     }
 
     var apiSourceText = _expandMedicalAbbreviations(sourceText);
-    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(apiSourceText) + '&langpair=en%7Car';
-    var supportsAbortSignalTimeout = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
-    var hasAbortController = (typeof AbortController !== 'undefined');
-    var timeoutMs = 9000;
-    var timer = null;
-    var controller = null;
-    var signal = undefined;
-
-    if(supportsAbortSignalTimeout){
-      signal = AbortSignal.timeout(timeoutMs);
-    } else if(hasAbortController){
-      controller = new AbortController();
-      signal = controller.signal;
-      timer = setTimeout(function(){ controller.abort(); }, timeoutMs);
-    }
-
-    _inFlight[norm] = fetch(url, { signal: signal })
-      .then(function(res){
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function(data){
-        if(timer) clearTimeout(timer);
-        var translated = data && data.responseData && data.responseData.translatedText ? String(data.responseData.translatedText).trim() : '';
+    _inFlight[providerCacheKey] = _bontragerTranslateWithFallback(apiSourceText, {
+      preferredProviderId: providerId,
+      timeoutMs: 9000
+    })
+      .then(function(result){
+        var translated = result && result.translatedText ? String(result.translatedText).trim() : '';
         if(!translated){
           translated = _translateWordsFallback(sourceText);
         } else {
           translated = _replaceMedicalTerms(translated);
         }
         if(translated && translated !== sourceText){
-          _appArCache[norm] = translated;
+          _appArCache[providerCacheKey] = translated;
           _saveCache();
         }
         return translated || sourceText;
       })
       .catch(function(){
-        if(timer) clearTimeout(timer);
         return _translateWordsFallback(sourceText);
       })
       .finally(function(){
-        delete _inFlight[norm];
+        delete _inFlight[providerCacheKey];
       });
 
-    return _inFlight[norm];
+    return _inFlight[providerCacheKey];
   }
 
   function _shouldSkipNode(node){
@@ -10385,6 +10554,126 @@ function navigateAnatomyRegion(dir){
     }catch(err){}
   }
 
+  function _saveFloatButtonPosition(left, top){
+    try{
+      localStorage.setItem(FLOAT_BTN_POS_KEY, JSON.stringify({
+        left: Math.round(left),
+        top: Math.round(top)
+      }));
+    }catch(err){}
+  }
+
+  function _clampFloatPos(left, top){
+    if(!_floatBtn) return { left:left, top:top };
+    var margin = FLOAT_BUTTON_MARGIN_PX;
+    var width = _floatBtn.offsetWidth || FLOAT_BUTTON_DEFAULT_WIDTH;
+    var height = _floatBtn.offsetHeight || FLOAT_BUTTON_DEFAULT_HEIGHT;
+    var maxLeft = Math.max(margin, window.innerWidth - width - margin);
+    var maxTop = Math.max(margin, window.innerHeight - height - margin);
+    return {
+      left: Math.min(maxLeft, Math.max(margin, Math.round(left))),
+      top: Math.min(maxTop, Math.max(margin, Math.round(top)))
+    };
+  }
+
+  function _applyFloatButtonPosition(left, top){
+    if(!_floatBtn) return;
+    var pos = _clampFloatPos(left, top);
+    _floatBtn.style.left = pos.left + 'px';
+    _floatBtn.style.top = pos.top + 'px';
+    _floatBtn.style.right = 'auto';
+    _hasCustomFloatPosition = true;
+  }
+
+  function _loadFloatButtonPosition(){
+    if(!_floatBtn) return;
+    try{
+      var raw = localStorage.getItem(FLOAT_BTN_POS_KEY);
+      if(!raw) return;
+      var parsed = JSON.parse(raw);
+      if(!parsed || typeof parsed !== 'object') return;
+      if(!Number.isFinite(Number(parsed.left)) || !Number.isFinite(Number(parsed.top))) return;
+      _applyFloatButtonPosition(Number(parsed.left), Number(parsed.top));
+    }catch(err){}
+  }
+
+  function _bindFloatButtonDrag(){
+    if(!_floatBtn) return;
+    var startX = 0;
+    var startY = 0;
+    var baseLeft = 0;
+    var baseTop = 0;
+    var dragging = false;
+    var moved = false;
+
+    function onDown(ev){
+      var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
+      var rect = _floatBtn.getBoundingClientRect();
+      startX = point.clientX;
+      startY = point.clientY;
+      baseLeft = rect.left;
+      baseTop = rect.top;
+      moved = false;
+      dragging = true;
+      _floatBtn.classList.add('dragging');
+      if(ev && ev.cancelable) ev.preventDefault();
+      if(ev.type === 'pointerdown' && _floatBtn.setPointerCapture){
+        try{ _floatBtn.setPointerCapture(ev.pointerId); }catch(err){}
+      }
+    }
+
+    function onMove(ev){
+      if(!dragging) return;
+      var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
+      var dx = point.clientX - startX;
+      var dy = point.clientY - startY;
+      if(!moved && (Math.abs(dx) > FLOAT_BUTTON_DRAG_THRESHOLD_PX || Math.abs(dy) > FLOAT_BUTTON_DRAG_THRESHOLD_PX)){
+        moved = true;
+      }
+      if(!moved) return;
+      if(ev.cancelable) ev.preventDefault();
+      var nextLeft = baseLeft + dx;
+      var nextTop = baseTop + dy;
+      _applyFloatButtonPosition(nextLeft, nextTop);
+    }
+
+    function onUp(ev){
+      if(!dragging) return;
+      dragging = false;
+      _floatBtn.classList.remove('dragging');
+      if(moved){
+        var rect = _floatBtn.getBoundingClientRect();
+        _saveFloatButtonPosition(rect.left, rect.top);
+        _skipNextToggleClick = true;
+        if(ev && ev.cancelable) ev.preventDefault();
+      }
+      moved = false;
+    }
+
+    if(window.PointerEvent){
+      _floatBtn.addEventListener('pointerdown', onDown);
+      window.addEventListener('pointermove', onMove, { passive:false });
+      window.addEventListener('pointerup', onUp, { passive:false });
+      window.addEventListener('pointercancel', onUp, { passive:false });
+    } else {
+      _floatBtn.addEventListener('mousedown', onDown);
+      window.addEventListener('mousemove', onMove, { passive:false });
+      window.addEventListener('mouseup', onUp, { passive:false });
+      _floatBtn.addEventListener('touchstart', onDown, { passive:false });
+      window.addEventListener('touchmove', onMove, { passive:false });
+      window.addEventListener('touchend', onUp, { passive:false });
+      window.addEventListener('touchcancel', onUp, { passive:false });
+    }
+
+    window.addEventListener('resize', function(){
+      if(!_hasCustomFloatPosition) return;
+      var rect = _floatBtn.getBoundingClientRect();
+      var pos = _clampFloatPos(rect.left, rect.top);
+      _applyFloatButtonPosition(pos.left, pos.top);
+      _saveFloatButtonPosition(pos.left, pos.top);
+    }, { passive:true });
+  }
+
   function _setArabicMode(enabled){
     _arabicModeEnabled = !!enabled;
 
@@ -10411,8 +10700,19 @@ function navigateAnatomyRegion(dir){
     if(!_floatBtn) return;
 
     _loadCache();
+    _loadFloatButtonPosition();
+    _bindFloatButtonDrag();
     _floatBtn.addEventListener('click', function(){
+      if(_skipNextToggleClick){
+        _skipNextToggleClick = false;
+        return;
+      }
       _setArabicMode(!_arabicModeEnabled);
+    });
+
+    window.addEventListener('bontrager:translation-archive-cleared', function(){
+      _appArCache = Object.create(null);
+      _saveCache();
     });
 
     var shouldStartArabic = false;
@@ -10833,7 +11133,11 @@ _loadQuizSettings();
 (function(){
   var MAX_TRANSLATION_CHARS = 500; // MyMemory max characters per translation request
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
+  var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
+  // Hidden reset: 7 taps within 8s balances deliberate activation vs accidental taps.
+  var SECRET_TAP_COUNT_THRESHOLD = 7;
+  var SECRET_TAP_TIMEOUT_MS = 8000; // 8 seconds tap window.
   // Split text into tokens by whitespace and common punctuation marks.
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
   // Arabic text meaning: "(Offline translation - approximate)"
@@ -10919,6 +11223,8 @@ _loadQuizSettings();
   var _panelEl = null;
   var _overlayEl = null;
   var _copyBtnOriginalHTML = null;
+  var _secretTapCount = 0;
+  var _secretTapTimer = null;
 
   function _init(){
     _popupEl  = document.getElementById('selPopup');
@@ -10933,6 +11239,13 @@ _loadQuizSettings();
     document.addEventListener('mouseup',  _onSelectionChange);
     document.addEventListener('touchend', _onSelectionChange);
     document.addEventListener('selectionchange', _onSelectionChangeLazy);
+    _syncTranslationProviderSelect();
+    _initTranslationArchiveSecret();
+    window.addEventListener('bontrager:translation-provider-changed', function(ev){
+      var providerId = ev && ev.detail && ev.detail.providerId ? ev.detail.providerId : _getSelectedProviderId();
+      _updatePanelProviderText(providerId);
+      _syncTranslationProviderSelect();
+    });
   }
 
   // Debounce for selectionchange (fires many times on mobile)
@@ -11000,6 +11313,69 @@ _loadQuizSettings();
     if(_popupEl) _popupEl.style.display = 'none';
   }
 
+  function _getSelectedProviderId(){
+    return _bontragerGetTranslationProviderId();
+  }
+
+  function _cacheKeyForProvider(sourceText, providerId){
+    var norm = _normalizeText(sourceText);
+    if(!norm) return '';
+    return _bontragerResolveTranslationProvider(providerId).id + '::' + norm;
+  }
+
+  function _updatePanelProviderText(providerId){
+    var footerTextEl = document.getElementById('trPanelProviderText');
+    if(!footerTextEl) return;
+    var provider = _bontragerResolveTranslationProvider(providerId || _getSelectedProviderId());
+    footerTextEl.textContent = 'مدعوم بواسطة ' + provider.shortLabel + ' + ترجمة محلية بدون إنترنت';
+  }
+
+  function _syncTranslationProviderSelect(){
+    var select = document.getElementById('translationProviderSelect');
+    if(!select) return;
+    var providerId = _getSelectedProviderId();
+    if(select.value !== providerId){
+      select.value = providerId;
+    }
+    _updatePanelProviderText(providerId);
+  }
+
+  function _clearTranslationArchiveCache(){
+    try{ localStorage.removeItem(TRANSLATION_CACHE_KEY); }catch(e){}
+    try{ localStorage.removeItem(APP_AR_CACHE_KEY); }catch(e){}
+    if(typeof window !== 'undefined'){
+      window.dispatchEvent(new CustomEvent('bontrager:translation-archive-cleared'));
+    }
+  }
+
+  function _resetSecretTapCounter(){
+    _secretTapCount = 0;
+    if(_secretTapTimer){
+      clearTimeout(_secretTapTimer);
+      _secretTapTimer = null;
+    }
+  }
+
+  function _initTranslationArchiveSecret(){
+    var trigger = document.getElementById('translationArchiveSecretTrigger');
+    if(!trigger) return;
+    trigger.addEventListener('click', function(){
+      _secretTapCount += 1;
+      if(_secretTapTimer) clearTimeout(_secretTapTimer);
+      _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_TIMEOUT_MS);
+      if(_secretTapCount < SECRET_TAP_COUNT_THRESHOLD) return;
+      _resetSecretTapCounter();
+      var approved = confirm(document.documentElement.lang === 'ar'
+        ? 'مسح جميع الترجمات المحفوظة من ذاكرة التطبيق؟'
+        : 'Clear all cached translations from app storage?');
+      if(!approved) return;
+      _clearTranslationArchiveCache();
+      if(typeof _showToast === 'function'){
+        _showToast('Translation archive cleared', '#15803d');
+      }
+    });
+  }
+
   function _normalizeText(text){
     return String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
   }
@@ -11027,8 +11403,8 @@ _loadQuizSettings();
     }
   }
 
-  function _saveTranslationCache(sourceText, translatedText){
-    var sourceKey = _normalizeText(sourceText);
+  function _saveTranslationCache(sourceText, translatedText, providerId){
+    var sourceKey = _cacheKeyForProvider(sourceText, providerId);
     if(!sourceKey || !translatedText) return;
     try {
       var cacheData = _readTranslationCache();
@@ -11052,8 +11428,8 @@ _loadQuizSettings();
     } catch(e){}
   }
 
-  function _getCachedTranslation(sourceText){
-    var key = _normalizeText(sourceText);
+  function _getCachedTranslation(sourceText, providerId){
+    var key = _cacheKeyForProvider(sourceText, providerId);
     if(!key) return '';
     var cacheData = _readTranslationCache();
     return (cacheData.translations && cacheData.translations[key]) || '';
@@ -11085,6 +11461,7 @@ _loadQuizSettings();
   window.openTranslationPanel = function(){
     if(!_selText) return;
     _hidePopup();
+    _updatePanelProviderText(_getSelectedProviderId());
 
     var origEl   = document.getElementById('trOriginalText');
     var resultEl = document.getElementById('trResultText');
@@ -11142,9 +11519,9 @@ _loadQuizSettings();
   };
 
   function _fetchTranslation(text, cb){
-    // Use MyMemory free translation API (no key needed, 1000 words/day free)
     var sourceText = String(text || '').substring(0, MAX_TRANSLATION_CHARS);
-    var cached = _getCachedTranslation(sourceText);
+    var providerId = _getSelectedProviderId();
+    var cached = _getCachedTranslation(sourceText, providerId);
     if(cached){
       cb(null, cached);
       return;
@@ -11161,47 +11538,26 @@ _loadQuizSettings();
       return;
     }
 
-    var url = 'https://api.mymemory.translated.net/get?q=' +
-              encodeURIComponent(sourceText) +
-              '&langpair=en%7Car';
-    var canTimeoutSignal = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
-    var hasAbortController = (typeof AbortController !== 'undefined');
-    var timeoutMs = 10000;
-    var timer = null;
-    var controller = null;
-    var signal = undefined;
-
-    if(canTimeoutSignal){
-      signal = AbortSignal.timeout(timeoutMs);
-    } else if(hasAbortController){
-      controller = new AbortController();
-      signal = controller.signal;
-      timer = setTimeout(function(){
-        controller.abort();
-      }, timeoutMs);
-    }
-
-    fetch(url, { signal: signal })
-      .then(function(res){
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function(data){
-        if(timer) clearTimeout(timer);
-        if(data && data.responseData && data.responseData.translatedText){
-          _saveTranslationCache(sourceText, data.responseData.translatedText);
-          cb(null, data.responseData.translatedText);
-        } else {
-          var offlineFallback = _translateOffline(sourceText);
-          if(offlineFallback){
-            cb(null, offlineFallback);
+    _bontragerTranslateWithFallback(sourceText, {
+      preferredProviderId: providerId,
+      timeoutMs: 10000
+    })
+      .then(function(result){
+        var translatedText = result && result.translatedText ? String(result.translatedText).trim() : '';
+        if(!translatedText){
+          var emptyFallback = _translateOffline(sourceText);
+          if(emptyFallback){
+            cb(null, emptyFallback);
           } else {
             cb('لم يتم استلام الترجمة');
           }
+          return;
         }
+        _saveTranslationCache(sourceText, translatedText, providerId);
+        _updatePanelProviderText(result.providerId || providerId);
+        cb(null, translatedText);
       })
       .catch(function(err){
-        if(timer) clearTimeout(timer);
         var fallback = _translateOffline(sourceText);
         if(fallback){
           cb(null, fallback);

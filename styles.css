@@ -118,9 +118,18 @@ body.app-arabic-mode button{font-family:var(--font)}
   box-shadow:0 8px 20px rgba(0,0,0,.22);
   cursor:pointer;z-index:99820;
   transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
 }
 .lang-float-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.26)}
 .lang-float-btn:active{transform:translateY(0) scale(.97)}
+.lang-float-btn.dragging{
+  cursor:grabbing;
+  transform:none !important;
+  transition:none;
+  opacity:.92;
+}
 body.app-arabic-mode .lang-float-btn{
   background:linear-gradient(135deg,#08723d,#14a44d);
 }

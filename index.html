@@ -1023,6 +1023,18 @@
       </div>
       <div class="settings-row">
         <div>
+          <div class="settings-row-label">Translation engine</div>
+          <div class="settings-row-sub">Choose the translator used by Arabic translation features</div>
+        </div>
+        <select class="settings-select" id="translationProviderSelect" onchange="setTranslationProvider(this.value)">
+          <option value="mymemory">MyMemory (Translation Memory)</option>
+          <option value="googlefree">Google Free Endpoint</option>
+          <option value="libretranslate_de">LibreTranslate.de</option>
+          <option value="argos">Argos OpenTech LibreTranslate</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div>
           <div class="settings-row-label">Restore defaults</div>
           <div class="settings-row-sub">Reset font and appearance settings</div>
         </div>
@@ -1042,7 +1054,7 @@
         </div>
         <button class="modal-btn secondary" onclick="resetQuizScores()" style="padding:10px 14px;">Reset</button>
       </div>
-      <div class="settings-row">
+      <div class="settings-row" id="translationArchiveSecretTrigger">
         <div>
           <div class="settings-row-label">App version</div>
           <div class="settings-row-sub" id="settingsAppVersion">—</div>
@@ -1491,7 +1503,7 @@ window._notifyAppUpdate = function() {
     </div>
   </div>
   <div class="tr-panel-footer">
-    <span>مدعوم بواسطة MyMemory + ترجمة محلية بدون إنترنت</span>
+    <span id="trPanelProviderText">مدعوم بواسطة MyMemory + ترجمة محلية بدون إنترنت</span>
   </div>
 </div>
 
