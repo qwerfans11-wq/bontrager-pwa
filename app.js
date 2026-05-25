@@ -10118,9 +10118,12 @@ window.setTranslationProvider = function(providerId){
   var APP_AR_MODE_KEY = 'bontrager_app_ar_mode_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var FLOAT_BTN_POS_KEY = 'bontrager_lang_float_pos_v1';
+  // Keep draggable FAB safely inside viewport on all devices.
   var FLOAT_BUTTON_MARGIN_PX = 8;
+  // Matches .lang-float-btn CSS base size for pre-layout drag math fallback.
   var FLOAT_BUTTON_DEFAULT_WIDTH = 44;
   var FLOAT_BUTTON_DEFAULT_HEIGHT = 44;
+  // Minimum pointer movement before a drag is treated as intentional.
   var FLOAT_BUTTON_DRAG_THRESHOLD_PX = 5;
   var MAX_TRANSLATE_CHARS = 1200;
   var TRANSLATE_DEBOUNCE_MS = 120;
@@ -11124,6 +11127,7 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
+  // Hidden reset requires 7 taps in quick succession to avoid accidental activation.
   var SECRET_TAP_COUNT_THRESHOLD = 7;
   var SECRET_TAP_TIMEOUT_MS = 8000;
   // Split text into tokens by whitespace and common punctuation marks.
