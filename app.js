@@ -10047,7 +10047,7 @@ function navigateAnatomyRegion(dir){
     var src = String(text || '');
     if(!src) return src;
     var translatedAny = false;
-    var out = src.replace(/[A-Za-z][A-Za-z0-9\- ]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
+    var out = src.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
       var key = _normalizeText(match);
       var mapped = STATIC_UI_AR_MAP[key];
       if(mapped){
@@ -10281,7 +10281,7 @@ function navigateAnatomyRegion(dir){
     } else {
       _floatBtn.textContent = 'AR';
       _floatBtn.setAttribute('aria-label', 'Switch app language to Arabic');
-      _floatBtn.title = 'العربية';
+      _floatBtn.title = 'Arabic';
     }
   }
 
