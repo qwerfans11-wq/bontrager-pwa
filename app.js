@@ -10049,7 +10049,12 @@ function _bontragerTranslateViaProvider(providerId, sourceText, timeoutMs){
 
   const endpoint = provider === 'argos'
     ? 'https://translate.argosopentech.com/translate'
-    : 'https://libretranslate.de/translate';
+    : (provider === 'libretranslate_de'
+      ? 'https://libretranslate.de/translate'
+      : null);
+  if(!endpoint){
+    return Promise.reject(new Error('UNSUPPORTED_PROVIDER'));
+  }
   return _bontragerFetchWithTimeout(endpoint, {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
@@ -10609,6 +10614,7 @@ window.setTranslationProvider = function(providerId){
       moved = false;
       dragging = true;
       _floatBtn.classList.add('dragging');
+      if(ev && ev.cancelable) ev.preventDefault();
       if(ev.type === 'pointerdown' && _floatBtn.setPointerCapture){
         try{ _floatBtn.setPointerCapture(ev.pointerId); }catch(err){}
       }
@@ -10651,7 +10657,7 @@ window.setTranslationProvider = function(providerId){
       _floatBtn.addEventListener('mousedown', onDown);
       window.addEventListener('mousemove', onMove, { passive:false });
       window.addEventListener('mouseup', onUp, { passive:false });
-      _floatBtn.addEventListener('touchstart', onDown, { passive:true });
+      _floatBtn.addEventListener('touchstart', onDown, { passive:false });
       window.addEventListener('touchmove', onMove, { passive:false });
       window.addEventListener('touchend', onUp, { passive:false });
       window.addEventListener('touchcancel', onUp, { passive:false });
@@ -11127,8 +11133,7 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
-  // Hidden reset requires 7 taps in quick succession to avoid accidental activation.
-  // 8 seconds gives enough time for deliberate taps while still resetting quickly.
+  // Hidden reset: 7 taps within 8s balances deliberate activation vs accidental taps.
   var SECRET_TAP_COUNT_THRESHOLD = 7;
   var SECRET_TAP_TIMEOUT_MS = 8000;
   // Split text into tokens by whitespace and common punctuation marks.
