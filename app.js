@@ -10118,6 +10118,10 @@ window.setTranslationProvider = function(providerId){
   var APP_AR_MODE_KEY = 'bontrager_app_ar_mode_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var FLOAT_BTN_POS_KEY = 'bontrager_lang_float_pos_v1';
+  var FLOAT_BUTTON_MARGIN_PX = 8;
+  var FLOAT_BUTTON_DEFAULT_WIDTH = 44;
+  var FLOAT_BUTTON_DEFAULT_HEIGHT = 44;
+  var FLOAT_BUTTON_DRAG_THRESHOLD_PX = 5;
   var MAX_TRANSLATE_CHARS = 1200;
   var TRANSLATE_DEBOUNCE_MS = 120;
   var ATTRS_TO_TRANSLATE = ['placeholder','title','aria-label'];
@@ -10552,9 +10556,9 @@ window.setTranslationProvider = function(providerId){
 
   function _clampFloatPos(left, top){
     if(!_floatBtn) return { left:left, top:top };
-    var margin = 8;
-    var width = _floatBtn.offsetWidth || 44;
-    var height = _floatBtn.offsetHeight || 44;
+    var margin = FLOAT_BUTTON_MARGIN_PX;
+    var width = _floatBtn.offsetWidth || FLOAT_BUTTON_DEFAULT_WIDTH;
+    var height = _floatBtn.offsetHeight || FLOAT_BUTTON_DEFAULT_HEIGHT;
     var maxLeft = Math.max(margin, window.innerWidth - width - margin);
     var maxTop = Math.max(margin, window.innerHeight - height - margin);
     return {
@@ -10612,7 +10616,7 @@ window.setTranslationProvider = function(providerId){
       var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
       var dx = point.clientX - startX;
       var dy = point.clientY - startY;
-      if(!moved && (Math.abs(dx) > 5 || Math.abs(dy) > 5)){
+      if(!moved && (Math.abs(dx) > FLOAT_BUTTON_DRAG_THRESHOLD_PX || Math.abs(dy) > FLOAT_BUTTON_DRAG_THRESHOLD_PX)){
         moved = true;
       }
       if(!moved) return;
@@ -11120,8 +11124,8 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_KEY = 'bontrager_translation_cache_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var TRANSLATION_CACHE_LIMIT = 300;
-  var SECRET_TAP_TARGET = 7;
-  var SECRET_TAP_WINDOW_MS = 8000;
+  var SECRET_TAP_COUNT_THRESHOLD = 7;
+  var SECRET_TAP_TIMEOUT_MS = 8000;
   // Split text into tokens by whitespace and common punctuation marks.
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
   // Arabic text meaning: "(Offline translation - approximate)"
@@ -11346,10 +11350,10 @@ _loadQuizSettings();
     trigger.addEventListener('click', function(){
       _secretTapCount += 1;
       if(_secretTapTimer) clearTimeout(_secretTapTimer);
-      _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_WINDOW_MS);
-      if(_secretTapCount < SECRET_TAP_TARGET) return;
+      _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_TIMEOUT_MS);
+      if(_secretTapCount < SECRET_TAP_COUNT_THRESHOLD) return;
       _resetSecretTapCounter();
-      var approved = confirm('Delete all saved translation archive entries? This clears cached translations from app storage.');
+      var approved = confirm('Delete all saved translation cache entries? This will clear all cached translations from app storage.');
       if(!approved) return;
       _clearTranslationArchiveCache();
       if(typeof _showToast === 'function'){
