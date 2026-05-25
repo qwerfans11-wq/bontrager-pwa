@@ -10008,14 +10008,14 @@ function navigateAnatomyRegion(dir){
     'source to image distance':'مسافة المصدر إلى المستقبل'
   });
   var MEDICAL_EXPANSION_MAP = Object.freeze({
-    'CR':'CR (central ray)',
-    'IR':'IR (image receptor)',
-    'SID':'SID (source to image distance)',
-    'kVp':'kVp (kilovoltage peak)',
-    'mAs':'mAs (milliampere-second)',
-    'AP':'AP (anteroposterior projection)',
-    'PA':'PA (posteroanterior projection)',
-    'LAT':'LAT (lateral projection)'
+    'CR':'central ray',
+    'IR':'image receptor',
+    'SID':'source to image distance',
+    'kVp':'kilovoltage peak',
+    'mAs':'milliampere-second',
+    'AP':'anteroposterior projection',
+    'PA':'posteroanterior projection',
+    'LAT':'lateral projection'
   });
 
   var _appArCache = Object.create(null);
@@ -10028,6 +10028,8 @@ function navigateAnatomyRegion(dir){
   var _floatBtn = null;
   var _nodeOriginalText = new Map();
   var _elementOriginalAttrs = new Map();
+  var _medicalTermReplacers = null;
+  var _medicalExpansionReplacers = null;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10075,19 +10077,34 @@ function navigateAnatomyRegion(dir){
 
   function _replaceMedicalTerms(text){
     var out = String(text || '');
-    var keys = Object.keys(MEDICAL_TERM_AR_MAP).sort(function(a, b){ return b.length - a.length; });
-    keys.forEach(function(key){
-      var re = new RegExp('\\b' + _escapeRegExp(key) + '\\b', 'gi');
-      out = out.replace(re, MEDICAL_TERM_AR_MAP[key]);
+    if(!_medicalTermReplacers){
+      _medicalTermReplacers = Object.keys(MEDICAL_TERM_AR_MAP)
+        .sort(function(a, b){ return b.length - a.length; })
+        .map(function(key){
+          return {
+            re: new RegExp('\\b' + _escapeRegExp(key) + '\\b', 'gi'),
+            value: MEDICAL_TERM_AR_MAP[key]
+          };
+        });
+    }
+    _medicalTermReplacers.forEach(function(entry){
+      out = out.replace(entry.re, entry.value);
     });
     return out;
   }
 
   function _expandMedicalAbbreviations(text){
     var out = String(text || '');
-    Object.keys(MEDICAL_EXPANSION_MAP).forEach(function(abbr){
-      var re = new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'g');
-      out = out.replace(re, MEDICAL_EXPANSION_MAP[abbr]);
+    if(!_medicalExpansionReplacers){
+      _medicalExpansionReplacers = Object.keys(MEDICAL_EXPANSION_MAP).map(function(abbr){
+        return {
+          re: new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'g'),
+          value: MEDICAL_EXPANSION_MAP[abbr]
+        };
+      });
+    }
+    _medicalExpansionReplacers.forEach(function(entry){
+      out = out.replace(entry.re, entry.value);
     });
     return out;
   }
