@@ -9948,6 +9948,7 @@ function navigateAnatomyRegion(dir){
   var APP_AR_MODE_KEY = 'bontrager_app_ar_mode_v1';
   var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
   var MAX_TRANSLATE_CHARS = 1200;
+  var TRANSLATE_DEBOUNCE_MS = 120;
   var ATTRS_TO_TRANSLATE = ['placeholder','title','aria-label'];
   var TRANSLATABLE_INPUT_TYPES = { button:1, submit:1, reset:1 };
   var NODE_REJECT_TAGS = { SCRIPT:1, STYLE:1, NOSCRIPT:1, TEXTAREA:1, INPUT:1, SELECT:1, OPTION:1, SVG:1 };
@@ -10194,7 +10195,7 @@ function navigateAnatomyRegion(dir){
     });
   }
 
-  function _shouldCaptureOriginalText(node){
+  function _shouldUpdateOriginalText(node){
     if(!_nodeOriginalText.has(node)) return true;
     var original = _nodeOriginalText.get(node);
     return original !== node.textContent && !_isArabicText(node.textContent);
@@ -10207,7 +10208,7 @@ function navigateAnatomyRegion(dir){
 
     _translateAttributes(target);
     _collectTextNodes(target).forEach(function(node){
-      if(_shouldCaptureOriginalText(node)){
+      if(_shouldUpdateOriginalText(node)){
         _nodeOriginalText.set(node, node.textContent);
       }
       var source = _nodeOriginalText.get(node);
@@ -10248,7 +10249,7 @@ function navigateAnatomyRegion(dir){
       var roots = Array.from(_pendingRoots);
       _pendingRoots.clear();
       roots.forEach(function(r){ _translateRoot(r); });
-    }, 120);
+    }, TRANSLATE_DEBOUNCE_MS);
   }
 
   function _observeDom(){
@@ -10276,11 +10277,11 @@ function navigateAnatomyRegion(dir){
     if(!_floatBtn) return;
     if(_arabicModeEnabled){
       _floatBtn.textContent = 'EN';
-      _floatBtn.setAttribute('aria-label', 'Switch app language to English');
+      _floatBtn.setAttribute('aria-label', 'Current language: Arabic. Switch to English');
       _floatBtn.title = 'English';
     } else {
       _floatBtn.textContent = 'AR';
-      _floatBtn.setAttribute('aria-label', 'Switch app language to Arabic');
+      _floatBtn.setAttribute('aria-label', 'Current language: English. Switch to Arabic');
       _floatBtn.title = 'Arabic';
     }
   }
