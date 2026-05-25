@@ -96,6 +96,34 @@
 .dark .nav-item svg,.dark .hbtn svg{stroke:#9d9cb8}
 .dark .nav-item.active svg{stroke:var(--accent)}
 body{font-family:var(--font);font-weight:var(--font-weight);background:var(--bg2);color:var(--text);font-size:var(--base-fs);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em}
+body.app-arabic-mode{
+  --font: 'Cairo', 'Tajawal', 'Noto Naskh Arabic', 'Tahoma', 'Segoe UI', sans-serif;
+  letter-spacing:0;
+}
+body.app-arabic-mode input,
+body.app-arabic-mode textarea,
+body.app-arabic-mode select,
+body.app-arabic-mode button{font-family:var(--font)}
+
+.lang-float-btn{
+  position:fixed;
+  top:calc(var(--safe-top) + 10px);
+  right:max(10px, calc((100vw - min(100vw, 480px))/2 + 10px));
+  width:44px;height:44px;
+  border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--accent),#1f8bff);
+  color:#fff;font-size:13px;font-weight:800;
+  font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px rgba(0,0,0,.22);
+  cursor:pointer;z-index:99820;
+  transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease;
+}
+.lang-float-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.26)}
+.lang-float-btn:active{transform:translateY(0) scale(.97)}
+body.app-arabic-mode .lang-float-btn{
+  background:linear-gradient(135deg,#08723d,#14a44d);
+}
 
 /* Adjust app layout when banner is visible */
 .app{

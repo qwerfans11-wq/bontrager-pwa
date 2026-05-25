@@ -9939,6 +9939,407 @@ function navigateAnatomyRegion(dir){
 
 }());
 
+/* ══════════════════════════════════════════════
+   APP-WIDE ARABIC MODE (FLOAT BUTTON)
+══════════════════════════════════════════════ */
+(function(){
+  'use strict';
+
+  var APP_AR_MODE_KEY = 'bontrager_app_ar_mode_v1';
+  var APP_AR_CACHE_KEY = 'bontrager_app_ar_cache_v1';
+  var MAX_TRANSLATE_CHARS = 1200;
+  var TRANSLATE_DEBOUNCE_MS = 120;
+  var ATTRS_TO_TRANSLATE = ['placeholder','title','aria-label'];
+  var TRANSLATABLE_INPUT_TYPES = { button:1, submit:1, reset:1 };
+  var NODE_REJECT_TAGS = { SCRIPT:1, STYLE:1, NOSCRIPT:1, TEXTAREA:1, INPUT:1, SELECT:1, OPTION:1, SVG:1 };
+
+  var STATIC_UI_AR_MAP = Object.freeze({
+    'home':'الرئيسية',
+    'learn':'التعلّم',
+    'quiz':'الاختبار',
+    'ask ai':'اسأل الذكاء الاصطناعي',
+    'settings':'الإعدادات',
+    'about':'حول التطبيق',
+    'developer manager':'إدارة المطور',
+    'book':'الكتاب',
+    'results':'النتائج',
+    'position':'الوضعية',
+    'anatomy':'التشريح',
+    'anatomy detail':'تفاصيل التشريح',
+    'quick review':'مراجعة سريعة',
+    'search':'بحث',
+    'search any position, cr, anatomy…':'ابحث عن أي وضعية أو شعاع مركزي أو تشريح…',
+    'clear':'مسح',
+    'cancel':'إلغاء',
+    'close':'إغلاق',
+    'open':'فتح',
+    'open ↗':'فتح ↗',
+    'install':'تثبيت',
+    'dismiss':'إخفاء',
+    'login':'تسجيل الدخول',
+    'username':'اسم المستخدم',
+    'password':'كلمة المرور',
+    'start quiz':'ابدأ الاختبار',
+    'next':'التالي',
+    'previous':'السابق',
+    'copy':'نسخ',
+    'copy translation':'نسخ الترجمة',
+    'translate':'ترجمة',
+    'translation':'الترجمة',
+    'chapter':'الفصل',
+    'chapters':'الفصول',
+    'positions':'الوضعيات',
+    'works offline · no internet needed':'يعمل بدون اتصال · لا يحتاج إنترنت',
+    'install bontrager positioning':'ثبّت تطبيق Bontrager Positioning'
+  });
+
+  var _appArCache = Object.create(null);
+  var _inFlight = Object.create(null);
+  var _arabicModeEnabled = false;
+  var _observer = null;
+  var _isApplyingTranslations = false;
+  var _translateDebounce = null;
+  var _pendingRoots = new Set();
+  var _floatBtn = null;
+  var _nodeOriginalText = new Map();
+  var _elementOriginalAttrs = new Map();
+
+  function _normalizeText(text){
+    return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
+  function _loadCache(){
+    try{
+      var raw = localStorage.getItem(APP_AR_CACHE_KEY);
+      if(!raw) return;
+      var parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object'){
+        _appArCache = parsed;
+      }
+    }catch(err){}
+  }
+
+  function _saveCache(){
+    try{
+      localStorage.setItem(APP_AR_CACHE_KEY, JSON.stringify(_appArCache));
+    }catch(err){}
+  }
+
+  function _isArabicText(text){
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(String(text || ''));
+  }
+
+  function _shouldTranslateText(text){
+    var value = String(text || '');
+    var trimmed = value.trim();
+    if(trimmed.length < 2 || trimmed.length > MAX_TRANSLATE_CHARS) return false;
+    if(!_hasAsciiLetters(trimmed)) return false;
+    if(/https?:\/\/|www\.|@[a-z0-9]/i.test(trimmed)) return false;
+    if(/[{}[\]<>]/.test(trimmed)) return false;
+    if(/\.(png|jpe?g|svg|gif|webp|js|css|json|pdf)\b/i.test(trimmed)) return false;
+    return true;
+  }
+
+  function _hasAsciiLetters(text){
+    return /[A-Za-z]/.test(String(text || ''));
+  }
+
+  function _translateWordsFallback(text){
+    var src = String(text || '');
+    if(!src) return src;
+    var translatedAny = false;
+    var out = src.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
+      var key = _normalizeText(match);
+      var mapped = STATIC_UI_AR_MAP[key];
+      if(mapped){
+        translatedAny = true;
+        return mapped;
+      }
+      return match;
+    });
+    return translatedAny ? out : src;
+  }
+
+  function _translateTextToArabic(text){
+    var sourceText = String(text || '');
+    if(sourceText.length > MAX_TRANSLATE_CHARS){
+      sourceText = sourceText.slice(0, MAX_TRANSLATE_CHARS);
+    }
+    if(!_shouldTranslateText(sourceText) || _isArabicText(sourceText)) return Promise.resolve(sourceText);
+
+    var norm = _normalizeText(sourceText);
+    if(!norm) return Promise.resolve(sourceText);
+
+    if(STATIC_UI_AR_MAP[norm]){
+      return Promise.resolve(STATIC_UI_AR_MAP[norm]);
+    }
+
+    if(_appArCache[norm]){
+      return Promise.resolve(_appArCache[norm]);
+    }
+
+    if(_inFlight[norm]){
+      return _inFlight[norm];
+    }
+
+    if(typeof navigator !== 'undefined' && navigator.onLine === false){
+      return Promise.resolve(_translateWordsFallback(sourceText));
+    }
+
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sourceText) + '&langpair=en%7Car';
+    var supportsAbortSignalTimeout = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
+    var hasAbortController = (typeof AbortController !== 'undefined');
+    var timeoutMs = 9000;
+    var timer = null;
+    var controller = null;
+    var signal = undefined;
+
+    if(supportsAbortSignalTimeout){
+      signal = AbortSignal.timeout(timeoutMs);
+    } else if(hasAbortController){
+      controller = new AbortController();
+      signal = controller.signal;
+      timer = setTimeout(function(){ controller.abort(); }, timeoutMs);
+    }
+
+    _inFlight[norm] = fetch(url, { signal: signal })
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        if(timer) clearTimeout(timer);
+        var translated = data && data.responseData && data.responseData.translatedText ? String(data.responseData.translatedText).trim() : '';
+        if(!translated){
+          translated = _translateWordsFallback(sourceText);
+        }
+        if(translated && translated !== sourceText){
+          _appArCache[norm] = translated;
+          _saveCache();
+        }
+        return translated || sourceText;
+      })
+      .catch(function(){
+        if(timer) clearTimeout(timer);
+        return _translateWordsFallback(sourceText);
+      })
+      .finally(function(){
+        delete _inFlight[norm];
+      });
+
+    return _inFlight[norm];
+  }
+
+  function _shouldSkipNode(node){
+    if(!node || !node.parentElement) return true;
+    var parent = node.parentElement;
+    if(NODE_REJECT_TAGS[parent.tagName]) return true;
+    if(parent.closest && parent.closest('.lang-float-btn')) return true;
+    if(parent.isContentEditable) return true;
+    return false;
+  }
+
+  function _collectTextNodes(root){
+    var base = (root && root.nodeType === 1) ? root : document.body;
+    var list = [];
+    if(!base) return list;
+    var walker = document.createTreeWalker(base, NodeFilter.SHOW_TEXT);
+    var current;
+    while((current = walker.nextNode())){
+      if(_shouldSkipNode(current)) continue;
+      if(!_shouldTranslateText(current.textContent)) continue;
+      list.push(current);
+    }
+    return list;
+  }
+
+  function _translateAttributes(root){
+    var base = (root && root.nodeType === 1) ? root : document.body;
+    if(!base || !base.querySelectorAll) return;
+    var nodes = base.querySelectorAll('input,button,a,label,[placeholder],[title],[aria-label]');
+    Array.prototype.forEach.call(nodes, function(el){
+      if(el.id === 'appLangFloatBtn') return;
+      if(el.closest && el.closest('.lang-float-btn')) return;
+
+      ATTRS_TO_TRANSLATE.forEach(function(attr){
+        if(!el.hasAttribute(attr)) return;
+        var val = el.getAttribute(attr);
+        if(!_shouldTranslateText(val)) return;
+
+        var originalAttrs = _elementOriginalAttrs.get(el) || Object.create(null);
+        if(!Object.prototype.hasOwnProperty.call(originalAttrs, attr)){
+          originalAttrs[attr] = val;
+          _elementOriginalAttrs.set(el, originalAttrs);
+        }
+
+        _translateTextToArabic(originalAttrs[attr]).then(function(translated){
+          if(!_arabicModeEnabled) return;
+          if(translated && translated !== val){
+            el.setAttribute(attr, translated);
+          }
+        });
+      });
+
+      if(el.tagName === 'INPUT' && TRANSLATABLE_INPUT_TYPES[(el.type || '').toLowerCase()]){
+        var currentVal = el.value;
+        if(!_shouldTranslateText(currentVal)) return;
+        var inputAttrs = _elementOriginalAttrs.get(el) || Object.create(null);
+        if(!Object.prototype.hasOwnProperty.call(inputAttrs, 'value')){
+          inputAttrs.value = currentVal;
+          _elementOriginalAttrs.set(el, inputAttrs);
+        }
+        _translateTextToArabic(inputAttrs.value).then(function(translated){
+          if(!_arabicModeEnabled) return;
+          if(translated && translated !== currentVal){
+            el.value = translated;
+          }
+        });
+      }
+    });
+  }
+
+  function _shouldUpdateOriginalText(node){
+    if(!_nodeOriginalText.has(node)) return true;
+    var original = _nodeOriginalText.get(node);
+    return original !== node.textContent && !_isArabicText(node.textContent);
+  }
+
+  function _translateRoot(root){
+    var target = root || document.body;
+    if(!target) return;
+    _isApplyingTranslations = true;
+
+    _translateAttributes(target);
+    _collectTextNodes(target).forEach(function(node){
+      if(_shouldUpdateOriginalText(node)){
+        _nodeOriginalText.set(node, node.textContent);
+      }
+      var source = _nodeOriginalText.get(node);
+      _translateTextToArabic(source).then(function(translated){
+        if(!_arabicModeEnabled || !node.isConnected) return;
+        if(translated && translated !== node.textContent){
+          node.textContent = translated;
+        }
+      });
+    });
+
+    _isApplyingTranslations = false;
+  }
+
+  function _restoreOriginalContent(){
+    _nodeOriginalText.forEach(function(original, node){
+      if(node && node.isConnected){
+        node.textContent = original;
+      }
+    });
+    _elementOriginalAttrs.forEach(function(attrs, el){
+      if(!el || !el.isConnected) return;
+      Object.keys(attrs).forEach(function(attr){
+        if(attr === 'value'){
+          el.value = attrs[attr];
+        } else {
+          el.setAttribute(attr, attrs[attr]);
+        }
+      });
+    });
+  }
+
+  function _scheduleTranslate(root){
+    if(!_arabicModeEnabled) return;
+    _pendingRoots.add(root && root.nodeType === 1 ? root : document.body);
+    clearTimeout(_translateDebounce);
+    _translateDebounce = setTimeout(function(){
+      var roots = Array.from(_pendingRoots);
+      _pendingRoots.clear();
+      roots.forEach(function(r){ _translateRoot(r); });
+    }, TRANSLATE_DEBOUNCE_MS);
+  }
+
+  function _observeDom(){
+    if(_observer) _observer.disconnect();
+    _observer = new MutationObserver(function(mutations){
+      if(!_arabicModeEnabled || _isApplyingTranslations) return;
+      mutations.forEach(function(m){
+        if(m.type === 'childList'){
+          m.addedNodes.forEach(function(node){
+            if(node.nodeType === 1){
+              _scheduleTranslate(node);
+            } else if(node.nodeType === 3 && node.parentElement){
+              _scheduleTranslate(node.parentElement);
+            }
+          });
+        } else if(m.type === 'characterData' && m.target && m.target.parentElement){
+          _scheduleTranslate(m.target.parentElement);
+        }
+      });
+    });
+    _observer.observe(document.body, { childList:true, subtree:true, characterData:true });
+  }
+
+  function _setButtonState(){
+    if(!_floatBtn) return;
+    if(_arabicModeEnabled){
+      _floatBtn.textContent = 'EN';
+      _floatBtn.setAttribute('aria-label', 'Current language: Arabic. Switch to English');
+      _floatBtn.title = 'Switch to English';
+    } else {
+      _floatBtn.textContent = 'AR';
+      _floatBtn.setAttribute('aria-label', 'Current language: English. Switch to Arabic');
+      _floatBtn.title = 'Switch to Arabic';
+    }
+  }
+
+  function _saveModeFlag(enabled){
+    try{
+      localStorage.setItem(APP_AR_MODE_KEY, enabled ? '1' : '0');
+    }catch(err){}
+  }
+
+  function _setArabicMode(enabled){
+    _arabicModeEnabled = !!enabled;
+
+    if(_arabicModeEnabled){
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+      document.body.classList.add('app-arabic-mode');
+      _observeDom();
+      _scheduleTranslate(document.body);
+    } else {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      document.body.classList.remove('app-arabic-mode');
+      if(_observer) _observer.disconnect();
+      _restoreOriginalContent();
+    }
+
+    _setButtonState();
+    _saveModeFlag(_arabicModeEnabled);
+  }
+
+  function _initArabicMode(){
+    _floatBtn = document.getElementById('appLangFloatBtn');
+    if(!_floatBtn) return;
+
+    _loadCache();
+    _floatBtn.addEventListener('click', function(){
+      _setArabicMode(!_arabicModeEnabled);
+    });
+
+    var shouldStartArabic = false;
+    try{
+      shouldStartArabic = localStorage.getItem(APP_AR_MODE_KEY) === '1';
+    }catch(err){}
+
+    _setArabicMode(shouldStartArabic);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _initArabicMode);
+  } else {
+    _initArabicMode();
+  }
+}());
+
 
 _bindResponsiveFontSizing();
 _refreshQuizBankQuality();
