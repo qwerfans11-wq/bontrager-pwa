@@ -11137,7 +11137,7 @@ _loadQuizSettings();
   var TRANSLATION_CACHE_LIMIT = 300;
   // Hidden reset: 7 taps within 8s balances deliberate activation vs accidental taps.
   var SECRET_TAP_COUNT_THRESHOLD = 7;
-  var SECRET_TAP_TIMEOUT_MS = 8 * 1000;
+  var SECRET_TAP_TIMEOUT_MS = 8000; // 8 seconds tap window.
   // Split text into tokens by whitespace and common punctuation marks.
   var WORD_SPLIT_PATTERN = /(\s+|[.,!?;:()[\]{}"'\/\\+\-]+)/;
   // Arabic text meaning: "(Offline translation - approximate)"
@@ -11365,7 +11365,9 @@ _loadQuizSettings();
       _secretTapTimer = setTimeout(_resetSecretTapCounter, SECRET_TAP_TIMEOUT_MS);
       if(_secretTapCount < SECRET_TAP_COUNT_THRESHOLD) return;
       _resetSecretTapCounter();
-      var approved = confirm('Clear all cached translations from app storage?');
+      var approved = confirm(document.documentElement.lang === 'ar'
+        ? 'مسح جميع الترجمات المحفوظة من ذاكرة التطبيق؟'
+        : 'Clear all cached translations from app storage?');
       if(!approved) return;
       _clearTranslationArchiveCache();
       if(typeof _showToast === 'function'){
