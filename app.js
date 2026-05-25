@@ -9992,6 +9992,33 @@ function navigateAnatomyRegion(dir){
     'works offline · no internet needed':'يعمل بدون اتصال · لا يحتاج إنترنت',
     'install bontrager positioning':'ثبّت تطبيق Bontrager Positioning'
   });
+  var MEDICAL_ABBR_AR_MAP = Object.freeze({
+    'cr':'الشعاع المركزي (CR)',
+    'ir':'المستقبل الصوري (IR)',
+    'sid':'مسافة المصدر إلى المستقبل (SID)',
+    'kvp':'الكيلو فولت الذروي (kVp)',
+    'mas':'الملي أمبير-ثانية (mAs)',
+    'ap':'إسقاط أمامي-خلفي (AP)',
+    'pa':'إسقاط خلفي-أمامي (PA)',
+    'lat':'إسقاط جانبي (LAT)'
+  });
+  var MEDICAL_TERM_AR_MAP = Object.freeze({
+    'lateral':'جانبي',
+    'oblique':'مائل',
+    'central ray':'الشعاع المركزي',
+    'image receptor':'المستقبل الصوري',
+    'source to image distance':'مسافة المصدر إلى المستقبل'
+  });
+  var MEDICAL_EXPANSION_MAP = Object.freeze({
+    'CR':'central ray',
+    'IR':'image receptor',
+    'SID':'source to image distance',
+    'kVp':'kilovoltage peak',
+    'mAs':'milliampere-second',
+    'AP':'anteroposterior projection',
+    'PA':'posteroanterior projection',
+    'LAT':'lateral projection'
+  });
 
   var _appArCache = Object.create(null);
   var _inFlight = Object.create(null);
@@ -10003,6 +10030,8 @@ function navigateAnatomyRegion(dir){
   var _floatBtn = null;
   var _nodeOriginalText = new Map();
   var _elementOriginalAttrs = new Map();
+  var _medicalTermReplacers = null;
+  var _medicalExpansionReplacers = null;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10044,13 +10073,66 @@ function navigateAnatomyRegion(dir){
     return /[A-Za-z]/.test(String(text || ''));
   }
 
+  function _escapeRegExp(value){
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function _replaceMedicalTerms(text){
+    var out = String(text || '');
+    if(!_medicalTermReplacers){
+      _medicalTermReplacers = Object.keys(MEDICAL_TERM_AR_MAP)
+        .sort(function(a, b){ return b.length - a.length; })
+        .map(function(key){
+          return {
+            re: new RegExp('\\b' + _escapeRegExp(key) + '\\b', 'gi'),
+            value: MEDICAL_TERM_AR_MAP[key]
+          };
+        });
+    }
+    _medicalTermReplacers.forEach(function(entry){
+      out = out.replace(entry.re, entry.value);
+    });
+    return out;
+  }
+
+  function _expandMedicalAbbreviations(text){
+    var out = String(text || '');
+    if(!_medicalExpansionReplacers){
+      _medicalExpansionReplacers = Object.keys(MEDICAL_EXPANSION_MAP)
+        .sort(function(a, b){ return b.length - a.length; })
+        .map(function(abbr){
+          return {
+            re: new RegExp('\\b' + _escapeRegExp(abbr) + '\\b', 'g'),
+            value: MEDICAL_EXPANSION_MAP[abbr]
+          };
+        });
+    }
+    _medicalExpansionReplacers.forEach(function(entry){
+      out = out.replace(entry.re, entry.value);
+    });
+    return out;
+  }
+
+  function _getDirectMedicalTranslation(text){
+    var normalized = _normalizeText(text);
+    return MEDICAL_ABBR_AR_MAP[normalized] || MEDICAL_TERM_AR_MAP[normalized] || '';
+  }
+
+  function _lookupArabicTerm(key){
+    var normKey = _normalizeText(key);
+    return STATIC_UI_AR_MAP[normKey] || MEDICAL_ABBR_AR_MAP[normKey] || MEDICAL_TERM_AR_MAP[normKey] || '';
+  }
+
   function _translateWordsFallback(text){
     var src = String(text || '');
     if(!src) return src;
     var translatedAny = false;
-    var out = src.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
-      var key = _normalizeText(match);
-      var mapped = STATIC_UI_AR_MAP[key];
+    var out = _replaceMedicalTerms(src);
+    if(out !== src){
+      translatedAny = true;
+    }
+    out = out.replace(/[A-Za-z][A-Za-z0-9 -]*[A-Za-z0-9]|[A-Za-z]/g, function(match){
+      var mapped = _lookupArabicTerm(match);
       if(mapped){
         translatedAny = true;
         return mapped;
@@ -10070,6 +10152,11 @@ function navigateAnatomyRegion(dir){
     var norm = _normalizeText(sourceText);
     if(!norm) return Promise.resolve(sourceText);
 
+    var directMedical = _getDirectMedicalTranslation(sourceText);
+    if(directMedical){
+      return Promise.resolve(directMedical);
+    }
+
     if(STATIC_UI_AR_MAP[norm]){
       return Promise.resolve(STATIC_UI_AR_MAP[norm]);
     }
@@ -10086,7 +10173,8 @@ function navigateAnatomyRegion(dir){
       return Promise.resolve(_translateWordsFallback(sourceText));
     }
 
-    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sourceText) + '&langpair=en%7Car';
+    var apiSourceText = _expandMedicalAbbreviations(sourceText);
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(apiSourceText) + '&langpair=en%7Car';
     var supportsAbortSignalTimeout = (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function');
     var hasAbortController = (typeof AbortController !== 'undefined');
     var timeoutMs = 9000;
@@ -10112,6 +10200,8 @@ function navigateAnatomyRegion(dir){
         var translated = data && data.responseData && data.responseData.translatedText ? String(data.responseData.translatedText).trim() : '';
         if(!translated){
           translated = _translateWordsFallback(sourceText);
+        } else {
+          translated = _replaceMedicalTerms(translated);
         }
         if(translated && translated !== sourceText){
           _appArCache[norm] = translated;
