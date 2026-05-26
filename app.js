@@ -10737,7 +10737,7 @@ window.setTranslationProvider = function(providerId){
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
           try{ wrapper.setPointerCapture(pointerId); }catch(err){
-            console.warn('setPointerCapture failed:', err);
+            console.warn('setPointerCapture failed for table wrapper:', err);
           }
         }
       }
@@ -10757,7 +10757,7 @@ window.setTranslationProvider = function(providerId){
         wrapper.classList.remove('dragging');
         if(pointerId !== null && wrapper.releasePointerCapture){
           try{ wrapper.releasePointerCapture(pointerId); }catch(err){
-            console.warn('releasePointerCapture failed:', err);
+            console.warn('releasePointerCapture failed for table wrapper:', err);
           }
         }
         pointerId = null;
