@@ -10737,9 +10737,7 @@ window.setTranslationProvider = function(providerId){
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
           try{ wrapper.setPointerCapture(pointerId); }catch(err){
-            if(typeof console !== 'undefined' && typeof console.warn === 'function'){
-              console.warn('setPointerCapture failed:', err);
-            }
+            console.warn('setPointerCapture failed:', err);
           }
         }
       }
@@ -10758,7 +10756,9 @@ window.setTranslationProvider = function(providerId){
         dragging = false;
         wrapper.classList.remove('dragging');
         if(pointerId !== null && wrapper.releasePointerCapture){
-          try{ wrapper.releasePointerCapture(pointerId); }catch(err){}
+          try{ wrapper.releasePointerCapture(pointerId); }catch(err){
+            console.warn('releasePointerCapture failed:', err);
+          }
         }
         pointerId = null;
       }

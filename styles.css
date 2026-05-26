@@ -598,7 +598,7 @@ max-height:90vh;
 .app{max-width:480px;margin:0 auto;min-height:100vh;min-height:var(--app-height, 100vh);background:var(--bg2);position:relative}
 
 /* ── HEADER ── */
-.header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--hh) + var(--safe-top));background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:var(--safe-top) 14px 0;z-index:500;gap:10px;box-shadow:var(--shadow-sm);background-image:linear-gradient(to bottom,var(--bg),var(--bg));border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent 0%,var(--accent) 30%,var(--accent2) 70%,transparent 100%) 1;transition:transform .22s ease,opacity .22s ease}
+.header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--hh) + var(--safe-top));background:var(--bg);display:flex;align-items:center;padding:var(--safe-top) 14px 0;z-index:500;gap:10px;box-shadow:var(--shadow-sm);background-image:linear-gradient(to bottom,var(--bg),var(--bg));border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent 0%,var(--accent) 30%,var(--accent2) 70%,transparent 100%) 1;transition:transform .22s ease,opacity .22s ease}
 body.header-hidden .header{transform:translate(-50%,calc(-100% - var(--safe-top)));opacity:.02}
 body.header-hidden .study-mode-bar{transform:translate(-50%,calc(-100% - var(--safe-top)));opacity:0}
 .htitle{font-size:.96em;font-weight:700;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);letter-spacing:-.01em}
