@@ -2712,6 +2712,10 @@ function navTo(id){
   if(ni)ni.classList.add('active');
   const titles={home:'Bontrager Positioning','learn-chapters':'Section 1 — Learn','quiz-chapters':'Section 2 — Quiz',ai:'Ask AI',settings:'Settings','about':'About','learn-subchapters':'','learn-positions':'','pos-view':'Position','quiz':'Quiz','score':'Results','dev-manager':'Developer Manager',quickreview:'⚡ Quick Review',anatomy:'Anatomy','anatomy-detail':'Anatomy Detail',book:'📖 Book','book-reader':'📖 Book'};
   document.getElementById('headerTitle').textContent=titles[id]||'Bontrager Positioning';
+  document.body.classList.toggle('no-header', id!=='home');
+  if(id!=='home'){
+    document.body.classList.remove('header-hidden');
+  }
   // AI input bar
   document.getElementById('aiBar').className='ai-input-bar'+(id==='ai'?' show':'');
   // Auto-test AI connection on first visit to AI page

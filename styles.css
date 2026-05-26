@@ -1451,6 +1451,11 @@ body.fab-menu-open .study-mode-bar{
 body.study-mode .study-mode-bar{display:block}
 body.study-mode .page{padding-top:calc(var(--hh) + var(--safe-top) + 27px)}
 body.study-mode .scan3-bar{top:calc(var(--hh) + var(--safe-top) + 35px)}
+body.no-header .header,
+body.no-header .study-mode-bar{display:none!important}
+body.no-header .page{padding-top:var(--safe-top)!important}
+body.no-header .scan3-bar,
+body.no-header .fast-summary.scan3-bar{top:calc(var(--safe-top) + 8px)!important}
 
 /* ── Spacing improvements ── */
 .pos-sec-block+.pos-sec-hdr{margin-top:4px}
