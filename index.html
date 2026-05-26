@@ -1454,8 +1454,19 @@ window._notifyAppUpdate = function() {
 
 <!-- ═══ APP-WIDE ARABIC MODE FLOAT BUTTON ═══ -->
 <button class="lang-float-btn" id="appLangFloatBtn" type="button" aria-label="Toggle app language">
-  AR
+  ☰
 </button>
+<div class="fab-menu-shell" id="fabMenuShell" aria-hidden="true">
+  <div class="fab-menu-row" id="fabMenuSections"></div>
+  <div class="fab-menu-row fab-menu-row-tools">
+    <button class="fab-menu-btn" id="fabSettingsBtn" type="button" aria-label="Open settings">⚙️ Settings</button>
+    <button class="fab-menu-btn" id="fabInfoBtn" type="button" aria-label="Open information">ℹ️ Info</button>
+    <button class="fab-menu-btn" id="fabThemeBtn" type="button" aria-label="Toggle theme mode">🌓 Theme</button>
+    <button class="fab-menu-btn" id="fabStudyBtn" type="button" aria-label="Toggle reading mode">👁️ Reading</button>
+    <button class="fab-menu-btn" id="fabLangBtn" type="button" aria-label="Toggle app language">AR/EN</button>
+  </div>
+</div>
+<button class="back-to-top-btn" id="backToTopBtn" type="button" aria-label="Back to top" title="Back to top">↑</button>
 
 <!-- ═══ TRANSLATION SELECTION POPUP ═══ -->
 <div class="sel-popup" id="selPopup" style="display:none">
