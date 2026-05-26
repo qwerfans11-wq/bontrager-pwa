@@ -13,6 +13,7 @@
   --radius:13px;--radius-sm:8px;--hh:54px;
   --safe-top:env(safe-area-inset-top, 0px);
   --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --fab-bottom-offset:86px;
   --app-height:100vh;
   --sidebar-w:264px;
   --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
@@ -200,7 +201,7 @@ body.fab-menu-open .fab-menu-shell{
 .back-to-top-btn{
   position:fixed;
   right:max(12px, calc((100vw - min(100vw, 480px))/2 + 12px));
-  bottom:calc(var(--safe-bottom) + 86px);
+  bottom:calc(var(--safe-bottom) + var(--fab-bottom-offset));
   width:44px;height:44px;
   border:none;border-radius:999px;
   background:linear-gradient(135deg,var(--accent),#1f8bff);

@@ -10673,19 +10673,23 @@ window.setTranslationProvider = function(providerId){
 
   function _bindScrollUX(){
     var backTopBtn = document.getElementById('backToTopBtn');
+    var BACK_TO_TOP_THRESHOLD = 300;
+    var SCROLL_HIDE_THRESHOLD = 120;
+    var SCROLL_DELTA_DOWN = 8;
+    var SCROLL_DELTA_UP = 6;
     var lastY = window.pageYOffset || 0;
     var ticking = false;
     function update(){
       ticking = false;
       var y = window.pageYOffset || document.documentElement.scrollTop || 0;
       if(backTopBtn){
-        backTopBtn.classList.toggle('show', y > 300);
+        backTopBtn.classList.toggle('show', y > BACK_TO_TOP_THRESHOLD);
       }
       if(!_fabMenuOpen && _fabHideHeaderOnScroll){
         var dy = y - lastY;
-        if(y > 120 && dy > 8){
+        if(y > SCROLL_HIDE_THRESHOLD && dy > SCROLL_DELTA_DOWN){
           document.body.classList.add('header-hidden');
-        } else if(dy < -6 || y < 40){
+        } else if(dy < -SCROLL_DELTA_UP || y < 40){
           document.body.classList.remove('header-hidden');
         }
       }
@@ -10708,6 +10712,7 @@ window.setTranslationProvider = function(providerId){
   }
 
   function _bindDraggableTables(){
+    var TABLE_DRAG_THRESHOLD = 2;
     function ensure(wrapper){
       if(!wrapper || wrapper.dataset.dtDragBound === '1') return;
       wrapper.dataset.dtDragBound = '1';
@@ -10731,14 +10736,18 @@ window.setTranslationProvider = function(providerId){
         wrapper.classList.add('dragging');
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
-          try{ wrapper.setPointerCapture(pointerId); }catch(err){}
+          try{ wrapper.setPointerCapture(pointerId); }catch(err){
+            if(typeof console !== 'undefined' && typeof console.warn === 'function'){
+              console.warn('setPointerCapture failed:', err);
+            }
+          }
         }
       }
       function onMove(ev){
         if(!dragging) return;
         var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
         var dx = point.clientX - startX;
-        if(Math.abs(dx) > 2){
+        if(Math.abs(dx) > TABLE_DRAG_THRESHOLD){
           wrapper.scrollLeft = startScroll - dx;
           wrapper.classList.add('dragged');
           if(ev.cancelable) ev.preventDefault();
@@ -10772,6 +10781,7 @@ window.setTranslationProvider = function(providerId){
     }
     function wrapTable(table){
       if(!table || table.closest('.dt')) return;
+      if(!table.parentNode) return;
       var wrapper = document.createElement('div');
       wrapper.className = 'dt';
       table.parentNode.insertBefore(wrapper, table);
@@ -10785,7 +10795,7 @@ window.setTranslationProvider = function(providerId){
     scan(document);
     var observer = new MutationObserver(function(mutations){
       mutations.forEach(function(m){
-        m.addedNodes.forEach(function(node){
+        Array.prototype.forEach.call(m.addedNodes, function(node){
           if(node.nodeType !== 1) return;
           scan(node);
         });
