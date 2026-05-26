@@ -6326,7 +6326,7 @@ function _aiBuildCRAngulationStudyTable(){
       </tr>`;
     }).join('');
     return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
-      <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:6px">
+      <div class="dt" style="margin-top:6px">
         <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:680px;background:var(--bg)">
           <thead><tr style="background:var(--accent-bg)">
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
@@ -6363,7 +6363,7 @@ function _aiBuildCRPointStudyTable(){
       </tr>`;
     }).join('');
     return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
-      <div style="overflow:auto;border:1px solid var(--border2);border-radius:10px;margin-top:6px">
+      <div class="dt" style="margin-top:6px">
         <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;background:var(--bg)">
           <thead><tr style="background:var(--accent-bg)">
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
@@ -10217,6 +10217,11 @@ window.setTranslationProvider = function(providerId){
   var _medicalExpansionReplacers = null;
   var _skipNextToggleClick = false;
   var _hasCustomFloatPosition = false;
+  var _fabMenuOpen = false;
+  var _fabMenuShell = null;
+  var _fabSectionRow = null;
+  var _fabButtons = Object.create(null);
+  var _fabHideHeaderOnScroll = true;
 
   function _normalizeText(text){
     return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10537,15 +10542,256 @@ window.setTranslationProvider = function(providerId){
 
   function _setButtonState(){
     if(!_floatBtn) return;
-    if(_arabicModeEnabled){
-      _floatBtn.textContent = 'EN';
-      _floatBtn.setAttribute('aria-label', 'Current language: Arabic. Switch to English');
-      _floatBtn.title = 'Switch to English';
-    } else {
-      _floatBtn.textContent = 'AR';
-      _floatBtn.setAttribute('aria-label', 'Current language: English. Switch to Arabic');
-      _floatBtn.title = 'Switch to Arabic';
+    _floatBtn.textContent = _fabMenuOpen ? '✕' : '☰';
+    _floatBtn.setAttribute('aria-label', _fabMenuOpen ? 'Close floating menu' : 'Open floating menu');
+    _floatBtn.title = _fabMenuOpen ? 'Close quick menu' : 'Open quick menu';
+    if(_fabButtons.lang){
+      _fabButtons.lang.textContent = _arabicModeEnabled ? 'EN' : 'AR';
+      _fabButtons.lang.setAttribute('aria-label', _arabicModeEnabled ? 'Switch app language to English' : 'Switch app language to Arabic');
+      _fabButtons.lang.title = _arabicModeEnabled ? 'Switch to English' : 'Switch to Arabic';
+      _fabButtons.lang.classList.toggle('is-active', _arabicModeEnabled);
     }
+  }
+
+  function _syncFabDynamicButtons(){
+    if(_fabButtons.theme && typeof _getStoredThemeMode === 'function'){
+      var mode = _getStoredThemeMode();
+      var modeLabel = mode === 'dark' ? 'Dark' : (mode === 'light' ? 'Light' : 'Auto');
+      _fabButtons.theme.textContent = '🌓 Theme: ' + modeLabel;
+      _fabButtons.theme.classList.toggle('is-active', mode === 'dark');
+    }
+    if(_fabButtons.study){
+      _fabButtons.study.textContent = _studyMode ? '👁️ Reading: ON' : '👁️ Reading: OFF';
+      _fabButtons.study.classList.toggle('is-active', !!_studyMode);
+    }
+    if(_fabSectionRow){
+      var activeId = (typeof _activePageId === 'string' && _activePageId) ? _activePageId : '';
+      Array.prototype.forEach.call(_fabSectionRow.querySelectorAll('[data-nav-id]'), function(btn){
+        btn.classList.toggle('is-active', btn.getAttribute('data-nav-id') === activeId);
+      });
+    }
+  }
+
+  function _setFabMenuOpen(open){
+    var nextState = !!open;
+    _fabMenuOpen = nextState;
+    document.body.classList.toggle('fab-menu-open', nextState);
+    if(_fabMenuShell){
+      _fabMenuShell.setAttribute('aria-hidden', nextState ? 'false' : 'true');
+    }
+    if(nextState){
+      document.body.classList.remove('header-hidden');
+      _syncFabDynamicButtons();
+    }
+    _setButtonState();
+  }
+
+  function _toggleFabMenu(){
+    _setFabMenuOpen(!_fabMenuOpen);
+  }
+
+  function _buildFabSectionButtons(){
+    if(!_fabSectionRow) return;
+    _fabSectionRow.innerHTML = '';
+    var sections = [
+      { id:'home', label:'Home', icon:'🏠' },
+      { id:'learn-chapters', label:'Learn', icon:'🎓' },
+      { id:'quiz-chapters', label:'Quiz', icon:'🧠' },
+      { id:'ai', label:'AI', icon:'🤖' },
+      { id:'quickreview', label:'Review', icon:'📋' },
+      { id:'anatomy', label:'Anatomy', icon:'🫀' },
+      { id:'book', label:'Book', icon:'📖' }
+    ];
+    sections.forEach(function(item){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'fab-menu-btn';
+      btn.setAttribute('data-nav-id', item.id);
+      btn.textContent = item.icon + ' ' + item.label;
+      btn.addEventListener('click', function(){
+        if(typeof navTo === 'function') navTo(item.id);
+        _setFabMenuOpen(false);
+      });
+      _fabSectionRow.appendChild(btn);
+    });
+  }
+
+  function _initFabMenu(){
+    _fabMenuShell = document.getElementById('fabMenuShell');
+    _fabSectionRow = document.getElementById('fabMenuSections');
+    _fabButtons.settings = document.getElementById('fabSettingsBtn');
+    _fabButtons.info = document.getElementById('fabInfoBtn');
+    _fabButtons.theme = document.getElementById('fabThemeBtn');
+    _fabButtons.study = document.getElementById('fabStudyBtn');
+    _fabButtons.lang = document.getElementById('fabLangBtn');
+
+    if(!_fabMenuShell || !_fabSectionRow) return;
+    _buildFabSectionButtons();
+
+    if(_fabButtons.settings){
+      _fabButtons.settings.addEventListener('click', function(){
+        if(typeof navTo === 'function') navTo('settings');
+        _setFabMenuOpen(false);
+      });
+    }
+    if(_fabButtons.info){
+      _fabButtons.info.addEventListener('click', function(){
+        if(typeof navTo === 'function') navTo('about');
+        _setFabMenuOpen(false);
+      });
+    }
+    if(_fabButtons.theme){
+      _fabButtons.theme.addEventListener('click', function(){
+        if(typeof toggleDark === 'function') toggleDark();
+        _syncFabDynamicButtons();
+      });
+    }
+    if(_fabButtons.study){
+      _fabButtons.study.addEventListener('click', function(){
+        if(typeof toggleStudyMode === 'function') toggleStudyMode();
+        _syncFabDynamicButtons();
+      });
+    }
+    if(_fabButtons.lang){
+      _fabButtons.lang.addEventListener('click', function(){
+        _setArabicMode(!_arabicModeEnabled);
+        _syncFabDynamicButtons();
+      });
+    }
+
+    document.addEventListener('click', function(ev){
+      if(!_fabMenuOpen || !_fabMenuShell || !_floatBtn) return;
+      if(_fabMenuShell.contains(ev.target) || _floatBtn.contains(ev.target)) return;
+      _setFabMenuOpen(false);
+    });
+    document.addEventListener('keydown', function(ev){
+      if(ev.key === 'Escape' && _fabMenuOpen){
+        _setFabMenuOpen(false);
+      }
+    });
+  }
+
+  function _bindScrollUX(){
+    var backTopBtn = document.getElementById('backToTopBtn');
+    var lastY = window.pageYOffset || 0;
+    var ticking = false;
+    function update(){
+      ticking = false;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if(backTopBtn){
+        backTopBtn.classList.toggle('show', y > 300);
+      }
+      if(!_fabMenuOpen && _fabHideHeaderOnScroll){
+        var dy = y - lastY;
+        if(y > 120 && dy > 8){
+          document.body.classList.add('header-hidden');
+        } else if(dy < -6 || y < 40){
+          document.body.classList.remove('header-hidden');
+        }
+      }
+      lastY = y;
+    }
+    window.addEventListener('scroll', function(){
+      if(ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive:true });
+    document.addEventListener('pointerdown', function(){
+      document.body.classList.remove('header-hidden');
+    }, { passive:true });
+    if(backTopBtn){
+      backTopBtn.addEventListener('click', function(){
+        window.scrollTo({ top:0, behavior:'smooth' });
+      });
+    }
+    update();
+  }
+
+  function _bindDraggableTables(){
+    function ensure(wrapper){
+      if(!wrapper || wrapper.dataset.dtDragBound === '1') return;
+      wrapper.dataset.dtDragBound = '1';
+      var hint = wrapper.querySelector('.dt-hint');
+      if(!hint){
+        hint = document.createElement('div');
+        hint.className = 'dt-hint';
+        hint.textContent = 'Drag to scroll';
+        wrapper.appendChild(hint);
+      }
+      var pointerId = null;
+      var dragging = false;
+      var startX = 0;
+      var startScroll = 0;
+      function onDown(ev){
+        if(ev.button !== undefined && ev.button !== 0) return;
+        var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
+        dragging = true;
+        startX = point.clientX;
+        startScroll = wrapper.scrollLeft;
+        wrapper.classList.add('dragging');
+        if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
+          pointerId = ev.pointerId;
+          try{ wrapper.setPointerCapture(pointerId); }catch(err){}
+        }
+      }
+      function onMove(ev){
+        if(!dragging) return;
+        var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
+        var dx = point.clientX - startX;
+        if(Math.abs(dx) > 2){
+          wrapper.scrollLeft = startScroll - dx;
+          wrapper.classList.add('dragged');
+          if(ev.cancelable) ev.preventDefault();
+        }
+      }
+      function onUp(){
+        if(!dragging) return;
+        dragging = false;
+        wrapper.classList.remove('dragging');
+        if(pointerId !== null && wrapper.releasePointerCapture){
+          try{ wrapper.releasePointerCapture(pointerId); }catch(err){}
+        }
+        pointerId = null;
+      }
+      if(window.PointerEvent){
+        wrapper.addEventListener('pointerdown', onDown);
+        window.addEventListener('pointermove', onMove, { passive:false });
+        window.addEventListener('pointerup', onUp, { passive:true });
+        window.addEventListener('pointercancel', onUp, { passive:true });
+      } else {
+        wrapper.addEventListener('mousedown', onDown);
+        window.addEventListener('mousemove', onMove, { passive:false });
+        window.addEventListener('mouseup', onUp, { passive:true });
+        wrapper.addEventListener('touchstart', onDown, { passive:true });
+        window.addEventListener('touchmove', onMove, { passive:false });
+        window.addEventListener('touchend', onUp, { passive:true });
+      }
+      wrapper.addEventListener('scroll', function(){
+        wrapper.classList.add('dragged');
+      }, { passive:true });
+    }
+    function wrapTable(table){
+      if(!table || table.closest('.dt')) return;
+      var wrapper = document.createElement('div');
+      wrapper.className = 'dt';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+    function scan(root){
+      var base = root && root.querySelectorAll ? root : document;
+      Array.prototype.forEach.call(base.querySelectorAll('table'), wrapTable);
+      Array.prototype.forEach.call(document.querySelectorAll('.dt'), ensure);
+    }
+    scan(document);
+    var observer = new MutationObserver(function(mutations){
+      mutations.forEach(function(m){
+        m.addedNodes.forEach(function(node){
+          if(node.nodeType !== 1) return;
+          scan(node);
+        });
+      });
+    });
+    observer.observe(document.body, { childList:true, subtree:true });
   }
 
   function _saveModeFlag(enabled){
@@ -10702,12 +10948,15 @@ window.setTranslationProvider = function(providerId){
     _loadCache();
     _loadFloatButtonPosition();
     _bindFloatButtonDrag();
+    _initFabMenu();
+    _bindScrollUX();
+    _bindDraggableTables();
     _floatBtn.addEventListener('click', function(){
       if(_skipNextToggleClick){
         _skipNextToggleClick = false;
         return;
       }
-      _setArabicMode(!_arabicModeEnabled);
+      _toggleFabMenu();
     });
 
     window.addEventListener('bontrager:translation-archive-cleared', function(){
@@ -10721,6 +10970,8 @@ window.setTranslationProvider = function(providerId){
     }catch(err){}
 
     _setArabicMode(shouldStartArabic);
+    _syncFabDynamicButtons();
+    _setFabMenuOpen(false);
   }
 
   if(document.readyState === 'loading'){
