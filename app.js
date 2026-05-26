@@ -10727,6 +10727,33 @@ window.setTranslationProvider = function(providerId){
       var dragging = false;
       var startX = 0;
       var startScroll = 0;
+      var usingPointer = !!window.PointerEvent;
+      function addActiveListeners(){
+        if(usingPointer){
+          window.addEventListener('pointermove', onMove, { passive:false });
+          window.addEventListener('pointerup', onUp, { passive:true });
+          window.addEventListener('pointercancel', onUp, { passive:true });
+        } else {
+          window.addEventListener('mousemove', onMove, { passive:false });
+          window.addEventListener('mouseup', onUp, { passive:true });
+          window.addEventListener('touchmove', onMove, { passive:false });
+          window.addEventListener('touchend', onUp, { passive:true });
+          window.addEventListener('touchcancel', onUp, { passive:true });
+        }
+      }
+      function removeActiveListeners(){
+        if(usingPointer){
+          window.removeEventListener('pointermove', onMove, { passive:false });
+          window.removeEventListener('pointerup', onUp, { passive:true });
+          window.removeEventListener('pointercancel', onUp, { passive:true });
+        } else {
+          window.removeEventListener('mousemove', onMove, { passive:false });
+          window.removeEventListener('mouseup', onUp, { passive:true });
+          window.removeEventListener('touchmove', onMove, { passive:false });
+          window.removeEventListener('touchend', onUp, { passive:true });
+          window.removeEventListener('touchcancel', onUp, { passive:true });
+        }
+      }
       function onDown(ev){
         if(ev.button !== undefined && ev.button !== 0) return;
         var point = ev.touches && ev.touches.length ? ev.touches[0] : ev;
@@ -10734,10 +10761,11 @@ window.setTranslationProvider = function(providerId){
         startX = point.clientX;
         startScroll = wrapper.scrollLeft;
         wrapper.classList.add('dragging');
+        addActiveListeners();
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
           try{ wrapper.setPointerCapture(pointerId); }catch(err){
-            console.warn('setPointerCapture failed for table wrapper (pointer may no longer be active):', err);
+            console.warn('setPointerCapture failed:', err);
           }
         }
       }
@@ -10754,26 +10782,20 @@ window.setTranslationProvider = function(providerId){
       function onUp(){
         if(!dragging) return;
         dragging = false;
+        removeActiveListeners();
         wrapper.classList.remove('dragging');
         if(pointerId !== null && wrapper.releasePointerCapture){
           try{ wrapper.releasePointerCapture(pointerId); }catch(err){
-            console.warn('releasePointerCapture failed for table wrapper (pointer may already be released):', err);
+            console.warn('releasePointerCapture failed:', err);
           }
         }
         pointerId = null;
       }
-      if(window.PointerEvent){
+      if(usingPointer){
         wrapper.addEventListener('pointerdown', onDown);
-        window.addEventListener('pointermove', onMove, { passive:false });
-        window.addEventListener('pointerup', onUp, { passive:true });
-        window.addEventListener('pointercancel', onUp, { passive:true });
       } else {
         wrapper.addEventListener('mousedown', onDown);
-        window.addEventListener('mousemove', onMove, { passive:false });
-        window.addEventListener('mouseup', onUp, { passive:true });
         wrapper.addEventListener('touchstart', onDown, { passive:true });
-        window.addEventListener('touchmove', onMove, { passive:false });
-        window.addEventListener('touchend', onUp, { passive:true });
       }
       wrapper.addEventListener('scroll', function(){
         wrapper.classList.add('dragged');
