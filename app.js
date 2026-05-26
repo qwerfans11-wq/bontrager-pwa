@@ -10679,7 +10679,9 @@ window.setTranslationProvider = function(providerId){
     var backTopBtn = document.getElementById('backToTopBtn');
     var BACK_TO_TOP_THRESHOLD = 300;
     var SCROLL_HIDE_THRESHOLD = 120;
+    // Require a slightly larger downward delta to avoid accidental hide during tiny jitter.
     var SCROLL_DELTA_DOWN = 8;
+    // Use a smaller upward delta so header reappears quickly when user scrolls back up.
     var SCROLL_DELTA_UP = 6;
     var lastY = window.pageYOffset || 0;
     var ticking = false;
@@ -10769,7 +10771,7 @@ window.setTranslationProvider = function(providerId){
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
           try{ wrapper.setPointerCapture(pointerId); }catch(err){
-            console.warn('setPointerCapture failed:', err);
+            console.warn('setPointerCapture failed on .dt wrapper:', err);
           }
         }
       }
@@ -10790,7 +10792,7 @@ window.setTranslationProvider = function(providerId){
         wrapper.classList.remove('dragging');
         if(pointerId !== null && wrapper.releasePointerCapture){
           try{ wrapper.releasePointerCapture(pointerId); }catch(err){
-            console.warn('releasePointerCapture failed:', err);
+            console.warn('releasePointerCapture failed on .dt wrapper:', err);
           }
         }
         pointerId = null;
@@ -10806,12 +10808,13 @@ window.setTranslationProvider = function(providerId){
       }, { passive:true });
     }
     function wrapTable(table){
-      if(!table || table.closest('.dt')) return;
+      if(!table || table.dataset.dtWrapped === '1' || table.closest('.dt')) return;
       if(!table.parentNode) return;
       var wrapper = document.createElement('div');
       wrapper.className = 'dt';
       table.parentNode.insertBefore(wrapper, table);
       wrapper.appendChild(table);
+      table.dataset.dtWrapped = '1';
     }
     function scan(root){
       var base = root && root.querySelectorAll ? root : document;
