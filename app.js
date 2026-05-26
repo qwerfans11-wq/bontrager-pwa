@@ -10737,7 +10737,7 @@ window.setTranslationProvider = function(providerId){
         if(ev.type === 'pointerdown' && wrapper.setPointerCapture){
           pointerId = ev.pointerId;
           try{ wrapper.setPointerCapture(pointerId); }catch(err){
-            console.warn('setPointerCapture failed for table wrapper:', err);
+            console.warn('setPointerCapture failed for table wrapper (pointer may no longer be active):', err);
           }
         }
       }
@@ -10757,7 +10757,7 @@ window.setTranslationProvider = function(providerId){
         wrapper.classList.remove('dragging');
         if(pointerId !== null && wrapper.releasePointerCapture){
           try{ wrapper.releasePointerCapture(pointerId); }catch(err){
-            console.warn('releasePointerCapture failed for table wrapper:', err);
+            console.warn('releasePointerCapture failed for table wrapper (pointer may already be released):', err);
           }
         }
         pointerId = null;
@@ -10797,6 +10797,9 @@ window.setTranslationProvider = function(providerId){
       mutations.forEach(function(m){
         Array.prototype.forEach.call(m.addedNodes, function(node){
           if(node.nodeType !== 1) return;
+          var hasTable = (node.tagName === 'TABLE')
+            || (typeof node.querySelector === 'function' && !!node.querySelector('table'));
+          if(!hasTable) return;
           scan(node);
         });
       });
