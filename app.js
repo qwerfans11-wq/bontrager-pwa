@@ -6233,6 +6233,13 @@ const _AI_CR_POINT_QUERY_PATTERN=/(cr point|cr center|cr centering|cr entry|cent
 const _AI_CR_NOT_STATED='Not stated';
 const _AI_UNKNOWN_CHAPTER_RANK_INCREMENT=1;
 const _AI_STUDY_CHAPTER_ORDER=['upper_limb','lower_limb','chest','bony_thorax','abdomen','spine'];
+const _AI_CR_REGION_FILTERS=[
+  {id:'upper_limb', label:'Upper Limb', chapterIds:['upper_limb'], pattern:/upper\s*limb|upper\s*extremity|arm|shoulder|humerus|elbow|forearm|wrist|hand|finger|thumb/i},
+  {id:'lower_limb', label:'Lower Limb', chapterIds:['lower_limb'], pattern:/lower\s*limb|lower\s*extremity|hip|femur|knee|leg|ankle|foot|toe|calcaneus|tibia|fibula/i},
+  {id:'chest', label:'Chest', chapterIds:['chest','bony_thorax'], pattern:/chest|thorax|rib|sternum/i},
+  {id:'abdomen', label:'Abdomen & Pelvis', chapterIds:['abdomen'], pattern:/abdomen|pelvis|kub/i},
+  {id:'spine', label:'Spine', chapterIds:['spine'], pattern:/spine|vertebral|cervical|thoracic|lumbar|sacrum|coccyx/i},
+];
 
 function _aiBuildStudyChapterRankMap(){
   const rankMap=new Map();
@@ -6309,8 +6316,21 @@ function _aiHasCRAngulation(crText){
     && !(/perpendicular/i.test(raw) && !_AI_CR_DEGREE_PATTERN.test(raw));
 }
 
-function _aiBuildCRAngulationStudyTable(){
-  const all=_aiGetAllPositions().filter(({pos})=>_aiHasCRAngulation(pos.info?.cr));
+function _aiGetCRRegionFilter(query){
+  const raw=String(query||'').toLowerCase();
+  for(const filter of _AI_CR_REGION_FILTERS){
+    if(filter.pattern.test(raw)) return filter;
+  }
+  return null;
+}
+
+function _aiBuildCRAngulationStudyTable(query){
+  const regionFilter=_aiGetCRRegionFilter(query);
+  const all=_aiGetAllPositions().filter(({pos,chId})=>{
+    if(!_aiHasCRAngulation(pos.info?.cr)) return false;
+    if(!regionFilter) return true;
+    return regionFilter.chapterIds.includes(chId);
+  });
   const sorter=_aiGetStudyRowSorter();
   const byType={
     routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
@@ -6318,11 +6338,12 @@ function _aiBuildCRAngulationStudyTable(){
   };
   const mkTable=(title,rows)=>{
     if(!rows.length) return '';
-    const body=rows.map(({pos,chapter,sub})=>{
+    const body=rows.map(({pos,chapter,sub,chId})=>{
       const section=sub?`${chapter} › ${sub}`:chapter;
       const cr=pos.info?.cr||'—';
       const ang=_aiExtractCRAngleText(cr);
       return `<tr>
+        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(chapter||chId||'—')}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);font-weight:700">${esc(pos.name)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(cr)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);white-space:nowrap">${esc(ang)}</td>
@@ -6331,23 +6352,33 @@ function _aiBuildCRAngulationStudyTable(){
     }).join('');
     return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
       <div class="dt" style="margin-top:6px">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:680px;background:var(--bg)">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:900px;background:var(--bg)">
           <thead><tr style="background:var(--accent-bg)">
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Region</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
-            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Required/Approx angle</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Angulation</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
           </tr></thead>
           <tbody>${body}</tbody>
         </table>
       </div>`;
   };
-
-  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR-Angulated Positions Study Table</strong><br>Grouped into routine and special positions from current dataset.</div>${mkTable('Routine positions',byType.routine)}${mkTable('Special positions',byType.special)}`;
+  if(!all.length){
+    const regionLabel=regionFilter?regionFilter.label:'selected filter';
+    return `No CR-angulated positions were found for **${regionLabel}**.`;
+  }
+  const regionText=regionFilter?` — ${regionFilter.label}`:'';
+  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR-Angulated Positions Study Table${esc(regionText)}</strong><br>Includes region, position name, CR details, and detected angulation.</div>${mkTable('Routine positions',byType.routine)}${mkTable('Special positions',byType.special)}`;
 }
 
-function _aiBuildCRPointStudyTable(){
-  const all=_aiGetAllPositions().filter(({pos})=>String(pos.info?.cr||'').trim());
+function _aiBuildCRPointStudyTable(query){
+  const regionFilter=_aiGetCRRegionFilter(query);
+  const all=_aiGetAllPositions().filter(({pos,chId})=>{
+    if(!String(pos.info?.cr||'').trim()) return false;
+    if(!regionFilter) return true;
+    return regionFilter.chapterIds.includes(chId);
+  });
   const sorter=_aiGetStudyRowSorter();
   const byType={
     routine:all.filter(x=>x.pos.type==='routine').sort(sorter),
@@ -6355,31 +6386,41 @@ function _aiBuildCRPointStudyTable(){
   };
   const mkTable=(title,rows)=>{
     if(!rows.length) return '';
-    const body=rows.map(({pos,chapter,sub})=>{
+    const body=rows.map(({pos,chapter,sub,chId})=>{
       const cr=pos.info?.cr||'—';
       const point=_aiExtractCRPointText(cr);
       const section=sub?`${chapter} › ${sub}`:chapter;
+      const ang=_aiExtractCRAngleText(cr);
       return `<tr>
+        <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(chapter||chId||'—')}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);font-weight:700">${esc(pos.name)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(point)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border);line-height:1.45">${esc(cr)}</td>
+        <td style="padding:7px 8px;border-top:1px solid var(--border);white-space:nowrap">${esc(ang)}</td>
         <td style="padding:7px 8px;border-top:1px solid var(--border)">${esc(section)}</td>
       </tr>`;
     }).join('');
     return `<div style="margin-top:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">${esc(title)} (${rows.length})</div>
       <div class="dt" style="margin-top:6px">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;background:var(--bg)">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:1040px;background:var(--bg)">
           <thead><tr style="background:var(--accent-bg)">
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Region</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Position</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR point</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">CR description</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Angulation</th>
             <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">Section</th>
           </tr></thead>
           <tbody>${body}</tbody>
         </table>
       </div>`;
   };
-  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR Point Reference (All Positions)</strong><br>Extracted central ray centering/entry point from each position CR text.</div>
+  if(!all.length){
+    const regionLabel=regionFilter?regionFilter.label:'selected filter';
+    return `No CR point data was found for **${regionLabel}**.`;
+  }
+  const regionText=regionFilter?` — ${regionFilter.label}`:'';
+  return '[[HTML]]'+`<div style="font-size:12px;line-height:1.55"><strong>CR Point Reference${esc(regionText)}</strong><br>Includes region, position name, CR details, and angulation when available.</div>
     ${mkTable('Routine positions',byType.routine)}
     ${mkTable('Special positions',byType.special)}`;
 }
@@ -6390,10 +6431,10 @@ function _aiDynamicKnowledge(query){
   const all=_aiGetAllPositions();
 
   if(_AI_CR_ANGULATION_QUERY_PATTERN.test(q)){
-    return _aiBuildCRAngulationStudyTable();
+    return _aiBuildCRAngulationStudyTable(query);
   }
   if(_AI_CR_POINT_QUERY_PATTERN.test(q)){
-    return _aiBuildCRPointStudyTable();
+    return _aiBuildCRPointStudyTable(query);
   }
 
   if(/quiz.*(mistake|wrong|incorrect|error)/.test(q)){
@@ -6565,10 +6606,16 @@ function _aiSuggestedAnswer(query){
     return _aiGeneralAnswer('open mortise ankle');
   }
   if(q==='positions with cr angulation table' || q==='cr angulation table'){
-    return _aiBuildCRAngulationStudyTable();
+    return _aiBuildCRAngulationStudyTable(query);
+  }
+  if(q==='cr angulation table for upper limb' || q==='upper limb cr table'){
+    return _aiBuildCRAngulationStudyTable('upper limb');
+  }
+  if(q==='cr angulation table for lower limb' || q==='lower limb cr table'){
+    return _aiBuildCRAngulationStudyTable('lower limb');
   }
   if(q==='cr point for all positions' || q==='all cr points'){
-    return _aiBuildCRPointStudyTable();
+    return _aiBuildCRPointStudyTable(query);
   }
   if(q==='pa chest cr and technique' || q==='pa chest cr & technique'){
     const matches=_aiSearch('pa chest');
