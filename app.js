@@ -7081,11 +7081,68 @@ function deleteChapter(chId){
 let _savedAppearance={};
 const _APPEARANCE_KEY='bontrager_appearance_v1';
 
+function _appearanceColorToRgb(color){
+  if(typeof color!=='string') return null;
+  const v=color.trim().toLowerCase();
+  if(!v) return null;
+
+  const hex=v.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if(hex){
+    let h=hex[1];
+    if(h.length===3) h=h.split('').map(ch=>ch+ch).join('');
+    return {
+      r:parseInt(h.slice(0,2),16),
+      g:parseInt(h.slice(2,4),16),
+      b:parseInt(h.slice(4,6),16)
+    };
+  }
+
+  const rgb=v.match(/^rgba?\(([^)]+)\)$/i);
+  if(!rgb) return null;
+  const parts=rgb[1].split(',').map(n=>Number(n.trim()));
+  if(parts.length<3 || parts.slice(0,3).some(n=>Number.isNaN(n))) return null;
+  return {
+    r:Math.max(0,Math.min(255,parts[0])),
+    g:Math.max(0,Math.min(255,parts[1])),
+    b:Math.max(0,Math.min(255,parts[2]))
+  };
+}
+
+function _appearanceContrastRatio(c1,c2){
+  const lin=v=>{
+    const s=v/255;
+    return s<=0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055,2.4);
+  };
+  const lum=c=>0.2126*lin(c.r)+0.7152*lin(c.g)+0.0722*lin(c.b);
+  const l1=lum(c1);
+  const l2=lum(c2);
+  const hi=Math.max(l1,l2);
+  const lo=Math.min(l1,l2);
+  return (hi+0.05)/(lo+0.05);
+}
+
+function _appearanceIsSafe(a){
+  const bg=_appearanceColorToRgb(a?.bg || '#f4f4f5');
+  const bgCard=_appearanceColorToRgb(a?.bgCard || '#ffffff');
+  const text=_appearanceColorToRgb(a?.text || '#09090b');
+  const text2=_appearanceColorToRgb(a?.text2 || '#52525b');
+  if(!bg || !bgCard || !text || !text2) return true;
+  return (
+    _appearanceContrastRatio(text,bg) >= 3 &&
+    _appearanceContrastRatio(text,bgCard) >= 3 &&
+    _appearanceContrastRatio(text2,bgCard) >= 2.2
+  );
+}
+
 function _loadSavedAppearance(){
   try{
     const raw=localStorage.getItem(_APPEARANCE_KEY);
     if(!raw) return;
     const a=JSON.parse(raw);
+    if(!_appearanceIsSafe(a)){
+      localStorage.removeItem(_APPEARANCE_KEY);
+      return;
+    }
     _savedAppearance=a;
     const root=document.documentElement;
     if(a.bg) root.style.setProperty('--bg2',a.bg);
@@ -7163,17 +7220,32 @@ function applyAppearanceValues(){
 }
 
 function saveAppearance(){
-  applyAppearanceValues();
-  const savedFontSize = _getStoredBaseFontSize();
-  _savedAppearance={
+  const candidate={
     bg:document.getElementById('dap-bg').value,
     bgCard:document.getElementById('dap-bg-card').value,
     accent:document.getElementById('dap-accent').value,
     text:document.getElementById('dap-text').value,
     text2:document.getElementById('dap-text2').value,
-    fs:String(savedFontSize),
+    fs:String(_normalizeFontSize(document.getElementById('dap-fontsize').value)),
     dark:document.body.classList.contains('dark'),
     large:document.getElementById('largeToggle')?.classList.contains('on')||false
+  };
+  if(!_appearanceIsSafe(candidate)){
+    resetAppearance();
+    return;
+  }
+
+  applyAppearanceValues();
+  const savedFontSize = _getStoredBaseFontSize();
+  _savedAppearance={
+    bg:candidate.bg,
+    bgCard:candidate.bgCard,
+    accent:candidate.accent,
+    text:candidate.text,
+    text2:candidate.text2,
+    fs:String(savedFontSize),
+    dark:candidate.dark,
+    large:candidate.large
   };
   try{ localStorage.setItem(_APPEARANCE_KEY, JSON.stringify(_savedAppearance)); }catch(e){}
   _showToast('🎨 Appearance saved');
